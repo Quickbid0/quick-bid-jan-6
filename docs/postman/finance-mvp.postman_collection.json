@@ -1,0 +1,117 @@
+{
+  "info": {
+    "name": "QuickMela Finance MVP",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "MVP loan apply + webhook flows for QuickMela"
+  },
+  "item": [
+    {
+      "name": "Apply Loan (DemoBank)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          },
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/finance/loans/apply",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "finance", "loans", "apply"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"product_id\": \"{{product_id}}\",\n  \"requested_amount\": 250000,\n  \"tenor_months\": 36,\n  \"loan_type\": \"vehicle\",\n  \"prefilled\": {\n    \"product_value\": 300000,\n    \"seller_id\": \"{{seller_id}}\"\n  },\n  \"documents\": [\n    { \"path\": \"partners/demo/rc_front.jpg\", \"type\": \"rc\" }\n  ],\n  \"consent_text\": \"I consent to sharing my data with DemoBank for loan processing.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get Loan Application",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/finance/loans/{{loan_id}}",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "finance", "loans", "{{loan_id}}"]
+        }
+      }
+    },
+    {
+      "name": "Partner Webhook (valid signature)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "X-Partner-Signature",
+            "value": "{{demo_bank_signature}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/webhooks/partner/demo_bank",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "webhooks", "partner", "demo_bank"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event_type\": \"loan_status_update\",\n  \"partner_ref_id\": \"{{partner_ref_id}}\",\n  \"status\": \"approved\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Partner Webhook (invalid signature)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json",
+            "type": "text"
+          },
+          {
+            "key": "X-Partner-Signature",
+            "value": "sha256=INVALID",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/webhooks/partner/demo_bank",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "webhooks", "partner", "demo_bank"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"event_type\": \"loan_status_update\",\n  \"partner_ref_id\": \"{{partner_ref_id}}\",\n  \"status\": \"approved\"\n}"
+        }
+      }
+    }
+  ],
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:4000" },
+    { "key": "access_token", "value": "" },
+    { "key": "product_id", "value": "" },
+    { "key": "seller_id", "value": "" },
+    { "key": "loan_id", "value": "" },
+    { "key": "partner_ref_id", "value": "" },
+    { "key": "demo_bank_signature", "value": "" }
+  ]
+}

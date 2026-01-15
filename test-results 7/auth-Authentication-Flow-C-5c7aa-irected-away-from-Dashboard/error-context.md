@@ -1,0 +1,285 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=e4]:
+    - navigation [ref=e5]:
+      - generic [ref=e7]:
+        - link "QuickMela" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e10]
+          - generic [ref=e16]: QuickMela
+        - generic [ref=e17]:
+          - link "Home" [ref=e18] [cursor=pointer]:
+            - /url: /
+          - button "Browse" [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+            - text: Browse
+            - img [ref=e27]
+          - button "Auctions" [ref=e30] [cursor=pointer]:
+            - img [ref=e31]
+            - text: Auctions
+            - img [ref=e37]
+        - generic [ref=e39]:
+          - button "Toggle dark mode" [ref=e40] [cursor=pointer]:
+            - img [ref=e41]
+          - link "Invest" [ref=e43] [cursor=pointer]:
+            - /url: /invest
+          - link "Login" [ref=e44] [cursor=pointer]:
+            - /url: /login
+          - link "Register" [ref=e45] [cursor=pointer]:
+            - /url: /register
+          - link "Company Registration" [ref=e46] [cursor=pointer]:
+            - /url: /company/register
+    - main [ref=e47]:
+      - generic [ref=e48]:
+        - generic [ref=e51]:
+          - heading "QuickMela" [level=1] [ref=e53]
+          - generic [ref=e55]:
+            - img [ref=e56]
+            - textbox "Search for anything..." [ref=e59]
+          - generic [ref=e60]:
+            - button "Mumbai" [ref=e61] [cursor=pointer]:
+              - img [ref=e62]
+              - generic [ref=e65]: Mumbai
+            - button [ref=e67] [cursor=pointer]:
+              - img [ref=e68]
+        - main [ref=e71]:
+          - generic [ref=e72]:
+            - generic [ref=e73]:
+              - generic [ref=e74]:
+                - img [ref=e76]
+                - generic [ref=e79]:
+                  - heading "Trending Auctions" [level=2] [ref=e80]
+                  - paragraph [ref=e81]: Hot deals everyone's bidding on
+              - link "View All" [ref=e82] [cursor=pointer]:
+                - /url: /catalog?sort=trending
+                - text: View All
+                - img [ref=e83]
+            - generic [ref=e85]:
+              - generic [ref=e87]:
+                - generic [ref=e88]:
+                  - button "Sample Trending Product 1" [ref=e90] [cursor=pointer]
+                  - generic [ref=e92]:
+                    - img [ref=e93]
+                    - text: "0"
+                - generic [ref=e96]:
+                  - heading "Sample Trending Product 1" [level=3] [ref=e98]
+                  - generic [ref=e100]:
+                    - img [ref=e101]
+                    - text: 4.5 / 5
+                  - generic [ref=e103]:
+                    - generic [ref=e104]:
+                      - img [ref=e105]
+                      - generic [ref=e108]: Ended
+                      - generic [ref=e109]: Time left
+                    - generic [ref=e110]:
+                      - img [ref=e111]
+                      - generic [ref=e116]: 0 watching
+                      - generic [ref=e117]: 12 bids
+                  - generic [ref=e118]:
+                    - paragraph [ref=e119]: Current bid
+                    - paragraph [ref=e121]: ₹15,000
+                  - button "Join live" [ref=e123] [cursor=pointer]
+              - generic [ref=e125]:
+                - generic [ref=e126]:
+                  - button "Sample Trending Product 2" [ref=e128] [cursor=pointer]
+                  - generic [ref=e130]:
+                    - img [ref=e131]
+                    - text: "0"
+                - generic [ref=e134]:
+                  - heading "Sample Trending Product 2" [level=3] [ref=e136]
+                  - generic [ref=e138]:
+                    - img [ref=e139]
+                    - text: 4.5 / 5
+                  - generic [ref=e141]:
+                    - generic [ref=e142]:
+                      - img [ref=e143]
+                      - generic [ref=e146]: Ended
+                      - generic [ref=e147]: Time left
+                    - generic [ref=e148]:
+                      - img [ref=e149]
+                      - generic [ref=e154]: 0 watching
+                      - generic [ref=e155]: 8 bids
+                  - generic [ref=e156]:
+                    - paragraph [ref=e157]: Current bid
+                    - paragraph [ref=e159]: ₹25,000
+                  - button "Join live" [ref=e161] [cursor=pointer]
+          - generic [ref=e162]:
+            - generic [ref=e163]:
+              - generic [ref=e164]:
+                - img [ref=e166]
+                - generic [ref=e169]:
+                  - heading "Ending Soon" [level=2] [ref=e170]
+                  - paragraph [ref=e171]: Last chance to place your bids
+              - link "View All" [ref=e172] [cursor=pointer]:
+                - /url: /catalog?filter=ending_soon
+                - text: View All
+                - img [ref=e173]
+            - generic [ref=e177]:
+              - generic [ref=e178]:
+                - button "Sample Ending Soon Product" [ref=e180] [cursor=pointer]
+                - generic [ref=e182]:
+                  - img [ref=e183]
+                  - text: "0"
+              - generic [ref=e186]:
+                - heading "Sample Ending Soon Product" [level=3] [ref=e188]
+                - generic [ref=e190]:
+                  - img [ref=e191]
+                  - text: 4.5 / 5
+                - generic [ref=e193]:
+                  - generic [ref=e194]:
+                    - img [ref=e195]
+                    - generic [ref=e198]: 2026-01-11T07:39:35.109Z
+                    - generic [ref=e199]: Time left
+                  - generic [ref=e200]:
+                    - img [ref=e201]
+                    - generic [ref=e206]: 0 watching
+                    - generic [ref=e207]: 15 bids
+                - generic [ref=e208]:
+                  - paragraph [ref=e209]: Current bid
+                  - paragraph [ref=e211]: ₹18,000
+                - button "Join live" [ref=e213] [cursor=pointer]
+          - generic [ref=e214]:
+            - generic [ref=e215]:
+              - generic [ref=e216]:
+                - img [ref=e218]
+                - generic [ref=e222]:
+                  - heading "New Listings" [level=2] [ref=e223]
+                  - paragraph [ref=e224]: Fresh items just listed
+              - link "View All" [ref=e225] [cursor=pointer]:
+                - /url: /catalog?sort=newest
+                - text: View All
+                - img [ref=e226]
+            - generic [ref=e230]:
+              - generic [ref=e231]:
+                - button "Sample New Listing" [ref=e233] [cursor=pointer]
+                - generic [ref=e235]:
+                  - img [ref=e236]
+                  - text: "0"
+              - generic [ref=e239]:
+                - heading "Sample New Listing" [level=3] [ref=e241]
+                - generic [ref=e243]:
+                  - img [ref=e244]
+                  - text: 4.5 / 5
+                - generic [ref=e246]:
+                  - generic [ref=e247]:
+                    - img [ref=e248]
+                    - generic [ref=e251]: Ended
+                    - generic [ref=e252]: Time left
+                  - generic [ref=e253]:
+                    - img [ref=e254]
+                    - generic [ref=e259]: 0 watching
+                    - generic [ref=e260]: 3 bids
+                - generic [ref=e261]:
+                  - paragraph [ref=e262]: Current bid
+                  - paragraph [ref=e264]: ₹8,000
+                - button "View Details" [ref=e266] [cursor=pointer]
+    - contentinfo [ref=e267]:
+      - generic [ref=e269]:
+        - generic [ref=e270]:
+          - generic [ref=e271]:
+            - img [ref=e272]
+            - generic [ref=e278]: Quick Mela
+          - paragraph [ref=e279]: Your trusted platform for online bidding and auctions.
+          - generic [ref=e280]:
+            - link [ref=e281] [cursor=pointer]:
+              - /url: https://facebook.com
+              - img [ref=e282]
+            - link [ref=e284] [cursor=pointer]:
+              - /url: https://twitter.com
+              - img [ref=e285]
+            - link [ref=e287] [cursor=pointer]:
+              - /url: https://instagram.com
+              - img [ref=e288]
+        - generic [ref=e291]:
+          - heading "Quick Links" [level=3] [ref=e292]
+          - list [ref=e293]:
+            - listitem [ref=e294]:
+              - link "Product Catalog" [ref=e295] [cursor=pointer]:
+                - /url: /catalog
+            - listitem [ref=e296]:
+              - link "Advanced Search" [ref=e297] [cursor=pointer]:
+                - /url: /advanced-search
+            - listitem [ref=e298]:
+              - link "Business Solutions" [ref=e299] [cursor=pointer]:
+                - /url: /business-solutions
+            - listitem [ref=e300]:
+              - link "Marketing Services" [ref=e301] [cursor=pointer]:
+                - /url: /marketing
+            - listitem [ref=e302]:
+              - link "Sales Support" [ref=e303] [cursor=pointer]:
+                - /url: /sales
+            - listitem [ref=e304]:
+              - link "Launch Campaigns" [ref=e305] [cursor=pointer]:
+                - /url: /campaigns
+            - listitem [ref=e306]:
+              - link "Trust & Safety" [ref=e307] [cursor=pointer]:
+                - /url: /trust-safety
+            - listitem [ref=e308]:
+              - link "Mobile App" [ref=e309] [cursor=pointer]:
+                - /url: /mobile-app
+            - listitem [ref=e310]:
+              - link "API Documentation" [ref=e311] [cursor=pointer]:
+                - /url: /api-docs
+            - listitem [ref=e312]:
+              - link "Careers" [ref=e313] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e314]:
+              - link "Partnerships" [ref=e315] [cursor=pointer]:
+                - /url: /partnerships
+            - listitem [ref=e316]:
+              - link "Investor Pitch" [ref=e317] [cursor=pointer]:
+                - /url: /investors
+        - generic [ref=e318]:
+          - heading "Support" [level=3] [ref=e319]
+          - list [ref=e320]:
+            - listitem [ref=e321]:
+              - link "Security Center" [ref=e322] [cursor=pointer]:
+                - /url: /security-center
+            - listitem [ref=e323]:
+              - link "Grievance Officer" [ref=e324] [cursor=pointer]:
+                - /url: /grievance-officer
+            - listitem [ref=e325]:
+              - link "Market Analytics" [ref=e326] [cursor=pointer]:
+                - /url: /market-analytics
+            - listitem [ref=e327]:
+              - link "Reports" [ref=e328] [cursor=pointer]:
+                - /url: /reports
+            - listitem [ref=e329]:
+              - link "FAQ" [ref=e330] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e331]:
+              - link "Admin Finance Leads" [ref=e332] [cursor=pointer]:
+                - /url: /demo?user=demo-admin&redirect=/admin/finance-leads
+        - generic [ref=e333]:
+          - heading "Legal" [level=3] [ref=e334]
+          - generic [ref=e335]:
+            - link "Terms & Conditions" [ref=e336] [cursor=pointer]:
+              - /url: /legal/terms-and-conditions
+            - link "Privacy Policy" [ref=e337] [cursor=pointer]:
+              - /url: /legal/privacy-policy
+            - link "Refund & Dispute Policy" [ref=e338] [cursor=pointer]:
+              - /url: /legal/refund-cancellation-dispute
+            - link "Wallet & Deposit Policy" [ref=e339] [cursor=pointer]:
+              - /url: /legal/wallet-deposit-investment
+            - link "Buyer Policy" [ref=e340] [cursor=pointer]:
+              - /url: /legal/buyer-policy
+            - link "Seller Policy" [ref=e341] [cursor=pointer]:
+              - /url: /legal/seller-policy
+            - link "Security & AML" [ref=e342] [cursor=pointer]:
+              - /url: /legal/security-authentication-passwordprotection-accesscontrol-encryption-policy
+            - link "E-Contract & Digital Agreement" [ref=e343] [cursor=pointer]:
+              - /url: /legal/e-contract-digital-agreement
+            - link "Auction Rules" [ref=e344] [cursor=pointer]:
+              - /url: /legal/auction-rules-bidding
+          - paragraph [ref=e345]: Need more policies? Visit the Legal Hub for the full catalog of compliance, governance, and reporting guides.
+  - generic [ref=e348]:
+    - generic [ref=e349]: We use cookies to provide essential site functionality and to improve your experience. Manage your preferences below.
+    - generic [ref=e350]:
+      - button "Accept all" [ref=e351] [cursor=pointer]
+      - group [ref=e352]:
+        - generic "Preferences" [ref=e353] [cursor=pointer]
+```

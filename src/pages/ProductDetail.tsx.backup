@@ -1,0 +1,801 @@
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
+import { useSessionContext } from '../context/SessionContext';
+import {
+  Eye,
+  Shield,
+  Star,
+  Clock,
+  Heart,
+  Gavel,
+  MapPin,
+  Trophy,
+  CheckCircle,
+  User,
+  Calendar,
+  Wallet
+} from 'lucide-react';
+import { toast } from 'react-hot-toast';
+import { supabase } from '../config/supabaseClient';
+import { useCountdown } from '../hooks/useCountdown';
+import BidModal from '../components/BidModal';
+import { motion } from 'framer-motion';
+import PageFrame from '../components/layout/PageFrame';
+import { VehicleDetails, WatchDetails, ArtDetails, MachineDetails, SculptureDetails, GenericDetails } from '../components/product-details';
+
+const DataBlock = ({ label, value }) => (
+  <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
+    <strong className="font-medium text-gray-500 dark:text-gray-400">{label}</strong>
+    <span className="font-semibold text-gray-800 dark:text-gray-100">{value}</span>
+  </div>
+);
+
+const getInitials = (name) => {
+  return name
+    .split(' ')
+    .map((word) => word[0])
+    .join('')
+    .toUpperCase();
+};
+
+const sectionWrapperClass = 'bg-white dark:bg-gray-900 rounded-3xl shadow-lg overflow-hidden';
+const sectionInnerPadding = 'px-6 py-6 space-y-6';
+
+type ProductType =
+  | 'vehicle'
+  | 'watch'
+  | 'art'
+  | 'industrial_machine'
+  | 'sculpture'
+  | 'antique'
+  | 'jewelry'
+  | 'other';
+
+const mapCategoryToType = (category: string): ProductType => {
+  const c = (category || '').toLowerCase();
+  if (c.includes('vehicle') || c.includes('car') || c.includes('bike')) return 'vehicle';
+  if (c.includes('watch')) return 'watch';
+  if (c.includes('art') || c.includes('painting')) return 'art';
+  if (c.includes('machine') || c.includes('industrial')) return 'industrial_machine';
+  if (c.includes('sculpture')) return 'sculpture';
+  if (c.includes('antique')) return 'antique';
+  if (c.includes('jewel')) return 'jewelry';
+  return 'other';
+};
+
+const ensureAttributes = (p: any): any => {
+  if (p?.attributes) return p.attributes;
+  const type = (p?.product_type as ProductType) || mapCategoryToType(p?.category || '');
+  const a: any = {};
+  if (type === 'vehicle') {
+    a.make = p.make;
+    a.model = p.model;
+    a.variant = p.variant;
+    a.year = p.year;
+    a.km_driven = p.mileage_km;
+    a.fuel = p.fuel_type;
+    a.transmission = p.transmission;
+    a.rc_status = p.rc_status;
+  } else if (type === 'watch') {
+    a.brand = p.brand;
+    a.model = p.model;
+    a.reference_number = p.reference_number;
+    a.year = p.year;
+    a.condition = p.condition;
+    a.box_papers = p.box_papers;
+    a.movement = p.movement;
+    a.case_size = p.case_size;
+    a.authenticity_certificate = p.authenticity_certificate;
+  } else if (type === 'art') {
+    a.artist = p.artist;
+    a.medium = p.medium;
+    a.canvas_size = p.canvas_size;
+    a.year_created = p.year_created;
+    a.signed = p.signed;
+    a.provenance = p.provenance;
+    a.certificate_of_authenticity = p.certificate_of_authenticity;
+  } else if (type === 'industrial_machine') {
+    a.manufacturer = p.manufacturer;
+    a.machine_type = p.machine_type;
+    a.year = p.year;
+    a.operating_hours = p.operating_hours;
+    a.power_rating = p.power_rating;
+    a.cnc_controller = p.cnc_controller;
+    a.maintenance_logs = p.maintenance_logs;
+    a.installation_location = p.installation_location;
+  } else if (type === 'sculpture') {
+    a.material = p.material;
+    a.dimensions = p.dimensions;
+    a.weight = p.weight;
+    a.handmade = p.handmade;
+    a.artist = p.artist;
+    a.artisan = p.artisan;
+    a.cultural_significance = p.cultural_significance;
+  }
+  return a;
+};
+
+const renderTypeDetails = (p: any) => {
+  const type: ProductType = (p?.product_type as ProductType) || mapCategoryToType(p?.category || '');
+  const normalized = { ...p, attributes: ensureAttributes(p) };
+  switch (type) {
+    case 'vehicle':
+      return <VehicleDetails data={normalized} />;
+    case 'watch':
+      return <WatchDetails data={normalized} />;
+    case 'art':
+      return <ArtDetails data={normalized} />;
+    case 'industrial_machine':
+      return <MachineDetails data={normalized} />;
+    case 'sculpture':
+      return <SculptureDetails data={normalized} />;
+    default:
+      return <GenericDetails data={normalized} />;
+  }
+};
+
+const ProductDetail = () => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const { userProfile } = useSessionContext();
+  const userId = userProfile?.id;
+
+  const [product, setProduct] = useState(null);
+  const [seller, setSeller] = useState(null);
+  const [bids, setBids] = useState([]);
+  const [auctionId, setAuctionId] = useState<string | null>(null);
+  const [auctionStatus, setAuctionStatus] = useState<'live' | 'upcoming' | 'sold' | 'expired' | null>(null);
+  const [watchersCount, setWatchersCount] = useState<number>(0);
+  const [viewerCount, setViewerCount] = useState<number>(0);
+  const [isInWishlist, setIsInWishlist] = useState(false);
+  const [wishlistLoading, setWishlistLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [showBidModal, setShowBidModal] = useState(false);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  const timeLeft = useCountdown(product?.end_date ? new Date(product.end_date) : null);
+
+  const fetchData = useCallback(async () => {
+      try {
+        setLoadError(null);
+        setLoading(true);
+
+        if (!id) return;
+
+        console.log('PDP productId:', id);
+
+        const resp = await fetch(`/api/auctions/detail?product_id=${id}`);
+        if (!resp.ok) {
+          try {
+            const rawDemo = localStorage.getItem('demo-added-products');
+            const demoList = rawDemo ? JSON.parse(rawDemo) : [];
+            const found = Array.isArray(demoList) ? demoList.find((p: any) => String(p.id) === String(id)) : null;
+            if (found) {
+              const demoProduct = {
+                id: String(found.id),
+                title: found.title || 'Untitled listing',
+                description: found.description || '',
+                image_url: Array.isArray(found.image_urls) && found.image_urls.length ? found.image_urls[0] : (found.image_url || 'https://placehold.co/800x600?text=Demo+Listing'),
+                image_urls: Array.isArray(found.image_urls) ? found.image_urls : [],
+                current_price: Number(found.current_price ?? found.starting_price ?? 0),
+                starting_price: Number(found.starting_price ?? found.current_price ?? 0),
+                increment_amount: Number(found.increment_amount ?? 1000),
+                category: found.category || 'General',
+                product_type: found.product_type || mapCategoryToType(found.category || 'General'),
+                attributes: found.attributes || undefined,
+                location: found.location || 'Location on request',
+                end_date: found.end_date || new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+                condition: found.condition || 'new',
+                verification_status: found.verification_status || 'verified',
+                view_count: Number(found.view_count ?? 0),
+                bid_count: Number(found.bid_count ?? 0),
+                watchers: Number(found.watchers ?? 0),
+                seller_id: found.seller_id || 'demo_seller',
+                tags: Array.isArray(found.tags) ? found.tags : [],
+                features: Array.isArray(found.features) ? found.features : [],
+              } as any;
+              setProduct(demoProduct);
+              setSeller({
+                id: found.seller_id || 'demo_seller',
+                name: found.seller?.name || 'Demo Seller',
+                verified: true,
+                rating: found.seller?.rating ?? 4.8,
+                sales_count: found.seller?.sales_count ?? 0,
+              } as any);
+              setAuctionId(null);
+              setAuctionStatus('upcoming');
+              setWatchersCount(Number(found.watchers ?? 0));
+              setBids([]);
+              setLoading(false);
+              return;
+            } else {
+              const placeholder: any = {
+                id: String(id),
+                title: 'Demo Product',
+                description: 'This is a placeholder product. No server data was found.',
+                image_url: 'https://placehold.co/800x600?text=Product',
+                image_urls: [],
+                current_price: 0,
+                starting_price: 0,
+                increment_amount: 1000,
+                category: 'General',
+                location: 'Location on request',
+                end_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+                condition: 'new',
+                verification_status: 'verified',
+                view_count: 0,
+                bid_count: 0,
+                watchers: 0,
+                seller_id: 'demo_seller',
+                tags: [],
+                features: [],
+              };
+              setProduct(placeholder);
+              setSeller({
+                id: 'demo_seller',
+                name: 'Demo Seller',
+                verified: true,
+                rating: 4.8,
+                sales_count: 0,
+              } as any);
+              setAuctionId(null);
+              setAuctionStatus('upcoming');
+              setWatchersCount(0);
+              setBids([]);
+              setLoading(false);
+              return;
+            }
+          } catch {
+            const placeholder: any = {
+              id: String(id),
+              title: 'Demo Product',
+              description: 'This is a placeholder product. No server data was found.',
+              image_url: 'https://placehold.co/800x600?text=Product',
+              image_urls: [],
+              current_price: 0,
+              starting_price: 0,
+              increment_amount: 1000,
+              category: 'General',
+              location: 'Location on request',
+              end_date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString(),
+              condition: 'new',
+              verification_status: 'verified',
+              view_count: 0,
+              bid_count: 0,
+              watchers: 0,
+              seller_id: 'demo_seller',
+              tags: [],
+              features: [],
+            };
+            setProduct(placeholder);
+            setSeller({
+              id: 'demo_seller',
+              name: 'Demo Seller',
+              verified: true,
+              rating: 4.8,
+              sales_count: 0,
+            } as any);
+            setAuctionId(null);
+            setAuctionStatus('upcoming');
+            setWatchersCount(0);
+            setBids([]);
+            setLoading(false);
+            return;
+          }
+        }
+        const json = await resp.json();
+        const productData = json.product || {};
+        setProduct(productData);
+        setSeller(json.seller_summary || json.seller || null);
+        setAuctionId(json.auction_id || null);
+        setAuctionStatus((json.auction_status || null) as any);
+        setWatchersCount(Number(json.watchers_count || 0));
+        setViewerCount(Number(json.viewer_count || 0));
+        setBids(Array.isArray(json.bids) ? json.bids : []);
+
+      } catch (e) {
+        console.error(e);
+        setLoadError('Failed to load product');
+        toast.error('Failed to load product');
+      } finally {
+        setLoading(false);
+      }
+    }, [id, userId]);
+
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
+  const verificationStatus = product?.verification_status || 'Pending';
+  const category = product?.category || '';
+
+  useEffect(() => {
+    try {
+      if (!userId || !product?.id) return;
+      const key = `watchlist:${userId}`;
+      const raw = localStorage.getItem(key);
+      const items = raw ? JSON.parse(raw) : [];
+      const exists = Array.isArray(items) && items.some((it: any) => String(it.productId) === String(product.id));
+      setIsInWishlist(Boolean(exists));
+    } catch {}
+  }, [userId, product?.id]);
+
+  const toggleWishlist = async () => {
+    if (!userId) {
+      toast.error('Please login to add to wishlist');
+      return;
+    }
+
+    setWishlistLoading(true);
+    try {
+      const key = `watchlist:${userId}`;
+      const raw = localStorage.getItem(key);
+      const items = raw ? JSON.parse(raw) : [];
+      const snapshot = {
+        id: `${userId}:${product.id}`,
+        productId: product.id,
+        title: product.title,
+        image_url: product.image_urls?.[0] || product.image_url || '',
+        current_price: product.current_price || 0,
+        end_date: product.end_date || null
+      };
+      if (isInWishlist) {
+        const filtered = (items || []).filter((it: any) => String(it.productId) !== String(product.id));
+        localStorage.setItem(key, JSON.stringify(filtered));
+        try {
+          await supabase.from('watchlist').delete().eq('user_id', userId).eq('product_id', product.id);
+        } catch {}
+        setIsInWishlist(false);
+        toast.success('Removed from wishlist');
+      } else {
+        const next = Array.isArray(items) ? [...items, snapshot] : [snapshot];
+        localStorage.setItem(key, JSON.stringify(next));
+        try {
+          await supabase.from('watchlist').insert({ user_id: userId, product_id: product.id });
+        } catch {}
+        setIsInWishlist(true);
+        toast.success('Added to wishlist');
+      }
+    } catch (e: any) {
+      console.error('wishlist toggle error', e);
+      toast.error('Unable to update wishlist');
+    } finally {
+      setWishlistLoading(false);
+    }
+  };
+
+  if (loading || !product) {
+    return (
+      <PageFrame
+        title="Loading product"
+        description="Please wait while we load the auction details"
+        className="space-y-10 pb-24 md:pb-0"
+        contentClassName="space-y-10"
+        headingClassName="space-y-1"
+      >
+        <section className={sectionWrapperClass}>
+          <div className={sectionInnerPadding}>
+            <div className="grid gap-8 lg:grid-cols-[1.2fr_minmax(320px,1fr)] items-start">
+              <div className="space-y-6">
+                <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-gray-200 dark:border-gray-700 shadow-xl">
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+                  </div>
+                </div>
+              </div>
+              <div className="flex flex-col gap-6">
+                <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                  <div>
+                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">Loading…</h2>
+                    <p className="text-sm text-gray-500">Seller • Category</p>
+                  </div>
+                  <button className="px-4 py-2 rounded-full text-sm font-semibold bg-gray-200 text-gray-700 dark:bg-gray-800 dark:text-gray-100">
+                    Wishlist
+                  </button>
+                </div>
+                <div className="rounded-3xl bg-gray-50 dark:bg-gray-800 border border-transparent dark:border-gray-700 shadow-lg p-6 space-y-5">
+                  <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-[0.3em]">Current Bid</p>
+                      <p className="text-4xl font-bold text-indigo-600">₹—</p>
+                      <p className="text-sm text-gray-500">Lead bid • — total</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-semibold text-gray-500 uppercase">Countdown</p>
+                      <p className="text-lg font-semibold text-red-600">—h —m —s</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-3">
+                    <button data-testid="place-bid-btn" className="w-full py-3 text-white bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-bold text-lg shadow-lg transition">
+                      Place Bid
+                    </button>
+                    <button className="w-full py-3 text-indigo-700 bg-indigo-50 hover:bg-indigo-100 rounded-2xl font-semibold">
+                      Pay Token & Unlock
+                    </button>
+                  </div>
+                </div>
+                <div className="rounded-2xl bg-gray-50 dark:bg-gray-800 p-4 space-y-2">
+                  <div className="flex items-center justify-between text-sm text-gray-500 font-semibold">
+                    <span>Buyer Readiness</span>
+                    <span>—%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500" style={{ width: `0%` }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </PageFrame>
+    );
+  }
+
+  const readinessSteps = [
+    { label: 'Complete KYC', done: true },
+    { label: 'Verify Phone', done: true },
+    { label: 'Pay Token', done: Boolean(userProfile?.token_fee_paid_at) },
+    { label: 'Pay Deposit', done: false }
+  ];
+  const readinessProgress = Math.round((readinessSteps.filter((step) => step.done).length / readinessSteps.length) * 100);
+  const liveBidList = bids?.slice(0, 4) || [];
+  const latestBidAmount = bids?.[0]?.amount || product?.current_price || 0;
+  const watchCount = watchersCount;
+  const incrementOptions = [5000, 10000, 20000];
+
+  if (loadError) {
+    return (
+      <PageFrame
+        title="Product unavailable"
+        description="We couldn't load this auction"
+        className="space-y-10 pb-24 md:pb-0"
+        contentClassName="space-y-10"
+        headingClassName="space-y-1"
+      >
+        <section className={sectionWrapperClass}>
+          <div className={sectionInnerPadding}>
+            <div className="text-center py-12">
+              <div className="h-16 w-16 text-red-500 mx-auto mb-4" />
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Product unavailable</h2>
+              <p className="text-gray-600 dark:text-gray-400 mb-6">{loadError}</p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <button onClick={() => window.location.reload()} className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                  Retry
+                </button>
+                <Link to="/catalog" className="px-4 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-800">
+                  Browse Auctions
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+      </PageFrame>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Product Header */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                {product.title}
+              </h1>
+              <p className="text-lg text-gray-600 dark:text-gray-400 mt-1">
+                {product.category} • {product.location}
+              </p>
+            </div>
+            <div className="flex items-center gap-3">
+              {product.is_trending && (
+                <div className="px-3 py-1 bg-orange-100 dark:bg-orange-900/30 rounded-full text-xs font-semibold text-orange-700">
+                  Trending
+                <img
+                  src={product.image_urls?.[selectedImageIndex] || product.image_url}
+                  alt="Product"
+                  className="w-full h-full object-cover"
+                />
+                <div className={`absolute top-4 left-4 px-3 py-1 text-xs font-bold rounded-full shadow-lg ${
+                  verificationStatus === 'verified' ? 'bg-emerald-500 text-white' : 'bg-amber-400 text-black'}`}>
+                  {verificationStatus === 'verified' ? 'Verified Source' : 'Verification Pending'}
+                </div>
+                <div className="absolute top-4 right-4 bg-black/70 text-white px-3 py-1 rounded-full text-xs flex items-center gap-1">
+                  <Eye className="h-3 w-3" /> {viewerCount} viewing now
+                </div>
+                {(auctionStatus === 'live' || auctionStatus === 'upcoming') && (
+                  <div className="absolute bottom-4 left-4 bg-black/70 text-white px-4 py-2 rounded-2xl text-sm">
+                    <p className="uppercase text-[10px] tracking-[0.3em] text-gray-200">
+                      {auctionStatus === 'live' ? 'Live' : 'Upcoming'}
+                    </p>
+                    <p className="font-semibold text-base">{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s left</p>
+                  </div>
+                )}
+              </div>
+              {product.image_urls && product.image_urls.length > 1 && (
+                <div className="flex gap-3 overflow-x-auto">
+                  {product.image_urls.map((url, index) => (
+                    <button
+                      key={index}
+                      onClick={() => setSelectedImageIndex(index)}
+                      className={`flex-shrink-0 h-16 w-20 rounded-2xl overflow-hidden border-2 transition ${
+                        selectedImageIndex === index ? 'border-indigo-500' : 'border-transparent'
+                      }`}
+                    >
+                      <img src={url} alt={`View ${index + 1}`} className="w-full h-full object-cover" />
+                    </button>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-6">
+              <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                <div>
+                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white leading-tight">{product.title}</h2>
+                  <p className="text-sm text-gray-500">{seller?.name || 'Seller'} • {category || 'Category'}</p>
+                </div>
+                <button
+                </button>
+              </div>
+                  <span key={index} className="px-3 py-1 bg-indigo-50 rounded-full border border-indigo-100">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+
+              {renderTypeDetails(product)}
+
+              <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
+                <div className="flex items-center gap-2">
+                  <Clock className="h-4 w-4 text-red-500" />
+                  {auctionStatus === 'live' || auctionStatus === 'upcoming' ? (
+                    <>Ends in {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</>
+                  ) : (
+                    <>Auction ended</>
+                  )}
+                </div>
+                <div className="flex items-center gap-2">
+                  <Eye className="h-4 w-4 text-gray-500" />
+                  {watchersCount} watching
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-green-500" />
+                  Seller verified
+                </div>
+                <div className="flex items-center gap-2">
+                  <Trophy className="h-4 w-4 text-yellow-500" />
+                  {bids.length} bids
+                </div>
+              </div>
+
+              <div className="rounded-3xl bg-gray-50 dark:bg-gray-800 border border-transparent dark:border-gray-700 shadow-lg p-6 space-y-5">
+                <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div>
+                    <p className="text-xs font-semibold text-gray-500 uppercase tracking-[0.3em]">Current bid</p>
+                    <p className="text-4xl font-bold text-indigo-600">₹{latestBidAmount.toLocaleString()}</p>
+                    <p className="text-sm text-gray-500">Lead bid • {bids.length} total</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs font-semibold text-gray-500 uppercase">Countdown</p>
+                    <p className="text-lg font-semibold text-red-600">{timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                  {[{
+                    label: 'Starting price',
+                    value: product.starting_price,
+                    detail: `+${Math.max(0, product.current_price - product.starting_price || 0).toLocaleString()} since start`
+                  }, {
+                    label: 'Watchers',
+                    value: watchCount,
+                    detail: 'live viewers'
+                  }].map((card) => (
+                    <div
+                      key={card.label}
+                      className="rounded-2xl bg-white dark:bg-gray-900 flex flex-col gap-1 p-4 border border-gray-100 dark:border-gray-700"
+                    >
+                    <span>Buyer Readiness</span>
+                    <span>{readinessProgress}%</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white overflow-hidden">
+                    <div className="h-full bg-gradient-to-r from-indigo-500 to-emerald-500" style={{ width: `${readinessProgress}%` }} />
+                  </div>
+                  <div className="space-y-1 text-xs text-gray-600">
+                    {readinessSteps.map((step, index) => (
+                      <div key={index} className="flex items-center justify-between">
+                        <span className={`font-medium ${step.done ? 'text-gray-900' : 'text-gray-500'}`}>
+                          {step.label}
+                        </span>
+                        {step.done ? (
+                          <span className="text-xs text-green-600 flex items-center gap-1">
+                            <CheckCircle className="h-3 w-3" /> Done
+                          </span>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              if (step.label === 'Pay Token') navigate('/wallet');
+                              else if (step.label === 'Pay Deposit') navigate('/wallet');
+                            }}
+                            className="text-xs text-indigo-600 hover:text-indigo-800 underline"
+                          >
+                            Complete Now
+                          </button>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-dashed border-indigo-200 dark:border-indigo-700 p-4 text-sm text-gray-600 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span>Live Activity</span>
+                    <span className="text-xs text-green-600">Real-time</span>
+                  </div>
+                  {liveBidList.map((bid, index) => (
+                    <div key={index} className="flex items-center justify-between text-gray-800">
+                      <span className="font-medium text-gray-900">{bid.user?.name || 'Bidder'}</span>
+                      <span className="text-indigo-600">₹{bid.amount.toLocaleString()}</span>
+                    </div>
+                  ))}
+                  <p className="text-xs text-gray-500">+{incrementOptions.map((n) => `₹${n.toLocaleString()}`).join(' / ')}</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className={sectionWrapperClass}>
+        <div className={sectionInnerPadding}>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Bidding History</h3>
+          {bids?.length > 0 ? (
+            <div className="space-y-4">
+              {bids.map((bid, index) => (
+                <motion.div
+                  key={index}
+                  initial={prefersReducedMotion ? false : { opacity: 0, y: 20 }}
+                  animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+                  transition={prefersReducedMotion ? undefined : { delay: index * 0.1 }}
+                  className={`flex justify-between items-center p-4 rounded-lg shadow-sm ${
+                    index === 0 ? 'bg-green-50 border border-green-200' : 'bg-gray-50 dark:bg-gray-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white ${
+                      index === 0 ? 'bg-green-500' : 'bg-gray-400'
+                    }`}>
+                      {getInitials(bid.user?.name || 'User')}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-gray-900 dark:text-white">
+                        {bid.user?.name || 'Anonymous Bidder'}
+                      </span>
+                      {index === 0 && (
+                        <span className="ml-2 px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">
+                          Winning Bid
+                        </span>
+                      )}
+                      <p className="text-sm text-gray-500">
+                        {new Date(bid.created_at).toLocaleString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-xl font-bold text-green-600">₹{bid.amount.toLocaleString()}</span>
+                    <p className="text-sm text-gray-500">Bid #{bids.length - index}</p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-12">
+              <Gavel className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 text-lg">No bids yet. Be the first to bid!</p>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <section className={sectionWrapperClass}>
+        <div className={sectionInnerPadding}>
+          <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Seller Information</h3>
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="w-16 h-16 bg-gray-300 rounded-full flex items-center justify-center">
+              <User className="h-8 w-8 text-gray-600" />
+            </div>
+            <div className="flex-1 space-y-2">
+              <div className="flex items-center gap-3">
+                <h4 className="text-xl font-semibold text-gray-900 dark:text-white">{seller?.name}</h4>
+                {seller?.verified && (
+                  <div className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-full text-xs">
+                    <Shield className="h-3 w-3" />
+                    Verified
+                  </div>
+                )}
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className={`h-4 w-4 ${i < Math.floor(seller?.rating || 0) ? 'fill-current' : 'text-gray-300'}`} />
+                  ))}
+                </div>
+                <span className="text-sm text-gray-600">{seller?.rating} rating</span>
+                <span className="text-sm text-gray-600">{seller?.total_sales} sales</span>
+              </div>
+            </div>
+            <button
+              onClick={() => {
+                if (seller?.id) {
+                  toast.success('Opening seller profile');
+                  navigate(`/user/${seller.id}`);
+                } else {
+                  toast.error('Seller profile not available');
+                }
+              }}
+              className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700"
+            >
+              View Profile
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {showBidModal && product && (
+        <BidModal 
+          product={product} 
+          auctionId={auctionId || undefined}
+          onClose={() => setShowBidModal(false)} 
+          onBidPlaced={() => {
+             setShowBidModal(false);
+             fetchData();
+          }}
+        />
+      )}
+
+      {/* Mobile Sticky Action Bar */}
+      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800 md:hidden z-50 pb-8 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)]">
+        <div className="flex items-center justify-between gap-4 max-w-md mx-auto">
+          <div className="flex flex-col">
+            <span className="text-[10px] text-gray-500 uppercase font-semibold">Current Bid</span>
+            <span className="text-lg font-bold text-indigo-600">₹{latestBidAmount.toLocaleString()}</span>
+          </div>
+          
+          <div className="flex-1">
+            {userId === product.seller_id ? (
+              <button
+                onClick={() => navigate(`/edit-product/${product.id}`)}
+                className="w-full py-3 text-white bg-gray-900 dark:bg-gray-700 rounded-xl font-bold text-sm shadow-lg"
+              >
+                Edit Product
+              </button>
+            ) : (
+              <button
+                onClick={() => {
+                  if (!userId) {
+                    toast.error('Please log in to place a bid');
+                    navigate('/login', { state: { from: location } });
+                    return;
+                  }
+                  setShowBidModal(true);
+                }}
+                className="w-full py-3 text-white bg-indigo-600 rounded-xl font-bold text-sm shadow-lg"
+              >
+                Place Bid
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    </PageFrame>
+  );
+
+};
+
+export default ProductDetail;

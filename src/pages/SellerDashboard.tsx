@@ -1,0 +1,1184 @@
+import React, { useState, useEffect } from 'react';
+import { supabase } from '../config/supabaseClient';
+import { Link } from 'react-router-dom';
+import { toast } from 'react-hot-toast';
+import { 
+  Package, 
+  DollarSign, 
+  TrendingUp, 
+  Eye, 
+  Plus,
+  BarChart3,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+  Users,
+  Trophy,
+  Search,
+  Store,
+  Info
+} from 'lucide-react';
+import { Tooltip } from '../components/ui/Tooltip';
+import { Skeleton } from '../components/ui/skeleton';
+import { KPICardSkeleton } from '../components/ui/SkeletonLoaders';
+// import { RiskGauge } from '../admin/RiskGauge';
+import { Line, Bar } from 'react-chartjs-2';
+import { motion } from 'framer-motion';
+
+interface SellerStats {
+  totalProducts: number;
+  activeAuctions: number;
+  totalRevenue: number;
+  totalViews: number;
+  conversionRate: number;
+  avgPrice: number;
+}
+
+interface AuctionPerformance {
+  totalAuctions: number;
+  endedAuctions: number;
+  totalBids: number;
+  avgBidsPerAuction: number;
+  sealedBids: number;
+  topAuctions: { id: string; title: string; bids: number; revenue: number }[];
+}
+
+interface SellerBidSummary {
+  id: string;
+  title: string;
+  type: string;
+  totalBids: number;
+  highestBid: number;
+}
+
+interface AiMediaSummary {
+  withMedia: number;
+  strongMedia: number;
+  perProduct: { [productId: string]: { approved: number; total: number } };
+}
+
+interface MonetizationSummary {
+  planName: string;
+  priceMonthly: number;
+  listingQuota: number | null;
+  usedListings: number;
+  boostQuota: number | null;
+  usedBoosts: number;
+  daysLeft: number | null;
+  monthNetPayout: number;
+  monthCommission: number;
+  pendingPayoutCount: number;
+  pendingPayoutNetTotal: number;
+}
+
+interface SellerRiskSummary {
+  sellerId: string;
+  riskScore: number;
+  riskLevel: 'low' | 'medium' | 'high';
+  status: 'normal' | 'limited' | 'blocked' | 'flagged';
+  penaltyPoints: number;
+  cooldownActive: boolean;
+  cooldownUntil: string | null;
+  cooldownReason: string | null;
+}
+
+const SellerDashboard = () => {
+  const [stats, setStats] = useState<SellerStats>({
+    totalProducts: 0,
+    activeAuctions: 0,
+    totalRevenue: 0,
+    totalViews: 0,
+    conversionRate: 0,
+    avgPrice: 0
+  });
+  
+  const [recentProducts, setRecentProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [pendingVerificationCount, setPendingVerificationCount] = useState(0);
+  const [endingSoonCount, setEndingSoonCount] = useState(0);
+  const [isSellerVerified, setIsSellerVerified] = useState<boolean | null>(null);
+  const [auctionPerformance, setAuctionPerformance] = useState<AuctionPerformance | null>(null);
+  const [aiMediaSummary, setAiMediaSummary] = useState<AiMediaSummary | null>(null);
+  const [profileUserType, setProfileUserType] = useState<string | null>(null);
+  const [monetization, setMonetization] = useState<MonetizationSummary | null>(null);
+  const [risk, setRisk] = useState<SellerRiskSummary | null>(null);
+  const [riskError, setRiskError] = useState<string | null>(null);
+  const [sellerSettlementEta, setSellerSettlementEta] = useState<{
+    minDays: number;
+    maxDays: number;
+    medianDays: number;
+    label: string;
+  } | null>(null);
+  const [sellerId, setSellerId] = useState<string | null>(null);
+  const [widgetLoading, setWidgetLoading] = useState(false);
+  const [widgetError, setWidgetError] = useState<string | null>(null);
+  const [bidSummaries, setBidSummaries] = useState<SellerBidSummary[]>([]);
+
+  useEffect(() => {
+    fetchSellerData();
+    
+    // Check for draft
+    const draft = localStorage.getItem('addProduct_draft');
+    if (draft) {
+      toast((t) => (
+        <div className="flex flex-col gap-2">
+          <span className="font-medium">You have an unfinished product draft.</span>
+          <div className="flex gap-2">
+            <Link 
+              to="/add-product" 
+              className="bg-indigo-600 text-white text-xs px-3 py-1 rounded"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Resume
+            </Link>
+            <button 
+              className="text-gray-500 text-xs px-3 py-1 border rounded"
+              onClick={() => {
+                localStorage.removeItem('addProduct_draft');
+                toast.dismiss(t.id);
+              }}
+            >
+              Discard
+            </button>
+          </div>
+        </div>
+      ), { duration: 6000, position: 'bottom-right' });
+    }
+  }, []);
+
+  const fetchSellerData = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Load profile to determine seller type (individual vs company)
+      try {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('is_verified, verification_status, user_type')
+          .eq('id', user.id)
+          .single();
+
+        setIsSellerVerified(!!profile?.is_verified);
+        setProfileUserType(profile?.user_type || null);
+      } catch (e) {
+        setProfileUserType(null);
+      }
+
+      // Best-effort seller risk summary from backend risk API
+      try {
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData.session?.access_token;
+        if (token) {
+          const res = await fetch(`/api/risk/sellers/${user.id}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (res.ok) {
+            const body = await res.json();
+            setRisk(body as SellerRiskSummary);
+            setRiskError(null);
+          } else if (res.status !== 404) {
+            setRiskError('Unable to load risk status for this seller');
+          }
+        }
+      } catch (e) {
+        setRiskError('Unable to load risk status for this seller');
+      }
+
+      // Fetch seller products
+      const { data: products } = await supabase
+        .from('products')
+        .select('*')
+        .eq('seller_id', user.id);
+
+      // Fetch auctions (all statuses) with minimal product info for titles
+      const { data: auctions } = await supabase
+        .from('auctions')
+        .select(`
+          id,
+          auction_type,
+          status,
+          current_price,
+          product:products(title),
+          end_date
+        `)
+        .eq('seller_id', user.id);
+
+      const totalProducts = products?.length || 0;
+      const activeAuctions = auctions?.filter((a) => a.status === 'active').length || 0;
+      const totalRevenue = products?.reduce((sum, p) => sum + (p.final_price || 0), 0) || 0;
+      const totalViews = products?.reduce((sum, p) => sum + (p.view_count || 0), 0) || 0;
+
+      const pendingVerification = products?.filter((p) => p.verification_status === 'pending').length || 0;
+      const now = new Date().getTime();
+      const in24h = 24 * 60 * 60 * 1000;
+      const endingSoon = auctions?.filter((a) => {
+        if (!a.end_date) return false;
+        const end = new Date(a.end_date as string).getTime();
+        return end >= now && end - now <= in24h;
+      }).length || 0;
+
+      // Best-effort seller-level settlement ETA using AI endpoint and one representative auction
+      try {
+        setSellerSettlementEta(null);
+        const sampleAuction = (auctions as any[] | null)?.find(
+          (a) => a.status === 'completed' || a.status === 'paid' || a.status === 'ended',
+        ) || (auctions as any[] | null)?.[0];
+
+        if (sampleAuction) {
+          const demoSession = localStorage.getItem('demo-session');
+          if (demoSession) {
+            setSellerSettlementEta(null);
+          }
+          const { data: sessionData } = await supabase.auth.getSession();
+          const token = sessionData?.session?.access_token;
+          if (token) {
+            const resp = await fetch(`/api/ai/settlement-eta/${encodeURIComponent(sampleAuction.id)}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            if (resp.ok) {
+              const body = await resp.json();
+              if (body) {
+                setSellerSettlementEta({
+                  minDays: typeof body.minDays === 'number' ? body.minDays : 3,
+                  maxDays: typeof body.maxDays === 'number' ? body.maxDays : 5,
+                  medianDays: typeof body.medianDays === 'number' ? body.medianDays : 4,
+                  label: typeof body.label === 'string' ? body.label : '',
+                });
+              }
+            }
+          }
+        }
+      } catch (e) {
+        setSellerSettlementEta(null);
+      }
+
+      const auctionIds = (auctions || []).map((a) => a.id);
+      let bidsForSeller: any[] = [];
+
+      if (auctionIds.length > 0) {
+        const { data: bids } = await supabase
+          .from('bids')
+          .select('id, amount, auction_id, bid_type')
+          .in('auction_id', auctionIds);
+
+        bidsForSeller = bids || [];
+      }
+
+      // Aggregate AI media verification for this seller's products
+      try {
+        const productIds = (products || []).map((p: any) => p.id).filter(Boolean);
+        if (productIds.length > 0) {
+          const { data: verifications } = await supabase
+            .from('product_verifications')
+            .select('product_id,status')
+            .in('product_id', productIds);
+
+          const perProduct: { [productId: string]: { approved: number; total: number } } = {};
+          (verifications || []).forEach((row: any) => {
+            if (!row.product_id) return;
+            if (!perProduct[row.product_id]) {
+              perProduct[row.product_id] = { approved: 0, total: 0 };
+            }
+            perProduct[row.product_id].total += 1;
+            if (row.status === 'approved') {
+              perProduct[row.product_id].approved += 1;
+            }
+          });
+
+          const productIdsWithMedia = Object.keys(perProduct).filter((id) => perProduct[id].total > 0);
+          const strongMedia = productIdsWithMedia.filter((id) => {
+            const info = perProduct[id];
+            if (!info.total) return false;
+            const ratio = info.approved / info.total;
+            return ratio >= 0.66 && info.approved >= 2;
+          }).length;
+
+          setAiMediaSummary({
+            withMedia: productIdsWithMedia.length,
+            strongMedia,
+            perProduct,
+          });
+        } else {
+          setAiMediaSummary(null);
+        }
+      } catch (e) {
+        console.warn('Failed to load AI media summary for seller', e);
+        setAiMediaSummary(null);
+      }
+
+      setStats({
+        totalProducts,
+        activeAuctions,
+        totalRevenue,
+        totalViews,
+        conversionRate: totalProducts > 0 ? (activeAuctions / totalProducts) * 100 : 0,
+        avgPrice: totalProducts > 0 ? totalRevenue / totalProducts : 0
+      });
+
+      setSellerId(user.id);
+      setPendingVerificationCount(pendingVerification);
+      setEndingSoonCount(endingSoon);
+
+      const totalAuctions = auctions?.length || 0;
+      const endedAuctions = auctions?.filter((a) => a.status !== 'active').length || 0;
+      const totalBids = bidsForSeller.length;
+      const sealedBids = bidsForSeller.filter((b: any) => b.bid_type === 'sealed').length;
+      const avgBidsPerAuction = totalAuctions > 0 ? totalBids / totalAuctions : 0;
+
+      const bidsByAuction: { [key: string]: { count: number; revenue: number; max: number } } = {};
+      bidsForSeller.forEach((b: any) => {
+        if (!b.auction_id) return;
+        if (!bidsByAuction[b.auction_id]) {
+          bidsByAuction[b.auction_id] = { count: 0, revenue: 0, max: 0 };
+        }
+        bidsByAuction[b.auction_id].count += 1;
+        bidsByAuction[b.auction_id].revenue += b.amount || 0;
+        if ((b.amount || 0) > bidsByAuction[b.auction_id].max) {
+          bidsByAuction[b.auction_id].max = b.amount || 0;
+        }
+      });
+
+      const topAuctions = (auctions || [])
+        .map((a: any) => {
+          const bidsInfo = bidsByAuction[a.id] || { count: 0, revenue: 0, max: 0 };
+          return {
+            id: a.id,
+            title: a.product?.title || 'Untitled auction',
+            bids: bidsInfo.count,
+            revenue: bidsInfo.revenue,
+          };
+        })
+        .sort((a, b) => b.bids - a.bids)
+        .slice(0, 3);
+
+      setAuctionPerformance({
+        totalAuctions,
+        endedAuctions,
+        totalBids,
+        sealedBids,
+        avgBidsPerAuction,
+        topAuctions,
+      });
+
+      try {
+        const { data: sub } = await supabase
+          .from('subscriptions')
+          .select('plan, price_monthly, listing_quota, used_listings, boost_quota, used_boosts, starts_at, expires_at, is_active')
+          .eq('seller_id', user.id)
+          .eq('is_active', true)
+          .order('starts_at', { ascending: false })
+          .limit(1)
+          .maybeSingle();
+
+        const nowDate = new Date();
+        const firstOfMonth = new Date(nowDate.getFullYear(), nowDate.getMonth(), 1, 0, 0, 0, 0);
+
+        const { data: payouts } = await supabase
+          .from('payouts')
+          .select('net_payout, commission_amount, status, paid_at')
+          .eq('seller_id', user.id)
+          .gte('paid_at', firstOfMonth.toISOString());
+
+        let monthNetPayout = 0;
+        let monthCommission = 0;
+        (payouts || []).forEach((p: any) => {
+          if (p.status === 'completed') {
+            monthNetPayout += p.net_payout || 0;
+            monthCommission += p.commission_amount || 0;
+          }
+        });
+
+        // Pending payouts: all payouts for this seller that are not completed (any time window)
+        const { data: pendingPayouts } = await supabase
+          .from('payouts')
+          .select('net_payout, status')
+          .eq('seller_id', user.id)
+          .neq('status', 'completed');
+
+        let pendingPayoutCount = 0;
+        let pendingPayoutNetTotal = 0;
+        (pendingPayouts || []).forEach((p: any) => {
+          pendingPayoutCount += 1;
+          pendingPayoutNetTotal += p.net_payout || 0;
+        });
+
+        if (sub) {
+          let daysLeft: number | null = null;
+          if (sub.expires_at) {
+            const end = new Date(sub.expires_at as string).getTime();
+            const diffMs = end - nowDate.getTime();
+            daysLeft = diffMs > 0 ? Math.ceil(diffMs / (1000 * 60 * 60 * 24)) : 0;
+          }
+
+          setMonetization({
+            planName: sub.plan,
+            priceMonthly: sub.price_monthly || 0,
+            listingQuota: sub.listing_quota ?? null,
+            usedListings: sub.used_listings || 0,
+            boostQuota: sub.boost_quota ?? null,
+            usedBoosts: sub.used_boosts || 0,
+            daysLeft,
+            monthNetPayout,
+            monthCommission,
+            pendingPayoutCount,
+            pendingPayoutNetTotal,
+          });
+        } else {
+          setMonetization({
+            planName: 'Free / Starter',
+            priceMonthly: 0,
+            listingQuota: null,
+            usedListings: 0,
+            boostQuota: null,
+            usedBoosts: 0,
+            daysLeft: null,
+            monthNetPayout,
+            monthCommission,
+            pendingPayoutCount,
+            pendingPayoutNetTotal,
+          });
+        }
+      } catch (e) {
+        setMonetization(null);
+      }
+    } catch (error) {
+      toast.error('Failed to load dashboard data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const loadSellerWidgets = async (sellerId: string) => {
+    setWidgetLoading(true);
+    setWidgetError(null);
+    try {
+      const { data: recentProductsData, error: productsError } = await supabase
+        .from('products')
+        .select('id,title,category,current_price,view_count,status,image_url,verification_status')
+        .eq('seller_id', sellerId)
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (productsError) throw productsError;
+      setRecentProducts(recentProductsData || []);
+
+      const { data: recentAuctions, error: auctionError } = await supabase
+        .from('auctions')
+        .select('id,auction_type,product:products(title)')
+        .eq('seller_id', sellerId)
+        .order('created_at', { ascending: false })
+        .limit(12);
+
+      if (auctionError) throw auctionError;
+
+      const auctionIds = (recentAuctions || []).map((a: any) => a.id).filter(Boolean);
+      let summaries: SellerBidSummary[] = [];
+
+      if (auctionIds.length > 0) {
+        const { data: bidsData, error: bidsError } = await supabase
+          .from('bids')
+          .select('auction_id,amount,bid_type')
+          .in('auction_id', auctionIds);
+
+        if (bidsError) throw bidsError;
+
+        const bidsByAuction: Record<string, { count: number; revenue: number; max: number }> = {};
+        (bidsData || []).forEach((bid: any) => {
+          if (!bid.auction_id) return;
+          if (!bidsByAuction[bid.auction_id]) {
+            bidsByAuction[bid.auction_id] = { count: 0, revenue: 0, max: 0 };
+          }
+          const record = bidsByAuction[bid.auction_id];
+          record.count += 1;
+          record.revenue += bid.amount || 0;
+          if ((bid.amount || 0) > record.max) {
+            record.max = bid.amount || 0;
+          }
+        });
+
+        summaries = (recentAuctions || []).map((a: any) => {
+          const bidsInfo = bidsByAuction[a.id] || { count: 0, revenue: 0, max: 0 };
+          let typeLabel = 'Auction';
+          if (a.auction_type === 'timed') typeLabel = 'Timed';
+          else if (a.auction_type === 'live') typeLabel = 'Live';
+          else if (a.auction_type === 'tender') typeLabel = 'Tender';
+          return {
+            id: a.id,
+            title: a.product?.title || 'Untitled auction',
+            type: typeLabel,
+            totalBids: bidsInfo.count,
+            highestBid: bidsInfo.max,
+          };
+        });
+      }
+
+      setBidSummaries(summaries);
+    } catch (error) {
+      console.error('Failed to load seller widgets', error);
+      setWidgetError(error instanceof Error ? error.message : 'Unable to load widgets');
+    } finally {
+      setWidgetLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (sellerId) {
+      loadSellerWidgets(sellerId);
+    }
+  }, [sellerId]);
+
+  interface StatCardProps {
+    title: any;
+    value: any;
+    icon: any;
+    color?: string;
+    trend?: any;
+  }
+
+  const StatCard: React.FC<StatCardProps> = ({ title, value, icon: Icon, color = 'text-gray-900', trend }) => (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
+    >
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-gray-500 dark:text-gray-400">{title}</p>
+          <p className={`text-2xl font-bold mt-1 ${color}`}>{value}</p>
+          {trend && (
+            <p className="text-sm text-green-600 mt-1">+{trend}% from last month</p>
+          )}
+        </div>
+        <div className="p-3 rounded-full bg-gray-100 dark:bg-gray-700">
+          <Icon className="h-6 w-6 text-indigo-600" />
+        </div>
+      </div>
+    </motion.div>
+  );
+
+  const aiMediaTrend = aiMediaSummary && aiMediaSummary.withMedia > 0
+    ? Math.round((aiMediaSummary.strongMedia / aiMediaSummary.withMedia) * 100)
+    : null;
+
+  if (loading) {
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className="mb-8 space-y-2">
+          <Skeleton className="h-6 w-56" />
+          <Skeleton className="h-4 w-80" />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+          {Array.from({ length: 6 }).map((_, i) => (
+            <KPICardSkeleton key={i} />
+          ))}
+        </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {Array.from({ length: 2 }).map((_, i) => (
+            <Skeleton key={i} className="h-64 w-full rounded-lg" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-8">
+        <div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Seller Dashboard</h1>
+            {profileUserType && profileUserType !== 'company' && stats.totalProducts > 0 && (
+              <span className="inline-flex items-center px-2 py-1 rounded-full text-[11px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Individual Seller
+              </span>
+            )}
+            {risk && (
+              <span
+                className={`inline-flex items-center px-2 py-1 rounded-full text-[11px] font-medium border ${
+                  risk.riskLevel === 'high'
+                    ? 'bg-red-50 text-red-700 border-red-200'
+                    : risk.riskLevel === 'medium'
+                    ? 'bg-amber-50 text-amber-700 border-amber-200'
+                    : 'bg-sky-50 text-sky-700 border-sky-200'
+                }`}
+              >
+                Risk: {risk.riskLevel}
+                {risk.cooldownActive && ' · Cooldown active'}
+              </span>
+            )}
+          </div>
+          <p className="text-gray-600 dark:text-gray-400">Manage your products and track performance</p>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Link
+            to="/advanced-search"
+            className="border border-indigo-200 text-indigo-700 px-3 md:px-4 py-2 rounded-lg hover:bg-indigo-50 flex items-center gap-2 text-xs md:text-sm bg-white dark:bg-gray-900"
+          >
+            <Search className="h-4 w-4" />
+            Advanced Search
+          </Link>
+          <Link
+            to="/add-product"
+            className="btn btn-primary flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            Add Product
+          </Link>
+          <Link
+            to="/seller/analytics"
+            className="border border-indigo-200 text-indigo-700 px-3 md:px-4 py-2 rounded-lg hover:bg-indigo-50 flex items-center gap-2 text-xs md:text-sm bg-white dark:bg-gray-900"
+          >
+            <BarChart3 className="h-4 w-4" />
+            Analytics
+          </Link>
+        </div>
+      </div>
+
+      {isSellerVerified === false && (
+        <div className="mb-6 p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700 rounded-lg">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-600" />
+              <div>
+                <p className="font-medium text-amber-800 dark:text-amber-200">Seller verification required</p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">Verify your account to unlock full seller features and buyer trust.</p>
+              </div>
+            </div>
+            <Link
+              to="/verify-seller"
+              className="inline-flex items-center px-4 py-2 bg-amber-600 text-white text-sm font-semibold rounded-lg hover:bg-amber-700"
+            >
+              Verify Now
+            </Link>
+          </div>
+        </div>
+      )}
+
+      {pendingVerificationCount > 0 || endingSoonCount > 0 || stats.activeAuctions === 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          {pendingVerificationCount > 0 && (
+            <div className="flex items-center gap-3 p-4 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-700 rounded-lg">
+              <AlertCircle className="h-5 w-5 text-yellow-600" />
+              <div className="text-sm">
+                <p className="font-medium text-yellow-800 dark:text-yellow-200">{pendingVerificationCount} listing(s) pending review</p>
+                <p className="text-xs text-yellow-700 dark:text-yellow-300">We’ll notify you as soon as they are approved.</p>
+              </div>
+            </div>
+          )}
+
+          {endingSoonCount > 0 && (
+            <div className="flex items-center gap-3 p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg">
+              <Clock className="h-5 w-5 text-red-600" />
+              <div className="text-sm">
+                <p className="font-medium text-red-800 dark:text-red-200">{endingSoonCount} auction(s) ending in 24 hours</p>
+                <p className="text-xs text-red-700 dark:text-red-300">Share your listings now to maximise bids.</p>
+              </div>
+            </div>
+          )}
+
+          {stats.activeAuctions === 0 && stats.totalProducts > 0 && (
+            <div className="flex items-center gap-3 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 rounded-lg">
+              <Trophy className="h-5 w-5 text-blue-600" />
+              <div className="text-sm">
+                <p className="font-medium text-blue-800 dark:text-blue-200">No active auctions right now</p>
+                <p className="text-xs text-blue-700 dark:text-blue-300">Start a new auction to reach buyers.</p>
+              </div>
+            </div>
+          )}
+        </div>
+      ) : null}
+
+      {monetization && (
+        <div className="mb-8 grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <p className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">QuickMela Plan</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white mt-1">{monetization.planName}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+                  {monetization.priceMonthly > 0 ? `₹${monetization.priceMonthly.toLocaleString()}/month` : 'No active subscription'}
+                </p>
+              </div>
+              <div className="text-right text-xs text-gray-500 dark:text-gray-400">
+                {monetization.daysLeft !== null && (
+                  <span className="inline-flex items-center px-2 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100">
+                    {monetization.daysLeft} day{monetization.daysLeft === 1 ? '' : 's'} left
+                  </span>
+                )}
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4 mt-4">
+              <div className="p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-800">
+                <p className="text-xs text-emerald-800 dark:text-emerald-200 mb-1">Cleared (This Month)</p>
+                <p className="text-lg font-bold text-emerald-700 dark:text-emerald-300">
+                  ₹{monetization.monthNetPayout.toLocaleString()}
+                </p>
+              </div>
+              <div className="p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-100 dark:border-amber-800">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-amber-800 dark:text-amber-200 mb-1">Pending Clearance</p>
+                  <Tooltip content="Funds currently in escrow or processing. Typically clears in 3-5 days.">
+                    <Info className="h-3 w-3 text-amber-600 dark:text-amber-400 cursor-help" />
+                  </Tooltip>
+                </div>
+                <p className="text-lg font-bold text-amber-700 dark:text-amber-300">
+                  ₹{monetization.pendingPayoutNetTotal.toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-3 flex items-center justify-between text-xs">
+              <div className="text-gray-500 dark:text-gray-400">
+                Next payout: <span className="font-medium text-gray-900 dark:text-white">
+                  {sellerSettlementEta 
+                    ? `~${new Date(Date.now() + sellerSettlementEta.medianDays * 86400000).toLocaleDateString()}` 
+                    : 'Processing...'}
+                </span>
+              </div>
+              <div className="flex items-center gap-1 text-gray-500 dark:text-gray-400">
+                <span>Commission: ₹{monetization.monthCommission.toLocaleString()}</span>
+                <Tooltip content="Total platform fees deducted from cleared payouts this month.">
+                  <Info className="h-3 w-3 cursor-help" />
+                </Tooltip>
+              </div>
+            </div>
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-xs text-gray-600 dark:text-gray-300">
+                <p>
+                  Listings used:{' '}
+                  {monetization.listingQuota !== null
+                    ? `${monetization.usedListings}/${monetization.listingQuota}`
+                    : monetization.usedListings}
+                </p>
+                <p className="mt-1">
+                  Boosts used:{' '}
+                  {monetization.boostQuota !== null
+                    ? `${monetization.usedBoosts}/${monetization.boostQuota}`
+                    : monetization.usedBoosts}
+                </p>
+              </div>
+              <Link
+                to="/seller/membership"
+                className="inline-flex items-center px-3 py-2 rounded-lg bg-indigo-600 text-white text-xs font-medium hover:bg-indigo-700"
+              >
+                Manage membership
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Risk Assessment Section */}
+      {/* {risk && (
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 mb-8 border border-gray-100 dark:border-gray-700">
+          <div className="flex flex-col md:flex-row items-center gap-6">
+            <div className="flex-shrink-0">
+              <RiskGauge score={risk.riskScore} size="lg" />
+            </div>
+            <div className="flex-grow">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+                Account Risk Assessment
+              </h3>
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-3">
+                {risk.status === 'blocked'
+                  ? 'Your account is currently blocked due to high risk activity.'
+                  : risk.status === 'limited'
+                  ? 'Your account has limitations. Improve your score to unlock full features.'
+                  : 'Your account is in good standing. Keep up the good work!'}
+              </p>
+              
+              {(risk.status !== 'normal' || risk.riskScore > 50) && (
+                 <div className="flex items-start gap-2 p-3 bg-gray-50 dark:bg-gray-700/30 rounded-lg text-sm">
+                   <AlertCircle className="w-5 h-5 text-amber-500 mt-0.5 flex-shrink-0" />
+                   <div>
+                     <p className="font-medium text-gray-900 dark:text-white">Why is my score {risk.riskScore}?</p>
+                     <p className="text-gray-600 dark:text-gray-400 mt-1">
+                       {risk.cooldownReason || 'Unusual activity detected in your recent listings.'}
+                       {risk.penaltyPoints > 0 && ` You have ${risk.penaltyPoints} penalty points.`}
+                     </p>
+                   </div>
+                 </div>
+              )}
+            </div>
+            
+            <div className="flex flex-col gap-2 min-w-[200px]">
+               <h4 className="text-sm font-medium text-gray-900 dark:text-white">Recommended Actions</h4>
+               <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                 <li className="flex items-center gap-2">
+                   <CheckCircle className="w-4 h-4 text-green-500" />
+                   Complete ID Verification
+                 </li>
+                 <li className="flex items-center gap-2">
+                   <CheckCircle className="w-4 h-4 text-green-500" />
+                   Resolve Pending Disputes
+                 </li>
+               </ul>
+               {risk.status !== 'normal' && (
+                 <button className="mt-2 text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                   Appeal Decision &rarr;
+                 </button>
+               )}
+            </div>
+          </div>
+        </div>
+      )} */}
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
+        <StatCard
+          title="Total Products"
+          value={stats.totalProducts}
+          icon={Package}
+          trend={12}
+        />
+        <StatCard
+          title="Active Auctions"
+          value={stats.activeAuctions}
+          icon={Clock}
+          color="text-blue-600"
+          trend={8}
+        />
+        <StatCard
+          title="Total Revenue"
+          value={`₹${stats.totalRevenue.toLocaleString()}`}
+          icon={DollarSign}
+          color="text-green-600"
+          trend={25}
+        />
+        <StatCard
+          title="Total Views"
+          value={stats.totalViews.toLocaleString()}
+          icon={Eye}
+          trend={15}
+        />
+        <StatCard
+          title="Conversion Rate"
+          value={`${stats.conversionRate.toFixed(1)}%`}
+          icon={TrendingUp}
+          color="text-purple-600"
+          trend={5}
+        />
+        <StatCard
+          title="Avg Price"
+          value={`₹${stats.avgPrice.toLocaleString()}`}
+          icon={BarChart3}
+          trend={18}
+        />
+        {aiMediaSummary && (
+          <StatCard
+            title="AI-verified media"
+            value={`${aiMediaSummary.strongMedia}/${aiMediaSummary.withMedia}`}
+            icon={CheckCircle}
+            color="text-emerald-600"
+            trend={aiMediaTrend ?? undefined}
+          />
+        )}
+      </div>
+
+      {/* Quick Actions */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <Link
+          to="/add-product"
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-indigo-100 rounded-lg">
+              <Plus className="h-6 w-6 text-indigo-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Add New Product</h3>
+              <p className="text-sm text-gray-500">List a new item for auction</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/seller/analytics"
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-green-100 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">View Analytics</h3>
+              <p className="text-sm text-gray-500">Detailed performance insights</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/products"
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-purple-100 rounded-lg">
+              <Package className="h-6 w-6 text-purple-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Manage Products</h3>
+              <p className="text-sm text-gray-500">Edit and update listings</p>
+            </div>
+          </div>
+        </Link>
+
+        <Link
+          to="/seller/membership"
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-yellow-100 rounded-lg">
+              <Trophy className="h-6 w-6 text-yellow-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">QuickMela Membership</h3>
+              <p className="text-sm text-gray-500">View plans, boosts & limits</p>
+            </div>
+          </div>
+        </Link>
+        <Link
+          to="/seller-center"
+          data-testid="seller-center-link"
+          className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+        >
+          <div className="flex items-center gap-4">
+            <div className="p-3 bg-indigo-100 rounded-lg">
+              <Store className="h-6 w-6 text-indigo-600" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-gray-900 dark:text-white">Seller Center</h3>
+              <p className="text-sm text-gray-500">Access seller resources</p>
+            </div>
+          </div>
+        </Link>
+      </div>
+
+      {/* Recent Products */}
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Recent Products</h2>
+        </div>
+        <div className="divide-y divide-gray-200 dark:divide-gray-700">
+          {widgetLoading ? (
+            <div className="p-8 text-sm text-gray-500 text-center">Loading recent products...</div>
+          ) : recentProducts.length > 0 ? (
+            recentProducts.map((product) => (
+              <div key={product.id} className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <img
+                      loading="lazy"
+                      decoding="async"
+                      width="48"
+                      height="48"
+                      src={product.image_url || 'https://images.unsplash.com/photo-1588499756884-d72584d84df5?auto=format&fit=crop&w=100&q=80'}
+                      alt={product.title}
+                      className="w-12 h-12 rounded-lg object-cover flex-shrink-0"
+                    />
+                    <div className="min-w-0">
+                      <h3 className="font-medium text-gray-900 dark:text-white truncate">{product.title}</h3>
+                      <p className="text-sm text-gray-500 truncate">{product.category}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-between md:justify-end gap-4 md:gap-6 w-full md:w-auto pl-16 md:pl-0">
+                    <div className="text-right space-y-1">
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        ₹{product.current_price?.toLocaleString()}
+                      </p>
+                      <p className="text-sm text-gray-500">{product.view_count || 0} views</p>
+                      {aiMediaSummary && aiMediaSummary.perProduct && aiMediaSummary.perProduct[product.id] && (
+                        <p className="text-[11px] inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">
+                          AI media {aiMediaSummary.perProduct[product.id].approved}/{aiMediaSummary.perProduct[product.id].total}
+                        </p>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="flex items-center">
+                        {product.status === 'active' ? (
+                          <CheckCircle className="h-5 w-5 text-green-500" />
+                        ) : (
+                          <AlertCircle className="h-5 w-5 text-yellow-500" />
+                        )}
+                      </div>
+                      <Link
+                        to="/products"
+                        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium whitespace-nowrap"
+                      >
+                        Manage
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="p-8 text-center text-gray-500 flex flex-col items-center gap-3">
+              <p className="text-sm">You haven&apos;t listed any products yet.</p>
+              <Link
+                to="/add-product"
+                className="btn btn-primary btn-sm flex items-center gap-2"
+              >
+                <Plus className="h-4 w-4" />
+                List your first product
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Auction Performance */}
+      {auctionPerformance && (
+        <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Auction Performance</h2>
+              <Users className="h-5 w-5 text-indigo-600" />
+            </div>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <p className="text-gray-500">Total auctions</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">{auctionPerformance.totalAuctions}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Ended auctions</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">{auctionPerformance.endedAuctions}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Total bids received</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">{auctionPerformance.totalBids}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Avg bids per auction</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">{auctionPerformance.avgBidsPerAuction.toFixed(1)}</p>
+              </div>
+              <div>
+                <p className="text-gray-500">Sealed tender bids</p>
+                <p className="text-lg font-semibold text-gray-900 dark:text-white">{auctionPerformance.sealedBids}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Top Auctions by Bids</h2>
+              <Trophy className="h-5 w-5 text-yellow-500" />
+            </div>
+            {widgetLoading ? (
+              <div className="p-6 text-sm text-gray-500">Loading bid overview...</div>
+            ) : auctionPerformance.topAuctions.length > 0 ? (
+              <div className="space-y-3">
+                {auctionPerformance.topAuctions.map((a) => (
+                  <div key={a.id} className="flex items-center justify-between">
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">{a.title}</p>
+                      <p className="text-xs text-gray-500">{a.bids} bid(s)</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">Total bid value</p>
+                      <p className="font-semibold text-gray-900 dark:text-white">₹{a.revenue.toLocaleString()}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-gray-500">You don&apos;t have enough bidding data yet. Once buyers start bidding, your top auctions will appear here.</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* Bid Summaries */}
+      <div className="mt-8 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Bids Overview</h2>
+          {widgetError && (
+            <div className="p-4 text-xs text-red-600">{widgetError}</div>
+          )}
+        </div>
+        {widgetLoading ? (
+          <div className="py-6 text-sm text-gray-500 text-center">Loading bid summaries…</div>
+        ) : bidSummaries.length > 0 ? (
+          <>
+            {/* Mobile Cards */}
+            <div className="md:hidden space-y-4 pt-2">
+              {bidSummaries.slice(0, 6).map((b) => (
+                <div key={b.id} className="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-lg border border-gray-100 dark:border-gray-700">
+                  <div className="flex justify-between items-start mb-3 gap-3">
+                    <Link to={`/products/${b.id}`} className="font-medium text-indigo-600 hover:text-indigo-700 line-clamp-2 text-sm">
+                      {b.title}
+                    </Link>
+                    <span className={`shrink-0 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                      b.type === 'Live' ? 'bg-red-100 text-red-800' : 
+                      b.type === 'Tender' ? 'bg-amber-100 text-amber-800' : 
+                      'bg-blue-100 text-blue-800'
+                    }`}>
+                      {b.type}
+                    </span>
+                  </div>
+                  <div className="flex justify-between items-end border-t border-gray-200 dark:border-gray-600 pt-3">
+                    <div className="text-xs text-gray-500 dark:text-gray-400">
+                      <span className="font-medium text-gray-900 dark:text-white">{b.totalBids}</span> bids
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xs text-gray-500 dark:text-gray-400">Highest Bid</div>
+                      <div className="text-base font-bold text-gray-900 dark:text-white">
+                        {b.highestBid > 0 ? `₹${b.highestBid.toLocaleString()}` : '—'}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop Table */}
+            <div className="hidden md:block overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+                <thead className="bg-gray-50 dark:bg-gray-900/40">
+                  <tr>
+                    <th scope="col" className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Auction</th>
+                    <th scope="col" className="px-4 py-2 text-left font-medium text-gray-500 dark:text-gray-400">Type</th>
+                    <th scope="col" className="px-4 py-2 text-right font-medium text-gray-500 dark:text-gray-400">Total bids</th>
+                    <th scope="col" className="px-4 py-2 text-right font-medium text-gray-500 dark:text-gray-400">Highest bid</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  {bidSummaries.slice(0, 6).map((b) => (
+                    <tr key={b.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/40">
+                      <td className="px-4 py-2">
+                        <Link to={`/products/${b.id}`} className="font-medium text-indigo-600 hover:text-indigo-700 block max-w-xs truncate">
+                          {b.title}
+                        </Link>
+                      </td>
+                      <td className="px-4 py-2 text-gray-600 dark:text-gray-300">
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                          b.type === 'Live' ? 'bg-red-100 text-red-800' : 
+                          b.type === 'Tender' ? 'bg-amber-100 text-amber-800' : 
+                          'bg-blue-100 text-blue-800'
+                        }`}>
+                          {b.type}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 text-right text-gray-900 dark:text-white">{b.totalBids}</td>
+                      <td className="px-4 py-2 text-right text-gray-900 dark:text-white">
+                        {b.highestBid > 0 ? `₹${b.highestBid.toLocaleString()}` : '—'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
+        ) : (
+          <p className="text-sm text-gray-500">You don&apos;t have enough bidding data yet.</p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SellerDashboard;

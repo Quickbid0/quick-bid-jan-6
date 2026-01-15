@@ -1,0 +1,55 @@
+# Netlify headers for security and performance
+# These headers will be applied to all responses
+
+# Security Headers
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=(), usb=(), magnetometer=(), gyroscope=(), accelerometer=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# Content Security Policy
+/*
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://js.stripe.com https://checkout.stripe.com https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://www.google.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: https: blob:; connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://www.google-analytics.com https://lyhxzcfsbpufswqrumqd.supabase.co wss://lyhxzcfsbpufswqrumqd.supabase.co; frame-src 'self' https://js.stripe.com https://checkout.stripe.com https://www.google.com/recaptcha/; object-src 'none'; base-uri 'self'; form-action 'self'; manifest-src 'self'
+
+# Performance Headers
+/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# API endpoints
+/api/*
+  Cache-Control: no-cache, no-store, must-revalidate
+  Pragma: no-cache
+  Expires: 0
+
+# Static assets with long caching
+/static/*
+  Cache-Control: public, max-age=31536000, immutable
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/images/*
+  Cache-Control: public, max-age=31536000, immutable
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Service Worker
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Service-Worker-Allowed: /
+
+# HTML files
+/*.html
+  Cache-Control: public, max-age=0, must-revalidate
+
+# JSON files
+/*.json
+  Cache-Control: public, max-age=3600
+
+# CORS headers for API
+/api/*
+  Access-Control-Allow-Origin: https://quickbid.example.com
+  Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS
+  Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With
+  Access-Control-Allow-Credentials: true

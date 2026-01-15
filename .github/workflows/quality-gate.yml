@@ -1,0 +1,56 @@
+name: QuickMela Quality Gate
+
+on:
+  pull_request:
+    branches: [main, production]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint & Type Check
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Install Playwright
+        run: npx playwright install --with-deps
+
+      - name: Run Full E2E + UX Test Suite
+        run: npm run test:all
+
+      - name: Upload Playwright Report (on failure)
+        if: failure()
+          uses: actions/upload-artifact@v4
+          with:
+            name: playwright-report
+            path: playwright-report/
+
+  quality-gate:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Quality Gate Check
+        run: |
+          echo "🔒 QUALITY GATE EVALUATION"
+          echo "✅ All E2E tests passing: $(npm run test:all --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')"
+          echo "✅ UX & usability tests passing: $(npm run test:ux --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')"
+          echo "✅ Accessibility tests passing: $(npm run test:accessibility --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')"
+          
+          if [ "$(npm run test:all --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')" -eq "$(npm run test:ux --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')" ] && [ "$(npm run test:accessibility --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')" -eq "$(npm run test:ux --reporter=json | jq '.suites[].specs[].tests[] | select(.status == "\"passed\"") | length')" ]; then
+            echo "🎯 QUALITY GATE: PASSED - All checks green"
+          else
+            echo "❌ QUALITY GATE: FAILED - Some checks failed"
+            echo "🚫 BLOCKING MERGE TO PREVENT REGRESSION"
+            exit 1

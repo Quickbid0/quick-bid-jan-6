@@ -1,0 +1,203 @@
+openapi: 3.0.3
+info:
+  title: QuickMela Finance MVP API
+  version: 1.0.0
+  description: >-
+    MVP finance endpoints for loans and insurance lead generation and partner webhooks.
+servers:
+  - url: http://localhost:4000
+    description: Local live backend
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    LoanApplyRequest:
+      type: object
+      required: [product_id, requested_amount, tenor_months]
+      properties:
+        product_id:
+          type: string
+          format: uuid
+        requested_amount:
+          type: number
+        tenor_months:
+          type: integer
+        loan_type:
+          type: string
+          description: e.g. vehicle, personal, working_capital
+        prefilled:
+          type: object
+          additionalProperties: true
+        provider_id:
+          type: string
+          format: uuid
+          nullable: true
+        documents:
+          type: array
+          items:
+            type: object
+            properties:
+              path:
+                type: string
+              type:
+                type: string
+        consent_text:
+          type: string
+    LoanApplyResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+          example: submitted
+    LoanApplication:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        product_id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        provider_id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        requested_amount:
+          type: number
+        approved_amount:
+          type: number
+          nullable: true
+        interest_rate_annual:
+          type: number
+          nullable: true
+        tenure_months:
+          type: integer
+          nullable: true
+        emi:
+          type: number
+          nullable: true
+        partner_ref_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+    PartnerWebhookPayload:
+      type: object
+      properties:
+        event_type:
+          type: string
+        partner_ref_id:
+          type: string
+        status:
+          type: string
+        commission_amount:
+          type: number
+        raw:
+          type: object
+          additionalProperties: true
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/finance/loans/apply:
+    post:
+      summary: Apply for a loan
+      operationId: applyLoan
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoanApplyRequest'
+      responses:
+        '201':
+          description: Loan application created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanApplyResponse'
+        '400':
+          description: Validation error
+        '401':
+          description: Unauthorized
+        '503':
+          description: No provider available
+
+  /api/v1/finance/loans/{id}:
+    get:
+      summary: Get loan application
+      operationId: getLoan
+      security:
+        - bearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Loan application
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoanApplication'
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not found
+
+  /api/v1/webhooks/partner/{partnerKey}:
+    post:
+      summary: Partner webhook callback
+      description: >-
+        Receives HMAC-signed status updates from loan/insurance partners. The
+        request body must be signed with `X-Partner-Signature: sha256=HEX(HMAC(secret, rawBody))`.
+      operationId: partnerWebhook
+      parameters:
+        - in: path
+          name: partnerKey
+          required: true
+          schema:
+            type: string
+          description: Adapter key configured for the partner, e.g. demo_bank, secure_insure.
+        - in: header
+          name: X-Partner-Signature
+          required: true
+          schema:
+            type: string
+          description: 'sha256=HEX(HMAC(secret, rawBody))'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PartnerWebhookPayload'
+      responses:
+        '200':
+          description: Webhook accepted and processed
+        '202':
+          description: Logged but not mapped to application
+        '400':
+          description: Invalid signature
+        '404':
+          description: Partner not found

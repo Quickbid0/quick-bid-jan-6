@@ -1,0 +1,55 @@
+name: Smoke Gate
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run Smoke E2E
+        env:
+          CI: true
+          E2E_BASE_URL: http://localhost:3005
+        run: npm run test:e2e -- tests/smoke
+      - name: Run Nav Coverage
+        env:
+          CI: true
+          E2E_BASE_URL: http://localhost:3005
+        run: npm run test:e2e -- tests/nav-coverage.spec.ts
+      - name: Summary (PASS)
+        if: success()
+        run: |
+          echo "Smoke Gate: PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "Workflow: $GITHUB_WORKFLOW" >> "$GITHUB_STEP_SUMMARY"
+          echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Summary (FAIL)
+        if: failure()
+        run: |
+          echo "Smoke Gate: FAIL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Workflow: $GITHUB_WORKFLOW" >> "$GITHUB_STEP_SUMMARY"
+          echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"

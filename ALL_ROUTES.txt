@@ -1,0 +1,229 @@
+349:                  <Route path="/" element={<LandingPage />} />
+350:                  <Route path="/login" element={<Login />} />
+351:                  <Route path="/register" element={<Register />} />
+352:                  <Route path="/demo" element={<DemoLogin />} />
+353:                  <Route path="/product/:id" element={<ProductDetail />} />
+354:                  <Route path="/seller/:id" element={<SellerProfile />} />
+355:                  <Route path="/about" element={<About />} />
+356:                  <Route path="/faq" element={<FAQ />} />
+357:                  <Route path="/contactus" element={<ContactUs />} />
+358:                  <Route path="/terms" element={<Terms />} />
+359:                  <Route path="/privacy" element={<Privacy />} />
+360:                  <Route path="/shipping" element={<Shipping />} />
+361:                  <Route path="/refunds" element={<Refunds />} />
+362:                  <Route path="/grievance-officer" element={<GrievanceOfficer />} />
+363:                  <Route path="/help" element={<Help />} />
+364:                  <Route path="/campaigns" element={<CampaignsPage />} />
+365:                  <Route path="/campaigns/new" element={<CampaignCreatePage />} />
+366:                  <Route path="/campaigns/launch" element={<CampaignLaunchPage />} />
+367:                  <Route path="/sales" element={<SalesPage />} />
+368:                  <Route path="/sales/login" element={<SalesLogin />} />
+369:                  <Route path="/sales/dashboard" element={<SalesProtectedRoute><SalesDashboardPage /></SalesProtectedRoute>} />
+370:                  <Route path="/marketing" element={<MarketingPage />} />
+371:                  <Route path="/legal" element={<LegalIndex />} />
+372:                  <Route path="/legal/manuals-sops" element={<LegalManualsSOPs />} />
+373:                  <Route path="/legal/platform-usage-acceptance-policy" element={<LegalPlatformUsageAcceptancePolicy />} />
+375:                    path="/legal/anti-reverse-engineering-tampering-application-security-protection-policy"
+379:                    path="/legal/incident-response-breach-handling-cybersecurity-crisis-management-policy"
+383:                    path="/legal/auditlogs-monitoring-evidencepreservation-adminaccountability-policy"
+387:                    path="/legal/crossbordertrade-importexport-customscompliance-internationalsellerbuyer-policy"
+391:                    path="/legal/disputeresolution-complainthandling-arbitration-fairpractice-policy"
+395:                    path="/legal/emergencyresponse-safetyincidents-lawenforcement-crisismanagement-policy"
+399:                    path="/legal/dataprotection-privacygovernance-personaldatahandling-dpdpcompliance-policy"
+403:                    path="/legal/dataaccuracy-integrityassurance-errorprevention-correction-policy"
+407:                    path="/legal/marketing-advertising-promotionethics-brandcommunication-policy"
+411:                    path="/legal/vendor-partner-serviceprovider-onboarding-compliance-policy"
+415:                    path="/legal/usergrievance-redressal-complaintescalation-nodalofficer-policy"
+419:                    path="/legal/ethicalconduct-integrity-anticorruption-professionalbehaviour-codeofconduct-policy"
+423:                    path="/legal/platformmoderation-contentreview-listingapproval-takedown-policy"
+427:                    path="/legal/security-authentication-passwordprotection-accesscontrol-encryption-policy"
+431:                    path="/legal/aml-fraudprevention-financialcrimescompliance-policy"
+435:                    path="/legal/audit-logging-monitoring-compliancereview-regulatoryreporting-policy"
+439:                    path="/legal/apiusage-developeraccess-integrationsecurity-ratelimiting-policy"
+443:                    path="/legal/businesscontinuity-disasterrecovery-systemavailability-outagecommunication-policy"
+447:                    path="/legal/intellectualproperty-copyright-trademark-brandprotection-policy"
+451:                    path="/legal/aiusage-monitoring-fairness-safety-responsibleautomation-policy"
+455:                    path="/legal/dataretention-archival-lifecyclemanagement-migration-offboarding-policy"
+459:                    path="/legal/legalnotice-termsupdate-usernotification-versioning-policy"
+463:                    path="/legal/seller-onboarding-productapproval-verification-compliance-policy"
+467:                    path="/legal/buyer-onboarding-identityverification-walletsafety-responsibleparticipation-policy"
+471:                    path="/legal/auction-participation-rules-bidconduct-antimanipulation-policy"
+475:                    path="/legal/buyer-deposit-escrowhandling-refunds-paymentcompliance-policy"
+479:                    path="/legal/highrisk-items-prohibitedassets-restrictedlistings-policy"
+483:                    path="/legal/vehicle-documentation-conditiondisclosure-authenticityverification-policy"
+487:                    path="/legal/internal-accesscontrol-rbac-adminaccountability-audit-policy"
+491:                    path="/legal/transport-yardsafety-delivery-handover-compliance-policy"
+495:                    path="/legal/quickmela-legal-compliance-manual"
+498:                  <Route path="/legal/transport-partner-agreement" element={<LegalTransportPartnerAgreement />} />
+500:                    path="/legal/vendor-registration-approval-policy"
+503:                  <Route path="/legal/ai-fraud-detection-policy" element={<LegalAIFraudDetectionPolicy />} />
+504:                  <Route path="/legal/ai-risk-score-policy" element={<LegalAIRiskScorePolicy />} />
+505:                  <Route path="/legal/device-fingerprinting-policy" element={<LegalDeviceFingerprintingPolicy />} />
+506:                  <Route path="/legal/multi-account-detection-policy" element={<LegalMultiAccountDetectionPolicy />} />
+507:                  <Route path="/legal/location-gps-verification-policy" element={<LegalLocationGPSVerificationPolicy />} />
+508:                  <Route path="/legal/behavioural-monitoring-policy" element={<LegalBehaviouralMonitoringPolicy />} />
+509:                  <Route path="/legal/ip-reputation-network-security-policy" element={<LegalIPReputationNetworkSecurityPolicy />} />
+510:                  <Route path="/legal/automated-fraud-escalation-policy" element={<LegalAutomatedFraudEscalationPolicy />} />
+511:                  <Route path="/legal/auction-integrity-monitoring-policy" element={<LegalAuctionIntegrityMonitoringPolicy />} />
+512:                  <Route path="/legal/aml-financial-integrity-policy" element={<LegalAMLPolicy />} />
+513:                  <Route path="/legal/ai-model-ownership-policy" element={<LegalAIModelOwnershipPolicy />} />
+514:                  <Route path="/legal/ai-explainability-human-oversight-policy" element={<LegalAIExplainabilityPolicy />} />
+515:                  <Route path="/legal/ai-model-transparency-audit-policy" element={<LegalAIModelTransparencyAuditPolicy />} />
+517:                  <Route path="/legal/terms-and-conditions" element={<LegalTermsAndConditions />} />
+518:                  <Route path="/legal/privacy-policy" element={<LegalPrivacyPolicy />} />
+519:                  <Route path="/legal/e-contract-digital-agreement" element={<LegalEContractDigitalAgreementPolicy />} />
+520:                  <Route path="/legal/auction-rules-bidding" element={<LegalAuctionRulesBiddingPolicy />} />
+521:                  <Route path="/legal/anti-fraud-shill-bidding" element={<LegalAntiFraudShillBiddingPolicy />} />
+522:                  <Route path="/legal/seller-policy" element={<LegalSellerPolicy />} />
+523:                  <Route path="/legal/buyer-policy" element={<LegalBuyerPolicy />} />
+524:                  <Route path="/legal/refund-cancellation-dispute" element={<LegalRefundCancellationDisputePolicy />} />
+525:                  <Route path="/legal/wallet-deposit-investment" element={<LegalWalletDepositInvestmentPolicy />} />
+526:                  <Route path="/legal/sarfaesi-property-compliance" element={<LegalSARFAESICompliancePolicy />} />
+527:                  <Route path="/legal/intellectual-property" element={<LegalIntellectualPropertyPolicy />} />
+528:                  <Route path="/legal/vendor-bank-partner-agreement" element={<LegalVendorBankPartnerAgreement />} />
+529:                  <Route path="/legal/bank-nbfc-mou" element={<LegalBankNBFCMOU />} />
+530:                  <Route path="/legal/vendor-service-level-agreement" element={<LegalVendorServiceLevelAgreement />} />
+531:                  <Route path="/legal/recovery-agency-agreement" element={<LegalRecoveryAgencyAgreement />} />
+532:                  <Route path="/legal/commission-rate-sheet" element={<LegalCommissionRateSheet />} />
+533:                  <Route path="/legal/white-label-partner-agreement" element={<LegalWhiteLabelPartnerAgreement />} />
+534:                  <Route path="/legal/bank-nbfc-onboarding-sop" element={<LegalBankNBFCOnboardingSOP />} />
+535:                  <Route path="/legal/investor-policy" element={<LegalInvestorPolicy />} />
+536:                  <Route path="/legal/branding-policy" element={<LegalBrandingPolicy />} />
+537:                  <Route path="/campaign/:source?" element={<CampaignLanding />} />
+538:                  <Route path="/links" element={<SocialLinks />} />
+539:                  <Route path="/marketing" element={<MarketingPage />} />
+540:                  <Route path="/sales" element={<SalesPage />} />
+541:                  <Route path="/campaigns" element={<CampaignsPage />} />
+542:                  <Route path="/seized-vehicles" element={<SeizedVehicles />} />
+543:                  <Route path="/vehicle/:id" element={<VehicleDetail />} />
+544:                  <Route path="/verify/employee/:token" element={<VerifyEmployee />} />
+545:                  <Route path="/scan" element={<QRScanner />} />
+546:                  <Route path="/inspection-report/:inspectionId" element={<InspectionReport />} />
+547:                  <Route path="/share/verification/:inspectionId" element={<ShareVerificationBadge />} />
+548:                  <Route path="/verify-phone" element={<ProtectedRoute><PhoneVerification /></ProtectedRoute>} />
+549:                  <Route path="/verification" element={<ProtectedRoute><Verification /></ProtectedRoute>} />
+550:                  <Route path="/verify-profile" element={<ProtectedRoute><VerifyProfile /></ProtectedRoute>} />
+551:                  <Route path="/checkout/token" element={<ProtectedRoute><TokenCheckout /></ProtectedRoute>} />
+552:                  <Route path="/checkout/deposit/:productId" element={<ProtectedRoute><DepositCheckout /></ProtectedRoute>} />
+553:                  <Route path="/visit/:productId?" element={<ProtectedRoute><VisitBooking /></ProtectedRoute>} />
+554:                  <Route path="/payment/success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
+555:                  <Route path="/payment/failed" element={<ProtectedRoute><PaymentFailed /></ProtectedRoute>} />
+556:                  <Route path="/delivery-preferences/:auctionId" element={<ProtectedRoute><DeliveryPreferences /></ProtectedRoute>} />
+557:                  <Route path="/invoice/:auctionId" element={<ProtectedRoute><WinInvoice /></ProtectedRoute>} />
+558:                  <Route path="/finance/loans/apply" element={<ProtectedRoute><LoanApplyPage /></ProtectedRoute>} />
+559:                  <Route path="/finance/loans/:id" element={<ProtectedRoute><ApplicationStatusPage /></ProtectedRoute>} />
+560:                  <Route path="/finance/insurance/apply" element={<ProtectedRoute><InsuranceApplyPage /></ProtectedRoute>} />
+561:                  <Route path="/finance/insurance/:id" element={<ProtectedRoute><InsuranceStatusPage /></ProtectedRoute>} />
+600:              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+601:              <Route path="/buyer/dashboard" element={<ProtectedRoute><BuyerDashboard /></ProtectedRoute>} />
+602:              <Route path="/my/won-auctions" element={<ProtectedRoute><MyWonAuctions /></ProtectedRoute>} />
+603:              <Route path="/my/issues/:issueId" element={<ProtectedRoute><MyIssueDetail /></ProtectedRoute>} />
+604:              <Route path="/seller/dashboard" element={<ProtectedRoute><SellerDashboard /></ProtectedRoute>} />
+605:              <Route path="/seller/membership" element={<ProtectedRoute><SellerMembership /></ProtectedRoute>} />
+606:              <Route path="/company/dashboard" element={<ProtectedRoute><CompanyDashboard /></ProtectedRoute>} />
+607:              <Route path="/products" element={<ProtectedRoute><Products /></ProtectedRoute>} />
+608:              <Route path="/company/register" element={<CompanyRegistration />} />
+609:              <Route path="/company/verification-pending" element={<ProtectedRoute><CompanyVerificationPending /></ProtectedRoute>} />
+610:              <Route path="/compliance" element={<ProtectedRoute><ComplianceTracking /></ProtectedRoute>} />
+611:              <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+612:              <Route path="/my-bids" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
+613:              <Route path="/watchlist" element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
+614:              <Route path="/my/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+615:              <Route path="/my/inspections" element={<ProtectedRoute><MyInspections /></ProtectedRoute>} />
+617:                path="/inspector"
+627:                path="/inspector/inspections/:inspectionId"
+636:              <Route path="/my/wins" element={<ProtectedRoute><MyWins /></ProtectedRoute>} />
+637:              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+638:              <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+639:              <Route path="/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
+640:              <Route path="/verify-seller" element={<ProtectedRoute><VerifySeller /></ProtectedRoute>} />
+641:              <Route path="/seller/analytics" element={<ProtectedRoute><SellerAnalytics /></ProtectedRoute>} />
+642:              <Route path="/creative-verification" element={<ProtectedRoute><CreativeVerification /></ProtectedRoute>} />
+643:              <Route path="/ai-recommendations" element={<ProtectedRoute><AIRecommendations /></ProtectedRoute>} />
+644:              <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+645:              <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
+646:              <Route path="/support" element={<ProtectedRoute><SupportTickets /></ProtectedRoute>} />
+647:              <Route path="/support/:id" element={<ProtectedRoute><SupportTicketDetail /></ProtectedRoute>} />
+648:              <Route path="/support/sales" element={<SupportSales />} />
+649:              <Route path="/order-tracking/:orderId?" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
+650:              <Route path="/winner/:auctionId" element={<ProtectedRoute><WinnerConfirmation /></ProtectedRoute>} />
+651:              <Route path="/pay/:auctionId" element={<ProtectedRoute><PayForWin /></ProtectedRoute>} />
+652:              <Route path="/market-analytics" element={<ProtectedRoute><MarketAnalytics /></ProtectedRoute>} />
+653:              <Route path="/payment-gateway" element={<ProtectedRoute><PaymentGateway /></ProtectedRoute>} />
+654:              <Route path="/security-center" element={<ProtectedRoute><SecurityCenter /></ProtectedRoute>} />
+655:              <Route path="/reports" element={<ProtectedRoute><ReportsAnalytics /></ProtectedRoute>} />
+658:              <Route path="/auction-preview" element={<ProtectedRoute><AuctionPreview /></ProtectedRoute>} />
+659:              <Route path="/live-auction/:id?" element={<ProtectedRoute><LiveAuctionPage /></ProtectedRoute>} />
+660:              <Route path="/timed-auction/:id?" element={<ProtectedRoute><TimedAuctionPage /></ProtectedRoute>} />
+661:              <Route path="/tender-auction/:id?" element={<ProtectedRoute><TenderAuctionPage /></ProtectedRoute>} />
+662:              <Route path="/live-bidding/:id?" element={<ProtectedRoute><LiveBidding /></ProtectedRoute>} />
+663:              <Route path="/auction-calendar" element={<ProtectedRoute><AuctionCalendar /></ProtectedRoute>} />
+664:              <Route path="/events" element={<EventsPage />} />
+665:              <Route path="/catalog" element={<ProductCatalog />} />
+666:                  <Route path="/product/:id" element={<ProductDetail />} />
+667:                  <Route path="/user/:id" element={<UserProfile />} />
+668:              <Route path="/advanced-search" element={<AdvancedSearch />} />
+669:              <Route path="/bidding-history" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
+670:              <Route path="/seller-center" element={<ProtectedRoute><SellerCenter /></ProtectedRoute>} />
+671:              <Route path="/invest" element={<InvestLanding />} />
+672:              <Route path="/invest/apply" element={<InvestApply />} />
+673:              <Route path="/invest/confirm" element={<InvestConfirm />} />
+674:              <Route path="/invest/dashboard" element={<ProtectedRoute><InvestorDashboardPage /></ProtectedRoute>} />
+677:              <Route path="/admin" element={<ProtectedRoute adminRequired={true}><AdminSalesDashboard /></ProtectedRoute>} />
+678:              <Route path="/admin/sales" element={<ProtectedRoute adminRequired={true}><AdminSalesDashboard /></ProtectedRoute>} />
+679:              <Route path="/admin/sales/leads" element={<ProtectedRoute adminRequired={true}><AdminSalesLeads /></ProtectedRoute>} />
+680:              <Route path="/admin/banners" element={<ProtectedRoute adminRequired={true}><AdminBanners /></ProtectedRoute>} />
+681:              <Route path="/admin/finance-leads" element={<ProtectedRoute adminRequired={true}><AdminFinanceLeads /></ProtectedRoute>} />
+682:              <Route path="/admin/users" element={<ProtectedRoute adminRequired={true}><UserManagement /></ProtectedRoute>} />
+683:              <Route path="/admin/verify-products" element={<ProtectedRoute adminRequired={true}><ProductVerification /></ProtectedRoute>} />
+684:              <Route path="/admin/products" element={<ProtectedRoute adminRequired={true}><AdminProductsList /></ProtectedRoute>} />
+685:              <Route path="/admin/products/:id" element={<ProtectedRoute adminRequired={true}><AdminProductDetail /></ProtectedRoute>} />
+686:              <Route path="/admin/events" element={<ProtectedRoute adminRequired={true}><AdminEventsList /></ProtectedRoute>} />
+687:              <Route path="/admin/events/new" element={<ProtectedRoute adminRequired={true}><AdminEventCreate /></ProtectedRoute>} />
+688:              <Route path="/admin/events/:id" element={<ProtectedRoute adminRequired={true}><AdminEventDetail /></ProtectedRoute>} />
+689:              <Route path="/admin/settings" element={<ProtectedRoute adminRequired={true}><SystemSettings /></ProtectedRoute>} />
+690:              <Route path="/admin/live-setup" element={<ProtectedRoute adminRequired={true}><AdminLiveSetup /></ProtectedRoute>} />
+691:              <Route path="/admin/live-stream" element={<ProtectedRoute adminRequired={true}><LiveStreamSetup /></ProtectedRoute>} />
+692:              <Route path="/admin/webcast-setup" element={<ProtectedRoute adminRequired={true}><LiveWebcastSetup /></ProtectedRoute>} />
+693:              <Route path="/admin/tender-review" element={<ProtectedRoute adminRequired={true}><AdminTenderReview /></ProtectedRoute>} />
+694:              <Route path="/admin/kyc-review" element={<ProtectedRoute adminRequired={true}><AdminKYCReview /></ProtectedRoute>} />
+695:              <Route path="/admin/content-moderation" element={<ProtectedRoute adminRequired={true}><ContentModeration /></ProtectedRoute>} />
+696:              <Route path="/admin/analytics" element={<ProtectedRoute adminRequired={true}><AnalyticsDashboard /></ProtectedRoute>} />
+697:              <Route path="/admin/investor-listings" element={<ProtectedRoute adminRequired={true}><InvestorAdmin /></ProtectedRoute>} />
+698:              <Route path="/admin/campaigns" element={<ProtectedRoute adminRequired={true}><AdminCampaigns /></ProtectedRoute>} />
+699:              <Route path="/admin/investments" element={<ProtectedRoute adminRequired={true}><AdminInvestments /></ProtectedRoute>} />
+700:              <Route path="/admin/live-control/:id" element={<ProtectedRoute adminRequired={true}><LiveStreamControl /></ProtectedRoute>} />
+701:              <Route path="/admin/ai-training" element={<ProtectedRoute adminRequired={true}><AIModelTraining /></ProtectedRoute>} />
+702:              <Route path="/admin/marketing" element={<ProtectedRoute adminRequired={true}><AdminMarketing /></ProtectedRoute>} />
+703:              <Route path="/admin/employees" element={<ProtectedRoute adminRequired={true}><AdminEmployees /></ProtectedRoute>} />
+704:              <Route path="/admin/deposit-policies" element={<ProtectedRoute adminRequired={true}><AdminDepositPolicies /></ProtectedRoute>} />
+705:              <Route path="/admin/fraud" element={<ProtectedRoute adminRequired={true}><AdminFraudReview /></ProtectedRoute>} />
+706:              <Route path="/admin/ai-reports" element={<ProtectedRoute adminRequired={true}><AIReports /></ProtectedRoute>} />
+707:              <Route path="/admin/locations" element={<ProtectedRoute adminRequired={true}><AdminLocations /></ProtectedRoute>} />
+709:                path="/admin/support-chat"
+718:              <Route path="/admin/tickets" element={<ProtectedRoute adminRequired={true}><AdminTicketDesk /></ProtectedRoute>} />
+719:              <Route path="/admin/support/:id" element={<ProtectedRoute adminRequired={true}><SupportTicketDetail /></ProtectedRoute>} />
+720:              <Route path="/admin/catalog-settings" element={<ProtectedRoute adminRequired={true}><CatalogSettings /></ProtectedRoute>} />
+721:              <Route path="/admin/fees" element={<ProtectedRoute adminRequired={true}><AdminFees /></ProtectedRoute>} />
+722:              <Route path="/admin/alerts-test" element={<ProtectedRoute adminRequired={true}><AdminAlertsTest /></ProtectedRoute>} />
+723:              <Route path="/admin/yard-tokens" element={<ProtectedRoute adminRequired={true}><AdminYardTokens /></ProtectedRoute>} />
+724:              <Route path="/admin/referrals" element={<ProtectedRoute adminRequired={true}><ReferralBonuses /></ProtectedRoute>} />
+725:              <Route path="/admin/winners" element={<ProtectedRoute adminRequired={true}><AdminWinners /></ProtectedRoute>} />
+726:              <Route path="/admin/deliveries" element={<ProtectedRoute adminRequired={true}><AdminDeliveries /></ProtectedRoute>} />
+727:              <Route path="/admin/seller-earnings" element={<ProtectedRoute adminRequired={true}><AdminSellerEarnings /></ProtectedRoute>} />
+728:              <Route path="/admin/win-payments" element={<ProtectedRoute><RoleGuard allow={['admin', 'superadmin']}><AdminWinPayments /></RoleGuard></ProtectedRoute>} />
+729:              <Route path="/admin/delivery-slip/:auctionId" element={<ProtectedRoute><RoleGuard allow={['admin', 'superadmin']}><AdminDeliverySlip /></RoleGuard></ProtectedRoute>} />
+730:              <Route path="/admin/departments" element={<ProtectedRoute adminRequired={true}><AdminDepartments /></ProtectedRoute>} />
+731:              <Route path="/admin/branches" element={<ProtectedRoute adminRequired={true}><AdminBranches /></ProtectedRoute>} />
+732:              <Route path="/admin/staff" element={<ProtectedRoute adminRequired={true}><AdminStaff /></ProtectedRoute>} />
+735:              <Route path="/super-admin" element={<ProtectedRoute superAdminRequired={true}><SuperAdmin /></ProtectedRoute>} />
+738:              <Route path="/mobile-app" element={<MobileApp />} />
+739:              <Route path="/api-docs" element={<APIDocumentation />} />
+740:              <Route path="/careers" element={<Careers />} />
+741:              <Route path="/partnerships" element={<Partnerships />} />
+742:              <Route path="/investors" element={<InvestorRelations />} />
+743:              <Route path="/investor-marketplace" element={<InvestorMarketplace />} />
+744:              <Route path="/trust-safety" element={<TrustSafety />} />
+745:              <Route path="/business-solutions" element={<BusinessSolutions />} />
+746:              <Route path="/investor-pitch" element={<InvestorPitch />} />
+749:                  <Route path="*" element={<NotFound />} />

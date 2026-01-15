@@ -1,0 +1,77 @@
+name: Nightly Regression
+
+on:
+  schedule:
+    - cron: '30 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Run Regression E2E
+        env:
+          CI: true
+          E2E_BASE_URL: http://localhost:3005
+        run: npm run test:e2e -- tests/regression tests/events-page.spec.ts tests/support-tickets.spec.ts
+      - name: Run Nav Coverage
+        env:
+          CI: true
+          E2E_BASE_URL: http://localhost:3005
+        run: npm run test:e2e -- tests/nav-coverage.spec.ts
+      - name: Summary (PASS)
+        if: success()
+        run: |
+          echo "Nightly Regression: PASS" >> "$GITHUB_STEP_SUMMARY"
+          echo "Workflow: $GITHUB_WORKFLOW" >> "$GITHUB_STEP_SUMMARY"
+          echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Summary (FAIL)
+        if: failure()
+        run: |
+          echo "Nightly Regression: FAIL" >> "$GITHUB_STEP_SUMMARY"
+          echo "Workflow: $GITHUB_WORKFLOW" >> "$GITHUB_STEP_SUMMARY"
+          echo "Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" >> "$GITHUB_STEP_SUMMARY"
+      - name: Slack Alert
+        if: failure()
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_MESSAGE: Nightly regression failed — review required
+          SLACK_COLOR: danger
+      - name: Email Alert
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: ${{ secrets.ALERT_EMAIL_SERVER }}
+          server_port: ${{ secrets.ALERT_EMAIL_PORT }}
+          username: ${{ secrets.ALERT_EMAIL_USERNAME }}
+          password: ${{ secrets.ALERT_EMAIL_PASSWORD }}
+          subject: Nightly regression failed — review required
+          to: ${{ secrets.ALERT_EMAIL_TO }}
+          from: ${{ secrets.ALERT_EMAIL_FROM }}
+          body: |
+            Nightly regression failed — review required.
+            Repository: ${{ github.repository }}
+            Workflow: ${{ github.workflow }}
+            Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}

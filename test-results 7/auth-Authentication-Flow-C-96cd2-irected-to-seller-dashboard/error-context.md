@@ -1,0 +1,142 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - link "Skip to main content" [ref=e3] [cursor=pointer]:
+    - /url: "#main"
+  - generic [ref=e4]:
+    - navigation [ref=e5]:
+      - generic [ref=e7]:
+        - link "QuickMela" [ref=e9] [cursor=pointer]:
+          - /url: /
+          - img [ref=e10]
+          - generic [ref=e16]: QuickMela
+        - generic [ref=e17]:
+          - link "Home" [ref=e18] [cursor=pointer]:
+            - /url: /
+          - button "Browse" [ref=e20] [cursor=pointer]:
+            - img [ref=e21]
+            - text: Browse
+            - img [ref=e27]
+          - button "Auctions" [ref=e30] [cursor=pointer]:
+            - img [ref=e31]
+            - text: Auctions
+            - img [ref=e37]
+        - generic [ref=e39]:
+          - button "Toggle dark mode" [ref=e40] [cursor=pointer]:
+            - img [ref=e41]
+          - link "Invest" [ref=e43] [cursor=pointer]:
+            - /url: /invest
+          - link "Login" [ref=e44] [cursor=pointer]:
+            - /url: /login
+          - link "Register" [ref=e45] [cursor=pointer]:
+            - /url: /register
+          - link "Company Registration" [ref=e46] [cursor=pointer]:
+            - /url: /company/register
+    - main [ref=e47]
+    - contentinfo [ref=e48]:
+      - generic [ref=e50]:
+        - generic [ref=e51]:
+          - generic [ref=e52]:
+            - img [ref=e53]
+            - generic [ref=e59]: Quick Mela
+          - paragraph [ref=e60]: Your trusted platform for online bidding and auctions.
+          - generic [ref=e61]:
+            - link [ref=e62] [cursor=pointer]:
+              - /url: https://facebook.com
+              - img [ref=e63]
+            - link [ref=e65] [cursor=pointer]:
+              - /url: https://twitter.com
+              - img [ref=e66]
+            - link [ref=e68] [cursor=pointer]:
+              - /url: https://instagram.com
+              - img [ref=e69]
+        - generic [ref=e72]:
+          - heading "Quick Links" [level=3] [ref=e73]
+          - list [ref=e74]:
+            - listitem [ref=e75]:
+              - link "Product Catalog" [ref=e76] [cursor=pointer]:
+                - /url: /catalog
+            - listitem [ref=e77]:
+              - link "Advanced Search" [ref=e78] [cursor=pointer]:
+                - /url: /advanced-search
+            - listitem [ref=e79]:
+              - link "Business Solutions" [ref=e80] [cursor=pointer]:
+                - /url: /business-solutions
+            - listitem [ref=e81]:
+              - link "Marketing Services" [ref=e82] [cursor=pointer]:
+                - /url: /marketing
+            - listitem [ref=e83]:
+              - link "Sales Support" [ref=e84] [cursor=pointer]:
+                - /url: /sales
+            - listitem [ref=e85]:
+              - link "Launch Campaigns" [ref=e86] [cursor=pointer]:
+                - /url: /campaigns
+            - listitem [ref=e87]:
+              - link "Trust & Safety" [ref=e88] [cursor=pointer]:
+                - /url: /trust-safety
+            - listitem [ref=e89]:
+              - link "Mobile App" [ref=e90] [cursor=pointer]:
+                - /url: /mobile-app
+            - listitem [ref=e91]:
+              - link "API Documentation" [ref=e92] [cursor=pointer]:
+                - /url: /api-docs
+            - listitem [ref=e93]:
+              - link "Careers" [ref=e94] [cursor=pointer]:
+                - /url: /careers
+            - listitem [ref=e95]:
+              - link "Partnerships" [ref=e96] [cursor=pointer]:
+                - /url: /partnerships
+            - listitem [ref=e97]:
+              - link "Investor Pitch" [ref=e98] [cursor=pointer]:
+                - /url: /investors
+        - generic [ref=e99]:
+          - heading "Support" [level=3] [ref=e100]
+          - list [ref=e101]:
+            - listitem [ref=e102]:
+              - link "Security Center" [ref=e103] [cursor=pointer]:
+                - /url: /security-center
+            - listitem [ref=e104]:
+              - link "Grievance Officer" [ref=e105] [cursor=pointer]:
+                - /url: /grievance-officer
+            - listitem [ref=e106]:
+              - link "Market Analytics" [ref=e107] [cursor=pointer]:
+                - /url: /market-analytics
+            - listitem [ref=e108]:
+              - link "Reports" [ref=e109] [cursor=pointer]:
+                - /url: /reports
+            - listitem [ref=e110]:
+              - link "FAQ" [ref=e111] [cursor=pointer]:
+                - /url: /faq
+            - listitem [ref=e112]:
+              - link "Admin Finance Leads" [ref=e113] [cursor=pointer]:
+                - /url: /demo?user=demo-admin&redirect=/admin/finance-leads
+        - generic [ref=e114]:
+          - heading "Legal" [level=3] [ref=e115]
+          - generic [ref=e116]:
+            - link "Terms & Conditions" [ref=e117] [cursor=pointer]:
+              - /url: /legal/terms-and-conditions
+            - link "Privacy Policy" [ref=e118] [cursor=pointer]:
+              - /url: /legal/privacy-policy
+            - link "Refund & Dispute Policy" [ref=e119] [cursor=pointer]:
+              - /url: /legal/refund-cancellation-dispute
+            - link "Wallet & Deposit Policy" [ref=e120] [cursor=pointer]:
+              - /url: /legal/wallet-deposit-investment
+            - link "Buyer Policy" [ref=e121] [cursor=pointer]:
+              - /url: /legal/buyer-policy
+            - link "Seller Policy" [ref=e122] [cursor=pointer]:
+              - /url: /legal/seller-policy
+            - link "Security & AML" [ref=e123] [cursor=pointer]:
+              - /url: /legal/security-authentication-passwordprotection-accesscontrol-encryption-policy
+            - link "E-Contract & Digital Agreement" [ref=e124] [cursor=pointer]:
+              - /url: /legal/e-contract-digital-agreement
+            - link "Auction Rules" [ref=e125] [cursor=pointer]:
+              - /url: /legal/auction-rules-bidding
+          - paragraph [ref=e126]: Need more policies? Visit the Legal Hub for the full catalog of compliance, governance, and reporting guides.
+  - generic [ref=e129]:
+    - generic [ref=e130]: We use cookies to provide essential site functionality and to improve your experience. Manage your preferences below.
+    - generic [ref=e131]:
+      - button "Accept all" [ref=e132] [cursor=pointer]
+      - group [ref=e133]:
+        - generic "Preferences" [ref=e134] [cursor=pointer]
+```

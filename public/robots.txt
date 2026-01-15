@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin/
+Disallow: /admin
+Disallow: /profile
+Disallow: /checkout/
+Disallow: /checkout
+
+Sitemap: https://quickbid.in/sitemap.xml

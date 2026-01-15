@@ -1,0 +1,333 @@
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Products.tsx:945:        <Link to="/advanced-search" className="border border-indigo-300 text-indigo-700 px-4 py-2 rounded-lg hover:bg-indigo-50 flex items-center gap-2 text-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Products.tsx:949:          <Link to="/add-product" className="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 flex items-center gap-2 text-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Products.tsx:1209:        <Link to="/advanced-search" className="inline-flex items-center gap-2 text-sm text-indigo-700 hover:text-indigo-900 mb-4">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Products.tsx:1213:          <Link to="/add-product" className="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SupportTickets.tsx:92:        <Link to="/help" className="px-4 py-2 rounded bg-gray-100 dark:bg-gray-800">Help Center</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SuperAdmin.tsx:391:              to="/admin/verify-products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesDashboardPage.tsx:114:              to="/campaigns"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesDashboardPage.tsx:120:              to="/campaigns/new"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesDashboardPage.tsx:126:              to="/campaigns/launch"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesDashboardPage.tsx:201:            <Link to="/support/sales" className="text-xs font-semibold text-indigo-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesDashboardPage.tsx:216:              to="/campaigns/launch"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesDashboardPage.tsx:222:              to="/support"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CampaignLaunchPage.tsx:155:              <Link to="/campaigns/new" className="rounded-full border border-slate-300 px-6 py-2 text-sm font-semibold text-slate-900 dark:text-white">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/PayForWin.tsx:397:            to="/my/won-auctions"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/PayForWin.tsx:430:            to="/my/won-auctions"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:121:              to="/add-product" 
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:652:            to="/advanced-search"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:659:            to="/add-product"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:768:                to="/seller/membership"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:833:          to="/add-product"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:848:          to="/seller/analytics"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:863:          to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:878:          to="/seller/membership"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:941:                        to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerDashboard.tsx:955:                to="/add-product"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:601:            to="/my/wins"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:619:            to="/my/orders"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:634:            to="/watchlist"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:934:            to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:947:            to="/watchlist"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:960:            to="/wallet"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:973:            to="/live-auction"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:986:            to="/auction-calendar"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:999:            to="/tender-auction"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:1012:            to="/my/won-auctions"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:1099:                    to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:1148:            <Link to="/watchlist" className="text-xs text-indigo-600 hover:text-indigo-800 flex items-center gap-1">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:1181:                  to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/WatchlistPage.tsx:150:            to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveAuctionPage.tsx:1557:                to="/advanced-search"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveAuctionPage.tsx:1565:                  to="/admin/live-setup"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveAuctionPage.tsx:1731:                to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TimedAuctionPage.tsx:844:                        <Link to="/wallet" className="ml-1 underline text-red-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TimedAuctionPage.tsx:932:                to="/advanced-search"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TimedAuctionPage.tsx:973:                to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TenderAuctionPage.tsx:862:                to="/advanced-search"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TenderAuctionPage.tsx:954:                to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MarketingPage.tsx:31:          to="/"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MarketingPage.tsx:38:            to="/demo?user=demo-marketing"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:40:            to="/timed-auction"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:48:            to="/advanced-search"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:56:            to="/register"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:64:            to="/marketing"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:72:            to="/sales"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:80:            to="/campaigns/launch"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:88:            to="/wallet"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SocialLinks.tsx:96:            to="/help"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesPage.tsx:19:        to="/"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesPage.tsx:26:          to="/demo?user=demo-sales&redirect=/sales"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CampaignsPage.tsx:23:          to="/"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CampaignsPage.tsx:30:            to="/demo?user=demo-campaigns&redirect=/campaigns/launch"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveBidding.tsx:56:          to="/live-auction" 
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:290:              to="/register"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:296:              to="/catalog"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:527:              <Link to="/live-auction" className="btn btn-primary inline-flex items-center gap-2">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:530:              <Link to="/products" className="btn btn-outline-invert inline-flex items-center gap-2">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:613:              to="/trust-safety"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:620:              to="/legal"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:658:                <Link to="/register" className="btn btn-primary btn-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:661:                <Link to="/add-product" className="btn btn-outline btn-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:683:                <Link to="/company/register" className="btn btn-primary btn-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:686:                <Link to="/business-solutions" className="btn btn-outline btn-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:817:                  to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:823:                  to="/add-product"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:945:              to="/register"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LandingPage.tsx:951:              to="/business-solutions"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminTenderReview.jsx:300:        <Link to="/admin" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminDeliverySlip.tsx:151:          to="/admin/winners"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminWinPayments.tsx:458:                to="/admin/winners"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminEventsList.tsx:108:            to="/admin/events/new"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminLiveSetup.jsx:89:          to="/admin/live-stream"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminLiveSetup.jsx:328:              to="/admin"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminDashboard.tsx:265:            to="/admin/verify-products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/WinInvoice.tsx:140:          to="/my/won-auctions"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/About.tsx:137:            Still curious? <Link to="/faq" className="text-blue-600 dark:text-blue-400 underline">Check our FAQs</Link> or{" "}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/About.tsx:138:            <Link to="/contactus" className="text-blue-600 dark:text-blue-400 underline">contact us</Link>.
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/About.tsx:141:            to="/"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:155:            to="/add-product"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:162:            to="/bulk-upload"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:296:          to="/add-product"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:309:          to="/seller/analytics"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:322:          to="/bulk-upload"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:335:          to="/profile"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerCenter.tsx:354:              to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SellerProfile.tsx:388:                  to="/admin/seller-earnings"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:304:          to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:376:          to="/products"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:389:          to="/watchlist"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:402:          to="/wallet"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:415:          to="/live-auction"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:434:              <Link to="/bidding-history" className="text-indigo-600 hover:text-indigo-700 text-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:463:                <Link to="/products" className="text-indigo-600 hover:text-indigo-700 text-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:511:              <Link to="/catalog" className="text-indigo-600 hover:text-indigo-700 text-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:552:              <Link to="/ai-recommendations" className="text-indigo-600 hover:text-indigo-700 text-sm">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Register.tsx:180:            <Link to="/login" className="font-medium text-primary-600 hover:text-primary-500">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Register.tsx:188:              <Link to="/company/register" className="text-primary-600 hover:text-primary-500 underline">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SupportSales.tsx:100:              <strong>1.</strong> Log in to <Link to="/sales/login" className="text-indigo-600">Sales Login</Link> to reach the dashboard and monitor pipelines.
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SupportSales.tsx:103:              <strong>2.</strong> Explore <Link to="/campaigns" className="text-indigo-600">campaign insights</Link> for performance numbers.
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SupportSales.tsx:113:            <Link className="inline-flex items-center justify-center rounded-full border border-slate-300 px-4 py-2 text-sm font-semibold text-slate-900" to="/support">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesLogin.tsx:76:        <Link to="/sales/dashboard" className="text-sm font-semibold text-indigo-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TenderAuctionPage.jsx:124:          to="/timed-auction"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyWonAuctions.tsx:249:        <Link to="/catalog" className="inline-flex items-center px-4 py-2 rounded-full bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/DeliveryPreferences.tsx:286:          to="/my/won-auctions"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Notifications.tsx:415:                              to="/wallet"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Privacy.tsx:22:            <Link to="/terms" className="text-indigo-600 hover:text-indigo-800">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Privacy.tsx:25:            <Link to="/contactus" className="text-indigo-600 hover:text-indigo-800">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Privacy.tsx:243:            <Link to="/terms" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Privacy.tsx:246:            <Link to="/contactus" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Privacy.tsx:249:            <Link to="/" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Terms.tsx:22:            <Link to="/privacy" className="text-indigo-600 hover:text-indigo-800">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Terms.tsx:25:            <Link to="/contactus" className="text-indigo-600 hover:text-indigo-800">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Terms.tsx:199:            <Link to="/privacy" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Terms.tsx:202:            <Link to="/contactus" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Terms.tsx:205:            <Link to="/" className="text-indigo-600 hover:text-indigo-700">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyDashboard.tsx:126:          to="/bulk-upload"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyDashboard.tsx:205:          to="/bulk-upload"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyDashboard.tsx:218:          to="/seized-vehicles"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyDashboard.tsx:231:          to="/company/analytics"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyDashboard.tsx:244:          to="/compliance"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TrustSafety.tsx:336:          to="/legal"
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/LegalIndex.tsx:531:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/QuickMelaLegalComplianceManual.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/QuickMelaLegalComplianceManual.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/QuickMelaLegalComplianceManual.tsx:106:            <Link to="/legal" className="font-semibold text-[#FF6E1E] hover:underline">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/LegalNoticeTermsUpdateUserNotificationVersioningPolicy.tsx:20:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/LegalNoticeTermsUpdateUserNotificationVersioningPolicy.tsx:26:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DataRetentionArchivalLifecycleManagementMigrationOffboardingPolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DataRetentionArchivalLifecycleManagementMigrationOffboardingPolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIUsageMonitoringFairnessSafetyResponsibleAutomationPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIUsageMonitoringFairnessSafetyResponsibleAutomationPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/IntellectualPropertyCopyrightTrademarkBrandProtectionPolicy.tsx:26:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BusinessContinuityDisasterRecoverySystemAvailabilityOutageCommunicationPolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BusinessContinuityDisasterRecoverySystemAvailabilityOutageCommunicationPolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/APIUsageDeveloperAccessIntegrationSecurityRateLimitingCompliancePolicy.tsx:20:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/APIUsageDeveloperAccessIntegrationSecurityRateLimitingCompliancePolicy.tsx:26:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AuditLoggingMonitoringComplianceReviewRegulatoryReportingPolicy.tsx:20:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AuditLoggingMonitoringComplianceReviewRegulatoryReportingPolicy.tsx:26:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AMLFinancialCrimesFraudPreventionCompliancePolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AMLFinancialCrimesFraudPreventionCompliancePolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/SecurityAuthenticationPasswordProtectionAccessControlEncryptionPolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/SecurityAuthenticationPasswordProtectionAccessControlEncryptionPolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/PlatformModerationContentReviewListingApprovalTakedownPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/PlatformModerationContentReviewListingApprovalTakedownPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/EthicalConductIntegrityAntiCorruptionProfessionalBehaviourCodeOfConductPolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/EthicalConductIntegrityAntiCorruptionProfessionalBehaviourCodeOfConductPolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/UserGrievanceRedressalComplaintEscalationNodalOfficerCompliancePolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/UserGrievanceRedressalComplaintEscalationNodalOfficerCompliancePolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/VendorPartnerServiceProviderOnboardingCompliancePolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/VendorPartnerServiceProviderOnboardingCompliancePolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/MarketingAdvertisingPromotionEthicsBrandCommunicationPolicy.tsx:20:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/MarketingAdvertisingPromotionEthicsBrandCommunicationPolicy.tsx:26:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DataAccuracyIntegrityAssuranceErrorPreventionCorrectionPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DataAccuracyIntegrityAssuranceErrorPreventionCorrectionPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DataProtectionPrivacyGovernancePersonalDataHandlingDPDPCompliancePolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DataProtectionPrivacyGovernancePersonalDataHandlingDPDPCompliancePolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/EmergencyResponseSafetyIncidentsLawEnforcementCrisisManagementPolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/EmergencyResponseSafetyIncidentsLawEnforcementCrisisManagementPolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DisputeResolutionComplaintHandlingArbitrationFairPracticePolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DisputeResolutionComplaintHandlingArbitrationFairPracticePolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/CrossBorderTradeImportExportCustomsComplianceInternationalSellerBuyerPolicy.tsx:21:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/CrossBorderTradeImportExportCustomsComplianceInternationalSellerBuyerPolicy.tsx:27:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AuditLogsMonitoringEvidencePreservationAdminAccountabilityPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AuditLogsMonitoringEvidencePreservationAdminAccountabilityPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/IncidentResponseBreachHandlingCybersecurityCrisisManagementPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/IncidentResponseBreachHandlingCybersecurityCrisisManagementPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AntiReverseEngineeringTamperingApplicationSecurityProtectionPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AntiReverseEngineeringTamperingApplicationSecurityProtectionPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/VendorRegistrationApprovalPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/VendorRegistrationApprovalPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/TransportPartnerAgreement.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/TransportPartnerAgreement.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIModelTransparencyAuditPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIModelTransparencyAuditPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIExplainabilityPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIExplainabilityPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIModelOwnershipPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIModelOwnershipPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AMLPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AMLPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AuctionIntegrityMonitoringPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AuctionIntegrityMonitoringPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AutomatedFraudEscalationPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AutomatedFraudEscalationPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/IPReputationNetworkSecurityPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/IPReputationNetworkSecurityPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BehaviouralMonitoringPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BehaviouralMonitoringPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/LocationGPSVerificationPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/LocationGPSVerificationPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/MultiAccountDetectionPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/MultiAccountDetectionPolicy.tsx:24:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DeviceFingerprintingPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/DeviceFingerprintingPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIRiskScorePolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIRiskScorePolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIFraudDetectionPolicy.tsx:19:            <Link to="/" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/AIFraudDetectionPolicy.tsx:25:            <Link to="/legal" className="hover:text-primary-600">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/PlatformUsageAcceptancePolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/PlatformUsageAcceptancePolicy.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:55:          <li><Link to="/legal/terms-and-conditions">Terms &amp; Conditions</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:56:          <li><Link to="/legal/privacy-policy">Privacy Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:57:          <li><Link to="/legal/buyer-policy">Buyer Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:59:          <li><Link to="/legal/refund-cancellation-dispute">Refund &amp; Dispute Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:60:          <li><Link to="/legal/anti-fraud-shill-bidding">Anti-Fraud &amp; Anti–Shill Bidding Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:61:          <li><Link to="/legal/auction-rules-bidding">Auction Rules &amp; Bidding Guidelines</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:62:          <li><Link to="/legal/e-contract-digital-agreement">E-Contract &amp; Digital Agreement Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:63:          <li><Link to="/legal/wallet-deposit-investment">Wallet, Deposit &amp; Investment Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:68:          <li><Link to="/legal/sarfaesi-property-compliance">SARFAESI &amp; Property Auction Compliance Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:69:          <li><Link to="/legal/vendor-bank-partner-agreement">Vendor &amp; Bank Partner Agreement</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:70:          <li><Link to="/legal/bank-nbfc-mou">Bank / NBFC Partnership MoU</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:71:          <li><Link to="/legal/vendor-service-level-agreement">Vendor Service Level Agreement (SLA)</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:72:          <li><Link to="/legal/recovery-agency-agreement">Recovery Agency Agreement</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:73:          <li><Link to="/legal/commission-rate-sheet">Commission Rate Sheet</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:74:          <li><Link to="/legal/bank-nbfc-onboarding-sop">Bank / NBFC Onboarding SOP</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:75:          <li><Link to="/legal/investor-policy">Investor Participation Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:81:          <li><Link to="/legal/bank-nbfc-onboarding-sop">Bank Onboarding SOP</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:94:          <li><Link to="/legal/anti-fraud-shill-bidding">Fraud &amp; Manipulation Detection</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:95:          <li><Link to="/legal/e-contract-digital-agreement">Digital Evidence &amp; E-Contracts</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:96:          <li><Link to="/legal/privacy-policy">Data Security &amp; Privacy Standards</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:101:          <li><Link to="/legal/bank-nbfc-mou">Bank Partnership MoU</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:102:          <li><Link to="/legal/vendor-bank-partner-agreement">Vendor Agreement</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:103:          <li><Link to="/legal/vendor-service-level-agreement">SLA Agreement</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:104:          <li><Link to="/legal/recovery-agency-agreement">Recovery Agency Agreement</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:105:          <li><Link to="/legal/white-label-partner-agreement">White-Label Partner Agreement</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:110:          <li><Link to="/legal/intellectual-property">IP / Copyright / Trademark Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:111:          <li><Link to="/legal/branding-policy">Branding, Logo &amp; Brand Usage Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:117:          <li><Link to="/legal/sarfaesi-property-compliance">SARFAESI &amp; Property Auction Compliance Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/ManualsSOPs.tsx:118:          <li><Link to="/legal/anti-fraud-shill-bidding">Anti-Fraud &amp; Anti–Shill Bidding Policy</Link></li>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BrandingPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BrandingPolicy.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/InvestorPolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/InvestorPolicy.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/CommissionRateSheet.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/CommissionRateSheet.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/RecoveryAgencyAgreement.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/RecoveryAgencyAgreement.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/VendorServiceLevelAgreement.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/VendorServiceLevelAgreement.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BankNBFCMOU.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/BankNBFCMOU.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/SARFAESICompliancePolicy.tsx:18:            <Link to="/" className="hover:text-primary-600">Home</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/legal/SARFAESICompliancePolicy.tsx:22:            <Link to="/legal" className="hover:text-primary-600">Legal</Link>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CampaignCreatePage.tsx:168:              onClick={() => navigate('/marketing')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/DepositCheckout.tsx:59:          navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/DepositCheckout.tsx:74:          navigate('/', { replace: true });
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/DepositCheckout.tsx:131:        navigate('/', { replace: true });
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TokenCheckout.tsx:59:          navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/TokenCheckout.tsx:117:        navigate('/', { replace: true });
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/PayForWin.tsx:286:                  navigate('/my/won-auctions');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/PayForWin.tsx:374:      navigate('/my/won-auctions');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/BuyerDashboard.tsx:790:                      navigate('/');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/AddProduct.tsx:583:        navigate('/seller/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/AddProduct.tsx:776:              navigate('/my/inspections');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/AddProduct.tsx:783:      navigate('/seller/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/AddProduct.tsx:804:                onClick={() => navigate('/login')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/AddProduct.tsx:810:                onClick={() => navigate('/demo?seller=true')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveAuctionPage.tsx:860:            navigate('/live-auction');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveAuctionPage.tsx:1584:              onTopUp={() => navigate('/wallet')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProductDetail.tsx:490:                            navigate('/login', { state: { from: location } });
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProductDetail.tsx:501:                        onClick={() => navigate('/wallet')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProductDetail.tsx:533:                              if (step.label === 'Pay Token') navigate('/wallet');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProductDetail.tsx:534:                              else if (step.label === 'Pay Deposit') navigate('/wallet');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProductDetail.tsx:683:                    navigate('/login', { state: { from: location } });
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Login.tsx:70:        navigate('/verify-profile');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Login.tsx:73:        navigate('/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Login.tsx:239:              onClick={() => navigate('/register')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Login.tsx:246:              onClick={() => navigate('/demo')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminPayouts.tsx:147:                onClick={() => navigate('/admin/payouts')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminEventCreate.tsx:75:      navigate('/admin/events');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminEventCreate.tsx:177:            onClick={() => navigate('/admin/events')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminDeliverySlip.tsx:255:          onClick={() => navigate('/admin/winners')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/admin/AdminLiveSetup.jsx:71:      navigate('/admin/live-setup');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/WinInvoice.tsx:238:          onClick={() => navigate('/my/won-auctions')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:111:            navigate('/buyer/dashboard', { replace: true });
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Dashboard.tsx:119:        navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/SalesLogin.tsx:23:          navigate('/sales/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProfilePage.jsx:57:        navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyWins.tsx:332:          onClick={() => navigate('/auction-preview')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyWins.tsx:349:            onClick={() => navigate('/auction-preview')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyIssueDetail.tsx:181:          onClick={() => navigate('/my/issues')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyIssueDetail.tsx:202:        onClick={() => navigate('/my/issues')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/DeliveryPreferences.tsx:264:      navigate('/my/won-auctions');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/DeliveryPreferences.tsx:306:        onClick={() => navigate('/my/won-auctions')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyProducts.tsx:43:          navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/MyProducts.tsx:169:            onClick={() => navigate('/add-product')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/sponsor/SponsorDashboard.tsx:31:      navigate('/sponsor/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/sponsor/SponsorDashboard.tsx:59:    navigate('/sponsor/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/sponsor/SponsorLogin.tsx:35:      navigate('/sponsor/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/InvestApply.tsx:240:            onClick={() => navigate('/invest')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyRegistration.tsx:255:        navigate('/company/verification-pending');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Verification.tsx:159:            onAction={phoneVerified ? undefined : () => navigate('/verify-phone')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Verification.tsx:170:            onAction={kycComplete ? undefined : () => navigate('/verify-profile')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/Verification.tsx:181:            onAction={userProfile?.address && userProfile?.pincode ? undefined : () => navigate('/profile')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VisitBooking.tsx:68:        navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifyProfile.jsx:35:        navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifyProfile.jsx:46:        navigate('/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifyProfile.jsx:208:              onClick={() => navigate('/dashboard')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyVerificationPending.tsx:32:        navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyVerificationPending.tsx:45:        navigate('/company/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/LiveStreamControl.tsx:167:        navigate('/admin/live-setup');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifySeller.tsx:26:        navigate('/login');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifySeller.tsx:37:        navigate('/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifySeller.tsx:42:        navigate('/seller/dashboard');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/VerifySeller.tsx:153:              onClick={() => navigate('/seller/dashboard')}
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/components/BidModal.tsx:105:                navigate('/wallet');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/components/Navbar.tsx:174:      navigate('/');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/components/layout/TopBar.tsx:30:      navigate('/');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/components/layout/TopBar.tsx:86:                      navigate('/profile');
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProfilePage.tsx:658:              <a href="/profile" className="px-3 py-1.5 rounded-md border border-gray-200 text-sm hover:bg-gray-50">Profile</a>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProfilePage.tsx:659:              <a href="/my/orders" className="px-3 py-1.5 rounded-md border border-gray-200 text-sm hover:bg-gray-50">Orders</a>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProfilePage.tsx:660:              <a href="/watchlist" className="px-3 py-1.5 rounded-md border border-gray-200 text-sm hover:bg-gray-50">Watchlist</a>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/ProfilePage.tsx:661:              <a href="/settings" className="px-3 py-1.5 rounded-md border border-gray-200 text-sm hover:bg-gray-50">Settings ⚙️</a>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/AddProduct.tsx:1737:          <a href="/company/register" className="text-primary-600 hover:text-primary-500 underline">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/InvestApply.tsx:225:            <a href="/docs/investor-policy.pdf" className="text-primary-600 underline" target="_blank" rel="noreferrer">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/InvestApply.tsx:230:            <a href="/legal/investment-agreement-draft" className="text-primary-600 underline" target="_blank" rel="noreferrer">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/InvestLanding.tsx:19:          <a href="/docs/investor-policy.pdf" className="btn btn-outline">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyRegistration.tsx:785:                    I accept the <a href="/terms" className="text-indigo-600 hover:text-indigo-700">Terms & Conditions</a> and 
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyRegistration.tsx:786:                    <a href="/privacy" className="text-indigo-600 hover:text-indigo-700 ml-1">Privacy Policy</a>
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyRegistration.tsx:841:            <a href="/register" className="text-primary-700 dark:text-primary-300 underline">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/pages/CompanyRegistration.tsx:845:            <a href="/add-product" className="text-primary-700 dark:text-primary-300 underline">
+/Users/sanieevmusugu/Desktop/quick-bid-oct/src/components/auctions/BidHistoryList.tsx:106:          href="/checkout/token"

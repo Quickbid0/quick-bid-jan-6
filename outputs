@@ -1,0 +1,6 @@
+
+> quickbid@1.0.0 build
+> vite build # Vite production build - to dist/
+
+vite v5.4.18 building for production...
+✓ 0 modules transformed.
