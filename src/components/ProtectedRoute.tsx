@@ -5,20 +5,19 @@ import { useSession } from '../context/SessionContext';
 interface ProtectedRouteProps {
   children: React.ReactNode;
   adminRequired?: boolean;
-  superAdminRequired?: boolean;
-  allowedRoles?: string[];
+  allowedRoles?: ('admin' | 'seller' | 'buyer')[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
   adminRequired = false, 
-  superAdminRequired = false,
   allowedRoles
 }) => {
   const { user, loading } = useSession();
 
   // Handle loading state
   if (loading) {
+    console.log('🔐 AUTH: ProtectedRoute - loading state');
     return (
       <div className="flex justify-center items-center min-h-screen">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
@@ -26,90 +25,47 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
 
-  // Check for test tokens (E2E test scenario)
-  if (typeof window !== 'undefined') {
-    const testAuthToken = localStorage.getItem('sb-auth-token');
-    const testUserId = localStorage.getItem('sb-user-id');
-    if (testAuthToken && testUserId) {
-      console.log('ProtectedRoute: Found test tokens, checking user profile');
-      
-      // Check for user profile in localStorage (set by auth tests)
-      const userProfileStr = localStorage.getItem('user-profile');
-      let userProfile = null;
-      try {
-        userProfile = userProfileStr ? JSON.parse(userProfileStr) : null;
-      } catch (e) {
-        console.log('ProtectedRoute: Could not parse user profile');
-      }
-      
-      const effectiveRole = (userProfile as any)?.role || (userProfile as any)?.user_type || 'buyer';
-      console.log('ProtectedRoute: Test user role:', effectiveRole);
-      
-      // Apply same role logic as normal authentication
-      if (superAdminRequired && effectiveRole !== 'superadmin') {
-        return <Navigate to="/dashboard" replace />;
-      }
-      
-      if (adminRequired) {
-        if (!['admin', 'superadmin', 'staff'].includes(effectiveRole)) {
-          return <Navigate to="/dashboard" replace />;
-        }
-      }
-      
-      if (allowedRoles && !allowedRoles.includes(effectiveRole)) {
-        return <Navigate to="/dashboard" replace />;
-      }
-      
-      // Handle seller redirect
-      if (effectiveRole === 'seller') {
-        return <Navigate to="/seller/dashboard" replace />;
-      }
-      
-      return <>{children}</>;
-    }
-  }
-
-  const effectiveRole = user?.role || 'user';
-
-  // Check for demo session
+  // Check for demo session - SINGLE SOURCE OF TRUTH
   const demoSession = localStorage.getItem('demo-session');
   if (demoSession) {
-    if (allowedRoles && !allowedRoles.includes(effectiveRole || '')) {
+    const effectiveRole = user?.role || 'buyer';
+    console.log('🔐 AUTH: ProtectedRoute - demo session detected, role:', effectiveRole);
+    
+    if (adminRequired && effectiveRole !== 'admin') {
+      console.log('🔐 AUTH: ProtectedRoute - admin required but user is', effectiveRole, 'redirecting to /demo');
       return <Navigate to="/demo" replace />;
     }
-    if (superAdminRequired && effectiveRole !== 'superadmin') {
+    
+    if (allowedRoles && !allowedRoles.includes(effectiveRole)) {
+      console.log('🔐 AUTH: ProtectedRoute - role', effectiveRole, 'not in allowed roles', allowedRoles, 'redirecting to /demo');
       return <Navigate to="/demo" replace />;
     }
-    if (adminRequired && !['admin', 'superadmin', 'staff'].includes(effectiveRole || '')) {
-      return <Navigate to="/demo" replace />;
-    }
+    
+    console.log('🔐 AUTH: ProtectedRoute - demo session access granted for role:', effectiveRole);
     return <>{children}</>;
   }
 
-  // Check if the user exists
+  // Check if user exists
   if (!user) {
+    console.log('🔐 AUTH: ProtectedRoute - no user found, redirecting to /login');
     return <Navigate to="/login" replace />;
   }
 
+  const effectiveRole = user.role;
+  console.log('🔐 AUTH: ProtectedRoute - regular session, role:', effectiveRole);
+
   // Check role requirements for regular sessions
-  if (superAdminRequired) {
-    // Check if user has super admin role
-    if (effectiveRole !== 'superadmin') {
-      return <Navigate to="/dashboard" replace />;
-    }
-  }
-
-  if (adminRequired) {
-    // Check if user has admin, super admin, or staff role
-    if (!['admin', 'superadmin', 'staff'].includes(effectiveRole || '')) {
-      return <Navigate to="/dashboard" replace />;
-    }
-  }
-
-  if (allowedRoles && !allowedRoles.includes(effectiveRole || '')) {
+  if (adminRequired && effectiveRole !== 'admin') {
+    console.log('🔐 AUTH: ProtectedRoute - admin required but user is', effectiveRole, 'redirecting to /dashboard');
     return <Navigate to="/dashboard" replace />;
   }
 
+  if (allowedRoles && !allowedRoles.includes(effectiveRole)) {
+    console.log('🔐 AUTH: ProtectedRoute - role', effectiveRole, 'not in allowed roles', allowedRoles, 'redirecting to /dashboard');
+    return <Navigate to="/dashboard" replace />;
+  }
+
+  console.log('🔐 AUTH: ProtectedRoute - access granted for role:', effectiveRole);
   return <>{children}</>;
 };
 

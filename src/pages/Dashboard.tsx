@@ -106,6 +106,8 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     const getUserSession = async () => {
       try {
+        console.log('🔐 AUTH: Dashboard - checking user session');
+        
         const { data: { session }, error } = await supabase.auth.getSession();
         if (error) console.error('Dashboard: session error', error);
         
@@ -114,7 +116,7 @@ const Dashboard: React.FC = () => {
           console.log('Dashboard: userId set', session.user.id);
 
           try {
-            const { data: profile, error } = await supabase
+            const { data: profile } = await supabase
               .from('profiles')
               .select('id, name, email, role, user_type, is_verified')
               .eq('id', session.user.id)
@@ -123,9 +125,22 @@ const Dashboard: React.FC = () => {
             if (error) console.error('Dashboard: profile error', error);
             setUserProfile(profile);
 
+            // Validate role
+            const userRole = profile?.role || profile?.user_type || 'buyer';
+            const validRoles = ['admin', 'seller', 'buyer'];
+            
+            if (!validRoles.includes(userRole)) {
+              console.error('🔐 AUTH: Dashboard - Invalid role detected:', userRole);
+              // Don't redirect, let ProtectedRoute handle it
+              setLoading(false);
+              return;
+            }
+            
+            console.log('🔐 AUTH: Dashboard - User role validated:', userRole);
+            
             // Only redirect sellers to their specific dashboard, NOT buyers
-            if (profile?.role === 'seller' || profile?.user_type === 'seller') {
-              console.log('Dashboard: redirecting seller to /seller/dashboard');
+            if (userRole === 'seller') {
+              console.log('🔐 AUTH: Dashboard - Redirecting seller to /seller/dashboard');
               navigate('/seller/dashboard', { replace: true });
               return;
             }
@@ -137,50 +152,51 @@ const Dashboard: React.FC = () => {
             setLoading(false);
           }
         } else {
-          // No session found, set loading to false
+          // No session found, set loading to false and let ProtectedRoute handle redirect
+          console.log('🔐 AUTH: Dashboard - No session found, letting ProtectedRoute handle redirect');
           setLoading(false);
         }
       } catch (e) {
         console.error('Dashboard: session exception', e);
-        // Check if we have auth tokens in localStorage (test scenario)
+        // Check if we have demo session
         if (typeof window !== 'undefined') {
-          const hasAuthToken = localStorage.getItem('sb-auth-token');
-          const hasUserId = localStorage.getItem('sb-user-id');
-          if (hasAuthToken && hasUserId) {
-            console.log('Dashboard: Found auth tokens in localStorage, proceeding');
-            setUserId(hasUserId);
+          const demoSession = localStorage.getItem('demo-session');
+          if (demoSession) {
+            console.log('🔐 AUTH: Dashboard - Demo session found, proceeding');
+            const session = JSON.parse(demoSession);
+            setUserId(session.user.id);
             
-            // Check for user profile and handle seller redirect
-            const userProfileStr = localStorage.getItem('user-profile');
-            let userProfile = null;
-            try {
-              userProfile = userProfileStr ? JSON.parse(userProfileStr) : null;
-            } catch (e) {
-              console.log('Dashboard: Could not parse user profile');
+            // Validate demo role
+            const userRole = session.user.user_metadata.role;
+            const validRoles = ['admin', 'seller', 'buyer'];
+            
+            if (!validRoles.includes(userRole)) {
+              console.error('🔐 AUTH: Dashboard - Invalid demo role:', userRole);
+              setLoading(false);
+              return;
             }
             
-            const effectiveRole = userProfile?.role || userProfile?.user_type || 'buyer';
-            console.log('Dashboard: Test user role:', effectiveRole);
+            console.log('🔐 AUTH: Dashboard - Demo role validated:', userRole);
             
-            // Handle seller redirect for test scenario
-            if (effectiveRole === 'seller') {
-              console.log('Dashboard: Redirecting seller to /seller/dashboard');
+            // Handle seller redirect for demo scenario
+            if (userRole === 'seller') {
+              console.log('🔐 AUTH: Dashboard - Redirecting demo seller to /seller/dashboard');
               navigate('/seller/dashboard', { replace: true });
               return;
             }
             
             setLoading(false);
           } else {
-            console.log('Dashboard: No auth tokens found, redirecting to login');
-            navigate('/login');
+            console.log('🔐 AUTH: Dashboard - No demo session, letting ProtectedRoute handle redirect');
+            setLoading(false);
           }
         } else {
-          navigate('/login');
+          setLoading(false);
         }
       }
     };
     getUserSession();
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     let mounted = true;
@@ -260,7 +276,7 @@ const Dashboard: React.FC = () => {
           >
             <div className="absolute top-20 left-1/2 transform -translate-x-1/2 w-full max-w-2xl mx-4">
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8">
                   <Search className="h-6 w-6 text-indigo-600" />
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Search</h3>
                 </div>

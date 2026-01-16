@@ -304,7 +304,7 @@ const ProductCatalog = () => {
                 className="overflow-hidden"
               >
                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-lg">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
                     <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</label>
                       <select

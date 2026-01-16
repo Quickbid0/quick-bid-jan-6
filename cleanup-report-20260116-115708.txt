@@ -1,0 +1,393 @@
+QuickBid Code Cleanup Report - Fri Jan 16 11:57:08 IST 2026
+=========================================
+
+USED: src//App.tsx (4 imports)
+USED: src//context/SessionContext.tsx (74 imports)
+UNUSED: src//components/FeedbackPromptComponent.tsx
+UNUSED: src//components/LegalAcceptance.tsx
+USED: src//components/ui/PageContainer.tsx (2 imports)
+USED: src//components/ui/PermissionDenied.tsx (2 imports)
+USED: src//components/ui/Tooltip.tsx (8 imports)
+UNUSED: src//components/ui/Sparkline.tsx
+USED: src//components/ui/SkeletonLoaders.tsx (6 imports)
+USED: src//components/ui/AuctionCard.tsx (10 imports)
+USED: src//components/Navbar.tsx (2 imports)
+USED: src//components/BidModal.tsx (6 imports)
+USED: src//components/LiveStreamPlayer.tsx (2 imports)
+USED: src//components/RoleGuard.tsx (2 imports)
+USED: src//components/BetaVersionBanner.tsx (8 imports)
+USED: src//components/SalesProtectedRoute.tsx (2 imports)
+USED: src//components/ProtectedRoute.tsx (4 imports)
+USED: src//components/sales/Leaderboard.tsx (2 imports)
+USED: src//components/sales/TargetsOKR.tsx (2 imports)
+USED: src//components/sales/IncentiveCalculator.tsx (2 imports)
+USED: src//components/UXGuard.tsx (8 imports)
+USED: src//components/SmartImage.tsx (10 imports)
+UNUSED: src//components/StrictUXGuard.tsx
+USED: src//components/AIRecommendationCard.tsx (2 imports)
+USED: src//components/layout/Shell.tsx (2 imports)
+USED: src//components/layout/TopBar.tsx (4 imports)
+USED: src//components/layout/GlobalLayout.tsx (2 imports)
+USED: src//components/layout/AdminSidebar.tsx (2 imports)
+UNUSED: src//components/layout/AppShell.tsx
+USED: src//components/layout/AdminLayout.tsx (2 imports)
+USED: src//components/layout/PageFrame.tsx (16 imports)
+UNUSED: src//components/layout/DashboardLayout.tsx
+USED: src//components/layout/Sidebar.tsx (6 imports)
+USED: src//components/NotificationBell.tsx (2 imports)
+UNUSED: src//components/ShareButtons.tsx
+UNUSED: src//components/StatCard.tsx
+USED: src//components/admin/LocationFilter.tsx (18 imports)
+UNUSED: src//components/CaptureStep.tsx
+USED: src//components/UXStates-fixed.tsx (2 imports)
+UNUSED: src//components/AddProductWizard.tsx
+UNUSED: src//components/BetaRequestForm.tsx
+UNUSED: src//components/BetaAccessGuard.tsx
+USED: src//components/Footer.tsx (2 imports)
+USED: src//components/LiveChat.tsx (2 imports)
+USED: src//components/CookieConsent.tsx (2 imports)
+UNUSED: src//components/Loader.jsx
+USED: src//components/EnvironmentBadge.tsx (14 imports)
+USED: src//components/ai/AIFraudDetection.tsx (3 imports)
+UNUSED: src//components/ai/AIEmailNotifications.tsx
+USED: src//components/ai/AIRecommendations.tsx (9 imports)
+UNUSED: src//components/ai/AIMarketInsights.tsx
+UNUSED: src//components/ai/AIRecommendationWidgets.tsx
+UNUSED: src//components/ai/AIDynamicPricing.tsx
+UNUSED: src//components/ai/AISentimentAnalysis.tsx
+UNUSED: src//components/ai/AIUserBehaviorAnalytics.tsx
+USED: src//components/ai/AINaturalSearch.tsx (2 imports)
+UNUSED: src//components/ai/AIImageRecognition.tsx
+USED: src//components/ai/AIPricePrediction.tsx (2 imports)
+USED: src//components/ai/AIBiddingAssistant.tsx (2 imports)
+USED: src//components/ai/AIChatbot.tsx (2 imports)
+UNUSED: src//components/ai/AIABTesting.tsx
+UNUSED: src//components/ai/AIMultilingualChatbot.tsx
+UNUSED: src//components/ai/AIAnomalyDetection.tsx
+USED: src//components/live/LiveWinnerReveal.tsx (4 imports)
+USED: src//components/live/Countdown.tsx (8 imports)
+UNUSED: src//components/InputField.jsx
+USED: src//components/product-details/ArtDetails.tsx (2 imports)
+USED: src//components/product-details/VehicleDetails.tsx (2 imports)
+USED: src//components/product-details/SculptureDetails.tsx (2 imports)
+USED: src//components/product-details/WatchDetails.tsx (2 imports)
+USED: src//components/product-details/MachineDetails.tsx (2 imports)
+USED: src//components/product-details/GenericDetails.tsx (2 imports)
+USED: src//components/RealTimeBidding.tsx (4 imports)
+UNUSED: src//components/UXStates.tsx
+USED: src//components/SmartImage-fixed.tsx (9 imports)
+USED: src//components/UXGuard-fixed.tsx (9 imports)
+USED: src//components/StatusStrip.tsx (3 imports)
+USED: src//components/AuctionCard.tsx (10 imports)
+USED: src//components/PerformanceMonitor.tsx (2 imports)
+USED: src//components/RealProductCard.tsx (2 imports)
+USED: src//components/SandboxWalletBanner.tsx (8 imports)
+USED: src//components/auctions/LiveScoreboard.tsx (2 imports)
+USED: src//components/auctions/SellerInfoCard.tsx (4 imports)
+USED: src//components/auctions/AuctionTypeBadge.tsx (12 imports)
+USED: src//components/auctions/SellerTrustSummary.tsx (10 imports)
+USED: src//components/auctions/BidHistoryList.tsx (2 imports)
+USED: src//components/BetaUserIndicator.tsx (12 imports)
+UNUSED: src//components/CategorySpecificFields.jsx
+USED: src//components/GrowthLeadForm.tsx (6 imports)
+UNUSED: src//components/ResponsiveComponents.tsx
+USED: src//components/HealthCheck.tsx (2 imports)
+UNUSED: src//components/SearchBar.jsx
+USED: src//components/error/RouteErrorBoundary.tsx (2 imports)
+USED: src//components/buyer/NextStepLabel.tsx (4 imports)
+USED: src//components/Skeleton.tsx (11 imports)
+USED: src//components/ErrorBoundary.tsx (4 imports)
+UNUSED: src//modules/admin/VehicleAdminPanel.tsx
+UNUSED: src//modules/admin/BidApprovalPanel.tsx
+UNUSED: src//modules/admin/SuperAdminAds.tsx
+UNUSED: src//modules/live/LiveAuctionRoom.tsx
+USED: src//modules/live/BidOverlayManager.tsx (2 imports)
+USED: src//modules/live/DepositBanner.tsx (2 imports)
+USED: src//modules/live/DepositFlowModal.tsx (2 imports)
+USED: src//pages/SellerAnalytics.tsx (1 imports)
+USED: src//pages/SalesLogin.tsx (1 imports)
+USED: src//pages/InvestConfirm.tsx (1 imports)
+USED: src//pages/InvestLanding.tsx (1 imports)
+USED: src//pages/ShareVerificationBadge.tsx (1 imports)
+USED: src//pages/SupportTickets.tsx (1 imports)
+UNUSED: src//pages/BetaUserManagement.tsx
+USED: src//pages/Shipping.tsx (1 imports)
+USED: src//pages/InspectionReport.tsx (1 imports)
+USED: src//pages/Terms.tsx (3 imports)
+UNUSED: src//pages/PostLaunchAnalytics.tsx
+USED: src//pages/VerifySeller.tsx (1 imports)
+USED: src//pages/DeliveryPreferences.tsx (1 imports)
+UNUSED: src//pages/EnterpriseDashboard.tsx
+USED: src//pages/SocialLinks.tsx (1 imports)
+USED: src//pages/AIRecommendations.tsx (7 imports)
+USED: src//pages/SellerCenter.tsx (1 imports)
+USED: src//pages/UserProfile.tsx (1 imports)
+USED: src//pages/TokenCheckout.tsx (1 imports)
+UNUSED: src//pages/ModernProductDetail-fixed.tsx
+USED: src//pages/SellerMembership.tsx (1 imports)
+USED: src//pages/Login.tsx (3 imports)
+USED: src//pages/NotificationSettings.tsx (1 imports)
+USED: src//pages/AIDashboard.tsx (1 imports)
+USED: src//pages/CampaignsPage.tsx (1 imports)
+USED: src//pages/Dashboard.tsx (12 imports)
+USED: src//pages/WinInvoice.tsx (1 imports)
+UNUSED: src//pages/RealProductsDashboard.tsx
+UNUSED: src//pages/ModernProductCatalog-fixed.tsx
+USED: src//pages/Verification.tsx (10 imports)
+USED: src//pages/Partnerships.tsx (1 imports)
+USED: src//pages/CampaignLaunchPage.tsx (1 imports)
+USED: src//pages/BuyerDashboard.tsx (1 imports)
+USED: src//pages/TrustSafety.tsx (1 imports)
+USED: src//pages/AuctionCalendar.tsx (1 imports)
+USED: src//pages/SupportSales.tsx (1 imports)
+USED: src//pages/SupportTicketDetail.tsx (1 imports)
+USED: src//pages/inspector/InspectionsList.tsx (1 imports)
+USED: src//pages/inspector/InspectionReview.tsx (1 imports)
+USED: src//pages/ProfilePage.tsx (1 imports)
+USED: src//pages/ReportsAnalytics.tsx (1 imports)
+USED: src//pages/WinnerConfirmation.tsx (1 imports)
+USED: src//pages/MyWonAuctions.tsx (1 imports)
+USED: src//pages/TimedAuctionPage.tsx (1 imports)
+USED: src//pages/WatchlistPage.tsx (1 imports)
+USED: src//pages/MyIssueDetail.tsx (1 imports)
+USED: src//pages/VerifyEmployee.tsx (1 imports)
+UNUSED: src//pages/ModernBuyerDashboard.tsx
+USED: src//pages/SalesDashboardPage.tsx (1 imports)
+USED: src//pages/PhoneVerification.tsx (1 imports)
+USED: src//pages/DemoLogin.tsx (1 imports)
+USED: src//pages/SuperAdmin.tsx (1 imports)
+UNUSED: src//pages/AdminControls.tsx
+USED: src//pages/CompanyVerificationPending.tsx (1 imports)
+USED: src//pages/admin/AdminDepartments.tsx (1 imports)
+UNUSED: src//pages/admin/AdminOverlayConfigurator.tsx
+USED: src//pages/admin/CatalogSettings.tsx (1 imports)
+UNUSED: src//pages/admin/AdminAdBilling.tsx
+USED: src//pages/admin/AIReports.tsx (2 imports)
+USED: src//pages/admin/AdminWinPayments.tsx (1 imports)
+USED: src//pages/admin/AdminProductsList.tsx (1 imports)
+USED: src//pages/admin/AdminSupportChat.tsx (1 imports)
+USED: src//pages/admin/AdminBranches.tsx (1 imports)
+UNUSED: src//pages/admin/CommissionManager.tsx
+USED: src//pages/admin/AdminMarketing.tsx (1 imports)
+USED: src//pages/admin/LiveWebcastSetup.tsx (1 imports)
+USED: src//pages/admin/SystemSettings.tsx (1 imports)
+USED: src//pages/admin/AdminFraudReview.tsx (1 imports)
+USED: src//pages/admin/AdminKYCReview.tsx (1 imports)
+USED: src//pages/admin/AdminDeliveries.tsx (1 imports)
+USED: src//pages/admin/AdminWinners.tsx (1 imports)
+USED: src//pages/admin/UserManagement.tsx (1 imports)
+UNUSED: src//pages/admin/AdminLiveSetup.jsx
+USED: src//pages/admin/AdminAlertsTest.tsx (1 imports)
+USED: src//pages/admin/AdminTasks.tsx (1 imports)
+USED: src//pages/admin/LiveStreamSetup.tsx (1 imports)
+USED: src//pages/admin/AdminEventDetail.tsx (1 imports)
+USED: src//pages/admin/AdminProductDetail.tsx (1 imports)
+USED: src//pages/admin/TicketDesk.tsx (1 imports)
+UNUSED: src//pages/admin/AdminVerificationReview.tsx
+UNUSED: src//pages/admin/AdminAdAnalytics.tsx
+UNUSED: src//pages/admin/AdminAdSlots.tsx
+UNUSED: src//pages/admin/AdminTenderReview.jsx
+UNUSED: src//pages/admin/AdminSponsors.tsx
+USED: src//pages/admin/AdminSellerEarnings.tsx (1 imports)
+USED: src//pages/admin/AdminInvestments.tsx (1 imports)
+USED: src//pages/admin/ContentModeration.tsx (1 imports)
+USED: src//pages/admin/AdminSalesLeads.tsx (1 imports)
+USED: src//pages/admin/CategoryManagement.tsx (1 imports)
+USED: src//pages/admin/AdminFinanceLeads.tsx (1 imports)
+USED: src//pages/admin/AdminRolesPermissions.tsx (1 imports)
+USED: src//pages/admin/AdminDepositPolicies.tsx (1 imports)
+USED: src//pages/admin/InvestorAdmin.tsx (1 imports)
+USED: src//pages/admin/PermissionsMatrix.tsx (1 imports)
+UNUSED: src//pages/admin/AdminBulkVerification.tsx
+USED: src//pages/admin/ProductVerification.tsx (1 imports)
+USED: src//pages/admin/AdminLocations.tsx (1 imports)
+USED: src//pages/admin/AdminPayouts.tsx (1 imports)
+USED: src//pages/admin/AdminDeliverySlip.tsx (1 imports)
+USED: src//pages/admin/AdminStaff.tsx (1 imports)
+USED: src//pages/admin/AnalyticsDashboard.tsx (1 imports)
+USED: src//pages/admin/AdminYardTokens.tsx (1 imports)
+USED: src//pages/admin/AdminEventCreate.tsx (1 imports)
+USED: src//pages/admin/AdminEventsList.tsx (1 imports)
+UNUSED: src//pages/admin/AdminReferralBonuses.tsx
+USED: src//pages/admin/AdminFees.tsx (1 imports)
+USED: src//pages/admin/AdminSellerPayouts.tsx (1 imports)
+UNUSED: src//pages/admin/AdminDashboard.tsx
+USED: src//pages/admin/ReferralBonuses.tsx (1 imports)
+USED: src//pages/admin/AdminEmployees.tsx (1 imports)
+USED: src//pages/admin/AdminCampaigns.tsx (1 imports)
+USED: src//pages/admin/AdminBanners.tsx (1 imports)
+USED: src//pages/admin/AdminSalesDashboard.tsx (1 imports)
+UNUSED: src//pages/RealProductDetail.tsx
+USED: src//pages/Register.tsx (1 imports)
+USED: src//pages/AuctionPreview.tsx (1 imports)
+USED: src//pages/CompanyDashboard.tsx (1 imports)
+USED: src//pages/MarketingPage.tsx (1 imports)
+USED: src//pages/LandingPage.tsx (1 imports)
+USED: src//pages/PaymentFailed.tsx (1 imports)
+USED: src//pages/EventsPage.tsx (1 imports)
+USED: src//pages/OrderTracking.tsx (1 imports)
+USED: src//pages/CompanyRegistration.tsx (1 imports)
+USED: src//pages/InvestorMarketplace.tsx (1 imports)
+USED: src//pages/GrievanceOfficer.tsx (2 imports)
+USED: src//pages/APIDocumentation.tsx (1 imports)
+USED: src//pages/MobileApp.tsx (1 imports)
+USED: src//pages/SecurityCenter.tsx (1 imports)
+USED: src//pages/CreativeVerification.tsx (1 imports)
+USED: src//pages/LiveChat.tsx (2 imports)
+UNUSED: src//pages/ModernProductCatalog.tsx
+USED: src//pages/SellerProfile.tsx (1 imports)
+USED: src//pages/MarketAnalytics.tsx (1 imports)
+USED: src//pages/InvestorPitch.tsx (1 imports)
+USED: src//pages/Notifications.tsx (1 imports)
+USED: src//pages/SalesPage.tsx (1 imports)
+USED: src//pages/MyInspections.tsx (1 imports)
+USED: src//pages/ContactUs.tsx (1 imports)
+USED: src//pages/InvestorRelations.tsx (1 imports)
+USED: src//pages/MyWins.tsx (1 imports)
+USED: src//pages/InvestorDashboard.tsx (1 imports)
+USED: src//pages/SeizedVehicles.tsx (1 imports)
+USED: src//pages/Refunds.tsx (2 imports)
+USED: src//pages/CampaignCreatePage.tsx (1 imports)
+USED: src//pages/SellerDashboard.tsx (1 imports)
+UNUSED: src//pages/sponsor/SponsorLogin.tsx
+UNUSED: src//pages/sponsor/SponsorDashboard.tsx
+USED: src//pages/Privacy.tsx (3 imports)
+UNUSED: src//pages/ModernBuyerDashboard-BidCraft-Fixed.tsx
+USED: src//pages/PaymentGateway.tsx (1 imports)
+USED: src//pages/Help.tsx (1 imports)
+USED: src//pages/AdvancedSearch.tsx (1 imports)
+USED: src//pages/TenderAuctionPage.tsx (1 imports)
+USED: src//pages/ProductDetail.tsx (2 imports)
+USED: src//pages/LiveAuctionPage.tsx (2 imports)
+USED: src//pages/BiddingHistory.tsx (1 imports)
+USED: src//pages/finance/InsuranceClaimPage.tsx (1 imports)
+USED: src//pages/finance/LoanApplyPage.tsx (1 imports)
+USED: src//pages/finance/ApplicationStatusPage.tsx (1 imports)
+USED: src//pages/finance/InsuranceStatusPage.tsx (1 imports)
+USED: src//pages/finance/InsuranceDashboard.tsx (1 imports)
+USED: src//pages/finance/InsuranceApplyPage.tsx (1 imports)
+USED: src//pages/ComplianceTracking.tsx (1 imports)
+USED: src//pages/AddProduct.tsx (1 imports)
+USED: src//pages/PaymentSuccess.tsx (1 imports)
+USED: src//pages/CampaignLanding.tsx (1 imports)
+UNUSED: src//pages/Error500.tsx
+USED: src//pages/WalletPage.tsx (1 imports)
+UNUSED: src//pages/AdminFeedbackDashboard.tsx
+USED: src//pages/LiveStreamControl.tsx (1 imports)
+USED: src//pages/legal/AIFraudDetectionPolicy.tsx (1 imports)
+USED: src//pages/legal/AuctionParticipationRulesBidConductAntiManipulationPolicy.tsx (1 imports)
+USED: src//pages/legal/IPReputationNetworkSecurityPolicy.tsx (1 imports)
+USED: src//pages/legal/TransportYardSafetyDeliveryHandoverCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/DataRetentionArchivalLifecycleManagementMigrationOffboardingPolicy.tsx (1 imports)
+USED: src//pages/legal/SellerOnboardingProductApprovalVerificationCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/EmergencyResponseSafetyIncidentsLawEnforcementCrisisManagementPolicy.tsx (1 imports)
+USED: src//pages/legal/IntellectualPropertyCopyrightTrademarkBrandProtectionPolicy.tsx (1 imports)
+USED: src//pages/legal/AuctionRulesBiddingPolicy.tsx (1 imports)
+USED: src//pages/legal/AIExplainabilityPolicy.tsx (1 imports)
+USED: src//pages/legal/VendorBankPartnerAgreement.tsx (1 imports)
+USED: src//pages/legal/APIUsageDeveloperAccessIntegrationSecurityRateLimitingCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/InvestorPolicy.tsx (1 imports)
+USED: src//pages/legal/CrossBorderTradeImportExportCustomsComplianceInternationalSellerBuyerPolicy.tsx (1 imports)
+USED: src//pages/legal/RefundCancellationDisputePolicy.tsx (1 imports)
+USED: src//pages/legal/AIModelOwnershipPolicy.tsx (1 imports)
+USED: src//pages/legal/PrivacyPolicy.tsx (1 imports)
+USED: src//pages/legal/WalletDepositInvestmentPolicy.tsx (1 imports)
+USED: src//pages/legal/SARFAESICompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/ManualsSOPs.tsx (1 imports)
+USED: src//pages/legal/UserGrievanceRedressalComplaintEscalationNodalOfficerCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/BehaviouralMonitoringPolicy.tsx (1 imports)
+USED: src//pages/legal/AntiReverseEngineeringTamperingApplicationSecurityProtectionPolicy.tsx (1 imports)
+USED: src//pages/legal/MarketingAdvertisingPromotionEthicsBrandCommunicationPolicy.tsx (1 imports)
+USED: src//pages/legal/VendorServiceLevelAgreement.tsx (1 imports)
+USED: src//pages/legal/CommissionRateSheet.tsx (1 imports)
+USED: src//pages/legal/TransportPartnerAgreement.tsx (1 imports)
+USED: src//pages/legal/DataAccuracyIntegrityAssuranceErrorPreventionCorrectionPolicy.tsx (1 imports)
+USED: src//pages/legal/AMLPolicy.tsx (1 imports)
+USED: src//pages/legal/PlatformUsageAcceptancePolicy.tsx (1 imports)
+USED: src//pages/legal/BuyerPolicy.tsx (2 imports)
+USED: src//pages/legal/BuyerOnboardingIdentityVerificationWalletSafetyResponsibleParticipationPolicy.tsx (1 imports)
+USED: src//pages/legal/AIRiskScorePolicy.tsx (1 imports)
+USED: src//pages/legal/IntellectualPropertyPolicy.tsx (1 imports)
+USED: src//pages/legal/DataProtectionPrivacyGovernancePersonalDataHandlingDPDPCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/VendorPartnerServiceProviderOnboardingCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/PlatformModerationContentReviewListingApprovalTakedownPolicy.tsx (1 imports)
+USED: src//pages/legal/BusinessContinuityDisasterRecoverySystemAvailabilityOutageCommunicationPolicy.tsx (1 imports)
+USED: src//pages/legal/SecurityAuthenticationPasswordProtectionAccessControlEncryptionPolicy.tsx (1 imports)
+USED: src//pages/legal/EContractDigitalAgreementPolicy.tsx (1 imports)
+USED: src//pages/legal/AutomatedFraudEscalationPolicy.tsx (1 imports)
+USED: src//pages/legal/BankNBFCOnboardingSOP.tsx (1 imports)
+USED: src//pages/legal/AIModelTransparencyAuditPolicy.tsx (1 imports)
+USED: src//pages/legal/AntiFraudShillBiddingPolicy.tsx (1 imports)
+USED: src//pages/legal/BrandingPolicy.tsx (1 imports)
+USED: src//pages/legal/SellerPolicy.tsx (1 imports)
+USED: src//pages/legal/HighRiskItemsProhibitedAssetsRestrictedListingsPolicy.tsx (1 imports)
+USED: src//pages/legal/LocationGPSVerificationPolicy.tsx (1 imports)
+USED: src//pages/legal/LegalNoticeTermsUpdateUserNotificationVersioningPolicy.tsx (1 imports)
+USED: src//pages/legal/EthicalConductIntegrityAntiCorruptionProfessionalBehaviourCodeOfConductPolicy.tsx (1 imports)
+USED: src//pages/legal/DeviceFingerprintingPolicy.tsx (1 imports)
+USED: src//pages/legal/AuditLoggingMonitoringComplianceReviewRegulatoryReportingPolicy.tsx (1 imports)
+USED: src//pages/legal/InternalAccessControlRBACAdminAccountabilityAuditPolicy.tsx (1 imports)
+USED: src//pages/legal/AIUsageMonitoringFairnessSafetyResponsibleAutomationPolicy.tsx (1 imports)
+USED: src//pages/legal/AuditLogsMonitoringEvidencePreservationAdminAccountabilityPolicy.tsx (1 imports)
+USED: src//pages/legal/MultiAccountDetectionPolicy.tsx (1 imports)
+USED: src//pages/legal/DisputeResolutionComplaintHandlingArbitrationFairPracticePolicy.tsx (1 imports)
+USED: src//pages/legal/TermsAndConditions.tsx (1 imports)
+USED: src//pages/legal/IncidentResponseBreachHandlingCybersecurityCrisisManagementPolicy.tsx (1 imports)
+USED: src//pages/legal/AMLFinancialCrimesFraudPreventionCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/BankNBFCMOU.tsx (1 imports)
+USED: src//pages/legal/QuickMelaLegalComplianceManual.tsx (1 imports)
+USED: src//pages/legal/BuyerDepositEscrowHandlingRefundsPaymentCompliancePolicy.tsx (1 imports)
+USED: src//pages/legal/VendorRegistrationApprovalPolicy.tsx (1 imports)
+USED: src//pages/legal/RecoveryAgencyAgreement.tsx (1 imports)
+USED: src//pages/legal/WhiteLabelPartnerAgreement.tsx (1 imports)
+USED: src//pages/legal/AuctionIntegrityMonitoringPolicy.tsx (1 imports)
+USED: src//pages/legal/VehicleDocumentationConditionDisclosureAuthenticityVerificationPolicy.tsx (1 imports)
+USED: src//pages/legal/LegalIndex.tsx (1 imports)
+USED: src//pages/PayForWin.tsx (1 imports)
+USED: src//pages/LiveBidding.tsx (1 imports)
+USED: src//pages/BulkUpload.tsx (1 imports)
+USED: src//pages/FAQ.tsx (1 imports)
+USED: src//pages/QRScanner.tsx (1 imports)
+USED: src//pages/BusinessSolutions.tsx (1 imports)
+USED: src//pages/ProductCatalog.tsx (1 imports)
+USED: src//pages/DepositCheckout.tsx (1 imports)
+USED: src//pages/MyOrders.tsx (1 imports)
+USED: src//pages/NotFound.tsx (2 imports)
+USED: src//pages/Products.tsx (2 imports)
+USED: src//pages/AIModelTraining.tsx (1 imports)
+USED: src//pages/VisitBooking.tsx (1 imports)
+USED: src//pages/VehicleDetail.tsx (2 imports)
+USED: src//pages/About.tsx (1 imports)
+USED: src//pages/MonitoringDashboard.tsx (1 imports)
+USED: src//pages/InvestApply.tsx (1 imports)
+UNUSED: src//pages/ModernProductDetail.tsx
+UNUSED: src//pages/ModernDashboard.tsx
+USED: src//pages/Careers.tsx (1 imports)
+USED: src//design-system/components/Card.tsx (29 imports)
+USED: src//design-system/components/Badge.tsx (31 imports)
+USED: src//design-system/components/Button.tsx (15 imports)
+UNUSED: src//design-system/components/Input.tsx
+USED: src//design-system/components/Button-fixed.tsx (3 imports)
+
+COMPONENT ANALYSIS SUMMARY:
+=========================
+Used components: 0
+Unused components: 0
+
+DEAD CODE ANALYSIS:
+===================
+Files with TODO/FIXME:        5
+Files with imports:      407
+Files with console.log:       12
+Files with debugger:        0
+Large file: total (1191 lines)
+
+CLEANUP RECOMMENDATIONS:
+========================
+1. Remove unused components and imports
+2. Clean up console.log statements (keep only for debugging)
+3. Remove debugger statements
+4. Address TODO/FIXME comments
+5. Consider splitting large files (>500 lines)
+6. Remove duplicate or redundant files
+7. Clean up unused dependencies in package.json

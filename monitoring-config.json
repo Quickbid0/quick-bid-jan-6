@@ -1,0 +1,23 @@
+{
+  "performance": {
+    "enabled": true,
+    "metrics": [
+      "page_load_time",
+      "first_contentful_paint",
+      "largest_contentful_paint",
+      "cumulative_layout_shift",
+      "first_input_delay"
+    ],
+    "thresholds": {
+      "page_load_time": 3000,
+      "fcp": 1800,
+      "lcp": 2500,
+      "cls": 0.1,
+      "fid": 100
+    },
+    "alerts": {
+      "enabled": true,
+      "webhook_url": ""
+    }
+  }
+}

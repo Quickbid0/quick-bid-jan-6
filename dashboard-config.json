@@ -1,0 +1,43 @@
+{
+  "dashboard": {
+    "enabled": true,
+    "refresh_interval": 30000,
+    "widgets": [
+      {
+        "type": "system_metrics",
+        "title": "System Metrics",
+        "metrics": [
+          "cpu_usage",
+          "memory_usage",
+          "disk_usage",
+          "network_io"
+        ]
+      },
+      {
+        "type": "application_metrics",
+        "title": "Application Metrics",
+        "metrics": [
+          "response_time",
+          "error_rate",
+          "throughput",
+          "active_users"
+        ]
+      },
+      {
+        "type": "business_metrics",
+        "title": "Business Metrics",
+        "metrics": [
+          "user_registrations",
+          "auction_count",
+          "revenue",
+          "conversion_rate"
+        ]
+      },
+      {
+        "type": "alerts",
+        "title": "Active Alerts",
+        "filter": "active=true"
+      }
+    ]
+  }
+}

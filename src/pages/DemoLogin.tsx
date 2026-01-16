@@ -21,7 +21,7 @@ const DemoLogin = () => {
         user_type: 'buyer',
         icon: <User className="h-8 w-8" />,
         color: 'bg-blue-500',
-        description: 'Experience the platform as a buyer - browse auctions, place bids, manage watchlist',
+        description: 'Experience platform as a buyer - browse auctions, place bids, manage watchlist',
         features: ['Browse live auctions', 'Place bids in real-time', 'Manage watchlist', 'Wallet management', 'Order tracking', 'AI recommendations'],
         stats: { auctions: '500+', savings: '₹2.5L', rating: '4.8/5' }
       },
@@ -34,35 +34,9 @@ const DemoLogin = () => {
         user_type: 'seller',
         icon: <Store className="h-8 w-8" />,
         color: 'bg-green-500',
-        description: 'Experience the platform as a seller - list products, manage auctions, view analytics',
-        features: ['List products', 'Manage auctions', 'Sales analytics', 'Revenue tracking', 'Customer management', 'Creative verification'],
+        description: 'Experience platform as a seller - list products, manage auctions, view analytics',
+        features: ['List products', 'Manage auctions', 'Sales analytics', 'Revenue tracking', 'Customer management', 'Product verification'],
         stats: { products: '150+', revenue: '₹12L', rating: '4.9/5' }
-      },
-      {
-        id: 'demo-company',
-        name: 'Seized Vehicles (Bank/NBFC pool)',
-        email: 'company@demo.com',
-        password: 'demo123',
-        role: 'company',
-        user_type: 'company',
-        icon: <Building className="h-8 w-8" />,
-        color: 'bg-orange-500',
-        description: 'Seized vehicle pool from partner banks/NBFCs (HDFC, ICICI, etc.) with bulk uploads and corporate features',
-        features: ['Bulk seized vehicle uploads', 'GST integration', 'Multi-bank seized vehicle auctions', 'Corporate dashboard', 'B2B transactions', 'Compliance tracking'],
-        stats: { vehicles: '1,200+', volume: '₹50Cr', clients: '25+' }
-      },
-      {
-        id: 'demo-artist',
-        name: 'Creative Artist',
-        email: 'artist@demo.com',
-        password: 'demo123',
-        role: 'seller',
-        user_type: 'seller',
-        icon: <Palette className="h-8 w-8" />,
-        color: 'bg-purple-500',
-        description: 'Creative professional - paintings, sculptures, handmade crafts with video verification',
-        features: ['Upload creative works', 'Video proof verification', 'AI authenticity check', 'Artist portfolio', 'Custom orders', 'Creative marketplace'],
-        stats: { artworks: '85+', verified: '100%', collectors: '200+' }
       },
       {
         id: 'demo-admin',
@@ -74,60 +48,8 @@ const DemoLogin = () => {
         icon: <Shield className="h-8 w-8" />,
         color: 'bg-indigo-500',
         description: 'Access admin features - user management, product verification, system settings',
-        features: ['User management', 'Product verification', 'Live stream setup', 'System monitoring', 'Content moderation', 'AI model training'],
-        stats: { users: '10K+', products: '5K+', streams: '50+' }
-      },
-      {
-        id: 'demo-superadmin',
-        name: 'Demo Super Admin',
-        email: 'superadmin@demo.com',
-        password: 'demo123',
-        role: 'superadmin',
-        user_type: 'superadmin',
-        icon: <Crown className="h-8 w-8" />,
-        color: 'bg-yellow-500',
-        description: 'Full system access - complete platform control and management',
-        features: ['Full system control', 'Role management', 'Database access', 'System settings', 'Platform analytics', 'AI configuration'],
-        stats: { revenue: '₹100Cr+', growth: '245%', markets: '5+' }
-      },
-      {
-        id: 'demo-marketing',
-        name: 'Marketing Services',
-        email: 'marketing@demo.com',
-        password: 'demo123',
-        role: 'seller',
-        user_type: 'seller',
-        icon: <Palette className="h-8 w-8" />,
-        color: 'bg-fuchsia-500',
-        description: 'Run premium brand campaigns with coordinated hero slots and spotlight placements',
-        features: ['Hero banner management', 'Campaign analytics', 'Sponsored carousel placements', 'Email nurture builder'],
-        stats: { impressions: '1M+', ctr: '7.2%', lift: '3x' }
-      },
-      {
-        id: 'demo-sales',
-        name: 'Sales Support',
-        email: 'sales@demo.com',
-        password: 'demo123',
-        role: 'sales',
-        user_type: 'sales',
-        icon: <Building className="h-8 w-8" />,
-        color: 'bg-emerald-500',
-        description: 'Experience high-touch sales coordination and enterprise deal flows',
-        features: ['Deal desk', 'Escrow coordination', 'Bulk purchase approvals', 'Partner financing'],
-        stats: { deals: '280+', revenue: '₹28Cr', nps: '89%' }
-      },
-      {
-        id: 'demo-campaigns',
-        name: 'Launch Campaigns',
-        email: 'campaigns@demo.com',
-        password: 'demo123',
-        role: 'company',
-        user_type: 'company',
-        icon: <Zap className="h-8 w-8" />,
-        color: 'bg-red-500',
-        description: 'Deploy timed launches, influencer drops, and seasonal blitzes with guided flow',
-        features: ['Timed auction planning', 'Influencer integrations', 'Launch checklists', 'Performance playbooks'],
-        stats: { launches: '45+', roi: '4.6x', partners: '12+' }
+        features: ['User management', 'Product verification', 'System monitoring', 'Content moderation', 'Analytics dashboard', 'Platform settings'],
+        stats: { users: '10K+', products: '5K+', approval_rate: '98%' }
       }
     ],
     []
@@ -139,7 +61,9 @@ const DemoLogin = () => {
   const handleDemoLogin = useCallback(async (user, redirectPath?: string) => {
     setLoading(true);
     try {
-      // Create demo session
+      console.log('🔐 AUTH: Demo login initiated for', user.role, user.email);
+      
+      // Create demo session - SINGLE SOURCE OF TRUTH
       const demoSession = {
         mode: 'demo',
         user: {
@@ -154,27 +78,29 @@ const DemoLogin = () => {
         }
       };
 
+      // Store ONLY demo-session - remove all other storage methods
       localStorage.setItem('demo-session', JSON.stringify(demoSession));
-      localStorage.setItem('demo-user-role', user.role);
-      localStorage.setItem('demo-user-type', user.user_type);
-      localStorage.setItem('demo-user-name', user.name);
+      console.log('🔐 AUTH: Demo session stored in localStorage');
 
+      // Dispatch event for SessionContext
       window.dispatchEvent(new CustomEvent('demo-login', { detail: demoSession }));
+      console.log('🔐 AUTH: Demo login event dispatched');
+
       toast.success(`Welcome ${user.name}! Exploring ${user.user_type} features.`);
 
-      // Navigate based on role
-      const defaultDestination = user.role === 'superadmin'
-        ? '/super-admin'
-        : user.role === 'admin'
-          ? '/admin'
-          : user.user_type === 'company'
-            ? '/company/dashboard'
-            : user.user_type === 'seller'
-              ? '/seller/dashboard'
-              : '/buyer/dashboard';
-      navigate(redirectPath || defaultDestination);
+      // Navigate based on role - ONLY 3 VALID ROLES
+      const defaultDestination = user.role === 'admin'
+        ? '/admin/dashboard'
+        : user.role === 'seller'
+          ? '/seller/dashboard'
+          : '/buyer/dashboard'; // buyer
+      
+      const finalDestination = redirectPath || defaultDestination;
+      console.log('🔐 AUTH: Redirecting to', finalDestination, 'for role', user.role);
+      
+      navigate(finalDestination);
     } catch (error) {
-      console.error('Demo login error:', error);
+      console.error('🔐 AUTH: Demo login error:', error);
       toast.error('Demo login failed');
     } finally {
       setLoading(false);

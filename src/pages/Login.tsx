@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { useNavigate } from 'react-router-dom';
-import { LogIn, Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { LogIn, Mail, Lock, Eye, EyeOff, User } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { useSession } from '../context/SessionContext';
 import { Card } from '@/components/ui/card';

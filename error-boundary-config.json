@@ -1,0 +1,21 @@
+{
+  "error_boundaries": {
+    "enabled": true,
+    "reporting": {
+      "service": "sentry",
+      "dsn": "",
+      "environment": "production",
+      "release": "1.0.0"
+    },
+    "retry_logic": {
+      "max_retries": 3,
+      "retry_delay": 1000,
+      "exponential_backoff": true
+    },
+    "user_feedback": {
+      "enabled": true,
+      "collect_user_info": true,
+      "allow_comments": true
+    }
+  }
+}

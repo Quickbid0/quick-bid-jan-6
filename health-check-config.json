@@ -1,0 +1,39 @@
+{
+  "health_checks": {
+    "database": {
+      "enabled": true,
+      "interval": 30000,
+      "timeout": 5000
+    },
+    "api_endpoints": {
+      "enabled": true,
+      "endpoints": [
+        "/api/health",
+        "/api/products",
+        "/api/users",
+        "/api/auctions"
+      ],
+      "interval": 60000,
+      "timeout": 3000
+    },
+    "network": {
+      "enabled": true,
+      "targets": [
+        "api.quickbid.com",
+        "cdn.quickbid.com",
+        "auth.quickbid.com"
+      ],
+      "interval": 120000,
+      "timeout": 5000
+    },
+    "security": {
+      "enabled": true,
+      "checks": [
+        "ssl_certificate",
+        "security_headers",
+        "vulnerability_scan"
+      ],
+      "interval": 300000
+    }
+  }
+}

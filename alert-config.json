@@ -1,0 +1,31 @@
+{
+  "alerts": {
+    "enabled": true,
+    "channels": [
+      "email",
+      "slack",
+      "webhook"
+    ],
+    "thresholds": {
+      "error_rate": 2.0,
+      "response_time": 2000,
+      "memory_usage": 80.0,
+      "cpu_usage": 85.0,
+      "uptime": 99.9
+    },
+    "notifications": {
+      "email": {
+        "enabled": true,
+        "recipients": [
+          "devops@quickbid.com",
+          "support@quickbid.com"
+        ]
+      },
+      "slack": {
+        "enabled": true,
+        "webhook_url": "",
+        "channel": "#alerts"
+      }
+    }
+  }
+}

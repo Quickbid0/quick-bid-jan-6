@@ -30,7 +30,6 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 // import BidModal from '../components/BidModal';
-import SearchBar from '../components/SearchBar';
 import { aiService, AIRecommendation } from '../services/aiService';
 import PageFrame from '../components/layout/PageFrame';
 import AINaturalSearch from '../components/ai/AINaturalSearch';
@@ -980,7 +979,13 @@ return (
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm p-6 space-y-6">
         <div className="flex flex-col lg:flex-row gap-4">
           <div className="flex-1">
-            <SearchBar onSearch={setSearchTerm} placeholder="Quick search..." />
+            <input
+              type="text"
+              placeholder="Quick search..."
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
           </div>
         <div className="flex flex-wrap items-center gap-3">
           <select

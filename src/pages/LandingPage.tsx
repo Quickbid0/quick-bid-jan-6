@@ -31,15 +31,15 @@ const bannerSlogans = [
 
 const bannerImages = [
   {
-    src: encodeURI('/banners/✅ 1. HOME HERO BANNER (1440 × 360 px)_Theme_ QuickMela – Buy & Sell Vehicles Fast_Style_ Wide, clean, premium_AI Banner Prompt (Copy & Use)__Prompt__“Wide website hero banner, ratio 4_1, size 1440x360. Theme_ QuickMela – India’s .jpg'),
+    src: '/images/banners/hero-banner.jpg',
     alt: 'Buy Better Sell Smarter on QuickMela',
   },
   {
-    src: encodeURI('/banners/✅ 2. HOME INLINE BANNER (1200 × 300 px)_Theme_ Popular Brands _ Best Deals_AI Banner Prompt__Prompt__“Ultra-wide promotional banner, size 1200x300, aspect 4_1. QuickMela branding. Show row of popular vehicles_ Swift, Creta, Bolero pick.jpg'),
+    src: '/images/banners/inline-banner.jpg',
     alt: 'Best Deals Every Day on QuickMela',
   },
   {
-    src: encodeURI('/banners/✅ 4. SQUARE BANNER (600 × 600 px)_Theme_ Sell Your Vehicle Fast_AI Banner Prompt__Prompt__“Square banner 600x600 for QuickMela. Simple background with parked car + bike. Big text_ ‘Sell Your Vehicle in Minutes’. Phone mockup wi (1).jpg'),
+    src: '/images/banners/square-banner.jpg',
     alt: 'Sell Your Vehicle in Minutes on QuickMela',
   },
 ];

@@ -120,9 +120,7 @@ const AdminEventsList = lazy(() => import('./pages/admin/AdminEventsList'));
 const AdminEventCreate = lazy(() => import('./pages/admin/AdminEventCreate'));
 const AdminEventDetail = lazy(() => import('./pages/admin/AdminEventDetail'));
 const SystemSettings = lazy(() => import('./pages/admin/SystemSettings'));
-const AdminLiveSetup = lazy(() => import('./pages/admin/AdminLiveSetup'));
 const LiveStreamSetup = lazy(() => import('./pages/admin/LiveStreamSetup'));
-const AdminTenderReview = lazy(() => import('./pages/admin/AdminTenderReview'));
 const LiveWebcastSetup = lazy(() => import('./pages/admin/LiveWebcastSetup'));
 const ContentModeration = lazy(() => import('./pages/admin/ContentModeration'));
 const AnalyticsDashboard = lazy(() => import('./pages/admin/AnalyticsDashboard'));
@@ -660,11 +658,9 @@ const App: React.FC = () => {
               <Route path="/admin/events/new" element={<ProtectedRoute adminRequired={true}><AdminEventCreate /></ProtectedRoute>} />
               <Route path="/admin/events/:id" element={<ProtectedRoute adminRequired={true}><AdminEventDetail /></ProtectedRoute>} />
               <Route path="/admin/settings" element={<ProtectedRoute adminRequired={true}><SystemSettings /></ProtectedRoute>} />
-              <Route path="/admin/live-setup" element={<ProtectedRoute adminRequired={true}><AdminLiveSetup /></ProtectedRoute>} />
-              <Route path="/admin/live-stream" element={<ProtectedRoute adminRequired={true}><LiveStreamSetup /></ProtectedRoute>} />
+                            <Route path="/admin/live-stream" element={<ProtectedRoute adminRequired={true}><LiveStreamSetup /></ProtectedRoute>} />
               <Route path="/admin/webcast-setup" element={<ProtectedRoute adminRequired={true}><LiveWebcastSetup /></ProtectedRoute>} />
-              <Route path="/admin/tender-review" element={<ProtectedRoute adminRequired={true}><AdminTenderReview /></ProtectedRoute>} />
-              <Route path="/admin/kyc-review" element={<ProtectedRoute adminRequired={true}><AdminKYCReview /></ProtectedRoute>} />
+                            <Route path="/admin/kyc-review" element={<ProtectedRoute adminRequired={true}><AdminKYCReview /></ProtectedRoute>} />
               <Route path="/admin/content-moderation" element={<ProtectedRoute adminRequired={true}><ContentModeration /></ProtectedRoute>} />
               <Route path="/admin/analytics" element={<ProtectedRoute adminRequired={true}><AnalyticsDashboard /></ProtectedRoute>} />
               <Route path="/admin/investor-listings" element={<ProtectedRoute adminRequired={true}><InvestorAdmin /></ProtectedRoute>} />
@@ -673,7 +669,7 @@ const App: React.FC = () => {
               <Route path="/admin/live-control/:id" element={<ProtectedRoute adminRequired={true}><LiveStreamControl /></ProtectedRoute>} />
               <Route path="/admin/ai-training" element={<ProtectedRoute adminRequired={true}><AIModelTraining /></ProtectedRoute>} />
               <Route path="/admin/marketing" element={<ProtectedRoute adminRequired={true}><AdminMarketing /></ProtectedRoute>} />
-              <Route path="/admin/employees" element={<ProtectedRoute adminRequired={true}><RoleGuard allow={['admin', 'superadmin']}><AdminEmployees /></RoleGuard></ProtectedRoute>} />
+              <Route path="/admin/employees" element={<ProtectedRoute adminRequired={true}><AdminEmployees /></ProtectedRoute>} />
               <Route path="/admin/deposit-policies" element={<ProtectedRoute adminRequired={true}><AdminDepositPolicies /></ProtectedRoute>} />
               <Route path="/admin/fraud" element={<ProtectedRoute adminRequired={true}><AdminFraudReview /></ProtectedRoute>} />
               <Route path="/admin/ai-reports" element={<ProtectedRoute adminRequired={true}><AIReports /></ProtectedRoute>} />
@@ -698,8 +694,8 @@ const App: React.FC = () => {
               <Route path="/admin/winners" element={<ProtectedRoute adminRequired={true}><AdminWinners /></ProtectedRoute>} />
               <Route path="/admin/deliveries" element={<ProtectedRoute adminRequired={true}><AdminDeliveries /></ProtectedRoute>} />
               <Route path="/admin/seller-earnings" element={<ProtectedRoute adminRequired={true}><AdminSellerEarnings /></ProtectedRoute>} />
-              <Route path="/admin/win-payments" element={<ProtectedRoute><RoleGuard allow={['admin', 'superadmin']}><AdminWinPayments /></RoleGuard></ProtectedRoute>} />
-              <Route path="/admin/delivery-slip/:auctionId" element={<ProtectedRoute><RoleGuard allow={['admin', 'superadmin']}><AdminDeliverySlip /></RoleGuard></ProtectedRoute>} />
+              <Route path="/admin/win-payments" element={<ProtectedRoute adminRequired={true}><AdminWinPayments /></ProtectedRoute>} />
+              <Route path="/admin/delivery-slip/:auctionId" element={<ProtectedRoute adminRequired={true}><AdminDeliverySlip /></ProtectedRoute>} />
               <Route path="/admin/departments" element={<ProtectedRoute adminRequired={true}><AdminDepartments /></ProtectedRoute>} />
               <Route path="/admin/branches" element={<ProtectedRoute adminRequired={true}><AdminBranches /></ProtectedRoute>} />
               <Route path="/admin/staff" element={<ProtectedRoute adminRequired={true}><AdminStaff /></ProtectedRoute>} />
@@ -712,7 +708,7 @@ const App: React.FC = () => {
               <Route path="/admin/tasks" element={<ProtectedRoute adminRequired={true}><AdminTasks /></ProtectedRoute>} />
 
               {/* Super Admin */}
-              <Route path="/super-admin" element={<ProtectedRoute superAdminRequired={true}><SuperAdmin /></ProtectedRoute>} />
+              <Route path="/super-admin" element={<ProtectedRoute adminRequired={true}><SuperAdmin /></ProtectedRoute>} />
               
               {/* Public Pages */}
               <Route path="/mobile-app" element={<MobileApp />} />
