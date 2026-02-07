@@ -20,6 +20,7 @@ import BidHistoryList from '../components/auctions/BidHistoryList';
 import AuctionTypeBadge from '../components/auctions/AuctionTypeBadge';
 import { AuctionCard } from '@/components/AuctionCard';
 import { StatusStrip } from '@/components';
+import { auctionSocket } from '../services/auctionSocket';
 
 const YARD_TOKEN_AMOUNT = 5000; // ₹5,000 token deposit per yard
 
@@ -404,13 +405,88 @@ const LiveAuctionPage = () => {
   }, [id, auctions, navigate]);
 
   useEffect(() => {
-    if (!selectedAuction) return;
-    if (!replayReveal) return;
-    if (winnerRevealShownForId === selectedAuction.id && !showWinnerReveal) return;
+    // Initialize auction socket for real-time bidding
+    const initAuctionSocket = async () => {
+      try {
+        const { data: { user } } = await supabase.auth.getUser();
+        const demoSession = localStorage.getItem('demo-session');
+        
+        if (user || demoSession) {
+          const userId = user?.id || 'demo-user';
+          const userName = user?.user_metadata?.name || user?.email || 'Demo User';
+          
+          // Connect to auction socket
+          console.log('🔌 Initializing auction socket connection...');
+          // Note: The auction socket is already initialized as a singleton
+          // We'll set up event listeners in the next useEffect
+        }
+      } catch (error) {
+        console.error('❌ Failed to initialize auction socket:', error);
+      }
+    };
 
-    setShowWinnerReveal(true);
-    setWinnerRevealShownForId(selectedAuction.id);
-  }, [selectedAuction, replayReveal, winnerRevealShownForId, showWinnerReveal]);
+    initAuctionSocket();
+
+    // Cleanup function
+    return () => {
+      // Note: We don't disconnect the global socket instance
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!selectedAuction) return;
+
+    const auctionId = selectedAuction.id;
+    const userId = 'current-user'; // This should come from auth context
+    const userName = 'Current User'; // This should come from auth context
+
+    // Join the auction room
+    auctionSocket.joinAuction(auctionId, userId);
+
+    // Set up event listeners for this auction
+    const unsubscribeBidUpdate = auctionSocket.onBidUpdate((bidData) => {
+      if (bidData.auctionId === auctionId) {
+        console.log('💰 Real-time bid update:', bidData);
+        setSelectedAuction(prev => prev ? {
+          ...prev,
+          current_price: bidData.amount,
+          bid_count: prev.bid_count + 1,
+        } : prev);
+        loadBidHistory(auctionId);
+        toast.success(`New bid: ₹${bidData.amount.toLocaleString()}`);
+      }
+    });
+
+    const unsubscribeAuctionEnd = auctionSocket.onAuctionEnd((winnerData) => {
+      if (winnerData.auctionId === auctionId) {
+        console.log('🏆 Auction ended:', winnerData);
+        setSelectedAuction(prev => prev ? {
+          ...prev,
+          status: 'ended'
+        } : prev);
+        setShowWinnerReveal(true);
+        setWinnerRevealShownForId(auctionId);
+        toast.success(`Auction ended! Winner: ${winnerData.winnerName}`);
+      }
+    });
+
+    const unsubscribeCountdown = auctionSocket.onCountdownUpdate((countdownData) => {
+      if (countdownData.auctionId === auctionId) {
+        // Update countdown timer
+        const minutes = Math.floor(countdownData.timeLeft / 60);
+        const seconds = countdownData.timeLeft % 60;
+        setTimeLeft(`${minutes}:${seconds.toString().padStart(2, '0')}`);
+      }
+    });
+
+    // Cleanup event listeners
+    return () => {
+      auctionSocket.leaveAuction(auctionId, userId);
+      unsubscribeBidUpdate();
+      unsubscribeAuctionEnd();
+      unsubscribeCountdown();
+    };
+  }, [selectedAuction]);
 
   useEffect(() => {
     const loadWatchlistState = async () => {
@@ -565,49 +641,37 @@ const LiveAuctionPage = () => {
         return { success: false, error: 'You need to be logged in to place a bid' };
       }
 
-      // Enforce refundable security deposit for this product before allowing live bids
-      if (selectedAuction.productId && !demo) {
-        try {
-          const { data, error } = await supabase
-            .from('deposits')
-            .select('id,status')
-            .eq('user_id', user?.id || '')
-            .eq('product_id', selectedAuction.productId)
-            .eq('type', 'security')
-            .eq('status', 'paid')
-            .order('created_at', { ascending: false })
-            .limit(1);
+      const userId = user?.id || 'demo-user';
+      const userName = user?.user_metadata?.name || user?.email || 'Demo User';
 
-          if (error || !Array.isArray(data) || data.length === 0) {
-            const msg = 'You must pay the refundable security deposit for this vehicle before placing a live bid.';
-            setBidError(msg);
-            return { success: false, error: msg };
-          }
-        } catch (e) {
-          console.error('LiveAuctionPage: security deposit check failed', e);
-          const msg = 'We could not verify your security deposit. Please refresh the page or try again.';
+      // Check socket connection status
+      const socketStatus = auctionSocket.getConnectionStatus();
+      if (!socketStatus.connected) {
+        console.warn('⚠️ Socket not connected, falling back to API call');
+        // Fall back to regular API call if socket is not connected
+        const result = await auctionService.placeBid({
+          auctionId: selectedAuction.id,
+          userId,
+          amount,
+        });
+
+        if (!result.success) {
+          const msg = result.error || 'Failed to place bid. Please try again.';
           setBidError(msg);
           return { success: false, error: msg };
         }
+      } else {
+        // Use real-time socket for bidding
+        console.log('🎯 Placing bid via socket:', { auctionId: selectedAuction.id, userId, amount });
+        auctionSocket.placeBid(selectedAuction.id, userId, amount);
+        
+        // Optimistically update UI immediately
+        setSelectedAuction(prev => prev ? {
+          ...prev,
+          current_price: amount,
+          bid_count: prev.bid_count + 1,
+        } : prev);
       }
-
-      const result = await auctionService.placeBid({
-        auctionId: selectedAuction.id,
-        userId: user?.id || 'demo-user',
-        amount,
-      });
-
-      if (!result.success) {
-        const msg = result.error || 'Failed to place bid. Please try again.';
-        setBidError(msg);
-        return { success: false, error: msg };
-      }
-
-      setSelectedAuction(prev => prev ? {
-        ...prev,
-        current_price: amount,
-        bid_count: prev.bid_count + 1,
-      } : prev);
 
       await loadBidHistory(selectedAuction.id);
       toast.success(`Bid of ₹${amount.toLocaleString()} placed successfully!`);

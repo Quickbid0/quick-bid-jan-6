@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>API Configuration Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .credentials { background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🔧 QuickBid API Configuration Test</h1>
+    
+    <div class="credentials">
+        <h3>🔐 Test Credentials:</h3>
+        <p><strong>Admin:</strong> founder@quickbid.com / QuickBid2026!</p>
+        <p><strong>Seller:</strong> seller@quickbid.com / QuickBid2026!</p>
+        <p><strong>Frontend:</strong> <a href="http://localhost:3021" target="_blank">http://localhost:3021</a></p>
+        <p><strong>Backend:</strong> <a href="http://localhost:4010" target="_blank">http://localhost:4010</a></p>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 API Configuration Tests</h2>
+        <button onclick="testBackendHealth()">Test Backend Health</button>
+        <button onclick="testDirectLogin()">Test Direct Login</button>
+        <button onclick="testFrontendAPI()">Test Frontend API Config</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function testBackendHealth() {
+            addResult('Testing Backend Health...', 'info');
+            try {
+                const response = await fetch('http://localhost:4010/api/health');
+                const data = await response.json();
+                if (response.ok) {
+                    addResult(`✅ Backend Health SUCCESS: ${data.status}`, 'success');
+                    addResult(`⏰ Timestamp: ${data.timestamp}`, 'success');
+                } else {
+                    addResult(`❌ Backend Health FAILED`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Backend Health ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        async function testDirectLogin() {
+            addResult('Testing Direct Login...', 'info');
+            try {
+                const response = await fetch('http://localhost:4010/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'founder@quickbid.com',
+                        password: 'QuickBid2026!'
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    addResult(`✅ Direct Login SUCCESS: ${data.message}`, 'success');
+                    addResult(`👤 User: ${data.user.name} (${data.user.role})`, 'success');
+                    addResult(`🔑 Token: ${data.token.substring(0, 20)}...`, 'success');
+                } else {
+                    addResult(`❌ Direct Login FAILED: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Direct Login ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        async function testFrontendAPI() {
+            addResult('Testing Frontend API Configuration...', 'info');
+            
+            // Check if we can access the frontend and see if it's configured correctly
+            try {
+                const response = await fetch('http://localhost:3021');
+                if (response.ok) {
+                    addResult(`✅ Frontend Server: RUNNING on http://localhost:3021`, 'success');
+                    
+                    // Try to access the API through the frontend (this will fail due to CORS, but we can see the error)
+                    try {
+                        const apiResponse = await fetch('http://localhost:3021/api/health');
+                        const apiData = await apiResponse.json();
+                        addResult(`✅ Frontend API Proxy: WORKING`, 'success');
+                        addResult(`📊 API Response: ${JSON.stringify(apiData)}`, 'success');
+                    } catch (apiError) {
+                        addResult(`⚠️ Frontend API Proxy: Not configured (expected)`, 'info');
+                        addResult(`💡 This is normal - frontend uses direct API calls`, 'info');
+                    }
+                } else {
+                    addResult(`❌ Frontend Server: FAILED`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Frontend Server ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function addResult(message, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-section ${type}`;
+            div.innerHTML = `<p>${message}</p>`;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Auto-run tests on load
+        window.onload = function() {
+            testBackendHealth();
+            testDirectLogin();
+            testFrontendAPI();
+        };
+    </script>
+</body>
+</html>

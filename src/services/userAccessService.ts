@@ -40,17 +40,17 @@ export class UserAccessService {
     const accessLevel = await this.getUserAccessLevel(userId);
     const isBeta = await this.isBetaUser(userId);
     
-    // Beta users and internal users can bid
-    return accessLevel === 'internal' || (accessLevel === 'beta' && isBeta);
+    // All users can bid during full launch
+    return accessLevel === 'internal' || accessLevel === 'beta' || accessLevel === 'public';
   }
   
   static async canSell(userId: string): Promise<boolean> {
     const accessLevel = await this.getUserAccessLevel(userId);
     const user = await this.getUserById(userId);
     
-    // Internal users and verified beta sellers can sell
-    return accessLevel === 'internal' || 
-           (accessLevel === 'beta' && user?.isBetaUser === true && user?.isVerified === true);
+    // All verified users can sell during full launch
+    return accessLevel === 'internal' || accessLevel === 'beta' || 
+           (accessLevel === 'public' && user?.isVerified === true);
   }
   
   static async addToBetaWhitelist(userId: string, email: string, approvedBy: string): Promise<void> {

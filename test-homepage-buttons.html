@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Homepage Button Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .btn { 
+            display: inline-flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 0.5rem; 
+            padding: 1rem 1.5rem; 
+            font-weight: 500; 
+            transition: all 0.2s; 
+            text-decoration: none; 
+            cursor: pointer; 
+            border: none;
+        }
+        .btn-lg { padding: 1.5rem 2rem; font-size: 1rem; }
+        .btn-white { 
+            background: white; 
+            color: #4f46e5; 
+            border: 1px solid #e5e7eb; 
+        }
+        .btn-primary { 
+            background: #4f46e5; 
+            color: white; 
+        }
+        .btn-outline-invert { 
+            background: transparent; 
+            color: white; 
+            border: 2px solid white; 
+        }
+        .btn-white:hover { background: #f9fafb; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-outline-invert:hover { 
+            background: white; 
+            color: #4f46e5; 
+        }
+        .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+        .text-center { text-align: center; }
+        .gap-4 { gap: 1rem; }
+        .flex { display: flex; }
+        .flex-col { flex-direction: column; }
+        .max-w-2xl { max-width: 42rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .bg-gradient-to-br { background: linear-gradient(to bottom right, #4f46e5, #7c3aed); }
+        .p-8 { padding: 2rem; }
+        .rounded-2xl { border-radius: 1rem; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Homepage Button Test</h1>
+    
+    <div class="test-section">
+        <h2>🧪 Button Functionality Test</h2>
+        <p>Testing the same buttons that appear on the homepage:</p>
+        
+        <div class="bg-gradient-to-br p-8 rounded-2xl">
+            <div class="flex flex-col gap-4 max-w-2xl mx-auto">
+                <a href="http://localhost:3021/register" class="btn btn-white btn-lg shadow-xl text-center">
+                    Start Bidding
+                </a>
+                <a href="http://localhost:3021/catalog" class="btn btn-primary btn-lg shadow-xl text-center">
+                    Browse Catalog
+                </a>
+                <a href="#become-seller" class="btn btn-outline-invert btn-lg text-center">
+                    Become a Seller
+                </a>
+            </div>
+        </div>
+        
+        <button onclick="testRoutes()">Test All Routes</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function testRoutes() {
+            addResult('Testing homepage button routes...', 'info');
+            
+            const routes = [
+                { name: 'Register', url: 'http://localhost:3021/register' },
+                { name: 'Catalog', url: 'http://localhost:3021/catalog' },
+                { name: 'Home', url: 'http://localhost:3021/' },
+            ];
+            
+            for (const route of routes) {
+                try {
+                    const response = await fetch(route.url, { method: 'HEAD' });
+                    if (response.ok) {
+                        addResult(`✅ ${route.name}: ${route.url} - Working`, 'success');
+                    } else {
+                        addResult(`❌ ${route.name}: ${route.url} - Status: ${response.status}`, 'error');
+                    }
+                } catch (error) {
+                    addResult(`❌ ${route.name}: ${route.url} - Error: ${error.message}`, 'error');
+                }
+            }
+        }
+
+        function addResult(message, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-section ${type}`;
+            div.innerHTML = `<p>${message}</p>`;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Auto-run route test on load
+        window.onload = function() {
+            testRoutes();
+        };
+    </script>
+</body>
+</html>

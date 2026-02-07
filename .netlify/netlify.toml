@@ -128,6 +128,18 @@ Permissions-Policy = "camera=(), microphone=(), geolocation=()"
 Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co wss: https://api.razorpay.com https://checkout.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; img-src 'self' data: https://images.unsplash.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; frame-src https://api.razorpay.com https://*.razorpay.com https://checkout.razorpay.com"
 
 [[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
+
+[[redirects]]
 from = "/api/*"
 to = "/.netlify/functions/:splat"
 status = 200.0

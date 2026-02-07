@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSession } from '../context/SessionContext';
 import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { X, Gavel, Wallet } from 'lucide-react';
@@ -17,10 +18,30 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
   const [loading, setLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [balanceLoading, setBalanceLoading] = useState(true);
+  const { user } = useSession();
   const navigate = useNavigate();
 
   const currentPrice = product.current_price || product.starting_price || 0;
-  const minBid = currentPrice + (product.increment_amount || 100);
+  const auctionType = product.auctionType || { type: 'standard', bidIncrement: 1000 };
+
+  // Calculate minimum bid based on auction type
+  const getMinBid = () => {
+    switch (auctionType.type) {
+      case 'reserve':
+        return currentPrice + auctionType.bidIncrement;
+      case 'dutch':
+        // For Dutch auctions, minimum bid is the current Dutch price
+        return currentPrice;
+      case 'tender':
+        // For tenders, there's no minimum - bidders can go lower
+        return 1; // Very low minimum
+      case 'standard':
+      default:
+        return currentPrice + (auctionType.bidIncrement || 1000);
+    }
+  };
+
+  const minBid = getMinBid();
 
   useEffect(() => {
     fetchWalletBalance();
@@ -28,18 +49,32 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
 
   const fetchWalletBalance = async () => {
     try {
+      // PRODUCTION: Disable demo session fallback
+      const isProduction = import.meta.env.PROD || import.meta.env.VITE_AUTH_MODE === 'real';
       const demoSession = localStorage.getItem('demo-session');
-      if (demoSession) {
+      
+      if (!isProduction && demoSession) {
         setWalletBalance(500000);
         return 500000;
       }
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return 0;
+      
+      // Use backend API for wallet balance - PRODUCTION PRIORITY
+      const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:4011';
+      const response = await fetch(`${serverUrl}/api/wallet/balance`);
+      
+      if (response.ok) {
+        const data = await response.json();
+        setWalletBalance(data.balance);
+        return data.balance;
+      }
+      
+      // Fallback to Supabase if backend fails
+      if (!user) return 0;
 
       const { data, error } = await supabase
         .from('profiles')
         .select('wallet_balance')
-        .eq('id', session.user.id)
+        .eq('id', user.id)
         .single();
       
       if (data) {
@@ -49,6 +84,7 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
       return 0;
     } catch (error) {
       console.error('Error fetching balance:', error);
+      toast.error('Failed to fetch wallet balance');
       return 0;
     } finally {
       setBalanceLoading(false);
@@ -59,9 +95,49 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
     e.preventDefault();
     const amount = parseFloat(bidAmount);
 
-    if (isNaN(amount) || amount < minBid) {
-      toast.error(`Bid must be at least ₹${minBid.toLocaleString()}`);
+    if (isNaN(amount)) {
+      toast.error('Please enter a valid bid amount');
       return;
+    }
+
+    // Auction type specific validation
+    switch (auctionType.type) {
+      case 'reserve':
+        if (amount < auctionType.reservePrice!) {
+          toast.error(`This is a reserve auction. Bid must be at least ₹${auctionType.reservePrice!.toLocaleString()}`);
+          return;
+        }
+        if (amount <= currentPrice) {
+          toast.error(`Bid must be higher than current bid of ₹${currentPrice.toLocaleString()}`);
+          return;
+        }
+        break;
+
+      case 'dutch':
+        if (amount < currentPrice) {
+          toast.error(`Dutch auction bid must match current price of ₹${currentPrice.toLocaleString()}`);
+          return;
+        }
+        break;
+
+      case 'tender':
+        if (auctionType.minimumBid && amount > auctionType.minimumBid) {
+          toast.error(`Tender bid cannot exceed ₹${auctionType.minimumBid.toLocaleString()}`);
+          return;
+        }
+        if (product.highestBid && amount >= product.highestBid.amount) {
+          toast.error('Tender bid must be lower than the current lowest bid');
+          return;
+        }
+        break;
+
+      case 'standard':
+      default:
+        if (amount <= currentPrice) {
+          toast.error(`Bid must be higher than current bid of ₹${currentPrice.toLocaleString()}`);
+          return;
+        }
+        break;
     }
 
     setLoading(true);
@@ -80,7 +156,7 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
       }
 
       // Prevent self-bidding
-      if (product.seller_id === session.user.id) {
+      if (product.seller_id === user?.id) {
         toast.error('You cannot bid on your own product');
         setLoading(false);
         return;
@@ -164,28 +240,26 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
           }
       }
 
-      const { error } = await supabase
-        .from('bids')
-        .insert({
-          auction_id: targetAuctionId,
-          user_id: session.user.id,
-          amount: amount,
-          status: 'active'
-        });
+      // Use backend API for bidding
+      const response = await fetch(`${process.env.VITE_SERVER_URL || 'http://localhost:4011'}/api/bids`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`
+        },
+        body: JSON.stringify({
+          auctionId: product.id, // Use product.id as auctionId for now
+          userId: user?.id || '',
+          amount: amount
+        })
+      });
 
-      if (error) throw error;
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'Failed to place bid');
+      }
 
-      // Update auction current price
-      await supabase
-        .from('auctions')
-        .update({ current_price: amount })
-        .eq('id', targetAuctionId);
-        
-      // Update product current price as well if needed
-      await supabase
-        .from('products')
-        .update({ current_price: amount })
-        .eq('id', product.id);
+      const result = await response.json();
 
       toast.success('Bid placed successfully!');
       onBidPlaced();
@@ -235,16 +309,34 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
 
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Current Highest Bid
+              {auctionType.type === 'tender' ? 'Current Lowest Bid' :
+               auctionType.type === 'dutch' ? 'Current Dutch Price' :
+               'Current Highest Bid'}
             </label>
             <div className="text-2xl font-bold text-gray-900 dark:text-white">
               ₹{currentPrice.toLocaleString()}
             </div>
+            {/* Auction type specific info */}
+            {auctionType.type === 'reserve' && auctionType.reservePrice && (
+              <div className="text-xs text-purple-600 font-medium mt-1">
+                Reserve Price: ₹{auctionType.reservePrice.toLocaleString()}
+                {currentPrice < auctionType.reservePrice && ' (Not Met)'}
+              </div>
+            )}
+            {auctionType.type === 'tender' && auctionType.minimumBid && (
+              <div className="text-xs text-blue-600 font-medium mt-1">
+                Maximum Bid Limit: ₹{auctionType.minimumBid.toLocaleString()}
+              </div>
+            )}
           </div>
 
           <div className="space-y-2">
             <label htmlFor="bidAmount" className="text-sm font-medium text-gray-700 dark:text-gray-300">
-              Your Bid (Min ₹{minBid.toLocaleString()})
+              Your Bid Amount
+              {auctionType.type === 'reserve' && ` (Min ₹${(auctionType.reservePrice! > currentPrice ? auctionType.reservePrice! : minBid).toLocaleString()})`}
+              {auctionType.type === 'dutch' && ` (Must match current price: ₹${currentPrice.toLocaleString()})`}
+              {auctionType.type === 'tender' && ` (Must be lower than current lowest bid)`}
+              {auctionType.type === 'standard' && ` (Min ₹${minBid.toLocaleString()})`}
             </label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-medium">₹</span>
@@ -253,9 +345,14 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
                 type="number"
                 value={bidAmount}
                 onChange={(e) => setBidAmount(e.target.value)}
-                placeholder={minBid.toString()}
+                placeholder={
+                  auctionType.type === 'dutch' ? currentPrice.toString() :
+                  auctionType.type === 'tender' ? 'Enter lower amount' :
+                  minBid.toString()
+                }
                 className="w-full pl-8 pr-4 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 transition-all outline-none dark:bg-gray-900 dark:border-gray-700 dark:text-white"
-                min={minBid}
+                min={auctionType.type === 'tender' ? 1 : minBid}
+                step={auctionType.bidIncrement || 100}
                 required
               />
             </div>
@@ -270,6 +367,23 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
             disabled={loading}
             data-testid="confirm-bid"
             className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={(e) => {
+              e.preventDefault();
+              const amount = parseFloat(bidAmount);
+              
+              // Show confirmation dialog
+              const confirmed = window.confirm(
+                `Are you sure you want to place a bid of ₹${amount.toLocaleString()}?\n\n` +
+                `• Current highest bid: ₹${currentPrice.toLocaleString()}\n` +
+                `• Your bid: ₹${amount.toLocaleString()}\n` +
+                `• This action cannot be undone\n\n` +
+                `By confirming, you agree to the auction terms and this bid is legally binding.`
+              );
+              
+              if (confirmed) {
+                handleBid(e);
+              }
+            }}
           >
             {loading ? 'Placing Bid...' : 'Confirm Bid'}
           </button>

@@ -26,7 +26,7 @@ export interface BetaUserRequest {
 }
 
 export class BetaUserService {
-  private static readonly MAX_BETA_USERS = 20;
+  private static readonly MAX_BETA_USERS = 10000; // Increased for full launch
   private static betaUsers: BetaUser[] = [];
   private static betaRequests: BetaUserRequest[] = [];
 

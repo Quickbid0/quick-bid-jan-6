@@ -2,13 +2,15 @@ import { test, expect } from '@playwright/test';
 
 test.describe('Authentication Flow Critical Tests', () => {
   test('Buyer is NOT redirected away from Dashboard', async ({ page }) => {
-    // Mock buyer authentication
+    // Mock buyer authentication using correct storage keys
     await page.addInitScript(() => {
-      localStorage.setItem('sb-auth-token', 'mock-token');
-      localStorage.setItem('sb-user-id', 'test-user-id');
-      localStorage.setItem('user-profile', JSON.stringify({
+      localStorage.setItem('qm-auth-user', JSON.stringify({
+        id: 'test-user-id',
+        email: 'buyer@test.com',
         role: 'buyer',
-        user_type: 'buyer'
+        user_type: 'buyer',
+        name: 'Test Buyer',
+        is_verified: true
       }));
     });
     
@@ -28,13 +30,15 @@ test.describe('Authentication Flow Critical Tests', () => {
   });
 
   test('Seller is redirected to seller dashboard', async ({ page }) => {
-    // Mock seller authentication
+    // Mock seller authentication using correct storage keys
     await page.addInitScript(() => {
-      localStorage.setItem('sb-auth-token', 'mock-token');
-      localStorage.setItem('sb-user-id', 'test-user-id');
-      localStorage.setItem('user-profile', JSON.stringify({
+      localStorage.setItem('qm-auth-user', JSON.stringify({
+        id: 'test-user-id',
+        email: 'seller@test.com',
         role: 'seller',
-        user_type: 'seller'
+        user_type: 'seller',
+        name: 'Test Seller',
+        is_verified: true
       }));
     });
     
@@ -45,7 +49,7 @@ test.describe('Authentication Flow Critical Tests', () => {
     // CRITICAL: Seller should be redirected to seller dashboard
     const currentUrl = page.url();
     expect(currentUrl).toContain('/seller/dashboard');
-    expect(currentUrl).not.toEqual('http://localhost:3008/dashboard'); // Should not be main dashboard
+    expect(currentUrl).not.toEqual('http://localhost:4173/dashboard'); // Should not be main dashboard
   });
 
   test('Unauthenticated user is redirected to login', async ({ page }) => {

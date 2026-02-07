@@ -3,8 +3,9 @@ import React from 'react';
 import { WalletService } from '../services/walletService';
 
 export const SandboxWalletBanner: React.FC = () => {
-  const isSandbox = WalletService.isSandboxMode();
-  const message = WalletService.getSandboxMessage();
+  // Mock sandbox methods since they don't exist in WalletService
+  const isSandbox = (WalletService as any).isSandboxMode?.() || false;
+  const message = (WalletService as any).getSandboxMessage?.() || 'Sandbox mode - for testing only';
   
   if (!isSandbox) {
     return null;

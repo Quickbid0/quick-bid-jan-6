@@ -1,6 +1,7 @@
 import type { Server as SocketIOServer, Socket } from 'socket.io';
 import type { Pool } from 'pg';
 import { BidService } from '../services/bidService.ts';
+import { CountdownService } from '../services/countdownService.ts';
 import crypto from 'crypto';
 import { checkLimit } from '../middleware/redisRateLimit.ts';
 import { createClient } from '@supabase/supabase-js';
@@ -22,7 +23,7 @@ interface AdminApproveBidPayload {
   overrideAmountCents?: number;
 }
 
-export function registerAuctionSocket(io: SocketIOServer, pool: Pool) {
+export function registerAuctionSocket(io: SocketIOServer, pool: Pool, countdownService?: CountdownService) {
   const bidService = new BidService(io, pool);
   const SUPABASE_URL = process.env.SUPABASE_URL as string | undefined;
   const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY as string | undefined;

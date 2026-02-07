@@ -4,6 +4,167 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  html {
+    max-width: 100vw;
+    overflow-x: hidden;
+  }
+  
+  body {
+    max-width: 100vw;
+    overflow-x: hidden;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  }
+  
+  /* Aggressive mobile overflow fixes */
+  * {
+    box-sizing: border-box;
+  }
+  
+  /* Prevent horizontal scroll on all elements */
+  div, section, main, aside, article, header, footer, nav {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+  
+  /* Fix images and media */
+  img, video, iframe {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  /* Fix tables */
+  table {
+    max-width: 100%;
+    overflow-x: auto;
+    display: block;
+  }
+  
+  /* Proper container constraints */
+  .container, .max-w-7xl, .max-w-6xl, .max-w-5xl {
+    max-width: 100%;
+    width: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  /* Fix button visibility */
+  button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  button.primary,
+  button[class*="primary"],
+  [data-testid="primary-action"] {
+    background: rgb(79 70 229) !important;
+    color: white !important;
+    padding: 0.5rem 1rem !important;
+    border-radius: 0.5rem !important;
+    font-weight: 600 !important;
+    min-height: 44px !important;
+    min-width: 44px !important;
+    visibility: visible !important;
+    display: flex !important;
+    opacity: 1 !important;
+  }
+  
+  /* Mobile-specific fixes */
+  @media (max-width: 640px) {
+    button.primary,
+    button[class*="primary"],
+    [data-testid="primary-action"],
+    button[class*="bg-indigo-600"],
+    button[class*="from-blue-600"] {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
+      z-index: 10 !important;
+      min-height: 44px !important;
+      min-width: 44px !important;
+    }
+    
+    /* Ensure button containers don't hide buttons */
+    .flex.gap-2,
+    .flex.gap-2 > button {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+    }
+  }
+  
+  /* Fix card layouts */
+  .card, .bg-white.rounded-lg, .bg-white.rounded-xl {
+    width: 100%;
+    max-width: 100%;
+    overflow: hidden;
+    border: 1px solid rgb(229 231 235);
+    border-radius: 0.75rem;
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
+  }
+  
+  /* Fix grid layouts */
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+  }
+  
+  .grid-cols-1 {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  
+  @media (min-width: 768px) {
+    .grid-cols-1.md\\:grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  
+  @media (min-width: 1024px) {
+    .grid-cols-1.lg\\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  
+  @media (min-width: 1280px) {
+    .grid-cols-1.xl\\:grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+  
+  /* Mobile-specific fixes */
+  @media (max-width: 640px) {
+    .container, .max-w-7xl, .max-w-6xl, .max-w-5xl {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+    
+    /* Hide sidebars on mobile */
+    aside[class*="sidebar"],
+    aside[class*="Sidebar"],
+    aside.w-64 {
+      display: none !important;
+    }
+    
+    /* Remove padding that causes overflow */
+    [class*="pl-64"],
+    [class*="pl-80"],
+    [class*="pl-96"] {
+      padding-left: 1rem !important;
+    }
+    
+    /* Ensure buttons are visible on mobile */
+    button {
+      min-height: 48px !important;
+      min-width: 48px !important;
+      font-size: 16px !important;
+    }
+  }
+}
+
 @layer utilities {
   .scrollbar-hide {
     -ms-overflow-style: none;

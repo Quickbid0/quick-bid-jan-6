@@ -8,6 +8,18 @@ import { useCountdown } from '../hooks/useCountdown';
 import BidModal from '../components/BidModal';
 import PageFrame from '../components/layout/PageFrame';
 
+interface AuctionType {
+  type: 'standard' | 'reserve' | 'dutch' | 'tender';
+  reservePrice?: number;
+  startingPrice: number;
+  minimumBid?: number;
+  buyNowPrice?: number;
+  bidIncrement: number;
+  duration: number;
+  dutchDecrement?: number;
+  dutchInterval?: number;
+}
+
 interface Product {
   id: string;
   title: string;
@@ -25,7 +37,8 @@ interface Product {
   is_trending: boolean;
   is_certified?: boolean;
   condition: string;
-  auction_type: 'live' | 'timed' | 'tender';
+  auction_type: 'live' | 'timed' | 'tender' | 'reserve' | 'dutch';
+  auctionType?: AuctionType;
   images?: string[];
 }
 
@@ -126,6 +139,18 @@ const ProductDetail = () => {
                         <Zap className="h-3 w-3" /> Trending
                       </div>
                     )}
+                    {/* Auction Type Badge */}
+                    <div className={`px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg ${
+                      product.auctionType?.type === 'reserve' ? 'bg-purple-500 text-white' :
+                      product.auctionType?.type === 'dutch' ? 'bg-orange-500 text-white' :
+                      product.auctionType?.type === 'tender' ? 'bg-blue-500 text-white' :
+                      'bg-indigo-600 text-white'
+                    }`}>
+                      {product.auctionType?.type === 'reserve' && '🏆 Reserve Auction'}
+                      {product.auctionType?.type === 'dutch' && '📉 Dutch Auction'}
+                      {product.auctionType?.type === 'tender' && '📋 Tender Auction'}
+                      {(!product.auctionType || product.auctionType?.type === 'standard') && '⚡ Standard Auction'}
+                    </div>
                     <div className="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg">
                       {product.category}
                     </div>
@@ -227,16 +252,65 @@ const ProductDetail = () => {
               <div className="space-y-4 mb-6">
                 <div className="flex items-center justify-between p-4 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl">
                   <div>
-                    <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">Current Bid</h3>
+                    <h3 className="text-sm font-semibold text-gray-600 dark:text-gray-400 mb-1">
+                      {product.auctionType?.type === 'tender' ? 'Current Lowest Bid' :
+                       product.auctionType?.type === 'dutch' ? 'Current Dutch Price' :
+                       'Current Bid'}
+                    </h3>
                     <p className="text-3xl font-bold text-green-600">₹{product.current_price.toLocaleString()}</p>
                     {product.starting_price && product.starting_price < product.current_price && (
                       <p className="text-sm text-gray-500 line-through">₹{product.starting_price.toLocaleString()}</p>
+                    )}
+                    {/* Auction specific info */}
+                    {product.auctionType?.type === 'reserve' && product.auctionType.reservePrice && (
+                      <p className="text-xs text-purple-600 font-medium mt-1">
+                        Reserve Price: ₹{product.auctionType.reservePrice.toLocaleString()}
+                        {product.current_price < product.auctionType.reservePrice && ' (Not Met)'}
+                      </p>
+                    )}
+                    {product.auctionType?.type === 'tender' && product.auctionType.minimumBid && (
+                      <p className="text-xs text-blue-600 font-medium mt-1">
+                        Maximum Bid: ₹{product.auctionType.minimumBid.toLocaleString()}
+                      </p>
                     )}
                   </div>
                   <div className="text-right">
                     <div className="text-sm text-gray-500 mb-1">{product.bid_count} bids</div>
                     <div className="text-sm text-gray-500">{product.watchers} watching</div>
                   </div>
+                </div>
+
+                {/* Auction Rules Display */}
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                  <h4 className="text-sm font-semibold text-blue-800 dark:text-blue-300 mb-2">Auction Rules</h4>
+                  <ul className="text-xs text-blue-700 dark:text-blue-400 space-y-1">
+                    {product.auctionType?.type === 'reserve' && (
+                      <>
+                        <li>• Reserve auction: Item will not sell below ₹{product.auctionType.reservePrice?.toLocaleString()}</li>
+                        <li>• Bid increment: ₹{product.auctionType.bidIncrement.toLocaleString()}</li>
+                      </>
+                    )}
+                    {product.auctionType?.type === 'dutch' && (
+                      <>
+                        <li>• Dutch auction: Price decreases over time</li>
+                        <li>• Current price updates every {Math.floor((product.auctionType.dutchInterval || 300000) / 60000)} minutes</li>
+                        <li>• First bidder at current price wins</li>
+                      </>
+                    )}
+                    {product.auctionType?.type === 'tender' && (
+                      <>
+                        <li>• Tender auction: Lowest bid wins</li>
+                        <li>• Maximum bid limit: ₹{product.auctionType.minimumBid?.toLocaleString()}</li>
+                        <li>• Bid increment: ₹{product.auctionType.bidIncrement.toLocaleString()}</li>
+                      </>
+                    )}
+                    {(!product.auctionType || product.auctionType?.type === 'standard') && (
+                      <>
+                        <li>• Standard auction: Highest bid wins</li>
+                        <li>• Bid increment: ₹1,000</li>
+                      </>
+                    )}
+                  </ul>
                 </div>
                 
                 {product.auction_status === 'live' && (

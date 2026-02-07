@@ -4,6 +4,7 @@ import { Gavel, Clock, Zap, AlertTriangle, Activity } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useSession } from '../context/SessionContext';
+import { useAuctionSocket } from '../hooks/useAuctionSocket';
 
 interface RealTimeBiddingProps {
   auctionId: string;
@@ -42,6 +43,15 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
   const [bidStatus, setBidStatus] = useState<'winning' | 'outbid' | 'neutral'>('neutral');
   const [bidSuccess, setBidSuccess] = useState(false);
   const recentBidsRef = useRef<number[]>([]);
+
+  // Use the enhanced auction socket with validation and rate limiting
+  const socketState = useAuctionSocket({
+    auctionId,
+    userId: user?.id,
+    userName: user?.name || 'Anonymous',
+    currentPrice,
+    incrementAmount,
+  });
 
   useEffect(() => {
     // Fetch initial state to ensure persistence on refresh
@@ -204,50 +214,38 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
 
     setBidding(true);
     try {
-      if (placeBidAction) {
-        const result = await placeBidAction(amount);
-        if (!result.success) {
-           // Enhanced error feedback
-           if (result.error?.includes('deposit')) {
-             toast.error('Security deposit required to bid higher.');
-           } else {
-             toast.error(result.error || 'Failed to place bid');
-           }
-           return;
-        }
-        // Success handled by parent or subscription update
+      const result = await socketState.placeBid(amount);
+      
+      if (result.success) {
+        // Success handling
         setBidAmount('');
         setCustomBidMode(false);
-        toast.success('Bid Accepted');
-      } else {
-        // Fallback for standalone usage
-        const { error } = await supabase
-          .from('bids')
-          .insert([{
-            auction_id: auctionId,
-            user_id: user.id,
-            amount,
-            status: 'active'
-          }]);
-
-        if (error) throw error;
-
-        // Update auction current price
-        await supabase
-          .from('auctions')
-          .update({ current_price: amount })
-          .eq('id', auctionId);
-
-        setBidAmount('');
-        setCustomBidMode(false);
-        onBidPlaced?.(amount);
         setBidSuccess(true);
         setTimeout(() => setBidSuccess(false), 2000);
-        toast.success(`Bid placed: ₹${amount.toLocaleString()}`);
+        
+        toast.success(`Bid placed: ₹${amount.toLocaleString()}`, {
+          duration: 3000
+        });
+        
+        // Trigger parent callback
+        onBidPlaced?.(amount);
+      } else {
+        // Handle specific error cases from the enhanced socket
+        if (result.reason === 'rate_limited') {
+          toast.error(result.message || 'Too many bids. Please wait.');
+        } else if (result.reason === 'duplicate_bid') {
+          toast.error('Bid already in progress');
+        } else if (result.reason === 'below_minimum') {
+          toast.error(result.message || 'Bid amount too low');
+        } else if (result.reason === 'auction_ended') {
+          toast.error('This auction has ended');
+        } else {
+          toast.error(result.message || 'Failed to place bid. Please try again.');
+        }
       }
     } catch (error) {
       console.error('Error placing bid:', error);
-      toast.error('Connection error. Retrying...');
+      toast.error('Connection error. Please try again.');
     } finally {
       setBidding(false);
     }
@@ -318,11 +316,44 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
 
       {/* Bidding Controls - Sticky on Mobile */}
       <div className="fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-800 p-4 border-t border-gray-200 dark:border-gray-700 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.1)] md:relative md:bottom-auto md:bg-transparent md:p-0 md:border-none md:shadow-none z-50 pb-safe">
+        {/* Rate Limiting Warning */}
+        {socketState.isRateLimited && (
+          <div className="mb-3 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded-lg">
+            <div className="flex items-center gap-2 text-yellow-800 dark:text-yellow-200">
+              <Clock className="h-4 w-4" />
+              <span className="text-sm font-medium">Rate limited - please wait before bidding again</span>
+            </div>
+          </div>
+        )}
+
+        {/* Pending Bids Indicator */}
+        {socketState.pendingBids.size > 0 && (
+          <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+            <div className="flex items-center gap-2 text-blue-800 dark:text-blue-200">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-blue-600 border-t-transparent"></div>
+              <span className="text-sm font-medium">{socketState.pendingBids.size} bid{socketState.pendingBids.size > 1 ? 's' : ''} in progress</span>
+            </div>
+          </div>
+        )}
+
         {!customBidMode ? (
           <div className="space-y-3 max-w-7xl mx-auto">
              <button
-              onClick={() => placeBid(nextMinBid)}
-              disabled={bidding}
+              onClick={() => {
+                // Show confirmation dialog for quick bid
+                const confirmed = window.confirm(
+                  `Confirm Quick Bid\n\n` +
+                  `• Bid Amount: ₹${nextMinBid.toLocaleString()}\n` +
+                  `• Current Price: ₹${currentPrice.toLocaleString()}\n` +
+                  `• This action cannot be undone\n\n` +
+                  `Are you sure you want to place this bid?`
+                );
+                
+                if (confirmed) {
+                  placeBid(nextMinBid);
+                }
+              }}
+              disabled={bidding || socketState.isRateLimited}
               className={`w-full py-4 rounded-xl flex items-center justify-center gap-2 shadow-lg transition-all active:scale-[0.98] ${
                 bidding 
                   ? 'bg-gray-400 cursor-not-allowed' 
@@ -344,15 +375,28 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
             
             <div className="grid grid-cols-2 gap-3">
               <button
-                onClick={() => placeBid(nextMinBid + incrementAmount)}
-                disabled={bidding}
+                onClick={() => {
+                  const bidAmount = nextMinBid + incrementAmount;
+                  const confirmed = window.confirm(
+                    `Confirm Additional Bid\n\n` +
+                    `• Bid Amount: ₹${bidAmount.toLocaleString()}\n` +
+                    `• Current Price: ₹${currentPrice.toLocaleString()}\n` +
+                    `• Increment: ₹${incrementAmount.toLocaleString()}\n\n` +
+                    `Are you sure you want to place this bid?`
+                  );
+                  
+                  if (confirmed) {
+                    placeBid(bidAmount);
+                  }
+                }}
+                disabled={bidding || socketState.isRateLimited}
                 className="px-4 py-3 bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-xl hover:bg-gray-100 dark:hover:bg-gray-600 disabled:opacity-50 text-sm transition-colors"
               >
                 + Bid ₹{(nextMinBid + incrementAmount).toLocaleString()}
               </button>
               <button
                 onClick={() => setCustomBidMode(true)}
-                disabled={bidding}
+                disabled={bidding || socketState.isRateLimited}
                 className="px-4 py-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-200 font-medium rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 text-sm transition-colors"
               >
                 Custom Amount...

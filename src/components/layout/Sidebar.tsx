@@ -179,7 +179,7 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, className }) => 
                   to={item.to}
                   className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium transition hover:bg-gray-100 hover:text-indigo-600 dark:hover:bg-gray-800 ${
                     isActive(item.to) ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700/20' : 'text-gray-600 dark:text-gray-300'
-                  }`}
+                  } ${collapsed ? 'justify-center' : ''}`}
                 >
                   {item.icon}
                   {!collapsed && item.label}

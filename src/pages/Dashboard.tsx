@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
-import { useSession } from '../context/SessionContext';
+import { useUnifiedAuth } from '../context/UnifiedAuthContext';
 import { 
   Search, 
   MapPin, 
@@ -99,6 +99,7 @@ const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const navigate = useNavigate();
+  const { user, getUser } = useUnifiedAuth();
 
   const { balance: walletBalance, loading: walletLoading } = useWalletBalance(userId);
   const { recommendations } = useAIRecommendations(userId);
@@ -108,25 +109,25 @@ const Dashboard: React.FC = () => {
       try {
         console.log('🔐 AUTH: Dashboard - checking user session');
         
-        const { data: { session }, error } = await supabase.auth.getSession();
-        if (error) console.error('Dashboard: session error', error);
-        
-        if (session?.user) {
-          setUserId(session.user.id);
-          console.log('Dashboard: userId set', session.user.id);
+        const currentUser = getUser();
+        if (currentUser) {
+          setUserId(currentUser.id);
+          console.log('Dashboard: userId set', currentUser.id);
 
           try {
             const { data: profile } = await supabase
               .from('profiles')
               .select('id, name, email, role, user_type, is_verified')
-              .eq('id', session.user.id)
+              .eq('id', currentUser.id)
               .single();
             
-            if (error) console.error('Dashboard: profile error', error);
-            setUserProfile(profile);
+            if (profile) {
+              setUserProfile(profile);
+              console.log('Dashboard: profile loaded', profile);
+            }
 
             // Validate role
-            const userRole = profile?.role || profile?.user_type || 'buyer';
+            const userRole = profile?.role || profile?.user_type || currentUser.role || 'buyer';
             const validRoles = ['admin', 'seller', 'buyer'];
             
             if (!validRoles.includes(userRole)) {
@@ -216,54 +217,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Global Navigation Header */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center">
-              <h1 data-testid="dashboard-logo" className="text-2xl font-bold text-indigo-600">QuickMela</h1>
-            </div>
-
-            {/* Search Bar */}
-            <div className="flex-1 max-w-2xl mx-8">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  onFocus={() => setShowSearchOverlay(true)}
-                  placeholder="Search for anything..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                />
-              </div>
-            </div>
-
-            {/* Right Actions */}
-            <div className="flex items-center gap-4">
-              <button
-                onClick={() => setShowLocationModal(true)}
-                className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-              >
-                <MapPin className="h-4 w-4 text-gray-500" />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{selectedCity}</span>
-              </button>
-
-              <div className="relative">
-                <button
-                  onClick={() => setShowSearchOverlay(!showSearchOverlay)}
-                  className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <Search className="h-5 w-5 text-gray-500" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
+    <div className="w-full">
       {/* Search Overlay */}
       <AnimatePresence>
         {showSearchOverlay && (
@@ -295,31 +249,65 @@ const Dashboard: React.FC = () => {
       </AnimatePresence>
 
       {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
+      <div className="space-y-8">
+        
+        {/* Quick Actions - Role-based */}
+        {userProfile && (
+          <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-xl font-bold text-gray-900 dark:text-white">Quick Actions</h2>
+                <p className="text-gray-600 dark:text-gray-400">Manage your account and listings</p>
+              </div>
+              <div className="flex gap-3">
+                <button
+                  data-testid="sell-button"
+                  onClick={() => userProfile.role === 'seller' ? navigate('/add-product') : undefined}
+                  disabled={userProfile.role !== 'seller'}
+                  className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                    userProfile.role === 'seller'
+                      ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                      : 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                  }`}
+                >
+                  <Package className="h-5 w-5" />
+                  List Item
+                </button>
+                <button
+                  onClick={() => navigate('/wallet')}
+                  className="flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg font-semibold hover:bg-green-700 transition-colors"
+                >
+                  <DollarSign className="h-5 w-5" />
+                  Wallet
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         
         {/* Trending Auctions */}
         {trendingProducts.length > 0 && (
-          <section data-testid="trending-section">
-            <div className="flex items-center justify-between mb-8">
+          <section data-testid="trending-section" className="space-y-8">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center gap-4">
-                <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-full">
-                  <TrendingUp className="h-6 w-6 text-red-600 dark:text-red-400" />
+                <div className="p-3 bg-gradient-to-r from-red-500 to-orange-500 rounded-full shadow-lg">
+                  <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-3xl font-bold text-gray-900 dark:text-white">Trending Auctions</h2>
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white">Trending Auctions</h2>
                   <p className="text-gray-600 dark:text-gray-400">Hot deals everyone's bidding on</p>
                 </div>
               </div>
               <Link 
                 to="/catalog?sort=trending" 
-                className="text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-2 px-4 py-2 rounded-lg hover:bg-indigo-50 dark:hover:bg-indigo-900/20 transition-colors"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-semibold rounded-lg transition-all duration-200 shadow-md hover:shadow-lg"
               >
                 View All <ArrowRight className="h-5 w-5" />
               </Link>
             </div>
-            <div className="flex gap-6 overflow-x-auto pb-6 scrollbar-hide">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 lg:gap-6">
               {trendingProducts.slice(0, 8).map((product) => (
-                <div key={product.id} className="flex-none w-80">
+                <div key={product.id} className="w-full">
                   <AuctionCard
                     variant="live"
                     id={product.id}
@@ -414,7 +402,7 @@ const Dashboard: React.FC = () => {
             </div>
           </section>
         )}
-      </main>
+      </div>
     </div>
   );
 };

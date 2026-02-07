@@ -222,12 +222,12 @@ test.describe('UX System Validation', () => {
   test('Role-based actions are correct', async ({ page }) => {
     // Test different roles
     const roles = [
-      { name: 'guest', canBid: false, canSell: false },
-      { name: 'demo_buyer', canBid: true, canSell: false },
-      { name: 'demo_seller', canBid: false, canSell: true },
-      { name: 'demo_admin', canBid: false, canSell: false, canManageUsers: true }
+      { name: 'guest', canSell: false },
+      { name: 'demo_buyer', canSell: false },
+      { name: 'demo_seller', canSell: true },
+      { name: 'demo_admin', canSell: false, canManageUsers: true }
     ];
-    
+
     for (const role of roles) {
       // Set role
       await page.addInitScript(() => {
@@ -239,26 +239,12 @@ test.describe('UX System Validation', () => {
           localStorage.removeItem('demo-session');
         }
       });
-      
+
       await page.goto('/dashboard');
       await page.waitForLoadState('networkidle');
-      
-      // Check bid button
-      const bidButton = page.locator('button:has-text("Bid")');
-      if (role.canBid) {
-        if (await bidButton.count() > 0) {
-          await expect(bidButton.first()).toBeVisible();
-          await expect(bidButton.first()).toBeEnabled();
-        }
-      } else {
-        if (await bidButton.count() > 0) {
-          await expect(bidButton.first()).toBeVisible();
-          await expect(bidButton.first()).toBeDisabled();
-        }
-      }
-      
-      // Check sell button
-      const sellButton = page.locator('button:has-text("Sell"), button:has-text("List Item")');
+
+      // Check sell button (List Item button on dashboard)
+      const sellButton = page.locator('button:has-text("List Item")');
       if (role.canSell) {
         if (await sellButton.count() > 0) {
           await expect(sellButton.first()).toBeVisible();

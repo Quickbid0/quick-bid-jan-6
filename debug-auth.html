@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Auth</title>
+</head>
+<body>
+    <h1>Debug Authentication</h1>
+    <div id="output"></div>
+    
+    <script>
+        // Set test user data
+        localStorage.setItem('qm-auth-user', JSON.stringify({
+            id: 'test-buyer-id',
+            email: 'buyer@test.com',
+            role: 'buyer',
+            user_type: 'buyer',
+            name: 'Test Buyer',
+            is_verified: true
+        }));
+        
+        // Check if it's stored
+        const stored = localStorage.getItem('qm-auth-user');
+        document.getElementById('output').innerHTML = `
+            <h2>Stored Data:</h2>
+            <pre>${stored}</pre>
+            <h2>Parsed:</h2>
+            <pre>${JSON.stringify(JSON.parse(stored), null, 2)}</pre>
+        `;
+    </script>
+</body>
+</html>

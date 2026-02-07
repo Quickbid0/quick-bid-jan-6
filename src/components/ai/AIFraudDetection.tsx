@@ -328,7 +328,7 @@ const AIFraudDetection: React.FC = () => {
               </span>
             </div>
           </div>
-          <div className="grid grid-cols-4 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div>
               <div className="flex items-center gap-2 mb-1">
                 <Users className="w-3 h-3 text-gray-600 dark:text-gray-400" />

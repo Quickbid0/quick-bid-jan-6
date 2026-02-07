@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Shield, Store, Crown, Building, Palette, Truck, Award, Zap, Globe } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { storageService } from '../services/storageService';
 
 const DemoLogin = () => {
   const [loading, setLoading] = useState(false);
@@ -78,9 +79,9 @@ const DemoLogin = () => {
         }
       };
 
-      // Store ONLY demo-session - remove all other storage methods
-      localStorage.setItem('demo-session', JSON.stringify(demoSession));
-      console.log('🔐 AUTH: Demo session stored in localStorage');
+      // Store ONLY demo-session - use storageService for consistency
+      storageService.setDemoSession(demoSession);
+      console.log('🔐 AUTH: Demo session stored using storageService');
 
       // Dispatch event for SessionContext
       window.dispatchEvent(new CustomEvent('demo-login', { detail: demoSession }));

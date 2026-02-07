@@ -25,7 +25,7 @@ const SalesProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const role = user?.role || user?.user_type || '';
-  const hasSalesRole = role === 'sales';
+  const hasSalesRole = role === 'admin'; // Only admin can access sales routes
 
   if (!hasSalesRole) {
     return <Navigate to="/" replace />;

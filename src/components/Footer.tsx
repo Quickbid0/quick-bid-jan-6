@@ -126,14 +126,6 @@ const Footer = () => {
                   FAQ
                 </Link>
               </li>
-              <li>
-                <Link
-                  to="/demo?user=demo-admin&redirect=/admin/finance-leads"
-                  className="text-gray-600 dark:text-gray-300 hover:text-primary-600"
-                >
-                  Admin Finance Leads
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -141,38 +133,28 @@ const Footer = () => {
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white uppercase tracking-wider mb-4">
               Legal
             </h3>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <Link to="/legal/terms-and-conditions" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Terms &amp; Conditions
-              </Link>
-              <Link to="/legal/privacy-policy" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Privacy Policy
-              </Link>
-              <Link to="/legal/refund-cancellation-dispute" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Refund &amp; Dispute Policy
-              </Link>
-              <Link to="/legal/wallet-deposit-investment" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Wallet &amp; Deposit Policy
-              </Link>
-              <Link to="/legal/buyer-policy" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Buyer Policy
-              </Link>
-              <Link to="/legal/seller-policy" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Seller Policy
-              </Link>
-              <Link to="/legal/security-authentication-passwordprotection-accesscontrol-encryption-policy" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Security &amp; AML
-              </Link>
-              <Link to="/legal/e-contract-digital-agreement" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                E-Contract &amp; Digital Agreement
-              </Link>
-              <Link to="/legal/auction-rules-bidding" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
-                Auction Rules
-              </Link>
-            </div>
-            <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
-              Need more policies? Visit the Legal Hub for the full catalog of compliance, governance, and reporting guides.
-            </p>
+            <ul className="space-y-2">
+              <li>
+                <Link to="/terms" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link to="/privacy" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
+                  Privacy Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/refunds" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
+                  Refund Policy
+                </Link>
+              </li>
+              <li>
+                <Link to="/grievance" className="text-gray-600 dark:text-gray-300 hover:text-primary-600">
+                  Grievance Officer
+                </Link>
+              </li>
+            </ul>
           </div>
         </div>
       </div>

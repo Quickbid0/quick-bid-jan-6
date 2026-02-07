@@ -1,6 +1,12 @@
 import { Router } from 'express';
 import { Pool } from 'pg';
+import OpenAI from 'openai';
 import { aiSupportHandler } from '../controllers/aiSupportController.ts';
+
+// Initialize OpenAI client server-side
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 // Router for AI endpoints
 export function createAiRouter(authMiddleware: any) {
@@ -115,17 +121,15 @@ export function createAiRouter(authMiddleware: any) {
     }
   });
 
-  // AI Fraud Detection - Action
-  router.post('/fraud-detection/action', authMiddleware, async (req, res) => {
+  // AI Fraud Analysis
+  router.post('/fraud-analysis', authMiddleware, async (req, res) => {
     try {
-      const { signalId, action } = req.body;
-      
-      await executeFraudAction(signalId, action);
-      
-      res.json({ success: true });
+      const { userData } = req.body;
+      const result = await analyzeFraudServer(userData);
+      res.json(result);
     } catch (error) {
-      console.error('Error executing fraud action:', error);
-      res.status(500).json({ error: 'Failed to execute action' });
+      console.error('Error analyzing fraud:', error);
+      res.status(500).json({ error: 'Failed to analyze fraud' });
     }
   });
 
@@ -175,37 +179,283 @@ export function createAiRouter(authMiddleware: any) {
   return router;
 }
 
-// Mock AI functions (in production, these would call actual ML models)
-async function generateRecommendations(userId: string, preferences: any) {
-  // Mock implementation - in production, this would call actual ML models
-  return [
-    {
-      id: '1',
-      title: '2021 Mercedes-Benz C-Class',
-      description: 'Luxury sedan with low mileage',
-      category: 'Vehicles',
-      price: 2800000,
-      image: 'https://example.com/car1.jpg',
-      confidence: 92,
-      reason: 'Based on your interest in premium vehicles',
-      trending: true,
-      timeSensitive: false,
-      matchScore: 95,
-    },
-    {
-      id: '2',
-      title: 'Vintage Rolex Submariner',
-      description: '1960s classic timepiece',
-      category: 'Jewelry',
-      price: 450000,
-      image: 'https://example.com/watch1.jpg',
-      confidence: 88,
-      reason: 'Matches your luxury preferences',
-      trending: false,
-      timeSensitive: true,
-      matchScore: 89,
-    },
-  ];
+// Server-side AI functions using OpenAI
+
+async function detectFakeProductServer(product: any) {
+  try {
+    const prompt = `
+      Analyze this product listing for authenticity and potential fraud. Consider:
+
+      Product Details:
+      - Title: "${product.title}"
+      - Description: "${product.description}"
+      - Price: ₹${product.price}
+      - Brand: ${product.brand || 'Not specified'}
+      - Category: ${product.category || 'Not specified'}
+
+      Provide enhanced analysis in JSON format:
+      {
+        "isFake": boolean,
+        "confidence": number (0-100),
+        "riskScore": number (0-100),
+        "flags": ["AI-detected flags"],
+        "recommendation": "approve|manual_review|reject",
+        "aiReasoning": "brief explanation of AI analysis"
+      }
+    `;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.2,
+      max_tokens: 300
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (response) {
+      const aiAnalysis = JSON.parse(response);
+      return {
+        isFake: aiAnalysis.isFake,
+        confidence: aiAnalysis.confidence,
+        riskScore: aiAnalysis.riskScore,
+        flags: aiAnalysis.flags || [],
+        recommendation: aiAnalysis.recommendation,
+        aiReasoning: aiAnalysis.aiReasoning
+      };
+    }
+  } catch (error) {
+    console.error('AI fake product detection failed:', error);
+  }
+
+async function generatePricingSuggestionsServer(productTitle: string, category: string, condition: string, originalPrice?: number) {
+  try {
+    const prompt = `
+      Suggest optimal pricing for this auction item. Consider:
+      1. Current market rates for similar items
+      2. Product condition and age
+      3. Demand and popularity
+      4. Platform competition
+      5. Seller goals (quick sale vs. maximum profit)
+
+      Product: "${productTitle}"
+      Category: "${category}"
+      Condition: "${condition}"
+      ${originalPrice ? `Original Price: ₹${originalPrice}` : ''}
+
+      Provide pricing analysis in JSON format:
+      {
+        "suggestedPrice": number,
+        "minPrice": number,
+        "maxPrice": number,
+        "reasoning": "detailed explanation",
+        "marketComparison": {
+          "averagePrice": number,
+          "lowestPrice": number,
+          "highestPrice": number
+        }
+      }
+    `;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.4,
+      max_tokens: 400
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (response) {
+      return JSON.parse(response);
+    }
+  } catch (error) {
+    console.error('AI pricing suggestions failed:', error);
+  }
+
+  // Fallback pricing
+  return {
+    suggestedPrice: originalPrice || 10000,
+    minPrice: (originalPrice || 10000) * 0.7,
+    maxPrice: (originalPrice || 10000) * 1.5,
+    reasoning: `Based on ${condition} condition and ${category} category market trends.`,
+    marketComparison: {
+      averagePrice: originalPrice || 10000,
+      lowestPrice: (originalPrice || 10000) * 0.5,
+      highestPrice: (originalPrice || 10000) * 2.0
+    }
+async function generateChatResponseServer(userMessage: string, context: any) {
+  try {
+    const recentHistory = context.conversationHistory?.slice(-5) || [];
+    const historyText = recentHistory.map((msg: any) =>
+      `${msg.role}: ${msg.content}`
+    ).join('\n');
+
+    const prompt = `
+      You are QuickMela's AI support assistant. Help users with auction-related questions.
+
+      User Context:
+      - Role: ${context.userRole}
+      - Current Page: ${context.currentPage}
+      - Recent Conversation:
+      ${historyText}
+
+      User Question: "${userMessage}"
+
+      Provide a helpful, professional response. Keep it concise but informative.
+      If this is a technical issue, suggest contacting human support.
+    `;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'system', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 200
+    });
+
+    return completion.choices[0]?.message?.content || getFallbackChatResponse(userMessage, context);
+  } catch (error) {
+    console.error('AI chat response failed:', error);
+    return getFallbackChatResponse(userMessage, context);
+async function analyzeFraudServer(userData: any) {
+  try {
+    const prompt = `
+      Analyze this user for potential fraud risk. Consider:
+
+      User Profile:
+      - Account Age: ${Math.floor((Date.now() - userData.registrationDate.getTime()) / (1000 * 60 * 60 * 24))} days
+      - Email: ${userData.email}
+      - Phone: ${userData.phone || 'Not provided'}
+      - Bidding History: ${userData.biddingHistory.length} bids
+      - Payment History: ${userData.paymentHistory.length} payments
+
+      Common fraud indicators:
+      1. New accounts with high-value bids
+      2. Suspicious email patterns
+      3. Rapid bidding patterns
+      4. Failed payment attempts
+      5. Multiple accounts from same IP
+
+      Provide fraud analysis in JSON format:
+      {
+        "riskScore": number (0-100),
+        "riskLevel": "low|medium|high",
+        "flags": ["flag1", "flag2"],
+        "recommendations": ["rec1", "rec2"],
+        "confidence": number (0-100)
+      }
+    `;
+
+    const completion = await openai.chat.completions.create({
+      model: 'gpt-4',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.2,
+      max_tokens: 300
+    });
+
+    const response = completion.choices[0]?.message?.content;
+    if (response) {
+      return JSON.parse(response);
+    }
+  } catch (error) {
+    console.error('AI fraud analysis failed:', error);
+  }
+
+  // Fallback analysis
+  const accountAge = Math.floor((Date.now() - userData.registrationDate.getTime()) / (1000 * 60 * 60 * 24));
+  const riskScore = Math.max(0, 100 - (accountAge * 2) - (userData.biddingHistory.length * 5));
+
+  return {
+    riskScore,
+    riskLevel: riskScore > 70 ? 'high' : riskScore > 40 ? 'medium' : 'low',
+    flags: riskScore > 50 ? ['New account with limited history'] : [],
+    recommendations: [
+      'Monitor account activity closely',
+      'Require additional verification for high-value transactions',
+      'Enable two-factor authentication'
+    ],
+    confidence: 75
+  };
+}
+
+// Fallback functions for when AI is unavailable
+async function heuristicFakeProductDetection(product: any) {
+  const flags: string[] = [];
+  let riskScore = 0;
+
+  const lowerTitle = product.title.toLowerCase();
+  const lowerDesc = product.description.toLowerCase();
+
+  // 1. Keyword Analysis
+  const suspiciousKeywords = ['first copy', '1st copy', 'clone', 'replica', 'duplicate', 'same as original', 'master copy', 'aaa copy', 'fake', 'counterfeit'];
+  suspiciousKeywords.forEach(keyword => {
+    if (lowerTitle.includes(keyword) || lowerDesc.includes(keyword)) {
+      flags.push(`Suspicious keyword found: "${keyword}"`);
+      riskScore += 40;
+    }
+  });
+
+  // 2. Brand Price Analysis
+  if (product.brand) {
+    const brandBaselines: Record<string, number> = {
+      'apple': 50000, 'samsung': 30000, 'rolex': 500000, 'gucci': 20000,
+      'louis vuitton': 40000, 'nike': 5000, 'adidas': 3000, 'sony': 15000
+    };
+    const lowerBrand = product.brand.toLowerCase();
+    const matchedBrand = Object.keys(brandBaselines).find(b => lowerBrand.includes(b));
+
+    if (matchedBrand) {
+      const expectedPrice = brandBaselines[matchedBrand];
+      if (product.price < expectedPrice * 0.15) {
+        flags.push(`Price (${product.price}) is suspiciously low for brand ${matchedBrand}`);
+        riskScore += 35;
+      } else if (product.price < expectedPrice * 0.3) {
+        flags.push(`Price is below market average for ${matchedBrand}`);
+        riskScore += 15;
+      }
+    }
+  }
+
+  // 3. Description Quality
+  if (product.price > 10000 && product.description.length < 20) {
+    flags.push('High value item with very short description');
+    riskScore += 10;
+  }
+
+  riskScore = Math.min(100, riskScore);
+
+  let recommendation: 'approve' | 'manual_review' | 'reject' = 'approve';
+  if (riskScore > 75) recommendation = 'reject';
+  else if (riskScore > 30) recommendation = 'manual_review';
+
+  return {
+    isFake: riskScore > 75,
+    confidence: Math.min(100, 50 + (riskScore / 2)),
+    riskScore,
+    flags,
+    recommendation
+  };
+}
+
+function getFallbackChatResponse(userMessage: string, context: any): string {
+  const lowerMessage = userMessage.toLowerCase();
+
+  if (lowerMessage.includes('bid') || lowerMessage.includes('bidding')) {
+    return 'To place a bid, navigate to any active auction and click the "Place Bid" button. Make sure you have sufficient funds in your wallet and meet the minimum bid requirements.';
+  }
+
+  if (lowerMessage.includes('payment') || lowerMessage.includes('pay')) {
+    return 'Payments are processed securely through Razorpay. You can add funds to your wallet or pay directly for won auctions. All transactions are protected and secure.';
+  }
+
+  if (lowerMessage.includes('kyc') || lowerMessage.includes('verification')) {
+    return 'KYC verification is required to access all platform features. Go to your profile settings and complete the KYC process by uploading your documents.';
+  }
+
+  if (lowerMessage.includes('seller') && context.userRole === 'buyer') {
+    return 'To become a seller, you need to complete KYC verification and then apply for seller status through your profile settings.';
+  }
+
+  return 'I\'m here to help! For specific questions about auctions, payments, or account issues, please provide more details or contact our human support team at support@quickmela.com.';
+}
 }
 
 async function generatePricePrediction(productId: string, options: any) {

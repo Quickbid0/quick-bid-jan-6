@@ -229,6 +229,7 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
       ref={ref}
       padding="none"
       variant="surface"
+      data-testid="product-card"
       className={`flex flex-col w-full overflow-hidden border border-gray-200 dark:border-gray-700 shadow-sm hover:shadow-md transition-all duration-200 ${className}`.trim()}
       {...rest}
     >
@@ -309,7 +310,7 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
       <div className="p-4 flex flex-col gap-3 flex-1">
         {/* Title & Verify Badge */}
         <div className="flex justify-between items-start gap-2">
-           <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-2" title={title}>
+           <h3 data-testid="product-title" className="font-bold text-gray-900 text-lg leading-tight line-clamp-2" title={title}>
             {title || 'Untitled auction'}
           </h3>
           {isCertified && <Shield className="h-5 w-5 text-green-500 shrink-0" />}
@@ -375,7 +376,7 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
         <div className="mt-2">
           <p className="text-xs text-gray-500 mb-0.5">{priceLabel}</p>
           <div className="flex items-end gap-2">
-             <p className="text-xl font-bold text-green-600">
+             <p data-testid="current-bid" className="text-xl font-bold text-green-600">
               {formatCurrency(priceValue)}
              </p>
              {price && currentBid && price > currentBid && (
@@ -400,6 +401,7 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
         {/* Actions */}
         <div className="flex gap-2 mt-2 pt-3 border-t border-gray-100">
           <Button 
+            data-testid="place-bid-button"
             className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-medium text-sm h-9 focus-visible focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
             onClick={onPrimaryAction}
           >

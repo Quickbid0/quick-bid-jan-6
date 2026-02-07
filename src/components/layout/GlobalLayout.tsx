@@ -2,9 +2,8 @@ import React from 'react';
 import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
-import AdminLayout from './AdminLayout';
 import Shell from './Shell';
-import { useSession } from '../../context/SessionContext';
+import { useUnifiedAuth } from '../../context/UnifiedAuthContext';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
@@ -12,8 +11,9 @@ interface GlobalLayoutProps {
 
 const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { user } = useSession();
+  const { user } = useUnifiedAuth();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isBuyerRoute = location.pathname.startsWith('/buyer/');
 
   const isPublicRoute = (() => {
     const path = location.pathname;
@@ -86,10 +86,26 @@ const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
   // Admin routes use their own layout
   if (isAdminRoute) {
-    return <AdminLayout>{children}</AdminLayout>;
   }
 
-  if (user && !isPublicRoute) {
+  // Buyer routes use their own layout (BuyerLayout)
+  if (isBuyerRoute) {
+    return <>{children}</>;
+  }
+
+  // Dashboard routes use Shell layout
+  if (location.pathname.startsWith('/dashboard') || 
+      location.pathname.startsWith('/profile') ||
+      location.pathname.startsWith('/wallet') ||
+      location.pathname.startsWith('/watchlist') ||
+      location.pathname.startsWith('/my/') ||
+      location.pathname.startsWith('/add-product') ||
+      location.pathname.startsWith('/bulk-upload') ||
+      location.pathname.startsWith('/verify-seller') ||
+      location.pathname.startsWith('/seller/') ||
+      location.pathname.startsWith('/notifications') ||
+      location.pathname.startsWith('/support') ||
+      location.pathname.startsWith('/settings')) {
     return (
       <Shell title={getShellTitle()}>
         {children}

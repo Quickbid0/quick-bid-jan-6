@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>QuickBid - Real Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; color: #155724; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; color: #721c24; }
+        button { padding: 10px 20px; margin: 5px; background: #007bff; color: white; border: none; border-radius: 3px; cursor: pointer; }
+        button:hover { background: #0056b3; }
+        .credentials { background: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🚀 QuickBid - Real Login Test</h1>
+    
+    <div class="credentials">
+        <h3>🔐 Test Credentials:</h3>
+        <p><strong>Admin:</strong> founder@quickbid.com / QuickBid2026!</p>
+        <p><strong>Seller:</strong> seller@quickbid.com / QuickBid2026!</p>
+        <p><strong>Platform:</strong> <a href="http://localhost:4173" target="_blank">http://localhost:4173</a></p>
+    </div>
+
+    <div class="test-section">
+        <h2>🧪 Test Real Login</h2>
+        <button onclick="testAdminLogin()">Test Admin Login</button>
+        <button onclick="testSellerLogin()">Test Seller Login</button>
+        <button onclick="testBackendAPI()">Test Backend API</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <div id="results"></div>
+
+    <script>
+        async function testAdminLogin() {
+            addResult('Testing Admin Login...', 'info');
+            try {
+                const response = await fetch('http://localhost:4010/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'founder@quickbid.com',
+                        password: 'QuickBid2026!'
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    addResult(`✅ Admin Login SUCCESS: ${data.message}`, 'success');
+                    addResult(`👤 User: ${data.user.name} (${data.user.role})`, 'success');
+                    addResult(`🔑 Token: ${data.token.substring(0, 20)}...`, 'success');
+                } else {
+                    addResult(`❌ Admin Login FAILED: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Admin Login ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        async function testSellerLogin() {
+            addResult('Testing Seller Login...', 'info');
+            try {
+                const response = await fetch('http://localhost:4010/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: 'seller@quickbid.com',
+                        password: 'QuickBid2026!'
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    addResult(`✅ Seller Login SUCCESS: ${data.message}`, 'success');
+                    addResult(`👤 User: ${data.user.name} (${data.user.role})`, 'success');
+                    addResult(`🔑 Token: ${data.token.substring(0, 20)}...`, 'success');
+                } else {
+                    addResult(`❌ Seller Login FAILED: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Seller Login ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        async function testBackendAPI() {
+            addResult('Testing Backend API...', 'info');
+            try {
+                const response = await fetch('http://localhost:4010/api/health');
+                const data = await response.json();
+                if (response.ok) {
+                    addResult(`✅ Backend API SUCCESS: ${data.status}`, 'success');
+                    addResult(`⏰ Timestamp: ${data.timestamp}`, 'success');
+                } else {
+                    addResult(`❌ Backend API FAILED`, 'error');
+                }
+            } catch (error) {
+                addResult(`❌ Backend API ERROR: ${error.message}`, 'error');
+            }
+        }
+
+        function addResult(message, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-section ${type}`;
+            div.innerHTML = `<p>${message}</p>`;
+            results.appendChild(div);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // Auto-run backend test on load
+        window.onload = function() {
+            testBackendAPI();
+        };
+    </script>
+</body>
+</html>

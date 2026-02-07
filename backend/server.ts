@@ -14,6 +14,7 @@ import cors from 'cors';
 import { Server as SocketIOServer } from 'socket.io';
 import { Pool } from 'pg';
 import { registerAuctionSocket } from './sockets/auctionSocket.ts';
+import { CountdownService } from './services/countdownService.ts';
 import { createAdsRouter } from './routes/adsRoutes.ts';
 import { createDepositRouter } from './routes/depositRoutes.ts';
 import { createMarketingRouter } from './routes/marketingRoutes.ts';
@@ -95,11 +96,16 @@ const authMiddleware = async (req: any, res: any, next: any) => {
 };
 
 export async function startServer() {
-  if (!DATABASE_URL) {
-    throw new Error('[live-backend] DATABASE_URL is required');
+  // Use Supabase instead of PostgreSQL if DATABASE_URL is not available
+  if (!DATABASE_URL && supabase) {
+    console.log('[live-backend] Using Supabase instead of PostgreSQL');
+    // Skip PostgreSQL pool creation and use Supabase client
+  } else if (!DATABASE_URL) {
+    throw new Error('[live-backend] DATABASE_URL is required when Supabase is not available');
   }
 
-  const pool = new Pool({ connectionString: DATABASE_URL });
+  // Create PostgreSQL pool only if DATABASE_URL is available
+  const pool = DATABASE_URL ? new Pool({ connectionString: DATABASE_URL }) : null;
 
   const app = express();
   app.set('trust proxy', true);
@@ -158,6 +164,13 @@ export async function startServer() {
   registerAuctionSocket(io, pool);
 
   const bidService = new BidService(io, pool);
+  const countdownService = new CountdownService(io, pool);
+
+  // Initialize countdown timers for active auctions
+  await countdownService.initializeActiveAuctions();
+
+  // Re-register auction socket with countdown service
+  registerAuctionSocket(io, pool, countdownService);
 
   async function autoEndLiveAuctions() {
     try {

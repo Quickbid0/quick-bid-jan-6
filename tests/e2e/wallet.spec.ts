@@ -18,7 +18,7 @@ test.describe('Wallet Critical Flow Tests', () => {
     await expect(body).toBeVisible();
     
     // CRITICAL: Wallet balance must be visible
-    const balanceSection = page.locator('text=/balance|wallet|₹|amount/i, [data-testid*="balance"], .wallet-balance');
+    const balanceSection = page.locator('[data-testid="wallet-balance"]');
     await expect(balanceSection).toBeVisible();
     
     // Verify balance amount is displayed
@@ -35,7 +35,7 @@ test.describe('Wallet Critical Flow Tests', () => {
     await page.waitForLoadState('networkidle');
     
     // CRITICAL: Transactions section must be visible
-    const transactionsSection = page.locator('text=/transaction|history|activity/i, [data-testid*="transaction"], .transaction-list');
+    const transactionsSection = page.locator('[data-testid="wallet-transactions"]');
     await expect(transactionsSection).toBeVisible();
     
     // Verify transaction items exist

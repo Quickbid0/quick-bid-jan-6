@@ -4,7 +4,9 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+    }),
   ],
   base: '/',
   resolve: {
@@ -18,15 +20,13 @@ export default defineConfig({
     },
   },
   build: {
-    // Optimize build
     target: 'esnext',
     minify: 'terser',
     sourcemap: false,
-    // Chunk optimization
+    reportCompressedSize: false,
     rollupOptions: {
       output: {
         manualChunks: {
-          // Separate vendor chunks
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
           ui: ['@headlessui/react', '@heroicons/react', 'framer-motion'],
@@ -34,18 +34,38 @@ export default defineConfig({
           forms: ['react-hook-form', '@hookform/resolvers'],
           utils: ['date-fns', 'clsx', 'tailwind-merge'],
         },
-        // Optimize chunk naming
         chunkFileNames: (chunkInfo) => {
           const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
           return `js/${facadeModuleId.replace(/\.[^.]*$/, '')}-[hash].js`;
         },
       },
     },
-    // Optimize assets
     assetsInlineLimit: 4096,
     chunkSizeWarningLimit: 1000,
   },
-  // Optimize dependencies
+  server: {
+    historyApiFallback: true,
+    port: 5173,
+    host: true,
+  },
+  proxy: {
+    '/api/images': {
+      target: 'http://localhost:4011',
+      changeOrigin: true,
+    },
+    '/api/rbac': {
+      target: 'http://localhost:4011',
+      changeOrigin: true,
+    },
+    '/api': {
+      target: 'http://localhost:4011',
+      changeOrigin: true,
+    },
+    '/webhooks': {
+      target: 'http://localhost:4011',
+      changeOrigin: true,
+    },
+  },
   optimizeDeps: {
     include: [
       'react',
@@ -56,31 +76,18 @@ export default defineConfig({
       'framer-motion',
     ],
   },
-  server: {
-    port: 3000,
-    host: true,
-    proxy: {
-      '/api/images': {
-        target: 'http://localhost:5001',
-        changeOrigin: true,
-      },
-      '/api/rbac': {
-        target: 'http://localhost:5001',
-        changeOrigin: true,
-      },
-      '/api': {
-        target: 'http://localhost:4000',
-        changeOrigin: true,
-      },
-      '/webhooks': {
-        target: 'http://localhost:4000',
-        changeOrigin: true,
-      },
-    },
-  },
-  // Define global constants
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
     __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
+  esbuild: {
+    tsconfigRaw: {
+      compilerOptions: {
+        noEmit: false,
+        strict: false,
+        noImplicitAny: false,
+        skipLibCheck: true,
+      },
+    },
   },
 });

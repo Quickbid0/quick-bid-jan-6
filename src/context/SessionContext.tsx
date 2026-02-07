@@ -226,7 +226,29 @@ export const SessionProvider: React.FC<SessionProviderProps> = ({ children }) =>
   const logout = async (): Promise<void> => {
     try {
       console.log('🔐 AUTH: Logout initiated');
-      await supabase.auth.signOut();
+      
+      // Clear backend auth tokens
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+      
+      // Call backend logout API
+      try {
+        const response = await fetch('http://localhost:4011/api/auth/logout', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        
+        if (response.ok) {
+          console.log('✅ Backend logout successful');
+        } else {
+          console.log('⚠️ Backend logout failed, but continuing with client-side logout');
+        }
+      } catch (error) {
+        console.log('⚠️ Backend logout error, but continuing with client-side logout:', error);
+      }
+      
       setUser(null);
       // Clear ALL demo-related storage
       localStorage.removeItem('demo-session');

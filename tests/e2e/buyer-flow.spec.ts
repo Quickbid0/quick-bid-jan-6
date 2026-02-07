@@ -2,20 +2,46 @@ import { test, expect } from '@playwright/test';
 import { Page } from '@playwright/test';
 
 test.describe('Buyer UX Flow Tests', () => {
-  test.beforeEach(async ({ page }) => {
-    // Mock authentication for buyer
+  test('Buyer Dashboard loads correctly', async ({ page }) => {
+    // Mock buyer authentication
     await page.addInitScript(() => {
-      localStorage.setItem('sb-auth-token', 'mock-token');
-      localStorage.setItem('sb-user-id', 'test-user-id');
-      localStorage.setItem('user-profile', JSON.stringify({
+      localStorage.setItem('qm-auth-user', JSON.stringify({
+        id: 'test-buyer-id',
+        email: 'buyer@test.com',
         role: 'buyer',
-        user_type: 'buyer'
+        user_type: 'buyer',
+        name: 'Test Buyer',
+        is_verified: true
       }));
     });
+    
+    await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
+    
+    // UX Assertion: Dashboard loads without blank screen
+    await expect(page.locator('body')).toBeVisible();
+    await expect(page.locator('[data-testid="dashboard-logo"], section, main').first()).toBeVisible();
+    
+    // UX Assertion: Clear next action visible (discover auctions)
+    const trendingSection = page.locator('[data-testid="trending-section"]');
+    await expect(trendingSection).toBeVisible();
   });
 
   test('Complete buyer journey - dashboard to bid placement', async ({ page }) => {
+    // Mock buyer authentication
+    await page.addInitScript(() => {
+      localStorage.setItem('qm-auth-user', JSON.stringify({
+        id: 'test-buyer-id',
+        email: 'buyer@test.com',
+        role: 'buyer',
+        user_type: 'buyer',
+        name: 'Test Buyer',
+        is_verified: true
+      }));
+    });
+    
     await page.goto('/dashboard');
+    await page.waitForLoadState('networkidle');
     
     // UX Assertion: Dashboard loads without blank screen
     await expect(page.locator('body')).toBeVisible();

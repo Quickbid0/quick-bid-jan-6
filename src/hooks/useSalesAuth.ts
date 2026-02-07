@@ -22,7 +22,27 @@ export const useSalesAuth = (): UseSalesAuthResult => {
   }, []);
 
   const logout = useCallback(async () => {
-    await supabase.auth.signOut();
+    // Clear backend auth tokens
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
+    
+    // Call backend logout API
+    try {
+      const response = await fetch('http://localhost:4011/api/auth/logout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      
+      if (response.ok) {
+        console.log('✅ Backend logout successful');
+      } else {
+        console.log('⚠️ Backend logout failed, but continuing with client-side logout');
+      }
+    } catch (error) {
+      console.log('⚠️ Backend logout error, but continuing with client-side logout:', error);
+    }
   }, []);
 
   return {

@@ -82,10 +82,10 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
   return (
     <Link 
       to={`/product/${id}`}
-      className={`group relative bg-white dark:bg-gray-800 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden ${className}`}
+      className={`group relative bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 dark:border-gray-700 w-full ${className}`}
     >
       {/* Image Container */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[4/3] overflow-hidden bg-gray-50 dark:bg-gray-900">
         <img
           src={image}
           alt={title}
@@ -95,25 +95,25 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
         {/* Status Badges */}
         <div className="absolute top-3 left-3 flex flex-wrap gap-2">
           {isLive && (
-            <div className="px-2 py-1 bg-red-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+            <div className="px-3 py-1.5 bg-gradient-to-r from-red-500 to-red-600 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
               <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
               LIVE
             </div>
           )}
           {isTrending && (
-            <div className="px-2 py-1 bg-orange-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+            <div className="px-3 py-1.5 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
               <TrendingUp size={12} />
               Trending
             </div>
           )}
           {isFeatured && (
-            <div className="px-2 py-1 bg-purple-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+            <div className="px-3 py-1.5 bg-gradient-to-r from-purple-500 to-purple-600 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
               <Star size={12} />
               Featured
             </div>
           )}
           {isCertified && (
-            <div className="px-2 py-1 bg-green-500 text-white text-xs font-semibold rounded-full flex items-center gap-1">
+            <div className="px-3 py-1.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-xs font-bold rounded-full flex items-center gap-1.5 shadow-lg">
               <Shield size={12} />
               Certified
             </div>
@@ -133,13 +133,13 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
       </div>
 
       {/* Content */}
-      <div className="p-4 space-y-3">
+      <div className="p-4 space-y-4">
         {/* Title and Location */}
         <div>
-          <h3 className="font-semibold text-gray-900 dark:text-white line-clamp-2 group-hover:text-primary-600 transition-colors">
+          <h3 className="font-bold text-lg text-gray-900 dark:text-white line-clamp-2 group-hover:text-indigo-600 transition-colors leading-tight">
             {title}
           </h3>
-          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 mt-1">
             <MapPin className="w-3 h-3" />
             <span>{location}</span>
             <span>•</span>
@@ -150,17 +150,17 @@ const AuctionCard: React.FC<AuctionCardProps> = ({
         {/* Price and Bids */}
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white">
+            <p className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               {formatPrice(currentPrice)}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <p className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {bidCount} bid{bidCount !== 1 ? 's' : ''}
             </p>
           </div>
           <div className="text-right">
             <div className="flex items-center gap-1 text-red-600 dark:text-red-400">
               <Clock className="w-4 h-4" />
-              <span className="text-sm font-medium">{formatTimeLeft(endTime)}</span>
+              <span className="text-sm font-bold">{formatTimeLeft(endTime)}</span>
             </div>
           </div>
         </div>

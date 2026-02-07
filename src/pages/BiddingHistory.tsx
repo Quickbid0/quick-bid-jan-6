@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { 
   Clock, 
@@ -19,6 +19,7 @@ import {
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
+import { VirtualizedList } from '../components/VirtualizedList';
 
 interface BidHistory {
   id: string;
@@ -192,14 +193,25 @@ const BiddingHistory = () => {
     return true;
   });
 
-  const stats = {
+  // Memoize stats calculation for performance
+  const stats = useMemo(() => ({
     totalBids: bids.length,
     activeBids: bids.filter(b => b.status === 'active').length,
     wonAuctions: bids.filter(b => b.status === 'won').length,
     totalSpent: bids.filter(b => b.status === 'won').reduce((sum, b) => sum + (b.final_price || 0), 0),
     totalRefunds: bids.filter(b => b.refund_amount).reduce((sum, b) => sum + (b.refund_amount || 0), 0),
     successRate: bids.length > 0 ? (bids.filter(b => b.status === 'won').length / bids.length * 100) : 0
-  };
+  }), [bids]);
+
+  // Memoize filter handler for performance
+  const handleFilterChange = useCallback((newFilter: typeof filter) => {
+    setFilter(newFilter);
+  }, []);
+
+  // Memoize category filter handler
+  const handleCategoryFilterChange = useCallback((newCategory: string) => {
+    setCategoryFilter(newCategory);
+  }, []);
 
   if (loading) {
     return (
@@ -286,7 +298,7 @@ const BiddingHistory = () => {
         ].map((tab) => (
           <button
             key={tab.id}
-            onClick={() => setFilter(tab.id as any)}
+            onClick={() => handleFilterChange(tab.id as any)}
             className={`px-4 py-2 rounded-lg text-sm font-medium flex items-center gap-2 ${
               filter === tab.id
                 ? 'bg-indigo-600 text-white'
@@ -303,145 +315,157 @@ const BiddingHistory = () => {
 
       {/* Bidding History List */}
       <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
-        <div className="divide-y divide-gray-200 dark:divide-gray-700">
-          {filteredBids.map((bid) => (
-            <motion.div
-              key={bid.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-            >
-              <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-center">
-                <div className="flex items-center gap-4 w-full md:w-auto">
-                  <img
-                    src={bid.product.image_url}
-                    alt={bid.product.title}
-                    className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg shadow-md flex-shrink-0"
-                  />
-                  
-                  <div className="md:hidden flex-1 min-w-0">
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">
-                      {bid.product.title}
-                    </h3>
-                    <div className="flex items-center gap-2 mt-1">
-                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border flex items-center gap-1 w-fit ${getStatusColor(bid.status)}`}>
+        {filteredBids.length === 0 ? (
+          <div className="p-8 text-center">
+            <Package className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No bids found</h3>
+            <p className="text-gray-500">You haven't placed any bids yet.</p>
+          </div>
+        ) : (
+          <VirtualizedList
+            items={filteredBids}
+            itemHeight={180} // Approximate height per bid item
+            containerHeight={600} // Container height
+            renderItem={(bid) => (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0"
+              >
+                <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-center">
+                  <div className="flex items-center gap-4 w-full md:w-auto">
+                    <img
+                      src={bid.product.image_url}
+                      alt={bid.product.title}
+                      className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-lg shadow-md flex-shrink-0"
+                      loading="lazy"
+                    />
+
+                    <div className="md:hidden flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">
+                        {bid.product.title}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium border flex items-center gap-1 w-fit ${getStatusColor(bid.status)}`}>
+                          {bid.status.toUpperCase()}
+                        </span>
+                        <p className="text-[10px] text-gray-500 truncate flex items-center gap-1">
+                          <Shield className="h-3 w-3" />
+                          {bid.product.seller_name}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex-1 w-full">
+                    <div className="hidden md:flex items-center gap-3 mb-1">
+                      <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {bid.product.title}
+                      </h3>
+                      <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getStatusColor(bid.status)}`}>
+                        {getStatusIcon(bid.status)}
                         {bid.status.toUpperCase()}
                       </span>
-                      <p className="text-[10px] text-gray-500 truncate flex items-center gap-1">
-                        <Shield className="h-3 w-3" />
-                        {bid.product.seller_name}
-                      </p>
                     </div>
-                  </div>
-                </div>
-                
-                <div className="flex-1 w-full">
-                  <div className="hidden md:flex items-center gap-3 mb-1">
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {bid.product.title}
-                    </h3>
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium border flex items-center gap-1 ${getStatusColor(bid.status)}`}>
-                      {getStatusIcon(bid.status)}
-                      {bid.status.toUpperCase()}
-                    </span>
-                  </div>
-                  <p className="hidden md:flex mb-2 text-[11px] text-gray-500 dark:text-gray-400 items-center gap-1">
-                    <Shield className="h-3 w-3" />
-                    {bid.product.seller_verified
-                      ? `${bid.product.seller_name} · Seller verification complete`
-                      : `${bid.product.seller_name} · Seller verification pending`}
-                  </p>
-                  
-                  <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-2 text-sm">
-                    <div>
-                      <span className="text-gray-500">Your Bid:</span>
-                      <p className="font-bold text-gray-900 dark:text-white">₹{bid.bid_amount.toLocaleString()}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Position:</span>
-                      <p className="font-bold">{bid.position} of {bid.total_bids}</p>
-                    </div>
-                    <div>
-                      <span className="text-gray-500">Placed:</span>
-                      <p className="font-medium">{new Date(bid.placed_at).toLocaleDateString()}</p>
-                    </div>
-                    {bid.final_price && (
-                      <div>
-                        <span className="text-gray-500">Final Price:</span>
-                        <p className="font-bold text-green-600">₹{bid.final_price.toLocaleString()}</p>
-                      </div>
-                    )}
-                    {bid.commission_paid && (
-                      <div>
-                        <span className="text-gray-500">Commission:</span>
-                        <p className="font-medium text-blue-600">₹{bid.commission_paid.toLocaleString()}</p>
-                      </div>
-                    )}
-                    {bid.refund_amount && (
-                      <div>
-                        <span className="text-gray-500">Refund:</span>
-                        <p className="font-medium text-green-600">₹{bid.refund_amount.toLocaleString()}</p>
-                      </div>
-                    )}
-                  </div>
+                    <p className="hidden md:flex mb-2 text-[11px] text-gray-500 dark:text-gray-400 items-center gap-1">
+                      <Shield className="h-3 w-3" />
+                      {bid.product.seller_verified
+                        ? `${bid.product.seller_name} · Seller verification complete`
+                        : `${bid.product.seller_name} · Seller verification pending`}
+                    </p>
 
-                  {/* Action Items for Different Statuses */}
-                  {bid.status === 'won' && (
-                    <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-green-800 dark:text-green-200 flex items-center gap-1">
-                          <Trophy className="h-4 w-4" />
-                          Congratulations! You won this auction.
-                        </span>
-                        <div className="flex gap-2">
-                          <Link
-                            to={`/order-tracking/${bid.id}`}
-                            className="text-xs bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700"
-                          >
-                            Track Order
-                          </Link>
-                          <button className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700">
-                            Leave Review
-                          </button>
+                    <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <span className="text-gray-500">Your Bid:</span>
+                        <p className="font-bold text-gray-900 dark:text-white">₹{bid.bid_amount.toLocaleString()}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Position:</span>
+                        <p className="font-bold">{bid.position} of {bid.total_bids}</p>
+                      </div>
+                      <div>
+                        <span className="text-gray-500">Placed:</span>
+                        <p className="font-medium">{new Date(bid.placed_at).toLocaleDateString()}</p>
+                      </div>
+                      {bid.final_price && (
+                        <div>
+                          <span className="text-gray-500">Final Price:</span>
+                          <p className="font-bold text-green-600">₹{bid.final_price.toLocaleString()}</p>
+                        </div>
+                      )}
+                      {bid.commission_paid && (
+                        <div>
+                          <span className="text-gray-500">Commission:</span>
+                          <p className="font-medium text-blue-600">₹{bid.commission_paid.toLocaleString()}</p>
+                        </div>
+                      )}
+                      {bid.refund_amount && (
+                        <div>
+                          <span className="text-gray-500">Refund:</span>
+                          <p className="font-medium text-green-600">₹{bid.refund_amount.toLocaleString()}</p>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Action Items for Different Statuses */}
+                    {bid.status === 'won' && (
+                      <div className="mt-3 p-3 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-green-800 dark:text-green-200 flex items-center gap-1">
+                            <Trophy className="h-4 w-4" />
+                            Congratulations! You won this auction.
+                          </span>
+                          <div className="flex gap-2">
+                            <Link
+                              to={`/order-tracking/${bid.id}`}
+                              className="text-xs bg-green-600 text-white px-3 py-1 rounded-full hover:bg-green-700"
+                            >
+                              Track Order
+                            </Link>
+                            <button className="text-xs bg-blue-600 text-white px-3 py-1 rounded-full hover:bg-blue-700">
+                              Leave Review
+                            </button>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {bid.status === 'outbid' && (
-                    <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm text-orange-800 dark:text-orange-200 flex items-center gap-1">
-                          <AlertTriangle className="h-4 w-4" />
-                          You've been outbid. Current auction is still active.
-                        </span>
-                        <Link
-                          to={`/product/${bid.product.id}`}
-                          className="text-xs bg-orange-600 text-white px-3 py-1 rounded-full hover:bg-orange-700"
-                        >
-                          Place New Bid
-                        </Link>
+                    {bid.status === 'outbid' && (
+                      <div className="mt-3 p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-orange-800 dark:text-orange-200 flex items-center gap-1">
+                            <AlertTriangle className="h-4 w-4" />
+                            You've been outbid. Current auction is still active.
+                          </span>
+                          <Link
+                            to={`/product/${bid.product.id}`}
+                            className="text-xs bg-orange-600 text-white px-3 py-1 rounded-full hover:bg-orange-700"
+                          >
+                            Place New Bid
+                          </Link>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
+
+                  <div className="text-right">
+                    <Link
+                      to={`/product/${bid.product.id}`}
+                      className="text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
+                    >
+                      <Eye className="h-4 w-4" />
+                      View
+                    </Link>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Ends: {new Date(bid.auction_end_time).toLocaleDateString()}
+                    </p>
+                  </div>
                 </div>
-                
-                <div className="text-right">
-                  <Link
-                    to={`/product/${bid.product.id}`}
-                    className="text-indigo-600 hover:text-indigo-700 flex items-center gap-1"
-                  >
-                    <Eye className="h-4 w-4" />
-                    View
-                  </Link>
-                  <p className="text-xs text-gray-500 mt-1">
-                    Ends: {new Date(bid.auction_end_time).toLocaleDateString()}
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            )}
+            className="divide-y divide-gray-200 dark:divide-gray-700"
+          />
+        )}
       </div>
 
       {/* Bidding Insights */}
@@ -472,4 +496,4 @@ const BiddingHistory = () => {
   );
 };
 
-export default BiddingHistory;
+export default React.memo(BiddingHistory);
