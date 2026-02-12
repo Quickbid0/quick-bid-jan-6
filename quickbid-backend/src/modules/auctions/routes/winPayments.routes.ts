@@ -2,7 +2,7 @@ import express from 'express';
 import type { Request, Response, NextFunction } from 'express';
 import { supabaseAdmin } from '../../../supabaseAdmin';
 import { requireAuth, AuthedRequest } from '../../../middleware/authMiddleware';
-import { rateLimit } from '../../../middleware/redisRateLimit';
+import { rateLimit } from '../../../middleware/rateLimit';
 import crypto from 'crypto';
 
 export const winPaymentsRouter = express.Router();
@@ -67,7 +67,7 @@ winPaymentsRouter.post(
   '/wins/:auctionId/payments',
   requireAuth,
   rateLimit(
-    (req) => {
+    (req: Request) => {
       const userId = (req as AuthedRequest).user?.id || req.ip;
       return `winpay:${userId}`;
     },

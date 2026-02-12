@@ -94,7 +94,7 @@ const BulkUpload = lazy(() => import('./pages/BulkUploadFixed'));
 const CompanyRegistration = lazy(() => import('./pages/CompanyRegistration'));
 const CompanyVerificationPending = lazy(() => import('./pages/CompanyVerificationPending'));
 const LiveStreamControl = lazy(() => import('./pages/LiveStreamControl'));
-const AIModelTraining = lazy(() => import('./pages/AIModelTraining'));
+const AdminModerationDashboard = lazy(() => import('./components/admin/AdminModerationDashboard'));
 // Creative & AI Pages
 const CreativeVerification = lazy(() => import('./pages/CreativeVerification'));
 const SellerProfile = lazy(() => import('./pages/SellerProfile'));
@@ -542,9 +542,9 @@ const App: React.FC = () => {
                   <LiveStreamControl />
                 </ProtectedRoute>
               } />
-              <Route path="/admin/ai-model-training" element={
+              <Route path="/admin/moderation" element={
                 <ProtectedRoute adminRequired={true}>
-                  <AIModelTraining />
+                  <AdminModerationDashboard />
                 </ProtectedRoute>
               } />
 

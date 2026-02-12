@@ -1,9 +1,8 @@
 import { createOrLoadUserKey } from './keyring';
+import { supabase } from '../config/supabaseClient';
 
 export async function getCurrentUserDataKey(): Promise<CryptoKey | null> {
 	try {
-		// Lazy import to avoid circular deps
-		const { supabase } = await import('../config/supabaseClient');
 		const { data, error } = await supabase.auth.getSession();
 		if (error || !data.session?.user?.id) return null;
 		const userId = data.session.user.id;

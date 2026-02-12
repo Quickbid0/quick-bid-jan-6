@@ -170,7 +170,6 @@ export class PaymentService {
 
   constructor(private configService: ConfigService) {
     this.initializeRazorpay();
-    this.initializeSupabase();
   }
 
   private initializeRazorpay() {
@@ -236,17 +235,6 @@ export class PaymentService {
       key_secret: keySecret,
     });
 
-  private initializeSupabase() {
-    const supabaseUrl = this.configService.get<string>('SUPABASE_URL');
-    const supabaseServiceKey = this.configService.get<string>('SUPABASE_SERVICE_ROLE_KEY');
-
-    if (supabaseUrl && supabaseServiceKey) {
-      this.supabase = createClient(supabaseUrl, supabaseServiceKey);
-      this.logger.log('Supabase client initialized for webhook idempotency');
-    } else {
-      this.logger.error('Supabase credentials not configured - webhook idempotency will not work');
-    }
-  }
 
   /**
    * Create a Razorpay order
@@ -867,6 +855,11 @@ export class PaymentService {
     const keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET');
     return !keyId || !keySecret || keyId === 'dummy_key_id' || keySecret === 'dummy_key_secret';
   }
+
+  /**
+   * Handle payment capture
+   */
+  private async handlePaymentCaptured(payment: any): Promise<void> {
     try {
       const { id: paymentId, amount, order_id, notes } = payment;
       const amountInRupees = Number(amount) / 100;

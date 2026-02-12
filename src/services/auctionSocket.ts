@@ -35,6 +35,7 @@ export interface AuctionSocketListeners {
 
 class AuctionSocketManager {
   private socket: Socket | null = null;
+  private _isConnected = false;
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
   private reconnectDelay = 1000;
@@ -63,7 +64,7 @@ class AuctionSocketManager {
 
       this.socket.on('connect', () => {
         console.log('Connected to auction socket server');
-        this.isConnected = true;
+        this._isConnected = true;
         this.reconnectAttempts = 0;
 
         // Emit stored user data if available
@@ -76,7 +77,7 @@ class AuctionSocketManager {
 
       this.socket.on('disconnect', (reason) => {
         console.log('Disconnected from auction socket server:', reason);
-        this.isConnected = false;
+        this._isConnected = false;
 
         if (reason === 'io server disconnect') {
           // Server disconnected, try to reconnect
@@ -86,7 +87,7 @@ class AuctionSocketManager {
 
       this.socket.on('connect_error', (error) => {
         console.error('Auction socket connection error:', error);
-        this.isConnected = false;
+        this._isConnected = false;
         this.reconnectAttempts++;
 
         if (this.reconnectAttempts >= this.maxReconnectAttempts) {
@@ -103,7 +104,7 @@ class AuctionSocketManager {
     if (this.socket) {
       this.socket.disconnect();
       this.socket = null;
-      this.isConnected = false;
+      this._isConnected = false;
       this.eventListeners.clear();
     }
   }
@@ -242,7 +243,7 @@ class AuctionSocketManager {
 
   // Connection status
   get isConnected(): boolean {
-    return this.socket?.connected ?? false;
+    return this._isConnected;
   }
 
   get connectionState(): string {
@@ -272,5 +273,8 @@ export const destroyAuctionSocket = (): void => {
     auctionSocketManager = null;
   }
 };
+
+// Export singleton instance for direct import
+export const auctionSocket = getAuctionSocket();
 
 export default AuctionSocketManager;

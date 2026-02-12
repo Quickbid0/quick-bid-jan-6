@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import ProtectedRoute from '../components/ProtectedRoute';
-import BuyerDashboard from '../pages/BuyerDashboardRedesigned';
+import BuyerDashboard from '../pages/DashboardFixed';
 import Products from '../pages/Products';
 import WatchlistPage from '../pages/WatchlistPage';
 import MyOrders from '../pages/MyOrders';

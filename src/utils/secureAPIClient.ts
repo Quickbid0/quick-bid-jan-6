@@ -2,7 +2,7 @@
 import { RateLimiter, validateCSRFToken, generateCSRFToken, sanitizeInput } from './securityUtils';
 
 class SecureAPIClient {
-  private static readonly BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4011';
+  private static readonly BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4010';
   private static csrfToken: string | null = null;
 
   // Rate limiting configurations

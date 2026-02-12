@@ -20,9 +20,8 @@ import BidHistoryList from '../components/auctions/BidHistoryList';
 import AuctionTypeBadge from '../components/auctions/AuctionTypeBadge';
 import { AuctionCard } from '@/components/AuctionCard';
 import { StatusStrip } from '@/components';
-import { auctionSocket } from '../services/auctionSocket';
-
-const YARD_TOKEN_AMOUNT = 5000; // ₹5,000 token deposit per yard
+import { securityService } from '../services/securityService';
+import { SecurityStatusBanner } from '../components/security/SecurityComponents';
 
 interface LiveAuction {
   id: string;
@@ -642,7 +641,39 @@ const LiveAuctionPage = () => {
       }
 
       const userId = user?.id || 'demo-user';
-      const userName = user?.user_metadata?.name || user?.email || 'Demo User';
+
+      // 🔐 SECURITY CHECKS - Comprehensive Access Verification
+      if (user) {
+        // Check user access permissions and restrictions
+        const accessCheck = await securityService.checkUserAccess(userId);
+
+        if (!accessCheck.canBid) {
+          const errorMsg = accessCheck.restrictionMessage || 'Your account has bidding restrictions. Please check your account status.';
+          setBidError(errorMsg);
+          return { success: false, error: errorMsg };
+        }
+
+        if (accessCheck.verificationRequired) {
+          const errorMsg = 'Identity verification is required to place bids. Please complete verification.';
+          setBidError(errorMsg);
+          return { success: false, error: errorMsg };
+        }
+
+        // Perform legal compliance check for financial transaction
+        const complianceCheck = await securityService.performComplianceCheck(userId, 'bid');
+        if (!complianceCheck.compliant) {
+          const errorMsg = `Compliance check failed: ${complianceCheck.violations.join(', ')}`;
+          setBidError(errorMsg);
+          return { success: false, error: errorMsg };
+        }
+
+        // Log the bidding attempt for security monitoring
+        await securityService.logSecurityEvent(
+          userId,
+          `Bid attempt: ₹${amount} on auction ${selectedAuction.id}`,
+          'general'
+        );
+      }
 
       // Check socket connection status
       const socketStatus = auctionSocket.getConnectionStatus();
@@ -664,7 +695,7 @@ const LiveAuctionPage = () => {
         // Use real-time socket for bidding
         console.log('🎯 Placing bid via socket:', { auctionId: selectedAuction.id, userId, amount });
         auctionSocket.placeBid(selectedAuction.id, userId, amount);
-        
+
         // Optimistically update UI immediately
         setSelectedAuction(prev => prev ? {
           ...prev,
@@ -913,6 +944,8 @@ const LiveAuctionPage = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-8">
+      {/* Security Status Banner - Shows account restrictions */}
+      {user && <SecurityStatusBanner userId={user.id} />}
       {/* Back to Lobby & Title Header */}
       <div className="flex items-center justify-between mb-6">
         <button 

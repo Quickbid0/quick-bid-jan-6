@@ -1,6 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
-interface AuctionType {
+export interface UserProfile {
+  id: string;
+  user_type: string;
+  is_verified: boolean;
+  verification_status: string;
+}
+
+export interface AuctionType {
   type: 'standard' | 'reserve' | 'dutch' | 'tender';
   reservePrice?: number;
   startingPrice: number;
@@ -10,6 +17,21 @@ interface AuctionType {
   duration: number; // in milliseconds
   dutchDecrement?: number; // for Dutch auctions, price decrease per time interval
   dutchInterval?: number; // time interval for Dutch auctions
+}
+
+export interface Wallet {
+  userId: string;
+  balance: number;
+  currency: string;
+}
+
+export interface Bid {
+  id: number;
+  productId: number;
+  amount: number;
+  bidderId: string;
+  bidderName: string;
+  createdAt: Date;
 }
 
 @Injectable()
@@ -86,22 +108,23 @@ export class ProductsService {
       createdAt: new Date(),
       updatedAt: new Date()
     }
+  ];
 
   // Mock user profiles for verification
-  private userProfiles = [
+  private userProfiles: UserProfile[] = [
     { id: 'seller1', user_type: 'seller', is_verified: true, verification_status: 'approved' },
     { id: 'seller2', user_type: 'seller', is_verified: false, verification_status: 'pending' },
     { id: 'buyer1', user_type: 'buyer', is_verified: true, verification_status: 'approved' },
   ];
 
-  private bids = [
+  private bids: Bid[] = [
     { id: 1, productId: 1, amount: 15000, bidderId: 'bidder1', bidderName: 'Jane Smith', createdAt: new Date() },
     { id: 2, productId: 1, amount: 12000, bidderId: 'bidder2', bidderName: 'Bob Johnson', createdAt: new Date() },
     { id: 3, productId: 2, amount: 7500, bidderId: 'bidder2', bidderName: 'Bob Johnson', createdAt: new Date() }
   ];
 
   // In-memory wallet storage
-  private wallets = [
+  private wallets: Wallet[] = [
     { userId: 'buyer1', balance: 50000, currency: 'INR' },
     { userId: 'buyer2', balance: 25000, currency: 'INR' },
     { userId: 'seller1', balance: 100000, currency: 'INR' },
@@ -139,6 +162,7 @@ export class ProductsService {
     const newProduct = {
       id: this.products.length + 1,
       ...createProductDto,
+      auctionType: createProductDto.auctionType || { type: 'standard', startingPrice: createProductDto.startingPrice, bidIncrement: 1000, duration: 7 * 24 * 60 * 60 * 1000 },
       sellerId,
       currentBid: createProductDto.startingPrice,
       endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days from now
@@ -209,7 +233,10 @@ export class ProductsService {
 
     // Check wallet balance
     const wallet = this.wallets.find(w => w.userId === bidderId);
-    if (!wallet || wallet.balance < bidAmount) {
+    if (!wallet) {
+      throw new Error('Wallet not found');
+    }
+    if (wallet.balance < bidAmount) {
       throw new Error('Insufficient wallet balance');
     }
 
@@ -345,7 +372,7 @@ export class ProductsService {
   // Verify seller authentication and verification status
   async verifySeller(sellerId: string): Promise<void> {
     // Find user profile
-    const profile = this.userProfiles.find(p => p.id === sellerId);
+    const profile: UserProfile | undefined = this.userProfiles.find(p => p.id === sellerId);
 
     if (!profile) {
       throw new Error('User not found');

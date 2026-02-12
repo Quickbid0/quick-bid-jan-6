@@ -301,7 +301,7 @@ class ErrorMonitoringService {
       timestamp: new Date(),
       message: error.message,
       stack: error.stack,
-      componentStack: errorInfo.componentStack,
+      componentStack: errorInfo.componentStack || undefined,
       userAgent: navigator.userAgent,
       url: window.location.href,
       userId

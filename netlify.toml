@@ -1,15 +1,5 @@
-[build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
-[build.environment]
-  NODE_VERSION = "18"
+[functions]
+  environment = { NODE_ENV = "production", SUPABASE_URL = "https://vxqvzylhbzgovuorzwqc.supabase.co", SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI4ODAzMzYsImV4cCI6MjA0ODQ1NjMzNn0.2zT2jL3g5mKqHn8wZ9xF6pV7rX4bN0cM3sT8uL5iO", SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjg4MDMzNiwiZXhwIjoyMDQ4NDU2MzM2fQ.1zT2jL3g5mKqHn8wZ9xF6pV7rX4bN0cM3sT8uL5iO", RAZORPAY_KEY_ID = "rzp_test_key", RAZORPAY_KEY_SECRET = "rzp_test_secret", RAZORPAY_WEBHOOK_SECRET = "webhook_secret", JWT_SECRET = "jwt_secret", SESSION_SECRET = "session_secret" }
 
 [dev]
   command = "npm run dev"

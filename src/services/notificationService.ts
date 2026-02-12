@@ -616,7 +616,7 @@ QuickMela Team`,
       return true;
     } catch (error) {
       console.error('Error sending email notification:', error);
-      await this.storeNotificationRecord(data, 'email', 'failed', { error: error.message });
+      await this.storeNotificationRecord(data, 'email', 'failed', { error: error instanceof Error ? error.message : 'Unknown error' });
       return false;
     }
   }
@@ -635,7 +635,7 @@ QuickMela Team`,
       return true;
     } catch (error) {
       console.error('Error sending SMS notification:', error);
-      await this.storeNotificationRecord(data, 'sms', 'failed', { error: error.message });
+      await this.storeNotificationRecord(data, 'sms', 'failed', { error: error instanceof Error ? error.message : 'Unknown error' });
       return false;
     }
   }
@@ -654,7 +654,7 @@ QuickMela Team`,
       return true;
     } catch (error) {
       console.error('Error sending push notification:', error);
-      await this.storeNotificationRecord(data, 'push', 'failed', { error: error.message });
+      await this.storeNotificationRecord(data, 'push', 'failed', { error: error instanceof Error ? error.message : 'Unknown error' });
       return false;
     }
   }
@@ -687,7 +687,7 @@ QuickMela Team`,
 
   private isChannelEnabled(
     prefs: UserNotificationPreferences,
-    channel: NotificationData['channels'][0],
+    channel: 'email' | 'push' | 'in_app' | 'sms',
     type: NotificationData['type']
   ): boolean {
     // Check if channel is globally enabled

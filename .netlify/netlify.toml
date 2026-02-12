@@ -1,18 +1,16 @@
 functionsDirectory = "/Users/sanieevmusugu/Desktop/quick-bid-jan-6/netlify/functions"
-functionsDirectoryOrigin = "config-v1"
+functionsDirectoryOrigin = "default"
 headersOrigin = "config"
-redirectsOrigin = "config"
 plugins = []
 
 [build]
 publish = "/Users/sanieevmusugu/Desktop/quick-bid-jan-6/dist"
-publishOrigin = "config"
-commandOrigin = "config"
-command = "npm run build"
+publishOrigin = "ui"
+commandOrigin = "ui"
+command = "yarn run build"
 functions = "/Users/sanieevmusugu/Desktop/quick-bid-jan-6/netlify/functions"
 
 [build.environment]
-NODE_VERSION = "18"
 
 [build.processing]
 
@@ -31,6 +29,17 @@ command = "npm run dev"
 targetPort = 3007.0
 
 [functions]
+
+[functions.environment]
+NODE_ENV = "production"
+SUPABASE_URL = "https://vxqvzylhbzgovuorzwqc.supabase.co"
+SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI4ODAzMzYsImV4cCI6MjA0ODQ1NjMzNn0.2zT2jL3g5mKqHn8wZ9xF6pV7rX4bN0cM3sT8uL5iO"
+SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjg4MDMzNiwiZXhwIjoyMDQ4NDU2MzM2fQ.1zT2jL3g5mKqHn8wZ9xF6pV7rX4bN0cM3sT8uL5iO"
+RAZORPAY_KEY_ID = "rzp_test_key"
+RAZORPAY_KEY_SECRET = "rzp_test_secret"
+RAZORPAY_WEBHOOK_SECRET = "webhook_secret"
+JWT_SECRET = "jwt_secret"
+SESSION_SECRET = "session_secret"
 
 [functions."*"]
 
@@ -130,18 +139,6 @@ Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supa
 [[redirects]]
 from = "/*"
 to = "/index.html"
-status = 200.0
-force = false
-
-[redirects.query]
-
-[redirects.conditions]
-
-[redirects.headers]
-
-[[redirects]]
-from = "/api/*"
-to = "/.netlify/functions/:splat"
 status = 200.0
 force = false
 
