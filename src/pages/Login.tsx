@@ -17,6 +17,8 @@ const Login = () => {
   const [otp, setOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
   const [isCheckingAuth, setIsCheckingAuth] = useState(true);
+  const [emailError, setEmailError] = useState('');
+  const [passwordError, setPasswordError] = useState('');
   const isLoggingIn = useRef(false);
 
   const navigate = useNavigate();
@@ -75,19 +77,30 @@ const Login = () => {
     }
 
     // Client-side validation
-    if (!email || !password) {
-      toast.error('Email and password are required');
+    if (!email) {
+      setEmailError('Email is required');
       return;
     }
 
-    if (!validateEmail(email)) {
-      toast.error('Please enter a valid email address');
+    if (!password) {
+      setPasswordError('Password is required');
       return;
     }
 
-    if (password.length < 6) {
-      toast.error('Password must be at least 6 characters long');
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setEmailError('Please enter a valid email address');
       return;
+    } else {
+      setEmailError('');
+    }
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      setPasswordError('Password must be at least 8 characters with uppercase, lowercase, number, and special character');
+      return;
+    } else {
+      setPasswordError('');
     }
 
     isLoggingIn.current = true;
@@ -249,6 +262,7 @@ const Login = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
               </div>
               <div>
                 <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -293,6 +307,7 @@ const Login = () => {
                     )}
                   </button>
                 </div>
+                {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
               </div>
             </div>
 

@@ -426,7 +426,7 @@ const Navbar = () => {
         <div className="flex items-center justify-between h-16">
           {/* Logo - Cars24/Spinny style */}
           <div className="flex items-center">
-            <Link to="/" className="flex items-center space-x-3 group">
+            <Link to="/" className="flex items-center space-x-3 group" data-testid="home-link">
               <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center shadow-md">
                 <Gavel className="w-6 h-6 text-white" />
               </div>
@@ -554,6 +554,7 @@ const Navbar = () => {
           onClick={() => setIsOpen(true)}
           className="lg:hidden p-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg transition-colors"
           aria-label="Open menu"
+          data-testid="mobile-nav"
         >
           <Menu className="w-6 h-6" />
         </button>
