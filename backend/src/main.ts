@@ -21,7 +21,7 @@ async function bootstrap() {
 
   // Enable CORS with strict origin allowlist
   app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000'],
+    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000', 'https://quickmela.netlify.app'],
     credentials: true,
   });
 
