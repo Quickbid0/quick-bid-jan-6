@@ -349,7 +349,7 @@ const App: React.FC = () => {
  
 
               {/* Protected User Routes */}
-              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
               <Route path="/ai-dashboard" element={
                 <ProtectedRoute>
                   <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
@@ -410,7 +410,7 @@ const App: React.FC = () => {
               <Route path="/company/register" element={<CompanyRegistration />} />
               <Route path="/company/verification-pending" element={<ProtectedRoute><CompanyVerificationPending /></ProtectedRoute>} />
               <Route path="/compliance" element={<ProtectedRoute><ComplianceTracking /></ProtectedRoute>} />
-              <Route path="/wallet" element={<WalletPage />} />
+              <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
               <Route path="/my-bids" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
               <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory /></ProtectedRoute>} />
               <Route path="/watchlist" element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
