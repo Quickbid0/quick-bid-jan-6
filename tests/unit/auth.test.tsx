@@ -6,7 +6,7 @@ import Login from '../../pages/Login';
 import Register from '../../pages/Register';
 
 // Mock Supabase
-jest.mock('../../lib/supabase', () => ({
+jest.mock('src/config/supabaseClient', () => ({
   supabase: {
     auth: {
       signInWithPassword: jest.fn(),
@@ -18,7 +18,7 @@ jest.mock('../../lib/supabase', () => ({
 }));
 
 // Mock storage service
-jest.mock('../../services/storageService', () => ({
+jest.mock('src/services/storageService', () => ({
   storageService: {
     getAuthUser: jest.fn(),
     setAuthUser: jest.fn(),
@@ -103,7 +103,7 @@ describe('Authentication Tests', () => {
         lastSignIn: new Date().toISOString(),
       };
 
-      const { supabase } = require('../../lib/supabase');
+      const { supabase } = require('src/config/supabaseClient');
       supabase.auth.signInWithPassword.mockResolvedValue({
         data: { user: mockUser },
         error: null,
@@ -128,7 +128,7 @@ describe('Authentication Tests', () => {
     });
 
     it('handles login error', async () => {
-      const { supabase } = require('../../lib/supabase');
+      const { supabase } = require('src/config/supabaseClient');
       supabase.auth.signInWithPassword.mockResolvedValue({
         data: null,
         error: { message: 'Invalid credentials' },
@@ -206,7 +206,7 @@ describe('Authentication Tests', () => {
         lastSignIn: new Date().toISOString(),
       };
 
-      const { supabase } = require('../../lib/supabase');
+      const { supabase } = require('src/config/supabaseClient');
       supabase.auth.signUp.mockResolvedValue({
         data: { user: mockUser },
         error: null,
@@ -241,7 +241,7 @@ describe('Authentication Tests', () => {
     });
 
     it('handles registration error', async () => {
-      const { supabase } = require('../../lib/supabase');
+      const { supabase } = require('src/config/supabaseClient');
       supabase.auth.signUp.mockResolvedValue({
         data: null,
         error: { message: 'Email already registered' },

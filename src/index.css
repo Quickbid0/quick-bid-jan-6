@@ -1,8 +1,9 @@
 @import './styles/auction-room.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+button, a, input, select, textarea {
+  min-width: 44px;
+  min-height: 44px;
+}
 
 @layer base {
   html {

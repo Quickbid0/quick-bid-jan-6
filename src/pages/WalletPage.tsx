@@ -37,7 +37,7 @@ const WalletPage = () => {
         }
         
         // Fallback to mock balance
-        setBalance(25000);
+        setBalance(0);
         setLoading(false);
       } catch (err) {
         console.error('Error fetching balance:', err);

@@ -44,26 +44,26 @@ export default defineConfig({
     chunkSizeWarningLimit: 1000,
   },
   server: {
-    historyApiFallback: true,
     port: 5173,
     host: true,
-  },
-  proxy: {
-    '/api/images': {
-      target: 'http://localhost:4011',
-      changeOrigin: true,
-    },
-    '/api/rbac': {
-      target: 'http://localhost:4011',
-      changeOrigin: true,
-    },
-    '/api': {
-      target: 'http://localhost:4011',
-      changeOrigin: true,
-    },
-    '/webhooks': {
-      target: 'http://localhost:4011',
-      changeOrigin: true,
+    allowedHosts: ['localhost', '.railway.app'], // ✅ allow Railway host
+    proxy: {
+      '/api/images': {
+        target: 'http://localhost:4011',
+        changeOrigin: true,
+      },
+      '/api/rbac': {
+        target: 'http://localhost:4011',
+        changeOrigin: true,
+      },
+      '/api': {
+        target: 'http://localhost:4011',
+        changeOrigin: true,
+      },
+      '/webhooks': {
+        target: 'http://localhost:4011',
+        changeOrigin: true,
+      },
     },
   },
   optimizeDeps: {
@@ -83,10 +83,7 @@ export default defineConfig({
   esbuild: {
     tsconfigRaw: {
       compilerOptions: {
-        noEmit: false,
         strict: false,
-        noImplicitAny: false,
-        skipLibCheck: true,
       },
     },
   },

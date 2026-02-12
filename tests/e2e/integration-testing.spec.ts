@@ -3,7 +3,7 @@
 
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = 'http://localhost:3021';
+const BASE_URL = 'https://quickmela.netlify.app';
 const API_BASE_URL = 'http://localhost:4011/api';
 
 test.describe('Integration Testing Scenarios', () => {

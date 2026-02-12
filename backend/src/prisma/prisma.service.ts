@@ -71,7 +71,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
       }
       
       try {
-        await this.user.deleteMany();
+        await this.account.deleteMany();
         await this.product.deleteMany();
         await this.auction.deleteMany();
         this.logger.log('Database cleaned successfully');

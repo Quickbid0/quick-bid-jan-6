@@ -444,6 +444,16 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const logout = async (): Promise<void> => {
     console.log('🔐 UNIFIED AUTH: Logging out user');
     
+    try {
+      // Call backend logout if real auth
+      if (state.authMode === 'real') {
+        await backendAuthAPI.logout();
+      }
+    } catch (error) {
+      console.error('🔐 UNIFIED AUTH: Backend logout failed:', error);
+      // Continue with local logout even if backend call fails
+    }
+    
     // Clear tokens
     clearAuthTokens();
     

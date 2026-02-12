@@ -63,7 +63,7 @@ const SuperAdmin = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [showUserModal, setShowUserModal] = useState(false);
-  const [activeTab, setActiveTab] = useState<'users' | 'stats' | 'settings' | 'products'>('users');
+  const [activeTab, setActiveTab] = useState<'users' | 'stats' | 'settings' | 'products' | 'categories'>('users');
   const [recentProducts, setRecentProducts] = useState<ProductRow[]>([]);
   const [productFilter, setProductFilter] = useState<'all' | 'pending' | 'approved' | 'rejected'>('all');
 
@@ -71,6 +71,15 @@ const SuperAdmin = () => {
     fetchUsers();
     fetchSystemStats();
     fetchRecentProducts();
+    
+    // Set active tab based on pathname
+    if (location.pathname === '/admin/categories') {
+      setActiveTab('categories');
+    } else if (location.pathname === '/admin/product-verification/bulk') {
+      setActiveTab('products');
+    } else {
+      setActiveTab('users');
+    }
   }, []);
 
   const fetchUsers = async () => {
@@ -271,6 +280,7 @@ const SuperAdmin = () => {
       <div className="flex space-x-1 mb-8">
         {[
           { id: 'users', label: 'User Management', icon: Users },
+          { id: 'categories', label: 'Categories', icon: Package },
           { id: 'stats', label: 'System Statistics', icon: BarChart3 },
           { id: 'products', label: 'Products & Auctions', icon: Package },
           { id: 'settings', label: 'System Settings', icon: Settings }
@@ -401,6 +411,14 @@ const SuperAdmin = () => {
                   Showing latest {recentProducts.length} products
                 </span>
               </div>
+              <div className="flex gap-2">
+                <button data-testid="bulk-upload" className="px-3 py-1 text-xs rounded-md bg-blue-600 text-white hover:bg-blue-700">
+                  Upload
+                </button>
+                <button data-testid="bulk-verify" className="px-3 py-1 text-xs rounded-md bg-green-600 text-white hover:bg-green-700">
+                  Verify
+                </button>
+              </div>
               <select
                 value={productFilter}
                 onChange={(e) => setProductFilter(e.target.value as any)}
@@ -412,7 +430,7 @@ const SuperAdmin = () => {
                 <option value="rejected">Rejected</option>
               </select>
             </div>
-            <div className="overflow-x-auto">
+            <div data-testid="verification-queue" className="overflow-x-auto">
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                 <thead className="bg-gray-50 dark:bg-gray-700">
                   <tr>
@@ -622,7 +640,125 @@ const SuperAdmin = () => {
         </div>
       )}
 
-      {/* System Settings */}
+      {/* Categories Management */}
+      {activeTab === 'categories' && (
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+                <Package className="h-5 w-5 text-indigo-500" />
+                Categories Management
+              </h2>
+              <p className="text-gray-600 dark:text-gray-400 text-sm">
+                Manage product categories and organization
+              </p>
+            </div>
+            <button
+              data-testid="add-category"
+              className="inline-flex items-center px-4 py-2 rounded-lg bg-indigo-600 text-white text-sm hover:bg-indigo-700"
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Add Category
+            </button>
+          </div>
+
+          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden">
+            <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
+              <div>
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">Product Categories</h3>
+                <span className="text-xs text-gray-500 dark:text-gray-400">
+                  Managing categories for product organization
+                </span>
+              </div>
+            </div>
+            <div className="overflow-x-auto">
+              <table data-testid="category-list" className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 categories-table">
+                <thead className="bg-gray-50 dark:bg-gray-700">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Category Name
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Description
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Created
+                    </th>
+                    <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+                  <tr>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">
+                      Vehicles
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
+                      Cars, motorcycles, and other vehicles
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                        Active
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {new Date().toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-right">
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          className="px-2 py-1 text-xs rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="px-2 py-1 text-xs rounded-md bg-red-600 text-white hover:bg-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className="px-6 py-4 text-sm text-gray-900 dark:text-white max-w-xs truncate">
+                      Electronics
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-200">
+                      Computers, phones, and electronic devices
+                    </td>
+                    <td className="px-6 py-4 text-sm">
+                      <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400">
+                        Active
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+                      {new Date().toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 text-sm text-right">
+                      <div className="inline-flex items-center gap-2">
+                        <button
+                          className="px-2 py-1 text-xs rounded-md bg-blue-600 text-white hover:bg-blue-700"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="px-2 py-1 text-xs rounded-md bg-red-600 text-white hover:bg-red-700"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
       {activeTab === 'settings' && (
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
           <h2 className="text-xl font-semibold mb-6">System Configuration</h2>

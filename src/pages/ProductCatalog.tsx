@@ -131,7 +131,7 @@ const ProductCatalog = () => {
   }, [filters, searchTerm, priceRange, navigate]);
 
   useEffect(() => {
-    loadProducts();
+    document.title = 'Product Catalog - QuickMela Auction Platform';
   }, []);
 
   useEffect(() => {
@@ -272,6 +272,7 @@ const ProductCatalog = () => {
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-9 pr-4 py-2 w-full border border-gray-200 dark:border-gray-700 rounded-lg text-sm bg-gray-50 dark:bg-gray-800 focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-primary-500 transition-all"
+                  aria-label="Search auctions, brands, categories"
                 />
               </div>
               
@@ -306,8 +307,9 @@ const ProductCatalog = () => {
                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-lg">
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-4">
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</label>
+                      <label htmlFor="category-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Category</label>
                       <select
+                        id="category-select"
                         value={filters.category}
                         onChange={(e) => setFilters(prev => ({ ...prev, category: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
@@ -331,6 +333,7 @@ const ProductCatalog = () => {
                           value={priceRange.min}
                           onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                          aria-label="Minimum price"
                         />
                         <input
                           type="number"
@@ -338,6 +341,7 @@ const ProductCatalog = () => {
                           value={priceRange.max}
                           onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                          aria-label="Maximum price"
                         />
                       </div>
                     </div>
@@ -351,6 +355,7 @@ const ProductCatalog = () => {
                           value={filters.minYear}
                           onChange={(e) => setFilters(prev => ({ ...prev, minYear: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                          aria-label="Minimum year"
                         />
                         <input
                           type="number"
@@ -358,13 +363,15 @@ const ProductCatalog = () => {
                           value={filters.maxYear}
                           onChange={(e) => setFilters(prev => ({ ...prev, maxYear: e.target.value }))}
                           className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                          aria-label="Maximum year"
                         />
                       </div>
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Auction Type</label>
+                      <label htmlFor="auction-type-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Auction Type</label>
                       <select
+                        id="auction-type-select"
                         value={filters.auctionType}
                         onChange={(e) => setFilters(prev => ({ ...prev, auctionType: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
@@ -377,8 +384,9 @@ const ProductCatalog = () => {
                     </div>
 
                     <div className="space-y-1.5">
-                      <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Sort By</label>
+                      <label htmlFor="sort-by-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Sort By</label>
                       <select
+                        id="sort-by-select"
                         value={filters.sortBy}
                         onChange={(e) => setFilters(prev => ({ ...prev, sortBy: e.target.value }))}
                         className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"

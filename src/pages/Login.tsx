@@ -25,11 +25,8 @@ const Login = () => {
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4011';
 
   useEffect(() => {
-    // Prevent infinite loop by checking if we're already on login page
-    if (window.location.pathname === '/login') {
-      setIsCheckingAuth(false);
-      return;
-    }
+    document.title = 'Login - QuickMela Auction Platform';
+  }, []);
 
     // Check if user is already logged in
     const token = localStorage.getItem('accessToken');
@@ -216,15 +213,14 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 py-12 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
-      <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg" role="main" aria-labelledby="login-heading">
-        <div className="text-center">
-          <div className="mx-auto h-12 w-12 bg-indigo-100 rounded-full flex items-center justify-center mb-4" aria-hidden="true">
-            <LogIn className="h-6 w-6 text-indigo-600" />
-          </div>
-          <h2 id="login-heading" className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+    <PageContainer>
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+        <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white p-2 z-50">Skip to main content</a>
+        <main id="main-content" className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+          <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg" aria-labelledby="login-heading">
+          <h1 id="login-heading" className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
             Welcome to QuickMela
-          </h2>
+          </h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400" aria-describedby="login-description">
             Sign in to your account (Local Backend)
           </p>
@@ -239,42 +235,37 @@ const Login = () => {
               <h3 id="credentials-heading" className="sr-only">Login Credentials</h3>
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email address
+                  Email Address
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    placeholder="name@company.com"
-                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    aria-describedby="email-help"
-                    aria-required="true"
-                  />
-                  <div id="email-help" className="sr-only">
-                    Enter your email address to sign in to your account
-                  </div>
-                </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  data-testid="email-input"
+                  autoComplete="email"
+                  required
+                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
-
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                   Password
                 </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Lock className="h-5 w-5 text-gray-400" />
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  data-testid="password-input"
+                  autoComplete="current-password"
+                  required
+                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
                     type={showPassword ? 'text' : 'password'}
                     autoComplete="current-password"
                     required
@@ -328,8 +319,9 @@ const Login = () => {
             <div className="space-y-3">
               <button
                 type="submit"
+                data-testid="login-button"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={loading}
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50"
                 aria-describedby={loading ? "login-status" : undefined}
               >
                 {loading ? 'Signing in...' : 'Sign in'}
@@ -469,7 +461,7 @@ const Login = () => {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
