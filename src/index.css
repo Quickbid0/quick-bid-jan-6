@@ -1,8 +1,8 @@
+@import './styles/auction-room.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import './styles/auction-room.css';
 
 button, a, input, select, textarea {
   min-width: 44px;

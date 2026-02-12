@@ -30,6 +30,7 @@ const Login = () => {
     document.title = 'Login - QuickMela Auction Platform';
   }, []);
 
+  useEffect(() => {
     // Check if user is already logged in
     const token = localStorage.getItem('accessToken');
     const user = localStorage.getItem('user');
@@ -57,7 +58,7 @@ const Login = () => {
       }
     }
     setIsCheckingAuth(false);
-  }, []); // Empty dependency array - only run once
+  }, [navigate]); // Add navigate as dependency
 
   // Show loading while checking authentication
   if (isCheckingAuth) {
