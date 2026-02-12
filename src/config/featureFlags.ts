@@ -1,4 +1,7 @@
 // Feature flags for QuickBid - PRODUCTION MODE
+const featureFlagsString = import.meta.env.VITE_FEATURE_FLAGS || '';
+const enabledFeatures = new Set(featureFlagsString.split(',').map(s => s.trim().toLowerCase()));
+
 export const FEATURE_FLAGS = {
   // Authentication mode - SET TO REAL FOR PRODUCTION
   AUTH_MODE: (import.meta.env.VITE_AUTH_MODE || 'real') as 'demo' | 'real' | 'hybrid',
@@ -8,9 +11,18 @@ export const FEATURE_FLAGS = {
   ENABLE_DEMO_AUTH: import.meta.env.VITE_ENABLE_DEMO_AUTH === 'true', // Demo disabled by default
   
   // Feature toggles - ALL ENABLED FOR PRODUCTION
-  ENABLE_AI_FEATURES: import.meta.env.VITE_ENABLE_AI_FEATURES !== 'false', // AI features enabled
-  ENABLE_MONITORING: import.meta.env.VITE_ENABLE_MONITORING !== 'false', // Monitoring enabled
-  ENABLE_BUSINESS_SOLUTIONS: import.meta.env.VITE_ENABLE_BUSINESS_SOLUTIONS !== 'false', // Business solutions enabled
+  ENABLE_AI_FEATURES: enabledFeatures.has('ai_features'), // AI features enabled
+  ENABLE_MONITORING: enabledFeatures.has('performance_monitoring'), // Monitoring enabled
+  ENABLE_BUSINESS_SOLUTIONS: enabledFeatures.has('business_solutions'), // Business solutions enabled
+  
+  // UI Features
+  ENABLE_ANALYTICS: enabledFeatures.has('analytics'),
+  ENABLE_ERROR_TRACKING: enabledFeatures.has('error_tracking'),
+  ENABLE_LIVE_STREAMING: enabledFeatures.has('live_streaming'),
+  ENABLE_NOTIFICATIONS: enabledFeatures.has('notifications'),
+  ENABLE_CHAT_SUPPORT: enabledFeatures.has('chat_support'),
+  ENABLE_DARK_MODE: enabledFeatures.has('dark_mode'),
+  ENABLE_ANIMATIONS: enabledFeatures.has('animations'),
   
   // Development flags - DISABLED FOR PRODUCTION
   DEBUG_AUTH: import.meta.env.VITE_DEBUG_AUTH === 'true', // Auth debugging disabled

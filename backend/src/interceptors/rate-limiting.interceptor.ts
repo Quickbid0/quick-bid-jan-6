@@ -1,4 +1,4 @@
-import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, NestInterceptor, ExecutionContext, CallHandler, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
@@ -19,6 +19,7 @@ interface RateLimitStore {
 export class RateLimitingInterceptor implements NestInterceptor {
   private store: RateLimitStore = {};
   private configs: Map<string, RateLimitConfig> = new Map();
+  private readonly logger = new Logger('RateLimitingInterceptor');
 
   constructor() {
     // Configure different rate limits for different endpoints
@@ -106,7 +107,17 @@ export class RateLimitingInterceptor implements NestInterceptor {
     const ip = request.ip || request.connection.remoteAddress;
     const userAgent = request.get('user-agent') || 'unknown';
     const path = request.route?.path || request.path;
-    return `${ip}:${userAgent}:${path}`;
+    let key = `${ip}:${userAgent}:${path}`;
+
+    // For auth endpoints, include email for account-specific limiting
+    if (path.includes('/auth/login') || path.includes('/auth/send-otp') || path.includes('/auth/verify-otp')) {
+      const email = request.body?.email;
+      if (email) {
+        key += `:${email}`;
+      }
+    }
+
+    return key;
   }
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -138,6 +149,9 @@ export class RateLimitingInterceptor implements NestInterceptor {
     if (this.store[key].requests > config.maxRequests) {
       const resetTime = this.store[key].resetTime;
       const waitTime = Math.ceil((resetTime - now) / 1000);
+      
+      // Log security event
+      this.logger.warn(`Rate limit breached: key=${key}, path=${path}, IP=${ip}, attempts=${this.store[key].requests}`);
       
       // Set rate limit headers
       const response = context.switchToHttp().getResponse();

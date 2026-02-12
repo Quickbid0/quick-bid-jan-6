@@ -1,13 +1,23 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   private users = new Map();
   private nextUserId = 1;
   private otpStore = new Map();
+  private readonly logger = new Logger(AuthService.name);
+  private refreshTokens = new Map<string, {userId: string, expiresAt: Date}>();
+  private csrfTokens = new Map<string, string>();
 
-  constructor() {
-    // Initialize with test users
+  constructor(private jwtService: JwtService, private configService: ConfigService) {
+    // Validate RSA keys at startup
+    const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
+    const publicKey = this.configService.get<string>('JWT_PUBLIC_KEY');
+    if (!privateKey || !publicKey) {
+      throw new Error('Missing RSA keys. Application cannot start.');
+    }
+    // Ensure private key is not logged
     this.initializeTestUsers();
   }
 
@@ -18,52 +28,46 @@ export class AuthService {
       { email: 'kavya@quickmela.com', name: 'Kavya Reddy', password: 'BuyerPass123!' },
       { email: 'vijay@quickmela.com', name: 'Vijay Singh', password: 'BuyerPass123!' },
       { email: 'neha@quickmela.com', name: 'Neha Sharma', password: 'BuyerPass123!' },
-      { email: 'rohit@quickmela.com', name: 'Rohit Verma', password: 'BuyerPass123!' },
-      { email: 'buyer@quickmela.com', name: 'Test Buyer', password: 'BuyerPass123!' },
-      { email: '123abc@gmail.com', name: 'Test User', password: 'San@8897' } // User's registered account
+      { email: 'rahul@quickmela.com', name: 'Rahul Gupta', password: 'BuyerPass123!' },
+      { email: 'priya@quickmela.com', name: 'Priya Patel', password: 'BuyerPass123!' }
     ];
 
     // Create test sellers
     const sellers = [
-      { email: 'anita@quickmela.com', name: 'Anita Desai', password: 'SellerPass123!' },
-      { email: 'suresh@quickmela.com', name: 'Suresh Mehta', password: 'SellerPass123!' },
-      { email: 'deepa@quickmela.com', name: 'Deepa Patel', password: 'SellerPass123!' },
-      { email: 'rajesh@quickmela.com', name: 'Rajesh Kumar', password: 'SellerPass123!' },
-      { email: 'seller@quickmela.com', name: 'Test Seller', password: 'SellerPass123!' }
+      { email: 'seller1@quickmela.com', name: 'Seller One', password: 'SellerPass123!' },
+      { email: 'seller2@quickmela.com', name: 'Seller Two', password: 'SellerPass123!' },
+      { email: 'seller3@quickmela.com', name: 'Seller Three', password: 'SellerPass123!' }
     ];
 
-    // Create test admins
-    const admins = [
-      { email: 'system@quickmela.com', name: 'System Admin', password: 'AdminPass123!' },
-      { email: 'support@quickmela.com', name: 'Support Admin', password: 'AdminPass123!' },
-      { email: 'admin@quickmela.com', name: 'Test Admin', password: 'AdminPass123!' }
+    // Create test company (admin)
+    const company = [
+      { email: 'admin@quickmela.com', name: 'QuickMela Admin', password: 'AdminPass123!' }
     ];
 
-    // Add all users to the in-memory database
-    [...buyers, ...sellers, ...admins].forEach(userData => {
-      const role = userData.email.includes('admin') ? 'admin' : 
-                  userData.email.includes('seller') ? 'seller' : 'buyer';
-      
-      this.users.set(userData.email, {
+    [...buyers, ...sellers, ...company].forEach(userData => {
+      const role = userData.email.includes('admin') ? 'company' : userData.email.includes('seller') ? 'seller' : 'buyer';
+      const user = {
         id: (this.nextUserId++).toString(),
         email: userData.email,
         name: userData.name,
         password: userData.password,
-        role: role,
+        role,
         createdAt: new Date(),
         isActive: true,
         isVerified: true,
-        walletBalance: role === 'admin' ? 500000 : 100000,
+        walletBalance: role === 'company' ? 500000 : 100000,
         kycStatus: 'verified',
         profile: {
-          phone: '+91' + Math.floor(Math.random() * 9000000000 + 1000000000),
-          address: 'Test Address, India',
-          pincode: '400001'
-        }
-      });
+          phone: '',
+          address: '',
+          pincode: ''
+        },
+        lastLogin: null,
+        failureCount: 0,
+        lockUntil: null
+      };
+      this.users.set(user.email, user);
     });
-
-    // Test users initialized successfully
   }
 
   async login(loginDto: any) {
@@ -73,23 +77,44 @@ export class AuthService {
     const user = this.users.get(email);
     
     if (!user) {
-      throw new Error('User not found');
+      this.logger.warn(`Failed login attempt: User not found for email ${email}`);
+      throw new Error('Invalid credentials');
+    }
+    
+    // Check if account is locked
+    if (user.lockUntil && user.lockUntil > new Date()) {
+      this.logger.warn(`Login attempt blocked: Account locked for email ${email}`);
+      throw new Error('Account locked due to too many failed attempts. Try again later.');
     }
     
     if (user.password !== password) {
-      throw new Error('Invalid password');
+      // Increment failure count
+      user.failureCount = (user.failureCount || 0) + 1;
+      if (user.failureCount > 5) {
+        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+        this.logger.warn(`Account locked for email ${email} due to too many failed attempts`);
+      }
+      this.logger.warn(`Failed login attempt: Invalid password for email ${email}`);
+      throw new Error('Invalid credentials');
     }
     
-    if (!user.isActive) {
-      throw new Error('Account is deactivated');
-    }
+    // Reset failure count on success
+    user.failureCount = 0;
+    user.lockUntil = null;
     
-    // Generate tokens (mock implementation)
-    const accessToken = `mock-jwt-${user.id}-${Date.now()}`;
-    const refreshToken = `mock-refresh-${user.id}-${Date.now()}`;
+    // Generate tokens
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
+    const accessToken = this.jwtService.sign(payload, { algorithm: 'RS256', secret: privateKey, expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign({ sub: user.id }, { algorithm: 'RS256', secret: privateKey, expiresIn: '7d' });
+    const crypto = require('crypto');
+    const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    this.refreshTokenHashes.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
     
     // Update last login
     user.lastLogin = new Date();
+    
+    this.logger.log(`Successful login for user ${email}`);
     
     return {
       message: 'Login successful',
@@ -107,21 +132,42 @@ export class AuthService {
     };
   }
 
+  async refresh(refreshToken: string) {
+    const stored = this.refreshTokens.get(refreshToken);
+    if (!stored || stored.expiresAt < new Date()) {
+      this.logger.warn('Invalid or expired refresh token');
+      throw new Error('Invalid refresh token');
+    }
+    const user = Array.from(this.users.values()).find(u => u.id === stored.userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    const newAccessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const newRefreshToken = this.jwtService.sign({ sub: user.id }, { expiresIn: '7d' });
+    // Invalidate old refresh token
+    this.refreshTokens.delete(refreshToken);
+    // Store new
+    this.refreshTokens.set(newRefreshToken, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+    this.logger.log(`Token refresh for user ${user.email}`);
+    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+  }
+
   async register(registerDto: any) {
-    const { email, password, name, role = 'buyer' } = registerDto;
+    const { email, password, name } = registerDto;
     
     // Check if user already exists
     if (this.users.has(email)) {
       throw new Error('User already exists');
     }
     
-    // Create new user
+    // Create new user - always assign 'buyer' role for security
     const newUser = {
       id: (this.nextUserId++).toString(),
       email,
       name,
       password,
-      role,
+      role: 'buyer', // Strict RBAC: new users are buyers only
       createdAt: new Date(),
       isActive: true,
       isVerified: false,
@@ -150,39 +196,78 @@ export class AuthService {
   }
 
   async getProfile(req: any) {
-    // Extract user from token (mock implementation)
-    const token = req.headers.authorization?.replace('Bearer ', '');
-    
-    if (!token) {
-      throw new Error('No token provided');
-    }
-    
-    // Mock token validation - extract user ID from token
-    const userId = token.split('-')[2];
-    
-    // Find user by ID
-    for (const [email, user] of this.users.entries()) {
-      if (user.id === userId) {
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-          walletBalance: user.walletBalance,
-          kycStatus: user.kycStatus,
-          profile: user.profile,
-          createdAt: user.createdAt,
-          lastLogin: user.lastLogin
-        };
-      }
-    }
-    
-    throw new Error('User not found');
+    const user = req.user;
+    if (!user) throw new Error('Not authenticated');
+    const fullUser = this.users.get(user.email);
+    return {
+      id: fullUser.id,
+      email: fullUser.email,
+      name: fullUser.name,
+      role: fullUser.role,
+      walletBalance: fullUser.walletBalance,
+      kycStatus: fullUser.kycStatus,
+      profile: fullUser.profile,
+      createdAt: fullUser.createdAt,
+      lastLogin: fullUser.lastLogin
+    };
   }
 
-  async logout(req: any) {
-    // Mock logout logic
+  async logout(refreshToken: string) {
+    const crypto = require('crypto');
+    const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+    this.refreshTokenHashes.delete(hash);
+    this.logger.log('User logged out, refresh token invalidated');
     return { message: 'Logout successful' };
+  }
+
+  async refresh(token: string): Promise<any> {
+    try {
+      const crypto = require('crypto');
+      const hash = crypto.createHash('sha256').update(token).digest('hex');
+      const stored = this.refreshTokenHashes.get(hash);
+
+      if (!stored) {
+        // Check if JWT is valid to detect reuse
+        try {
+          const payload = this.jwtService.verify(token, { algorithms: ['RS256'], secret: this.configService.get('JWT_PUBLIC_KEY') });
+          this.logger.warn(`Refresh token reuse detected for user ${payload.sub}`);
+          // Invalidate all refresh tokens for this user
+          for (const [h, data] of this.refreshTokenHashes.entries()) {
+            if (data.userId === payload.sub) {
+              this.refreshTokenHashes.delete(h);
+            }
+          }
+          throw new Error('Refresh token reuse detected');
+        } catch (e) {
+          throw new Error('Invalid refresh token');
+        }
+      }
+
+      if (stored.expiresAt < new Date()) {
+        this.refreshTokenHashes.delete(hash);
+        throw new Error('Expired refresh token');
+      }
+
+      // Find user to get email and role
+      const user = Array.from(this.users.values()).find(u => u.id === stored.userId);
+      if (!user) throw new Error('User not found');
+
+      // Generate new tokens
+      const newPayload = { sub: user.id, email: user.email, role: user.role };
+      const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
+      const newAccessToken = this.jwtService.sign(newPayload, { algorithm: 'RS256', secret: privateKey, expiresIn: '15m' });
+      const newRefreshToken = this.jwtService.sign({ sub: user.id }, { algorithm: 'RS256', secret: privateKey, expiresIn: '7d' });
+
+      // Update refresh token store
+      this.refreshTokenHashes.delete(hash);
+      const newHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
+      this.refreshTokenHashes.set(newHash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+
+      return { accessToken: newAccessToken, refreshToken: newRefreshToken };
+    } catch (error) {
+      this.logger.error(`Refresh token validation failed: ${error.message}`);
+      throw new Error('Invalid refresh token');
+    }
   }
 
   async getAllUsers() {

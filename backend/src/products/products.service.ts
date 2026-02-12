@@ -36,8 +36,7 @@ export interface Bid {
 
 @Injectable()
 export class ProductsService {
-  // In-memory storage for demo purposes
-  private products = [
+  private products: any[] = [
     {
       id: 1,
       title: 'Vintage Watch Collection - Reserve Auction',
@@ -193,7 +192,7 @@ export class ProductsService {
     switch (auctionType.type) {
       case 'reserve':
         // Reserve auction: bids below reserve price don't count as winning bids
-        if (bidAmount < auctionType.reservePrice!) {
+        if ('reservePrice' in auctionType && auctionType.reservePrice && bidAmount < auctionType.reservePrice) {
           // Allow bidding below reserve, but don't update current bid until reserve is met
           // This is common in reserve auctions - bidders can bid below reserve but it doesn't change the display
           throw new Error(`Bid must be at least ₹${auctionType.reservePrice}. This is a reserve auction.`);
@@ -213,7 +212,7 @@ export class ProductsService {
 
       case 'tender':
         // Tender auction: bids must be below starting price and meet minimum requirements
-        if (auctionType.minimumBid && bidAmount > auctionType.minimumBid) {
+        if ('minimumBid' in auctionType && auctionType.minimumBid && bidAmount > auctionType.minimumBid) {
           throw new Error(`Tender bid must be ₹${auctionType.minimumBid} or lower`);
         }
         // For tenders, lower bids win (opposite of standard auctions)
@@ -241,7 +240,7 @@ export class ProductsService {
     }
 
     // For reserve auctions, only update display if reserve is met
-    const shouldUpdateBid = auctionType.type !== 'reserve' || bidAmount >= (auctionType.reservePrice || 0);
+    const shouldUpdateBid = auctionType.type !== 'reserve' || ('reservePrice' in auctionType && bidAmount >= (auctionType.reservePrice || 0));
 
     if (shouldUpdateBid) {
       // Deduct from wallet
@@ -282,7 +281,7 @@ export class ProductsService {
   // Calculate current Dutch auction price
   private calculateDutchPrice(product: any): number {
     const auctionType = product.auctionType;
-    if (auctionType.type !== 'dutch') return product.currentBid;
+    if (auctionType.type !== 'dutch' || !auctionType.dutchDecrement || !auctionType.dutchInterval) return product.currentBid;
 
     const elapsed = Date.now() - product.createdAt.getTime();
     const intervalsPassed = Math.floor(elapsed / auctionType.dutchInterval);
@@ -325,6 +324,7 @@ export class ProductsService {
         startingPrice: productData.startingBid || productData.startingPrice,
         currentBid: productData.startingBid || productData.startingPrice,
         buyNowPrice: productData.buyNowPrice,
+        auctionType: { type: 'standard', startingPrice: productData.startingPrice, bidIncrement: 1000, duration: 7 * 24 * 60 * 60 * 1000 },
         endTime: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
         images: productData.images || ['https://picsum.photos/seed/product/400/300.jpg'],
         category: productData.category || 'Other',
