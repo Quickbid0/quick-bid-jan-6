@@ -20,8 +20,7 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: '1mb', extended: true }));
 
   // Enable CORS with strict origin allowlist
-async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+
 
   // 🔥 ENABLE CORS FIRST — BEFORE ANYTHING ELSE
   app.enableCors({
@@ -35,15 +34,7 @@ async function bootstrap() {
     allowedHeaders: ['Content-Type', 'Authorization'],
   });
 
-  app.setGlobalPrefix('api');
-
-  await app.listen(process.env.PORT || 3000);
-}
-bootstrap();
-
-
-
-
+ 
   // Global validation pipe
   app.useGlobalPipes(
     new ValidationPipe({
@@ -76,10 +67,11 @@ bootstrap();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  const port = process.env.PORT || 4011;
+  const port = process.env.PORT || 3000;
   await app.listen(port);
 
   // Startup complete - server is running
 }
+
 
 bootstrap();
