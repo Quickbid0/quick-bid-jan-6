@@ -9,61 +9,120 @@ import { AllExceptionsFilter } from './filters/all-exceptions.filter';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 🔥 ENABLE CORS FIRST — BEFORE ANYTHING ELSE
+  /**
+   * ========================================
+   * 🔥 PRODUCTION-READY CORS CONFIG
+   * ========================================
+   */
+
+  const allowedOrigins = [
+    'https://quickmela.netlify.app',
+    'https://quickmela.com',       // add your main domain
+    'http://localhost:3000',
+    'http://localhost:5173',
+  ];
+
   app.enableCors({
     origin: (origin, callback) => {
-      const allowedOrigins = [
-        'https://quickmela.netlify.app',
-        'http://localhost:3000',
-        'http://localhost:5173',
-      ];
-
-      // Allow non-browser requests (Postman, curl, server-to-server)
+      // Allow server-to-server / Postman
       if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
 
-      return callback(new Error(`CORS blocked for origin: ${origin}`), false);
+      return callback(
+        new Error(`CORS blocked for origin: ${origin}`),
+        false,
+      );
     },
+
     credentials: true,
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-   allowedHeaders: [
-    'Content-Type',
-    'Authorization',
-    'x-csrf-token',
-  ],
-    exposedHeaders: 'Authorization',
+
+    methods: [
+      'GET',
+      'HEAD',
+      'PUT',
+      'PATCH',
+      'POST',
+      'DELETE',
+      'OPTIONS',
+    ],
+
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-csrf-token',
+      'x-requested-at',   // 🔥 FIXED YOUR ERROR
+      'Accept',
+      'Origin'
+    ],
+
+    exposedHeaders: [
+      'Authorization',
+    ],
+  });
+
+  // Explicitly handle OPTIONS (extra safe for Railway)
+  app.getHttpAdapter().getInstance().options('*', (req, res) => {
+    res.sendStatus(200);
   });
 
   console.log('🚀 CORS CONFIG LOADED');
 
-  // Security: Disable x-powered-by
-  // app.disable('x-powered-by');
+  /**
+   * ========================================
+   * SECURITY & BODY LIMITS
+   * ========================================
+   */
 
-  // Body size limits
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ limit: '1mb', extended: true }));
 
-  // Global validation
+  /**
+   * ========================================
+   * GLOBAL VALIDATION
+   * ========================================
+   */
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       transform: true,
+      forbidNonWhitelisted: true,
     }),
   );
 
-  // Global error filter
+  /**
+   * ========================================
+   * GLOBAL ERROR FILTER
+   * ========================================
+   */
+
   app.useGlobalFilters(new AllExceptionsFilter());
 
-  // Static files
+  /**
+   * ========================================
+   * STATIC FILES
+   * ========================================
+   */
+
   app.use('/assets', express.static(join(__dirname, 'assets')));
 
-  // API prefix
+  /**
+   * ========================================
+   * GLOBAL API PREFIX
+   * ========================================
+   */
+
   app.setGlobalPrefix('api');
 
-  // Swagger (optional in production)
+  /**
+   * ========================================
+   * SWAGGER (Disable in production if needed)
+   * ========================================
+   */
+
   const config = new DocumentBuilder()
     .setTitle('QuickMela API')
     .setDescription('QuickMela Auction Platform API')
@@ -76,6 +135,12 @@ async function bootstrap() {
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
+
+  /**
+   * ========================================
+   * START SERVER
+   * ========================================
+   */
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
