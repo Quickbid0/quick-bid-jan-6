@@ -8,11 +8,21 @@ import { validateEmail, validatePassword } from '../utils/securityUtils';
 import { LogIn, Mail, Lock, Eye, EyeOff, User, MessageSquare } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
+interface LoginResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: string;
+    email: string;
+    role: string;
+    full_name?: string;
+  };
+}
+
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   const [otp, setOTP] = useState('');
   const [generatedOTP, setGeneratedOTP] = useState('');
@@ -108,7 +118,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await SecureAPIClient.login({ email, password });
+      const response = await SecureAPIClient.login({ email, password }) as LoginResponse;
 
       // Store tokens and user data
       localStorage.setItem('accessToken', response.accessToken);
@@ -227,7 +237,7 @@ const Login = () => {
   };
 
   return (
-    <PageContainer>
+    <>
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white p-2 z-50">Skip to main content</a>
         <main id="main-content" className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -241,7 +251,6 @@ const Login = () => {
           <div id="login-description" className="sr-only">
             Enter your email and password to access your QuickMela account. New users can create an account using the registration link below.
           </div>
-        </div>
 
         {!showOTP ? (
           <form className="mt-8 space-y-6" onSubmit={handleLogin} role="form" aria-labelledby="login-form-heading">
@@ -276,37 +285,15 @@ const Login = () => {
                   data-testid="password-input"
                   autoComplete="current-password"
                   required
+                  placeholder="••••••••"
                   className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  aria-describedby="password-help"
+                  aria-required="true"
                 />
-                    type={showPassword ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    required
-                    placeholder="••••••••"
-                    className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    aria-describedby="password-help"
-                    aria-required="true"
-                  />
-                  <div id="password-help" className="sr-only">
-                    Enter your password to sign in to your account
-                  </div>
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-500 focus:outline-none focus:text-gray-600"
-                    onClick={() => setShowPassword(!showPassword)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    aria-pressed={showPassword}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="h-5 w-5" aria-hidden="true" />
-                    ) : (
-                      <Eye className="h-5 w-5" aria-hidden="true" />
-                    )}
-                  </button>
+                <div id="password-help" className="sr-only">
+                  Enter your password to sign in to your account
                 </div>
                 {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
               </div>
@@ -427,6 +414,8 @@ const Login = () => {
           </div>
         )}
 
+        </div>
+
         <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6" role="region" aria-labelledby="account-options">
           <div className="flex flex-col gap-3">
             <p className="text-center text-sm text-gray-500" aria-describedby="registration-help">
@@ -479,6 +468,7 @@ const Login = () => {
         </div>
       </main>
     </div>
+    </>
   );
 };
 

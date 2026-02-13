@@ -27,6 +27,14 @@ export default defineConfig({
       name: 'webkit',
       use: { ...devices['Desktop Safari'] },
     },
+    {
+      name: 'production',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: 'https://quickmela.netlify.app',
+        storageState: 'playwright/.auth/admin.json'
+      },
+    },
   ],
 
   webServer: {
