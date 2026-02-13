@@ -49,14 +49,7 @@ async function bootstrap() {
       'OPTIONS',
     ],
 
-    allowedHeaders: [
-      'Content-Type',
-      'Authorization',
-      'x-csrf-token',
-      'x-requested-at',   // 🔥 FIXED YOUR ERROR
-      'Accept',
-      'Origin'
-    ],
+    allowedHeaders: '*', // � TEMPORARY: Allow all headers to debug
 
     exposedHeaders: [
       'Authorization',
