@@ -1,12 +1,16 @@
 {
-  "name": "quickbid",
+  "name": "quickbid-backend",
   "private": true,
   "version": "1.0.0",
   "license": "Proprietary",
   "type": "module",
+
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
+    "postinstall": "prisma generate",
+    "build": "prisma generate && nest build",
+    "start": "nest start",
+    "start:prod": "node dist/main",
+    "dev": "nest start --watch",
     "build:production": "vite build --config vite.config.production.ts",
     "build:analyze": "vite build --config vite.config.production.ts && npx vite-bundle-analyzer dist",
     "typecheck": "tsc -p tsconfig.strict.json",
