@@ -19,8 +19,9 @@
   for = "/*"
   [headers.values]
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
     Referrer-Policy = "strict-origin-when-cross-origin"
     Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    # Adjust CSP as needed for additional providers
-    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co wss: https://api.razorpay.com https://checkout.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; img-src 'self' data: https://images.unsplash.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; frame-src https://api.razorpay.com https://*.razorpay.com https://checkout.razorpay.com"
+    Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co wss: https://api.razorpay.com https://checkout.razorpay.com https://web-production-b7c8b.up.railway.app/; script-src 'self' 'unsafe-inline' data: https://checkout.razorpay.com; img-src 'self' data: https: https://images.unsplash.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; frame-src https://api.razorpay.com https://*.razorpay.com https://checkout.razorpay.com; font-src 'self' data: https:"

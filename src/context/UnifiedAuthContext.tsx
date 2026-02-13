@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, ReactNode } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { 
   getAuthMode, 
@@ -62,8 +62,14 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
     authMode: null,
   });
 
+  // Safe initialization guard
+  const initialized = useRef(false);
+
   // Initialize auth mode on mount
   useEffect(() => {
+    if (initialized.current) return;
+    initialized.current = true;
+
     console.log('🔐 UNIFIED AUTH: Initializing unified auth system');
     console.log('🔐 UNIFIED AUTH: System AUTH_MODE:', getAuthMode());
     

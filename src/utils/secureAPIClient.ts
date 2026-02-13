@@ -2,7 +2,7 @@
 import { RateLimiter, validateCSRFToken, generateCSRFToken, sanitizeInput } from './securityUtils';
 
 class SecureAPIClient {
-  private static readonly BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:4011';
+  private static readonly BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:4011'}/`;
   private static csrfToken: string | null = null;
 
   // Rate limiting configurations
@@ -151,7 +151,7 @@ class SecureAPIClient {
       throw new Error('Email and password are required');
     }
 
-    return this.post('/api/auth/login', {
+    return this.post('api/auth/login', {
       email: credentials.email.trim().toLowerCase(),
       password: credentials.password,
     });
