@@ -20,10 +20,31 @@ async function bootstrap() {
   app.use(express.urlencoded({ limit: '1mb', extended: true }));
 
   // Enable CORS with strict origin allowlist
-  app.enableCors({
-    origin: process.env.ALLOWED_ORIGINS ? process.env.ALLOWED_ORIGINS.split(',') : ['http://localhost:3000', 'https://quickmela.netlify.app'],
-    credentials: true,
-  });
+app.enableCors({
+  origin: (origin, callback) => {
+    const allowedOrigins = process.env.ALLOWED_ORIGINS
+      ? process.env.ALLOWED_ORIGINS.split(',').map(o => o.trim())
+      : [
+          'http://localhost:3000',
+          'http://localhost:5173',
+          'https://quickmela.netlify.app',
+        ];
+
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS blocked for origin: ${origin}`), false);
+    }
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+});
+
+
 
   // Global validation pipe
   app.useGlobalPipes(
