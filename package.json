@@ -2,10 +2,12 @@
   "name": "quickbid-frontend",
   "private": true,
   "version": "1.0.0",
+  "packageManager": "npm@10.8.2",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
   },
+
   "scripts": {
     "dev": "vite",
     "build": "vite build",
