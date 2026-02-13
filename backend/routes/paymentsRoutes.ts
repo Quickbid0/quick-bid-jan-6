@@ -1,5 +1,5 @@
 import express from 'express';
-import Razorpay from 'razorpay';
+import * as Razorpay from 'razorpay';
 import crypto from 'crypto';
 import { authMiddleware } from '../middleware/auth';
 import jwt from 'jsonwebtoken';

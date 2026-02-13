@@ -1,7 +1,7 @@
 import crypto from 'crypto';
 import type { Request, Response } from 'express';
 import type { Pool } from 'pg';
-import Razorpay from 'razorpay';
+import * as Razorpay from 'razorpay';
 import { Queue } from 'bullmq';
 import IORedis from 'ioredis';
 

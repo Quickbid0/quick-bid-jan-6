@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
-import { Auction } from '../auctions/auction.entity';
 import { AdminController } from './admin.controller';
 import { AdminDashboardService } from './admin-dashboard.service';
 import { ApprovalService } from './approval.service';
@@ -16,7 +14,7 @@ import { AuctionsModule } from '../auctions/auctions.module';
 import { ObservabilityModule } from '../observability/observability.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Auction]), ObservabilityModule, AuctionsModule],
+  imports: [ObservabilityModule, AuctionsModule],
   controllers: [
     AdminController,
     AdminAuctionController,

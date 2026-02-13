@@ -3,7 +3,7 @@ import { toast } from 'react-hot-toast';
 // Extend the Window interface to include Razorpay
 declare global {
   interface Window {
-    Razorpay: any;
+    Razorpay?: any;
   }
 }
 
