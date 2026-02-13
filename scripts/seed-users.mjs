@@ -16,9 +16,9 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, {
 const users = [
   { email: 'superadmin@test.in', password: 'Test@12345', role: 'admin', app_role: 'super_admin', full_name: 'Super Admin' },
   { email: 'admin@test.in', password: 'Test@12345', role: 'admin', app_role: 'admin', full_name: 'Admin User' },
-  { email: 'admin@quickbid.com', password: 'admin123', role: 'admin', app_role: 'admin', full_name: 'Test Admin' },
-  { email: 'buyer@quickbid.com', password: 'buyer123', role: 'user', app_role: 'buyer', full_name: 'Test Buyer' },
-  { email: 'seller@quickbid.com', password: 'seller123', role: 'user', app_role: 'seller', full_name: 'Test Seller' },
+  { email: 'admin@quickbid.com', password: 'Admin@123', role: 'admin', app_role: 'admin', full_name: 'Test Admin' },
+  { email: 'buyer@quickbid.com', password: 'Buyer@123', role: 'user', app_role: 'buyer', full_name: 'Test Buyer' },
+  { email: 'seller@quickbid.com', password: 'Seller@123', role: 'user', app_role: 'seller', full_name: 'Test Seller' },
   { email: 'buyer1@test.in', password: 'Test@12345', role: 'user', app_role: 'buyer', full_name: 'Buyer One' },
   { email: 'buyer2@test.in', password: 'Test@12345', role: 'user', app_role: 'buyer', full_name: 'Buyer Two' },
   { email: 'buyer3@test.in', password: 'Test@12345', role: 'user', app_role: 'buyer', full_name: 'Buyer Three' },
@@ -37,7 +37,12 @@ async function ensureUser(u) {
     if (listErr) throw listErr;
     const existing = listRes?.users?.find((x) => x.email?.toLowerCase() === u.email.toLowerCase());
     if (existing) {
-      console.log(`User exists: ${u.email} (${existing.id})`);
+      // Update password for existing user
+      const { error: updateErr } = await supabase.auth.admin.updateUser(existing.id, {
+        password: u.password,
+      });
+      if (updateErr) throw updateErr;
+      console.log(`Updated password for ${u.email} (${existing.id})`);
       return existing;
     }
 

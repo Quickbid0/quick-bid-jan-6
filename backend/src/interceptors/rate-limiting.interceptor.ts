@@ -151,7 +151,8 @@ export class RateLimitingInterceptor implements NestInterceptor {
       const waitTime = Math.ceil((resetTime - now) / 1000);
       
       // Log security event
-      this.logger.warn(`Rate limit breached: key=${key}, path=${path}, IP=${ip}, attempts=${this.store[key].requests}`);
+      const req = context.switchToHttp().getRequest();
+      this.logger.warn(`Rate limit breached: key=${key}, path=${req.path}, IP=${req.ip}, attempts=${this.store[key].requests}`);
       
       // Set rate limit headers
       const response = context.switchToHttp().getResponse();

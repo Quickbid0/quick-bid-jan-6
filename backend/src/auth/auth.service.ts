@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
@@ -109,7 +110,7 @@ export class AuthService {
     const refreshToken = this.jwtService.sign({ sub: user.id }, { algorithm: 'RS256', secret: privateKey, expiresIn: '7d' });
     const crypto = require('crypto');
     const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    this.refreshTokenHashes.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+    this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
     
     // Update last login
     user.lastLogin = new Date();
@@ -130,27 +131,6 @@ export class AuthService {
       accessToken,
       refreshToken
     };
-  }
-
-  async refresh(refreshToken: string) {
-    const stored = this.refreshTokens.get(refreshToken);
-    if (!stored || stored.expiresAt < new Date()) {
-      this.logger.warn('Invalid or expired refresh token');
-      throw new Error('Invalid refresh token');
-    }
-    const user = Array.from(this.users.values()).find(u => u.id === stored.userId);
-    if (!user) {
-      throw new Error('User not found');
-    }
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    const newAccessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
-    const newRefreshToken = this.jwtService.sign({ sub: user.id }, { expiresIn: '7d' });
-    // Invalidate old refresh token
-    this.refreshTokens.delete(refreshToken);
-    // Store new
-    this.refreshTokens.set(newRefreshToken, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
-    this.logger.log(`Token refresh for user ${user.email}`);
-    return { accessToken: newAccessToken, refreshToken: newRefreshToken };
   }
 
   async register(registerDto: any) {
@@ -215,7 +195,7 @@ export class AuthService {
   async logout(refreshToken: string) {
     const crypto = require('crypto');
     const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    this.refreshTokenHashes.delete(hash);
+    this.refreshTokens.delete(hash);
     this.logger.log('User logged out, refresh token invalidated');
     return { message: 'Logout successful' };
   }
@@ -224,7 +204,7 @@ export class AuthService {
     try {
       const crypto = require('crypto');
       const hash = crypto.createHash('sha256').update(token).digest('hex');
-      const stored = this.refreshTokenHashes.get(hash);
+      const stored = this.refreshTokens.get(hash);
 
       if (!stored) {
         // Check if JWT is valid to detect reuse
@@ -232,9 +212,9 @@ export class AuthService {
           const payload = this.jwtService.verify(token, { algorithms: ['RS256'], secret: this.configService.get('JWT_PUBLIC_KEY') });
           this.logger.warn(`Refresh token reuse detected for user ${payload.sub}`);
           // Invalidate all refresh tokens for this user
-          for (const [h, data] of this.refreshTokenHashes.entries()) {
+          for (const [h, data] of this.refreshTokens.entries()) {
             if (data.userId === payload.sub) {
-              this.refreshTokenHashes.delete(h);
+              this.refreshTokens.delete(h);
             }
           }
           throw new Error('Refresh token reuse detected');
@@ -244,7 +224,7 @@ export class AuthService {
       }
 
       if (stored.expiresAt < new Date()) {
-        this.refreshTokenHashes.delete(hash);
+        this.refreshTokens.delete(hash);
         throw new Error('Expired refresh token');
       }
 
@@ -259,9 +239,9 @@ export class AuthService {
       const newRefreshToken = this.jwtService.sign({ sub: user.id }, { algorithm: 'RS256', secret: privateKey, expiresIn: '7d' });
 
       // Update refresh token store
-      this.refreshTokenHashes.delete(hash);
+      this.refreshTokens.delete(hash);
       const newHash = crypto.createHash('sha256').update(newRefreshToken).digest('hex');
-      this.refreshTokenHashes.set(newHash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+      this.refreshTokens.set(newHash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
 
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
     } catch (error) {
@@ -359,5 +339,11 @@ export class AuthService {
   // Helper method for testing
   getUserByEmail(email: string) {
     return this.users.get(email);
+  }
+
+  async generateCsrfToken(userId: string): Promise<string> {
+    const token = Math.random().toString(36).substring(2);
+    this.csrfTokens.set(userId, token);
+    return token;
   }
 }

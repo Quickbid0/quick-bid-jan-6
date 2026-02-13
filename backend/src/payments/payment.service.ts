@@ -1,6 +1,7 @@
 import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHmac, timingSafeEqual } from 'crypto';
+import Razorpay from 'razorpay';
 
 interface PaymentProvider {
   name: string;
@@ -14,7 +15,7 @@ interface PaymentProvider {
 interface PaymentMethod {
   code: string;
   name: string;
-  type: 'upi' | 'wallet' | 'card' | 'netbanking';
+  type: string;
   icon: string;
   description: string;
   fees: number;
@@ -23,14 +24,15 @@ interface PaymentMethod {
     min: number;
     max: number;
   };
-  providers: string[]; // Which providers support this method
+  providers: string[];
+  isActive?: boolean;
 }
 
 interface CreateOrderDto {
   amount: number;
   currency?: string;
   receipt?: string;
-  notes?: Record<string, string>;
+  notes?: Record<string, any>;
 }
 
 interface VerifyPaymentDto {
@@ -42,17 +44,25 @@ interface VerifyPaymentDto {
 interface RefundDto {
   paymentId: string;
   amount?: number;
-  notes?: Record<string, string>;
+  notes?: Record<string, any>;
 }
 
 interface AuctionPaymentDto {
   auctionId: string;
-  bidderId: string;
   amount: number;
   paymentId: string;
   orderId: string;
   userId: string;
   sellerId: string;
+}
+
+enum EscrowState {
+  PENDING = 'pending',
+  FUNDED = 'funded',
+  DELIVERED = 'delivered',
+  RELEASED = 'released',
+  CANCELLED = 'cancelled',
+  REFUNDED = 'refunded',
 }
 
 @Injectable()
@@ -179,18 +189,6 @@ export class PaymentService {
     return 10000; // ₹100
   }
 
-  private transitionEscrowState(currentState: EscrowState, newState: EscrowState): boolean {
-    const allowed: Record<EscrowState, EscrowState[]> = {
-      [EscrowState.PENDING]: [EscrowState.FUNDED, EscrowState.CANCELLED],
-      [EscrowState.FUNDED]: [EscrowState.DELIVERED, EscrowState.REFUNDED],
-      [EscrowState.DELIVERED]: [EscrowState.RELEASED],
-      [EscrowState.RELEASED]: [],
-      [EscrowState.CANCELLED]: [],
-      [EscrowState.REFUNDED]: [],
-    };
-    return allowed[currentState]?.includes(newState) || false;
-  }
-
   private initializeRazorpay() {
     const keyId = this.configService.get<string>('RAZORPAY_KEY_ID');
     const keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET');
@@ -201,63 +199,71 @@ export class PaymentService {
       this.razorpay = {
         orders: {
           create: async (data: any) => ({
-            id: `order_mock_${Date.now()}`,
+            id: `order_${Date.now()}`,
+            entity: 'order',
             amount: data.amount,
+            amount_paid: 0,
+            amount_due: data.amount,
             currency: data.currency || 'INR',
             receipt: data.receipt,
-            status: 'created'
-          }),
-          fetch: async (id: string) => ({
-            id,
-            amount: 100000, // Mock amount in paisa
-            currency: 'INR',
-            status: 'paid'
+            offer_id: null,
+            status: 'created',
+            attempts: 0,
+            notes: data.notes || [],
+            created_at: Date.now()
           })
         },
         payments: {
-          fetch: async (id: string) => ({
-            id,
-            amount: 100000,
+          fetch: async (paymentId: string) => ({
+            id: paymentId,
+            entity: 'payment',
+            amount: 10000,
             currency: 'INR',
             status: 'captured',
+            order_id: null,
+            invoice_id: null,
+            international: false,
             method: 'card',
-            order_id: `order_mock_${Date.now()}`,
-            captured: true
+            amount_refunded: 0,
+            refund_status: null,
+            captured: true,
+            description: 'Test payment',
+            card_id: null,
+            bank: null,
+            wallet: null,
+            vpa: null,
+            email: 'test@example.com',
+            contact: '+919876543210',
+            notes: [],
+            fee: 0,
+            tax: 0,
+            error_code: null,
+            error_description: null,
+            created_at: Date.now()
           }),
-          refund: async (id: string, options: any) => ({
-            id: `refund_mock_${Date.now()}`,
-            payment_id: id,
-            amount: options.amount || 100000,
-            status: 'processed'
-          })
-        },
-        customers: {
-          create: async (data: any) => ({
-            id: `cust_mock_${Date.now()}`,
-            name: data.name,
-            email: data.email,
-            contact: data.contact
+          refund: async (paymentId: string, refundData: any) => ({
+            id: `refund_${Date.now()}`,
+            entity: 'refund',
+            amount: refundData.amount,
+            currency: 'INR',
+            payment_id: paymentId,
+            status: 'processed',
+            speed_processed: 'normal',
+            speed_requested: 'normal',
+            receipt: null,
+            notes: refundData.notes || [],
+            created_at: Date.now()
           })
         }
-      } as any;
-      this.logger.log('Mock Razorpay initialized successfully');
-      return;
+      };
+    } else {
+      this.razorpay = new Razorpay({
+        key_id: keyId,
+        key_secret: keySecret
+      });
     }
+  }
 
-    if (!keyId || !keySecret) {
-      this.logger.error('Razorpay credentials not configured. Please set RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET environment variables.');
-      throw new Error('Razorpay credentials not configured');
-    }
-
-    this.razorpay = new Razorpay({
-      key_id: keyId,
-      key_secret: keySecret,
-    });
-
-
-  /**
-   * Create a Razorpay order
-   */
   async createOrder(createOrderDto: any): Promise<any> {
     try {
       const { amount, currency = 'INR', receipt, notes } = createOrderDto;
@@ -301,9 +307,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Verify Razorpay payment signature
-   */
   async verifyPayment(verifyPaymentDto: any): Promise<boolean> {
     try {
       const { paymentId, orderId, signature } = verifyPaymentDto;
@@ -318,7 +321,10 @@ export class PaymentService {
         .update(`${orderId}|${paymentId}`)
         .digest('hex');
 
-      const isValid = expectedSignature === signature;
+      const isValid = timingSafeEqual(
+        Buffer.from(expectedSignature, 'hex'),
+        Buffer.from(signature, 'hex')
+      );
 
       if (isValid) {
         this.logger.log(`Payment verification successful for order: ${orderId}, payment: ${paymentId}`);
@@ -333,9 +339,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Process auction payment after successful Razorpay payment
-   */
   async processAuctionPayment(auctionPaymentDto: AuctionPaymentDto): Promise<any> {
     try {
       const { auctionId, amount, paymentId, orderId, userId, sellerId } = auctionPaymentDto;
@@ -396,9 +399,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Process refund
-   */
   async processRefund(refundDto: any): Promise<any> {
     try {
       const { paymentId, amount, notes } = refundDto;
@@ -443,9 +443,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Get payment details
-   */
   async getPayment(paymentId: string): Promise<any> {
     try {
       const payment = await this.razorpay.payments.fetch(paymentId);
@@ -471,9 +468,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Get order details
-   */
   async getOrder(orderId: string): Promise<any> {
     try {
       const order = await this.razorpay.orders.fetch(orderId);
@@ -493,9 +487,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Create customer (for future use)
-   */
   async createCustomer(customerData: {
     name: string;
     email: string;
@@ -521,18 +512,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Compute payment amount server-side - never trust client input
-   */
-  private computePaymentAmount(auctionId: string): number {
-    // In production, this would calculate based on auction rules, bids, etc.
-    // For demo purposes, return a fixed amount
-    return 10; // ₹10.00
-  }
-
-  /**
-   * Handle Razorpay webhooks with complete event processing and idempotency
-   */
   async handleWebhook(webhookData: any, signature: string): Promise<boolean> {
     try {
       const secret = this.configService.get<string>('RAZORPAY_WEBHOOK_SECRET');
@@ -583,9 +562,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Process individual webhook events with idempotency
-   */
   private async processWebhookEventIdempotent(webhookData: any): Promise<void> {
     const { event, data } = webhookData;
 
@@ -634,9 +610,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Check if a webhook event has already been processed
-   */
   private async isEventAlreadyProcessed(razorpayId: string): Promise<boolean> {
     try {
       if (!this.supabase) {
@@ -670,9 +643,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Mark a webhook event as processed for idempotency
-   */
   private async markEventAsProcessed(razorpayId: string, eventType: string, webhookData: any): Promise<void> {
     try {
       if (!this.supabase) {
@@ -709,9 +679,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Process individual webhook events
-   */
   private async processWebhookEvent(webhookData: any): Promise<void> {
     const { event, data } = webhookData;
 
@@ -720,15 +687,12 @@ export class PaymentService {
         case 'payment.captured':
           await this.handlePaymentCaptured(data.payment);
           break;
-
         case 'payment.failed':
           await this.handlePaymentFailed(data.payment);
           break;
-
         case 'refund.created':
           await this.handleRefundCreated(data.refund);
           break;
-
         default:
           this.logger.log(`Unhandled webhook event: ${event}`);
       }
@@ -738,9 +702,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Get available payment methods for a given amount
-   */
   async getAvailablePaymentMethods(amount?: number): Promise<PaymentMethod[]> {
     let methods = this.paymentMethods.filter(method => method.isActive !== false);
 
@@ -753,9 +714,6 @@ export class PaymentService {
     return methods;
   }
 
-  /**
-   * Get supported payment methods
-   */
   getSupportedMethods(): string[] {
     const allMethods = new Set<string>();
     this.providers.forEach(provider => {
@@ -766,9 +724,6 @@ export class PaymentService {
     return Array.from(allMethods);
   }
 
-  /**
-   * Create payment with specified method and provider
-   */
   async createPaymentWithMethod(
     amount: number,
     method: string,
@@ -901,9 +856,6 @@ export class PaymentService {
     return !keyId || !keySecret || keyId === 'dummy_key_id' || keySecret === 'dummy_key_secret';
   }
 
-  /**
-   * Handle payment capture
-   */
   private async handlePaymentCaptured(payment: any): Promise<void> {
     try {
       const { id: paymentId, amount, order_id, notes } = payment;
@@ -934,9 +886,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Handle payment failure
-   */
   private async handlePaymentFailed(payment: any): Promise<void> {
     try {
       const { id: paymentId, amount, order_id, error_code, error_description, notes } = payment;
@@ -962,9 +911,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Handle refund creation
-   */
   private async handleRefundCreated(refund: any): Promise<void> {
     try {
       const { id: refundId, payment_id: paymentId, amount, status, notes } = refund;
@@ -988,9 +934,6 @@ export class PaymentService {
     }
   }
 
-  /**
-   * Process wallet topup from webhook
-   */
   private async processWalletTopupFromWebhook(userId: string, amount: number, paymentId: string): Promise<void> {
     // Implementation would update wallet balance in database
     this.logger.log(`Wallet topup processed for user ${userId}: ₹${amount} (payment: ${paymentId})`);
@@ -999,9 +942,6 @@ export class PaymentService {
     // await this.walletService.addFunds(userId, amount, paymentId);
   }
 
-  /**
-   * Process auction payment from webhook
-   */
   private async processAuctionPaymentFromWebhook(bidId: string, userId: string, amount: number, paymentId: string): Promise<void> {
     // Implementation would mark auction as won and process payment
     this.logger.log(`Auction payment processed for bid ${bidId}: ₹${amount} (payment: ${paymentId})`);
@@ -1011,9 +951,6 @@ export class PaymentService {
     // await this.walletService.processAuctionPayment(bidId, userId, amount);
   }
 
-  /**
-   * Mark bid as failed
-   */
   private async markBidAsFailed(bidId: string, reason: string): Promise<void> {
     this.logger.log(`Marking bid ${bidId} as failed: ${reason}`);
 
@@ -1021,9 +958,6 @@ export class PaymentService {
     // await this.auctionService.markBidAsFailed(bidId, reason);
   }
 
-  /**
-   * Process refund to wallet
-   */
   private async processRefundToWallet(userId: string, amount: number, refundId: string, reason?: string): Promise<void> {
     this.logger.log(`Processing refund to wallet for user ${userId}: ₹${amount} (refund: ${refundId})`);
 
@@ -1031,9 +965,6 @@ export class PaymentService {
     // await this.walletService.addRefund(userId, amount, refundId, reason);
   }
 
-  /**
-   * Send payment success notification
-   */
   // private async sendPaymentSuccessNotification(userId: string, amount: number, paymentId: string): Promise<void> {
   //   this.logger.log(`Sending payment success notification to user ${userId}`);
 
@@ -1041,9 +972,6 @@ export class PaymentService {
   //   // await this.notificationService.sendPaymentSuccess(userId, amount, paymentId);
   // }
 
-  /**
-   * Send payment failure notification
-   */
   // private async sendPaymentFailureNotification(userId: string, amount: number, error: string): Promise<void> {
   //   this.logger.log(`Sending payment failure notification to user ${userId}`);
 
@@ -1051,9 +979,6 @@ export class PaymentService {
   //   // await this.notificationService.sendPaymentFailure(userId, amount, error);
   // }
 
-  /**
-   * Send refund notification
-   */
   // private async sendRefundNotification(userId: string, amount: number, refundId: string): Promise<void> {
   //   this.logger.log(`Sending refund notification to user ${userId}`);
 

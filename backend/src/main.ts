@@ -13,7 +13,7 @@ async function bootstrap() {
   });
 
   // Security: Disable x-powered-by header
-  app.disable('x-powered-by');
+  // app.disable('x-powered-by');
 
   // Security: Limit JSON payload size to 1MB
   app.use(express.json({ limit: '1mb' }));
