@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "type": "module",
   "engines": {
-    "node": "20.x"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "dev": "vite",
@@ -27,6 +27,8 @@
     "framer-motion": "^11.18.2",
     "html2canvas": "^1.4.1",
     "i18next": "^25.8.4",
+    "i18next-browser-languagedetector": "^8.2.1",
+    "i18next-http-backend": "^2.7.3",
     "jspdf": "^4.1.0",
     "lucide-react": "^0.344.0",
     "react": "^18.3.1",
@@ -40,6 +42,7 @@
     "react-select": "^5.10.2",
     "recharts": "^3.1.2",
     "socket.io-client": "^4.8.3",
+    "tailwind-merge": "^3.4.0",
     "zod": "^3.25.76",
     "zustand": "^5.0.8"
   },
