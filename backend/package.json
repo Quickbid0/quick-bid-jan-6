@@ -4,6 +4,9 @@
   "description": "QuickBid Backend API - NestJS + Prisma",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": "20.x"
+  },
 
   "scripts": {
     "build": "nest build",
