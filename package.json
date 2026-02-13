@@ -21,6 +21,7 @@
     "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.2",
+    "@supabase/supabase-js": "^2.39.3",
     "axios": "^1.13.4",
     "chart.js": "^4.5.1",
     "date-fns": "^2.30.0",
