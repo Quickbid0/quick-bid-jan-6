@@ -1,8 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as nodemailer from 'nodemailer';
-import * as twilio from 'twilio';
 import { EventEmitter2 } from '@nestjs/event-emitter';
+const twilio = require('twilio');
 
 export interface NotificationTemplate {
   id: string;

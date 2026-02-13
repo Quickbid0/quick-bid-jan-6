@@ -12,13 +12,12 @@ export class AuthService {
   private csrfTokens = new Map<string, string>();
 
   constructor(private jwtService: JwtService, private configService: ConfigService) {
-    // Validate RSA keys at startup
-    const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
-    const publicKey = this.configService.get<string>('JWT_PUBLIC_KEY');
-    if (!privateKey || !publicKey) {
-      throw new Error('Missing RSA keys. Application cannot start.');
+    // Validate JWT_SECRET at startup
+    const jwtSecret = this.configService.get<string>('JWT_SECRET');
+    if (!jwtSecret) {
+      throw new Error('JWT_SECRET missing');
     }
-    // Ensure private key is not logged
+    // Ensure JWT secret is not logged
     this.initializeTestUsers();
   }
 
@@ -105,9 +104,8 @@ export class AuthService {
     
     // Generate tokens
     const payload = { sub: user.id, email: user.email, role: user.role };
-    const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
-    const accessToken = this.jwtService.sign(payload, { algorithm: 'RS256', secret: privateKey, expiresIn: '15m' });
-    const refreshToken = this.jwtService.sign({ sub: user.id }, { algorithm: 'RS256', secret: privateKey, expiresIn: '7d' });
+    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
+    const refreshToken = this.jwtService.sign({ sub: user.id }, { expiresIn: '7d' });
     const crypto = require('crypto');
     const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
     this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
@@ -209,7 +207,7 @@ export class AuthService {
       if (!stored) {
         // Check if JWT is valid to detect reuse
         try {
-          const payload = this.jwtService.verify(token, { algorithms: ['RS256'], secret: this.configService.get('JWT_PUBLIC_KEY') });
+          const payload = this.jwtService.verify(token);
           this.logger.warn(`Refresh token reuse detected for user ${payload.sub}`);
           // Invalidate all refresh tokens for this user
           for (const [h, data] of this.refreshTokens.entries()) {
@@ -234,9 +232,8 @@ export class AuthService {
 
       // Generate new tokens
       const newPayload = { sub: user.id, email: user.email, role: user.role };
-      const privateKey = this.configService.get<string>('JWT_PRIVATE_KEY');
-      const newAccessToken = this.jwtService.sign(newPayload, { algorithm: 'RS256', secret: privateKey, expiresIn: '15m' });
-      const newRefreshToken = this.jwtService.sign({ sub: user.id }, { algorithm: 'RS256', secret: privateKey, expiresIn: '7d' });
+      const newAccessToken = this.jwtService.sign(newPayload, { expiresIn: '15m' });
+      const newRefreshToken = this.jwtService.sign({ sub: user.id }, { expiresIn: '7d' });
 
       // Update refresh token store
       this.refreshTokens.delete(hash);

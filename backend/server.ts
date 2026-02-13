@@ -8,11 +8,16 @@ const __dirname = dirname(__filename);
 
 dotenv.config({ path: `${__dirname}/.env` });
 
-import express from 'express';
-import http from 'http';
-import cors from 'cors';
-import { Server as SocketIOServer } from 'socket.io';
-import { Pool } from 'pg';
+const express = require('express');
+const http = require('http');
+const cors = require('cors');
+const { Server: SocketIOServer } = require('socket.io');
+const { Pool } = require('pg');
+const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
+const Sentry = require('@sentry/node');
+
+// Import other modules
 import { registerAuctionSocket } from './sockets/auctionSocket.ts';
 import { CountdownService } from './services/countdownService.ts';
 import { createAdsRouter } from './routes/adsRoutes.ts';
@@ -28,15 +33,6 @@ import { razorpayWebhookHandler } from './controllers/depositController.ts';
 import { createWinsRouter } from './routes/winsRoutes.ts';
 import { createDepartmentsRouter } from './routes/departmentsRoutes.ts';
 import { createRiskRouter } from './routes/riskRoutes.ts';
-import { createClient } from '@supabase/supabase-js';
-import crypto from 'crypto';
-import * as Sentry from '@sentry/node';
-// Observability for live-backend is kept minimal to avoid runtime instability.
-
-const PORT = Number(process.env.LIVE_BACKEND_PORT || process.env.PORT || 4000);
-const DATABASE_URL = process.env.DATABASE_URL;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
 
 if (!DATABASE_URL) {
   console.warn('[live-backend] DATABASE_URL is not set. Postgres connections will fail.');

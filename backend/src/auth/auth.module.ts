@@ -13,8 +13,12 @@ import { PrismaModule } from '../prisma/prisma.module';
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.register({
-      secret: process.env.JWT_SECRET || 'your-secret-key',
-      signOptions: { expiresIn: '1h' },
+      privateKey: process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+      publicKey: process.env.JWT_PUBLIC_KEY?.replace(/\\n/g, '\n'),
+      signOptions: {
+        algorithm: 'RS256',
+        expiresIn: '1d',
+      },
     }),
     EmailModule,
     PrismaModule,
@@ -24,3 +28,8 @@ import { PrismaModule } from '../prisma/prisma.module';
   exports: [AuthService, JwtAuthGuard],
 })
 export class AuthModule {}
+
+
+
+                                                                    
+
