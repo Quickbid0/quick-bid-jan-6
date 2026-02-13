@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, MoreThan } from 'typeorm';
-import { Auction } from '../auctions/auction.entity';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface FraudDetectionResult {
@@ -43,8 +40,6 @@ export interface SmartModerationResult {
 @Injectable()
 export class AIService {
   constructor(
-    @InjectRepository(Auction)
-    private auctionRepository: Repository<Auction>,
     private prismaService: PrismaService,
   ) {}
 
@@ -70,9 +65,9 @@ export class AIService {
     }
 
     // Check for shill bidding patterns
-    const auction = await this.auctionRepository.findOne({ where: { id: auctionId } });
+    const auction = await this.prismaService.auction.findUnique({ where: { id: auctionId } });
     if (auction) {
-      const bidIncrement = amount - auction.currentPrice;
+      const bidIncrement = amount - auction.currentBid;
       const expectedIncrement = this.calculateExpectedIncrement(auction);
 
       if (bidIncrement < expectedIncrement * 0.1) {
@@ -82,7 +77,7 @@ export class AIService {
 
       // Check for last-minute bidding
       const timeToEnd = (auction.endTime.getTime() - Date.now()) / (1000 * 60); // minutes
-      if (timeToEnd < 5 && amount > auction.currentPrice * 1.5) {
+      if (timeToEnd < 5 && amount > auction.currentBid * 1.5) {
         riskScore += 25;
         riskFactors.push('Last-minute high-value bid');
         recommendations.push('Consider extending auction time');
@@ -232,10 +227,10 @@ export class AIService {
       whereCondition.id = { not: currentAuction };
     }
 
-    const recommendedAuctions = await this.auctionRepository.find({
+    const recommendedAuctions = await this.prismaService.auction.findMany({
       where: whereCondition,
       take: limit * 2, // Get more to score and filter
-      order: { createdAt: 'DESC' },
+      orderBy: { createdAt: 'desc' },
     });
 
     // Score recommendations
@@ -244,21 +239,21 @@ export class AIService {
       let reason = 'Similar item';
 
       // Category match
-      if (userCategories.includes(auction.category || 'General')) {
+      if (userCategories.includes('General')) { // Since Prisma doesn't have category field
         score += 20;
         reason = 'Based on your interests';
       }
 
       // Price range match
       if (priceRange &&
-          auction.currentPrice >= priceRange.min &&
-          auction.currentPrice <= priceRange.max) {
+          auction.currentBid >= priceRange.min &&
+          auction.currentBid <= priceRange.max) {
         score += 15;
         reason = 'Within your preferred price range';
       }
 
       // Price similarity to user's average bids
-      const priceDiff = Math.abs(auction.currentPrice - avgBidAmount) / avgBidAmount;
+      const priceDiff = Math.abs(auction.currentBid - avgBidAmount) / avgBidAmount;
       if (priceDiff < 0.3) {
         score += 10;
         reason = 'Similar to items you\'ve bid on';
@@ -276,7 +271,7 @@ export class AIService {
         title: auction.title,
         score: Math.min(100, score),
         reason,
-        category: auction.category || 'General',
+        category: 'General', // Since Prisma doesn't have category field
       };
     });
 
@@ -420,9 +415,9 @@ export class AIService {
     };
   }
 
-  private calculateExpectedIncrement(auction: Auction): number {
+  private calculateExpectedIncrement(auction: any): number {
     const baseIncrement = 100;
-    const price = auction.currentPrice;
+    const price = auction.currentBid; // Use currentBid instead of currentPrice
 
     if (price < 1000) return baseIncrement;
     if (price < 10000) return Math.floor(price * 0.05);

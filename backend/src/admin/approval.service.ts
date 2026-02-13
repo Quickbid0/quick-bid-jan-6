@@ -1,7 +1,4 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
-import { Auction, AuctionStatus } from '../auctions/auction.entity';
 import { PrismaService } from '../prisma/prisma.service';
 import { AIService } from '../ai/ai.service';
 
@@ -45,8 +42,6 @@ export interface ApprovalStep {
 @Injectable()
 export class ApprovalService {
   constructor(
-    @InjectRepository(Auction)
-    private auctionRepository: Repository<Auction>,
     private prismaService: PrismaService,
     private aiService: AIService,
   ) {}
@@ -237,7 +232,7 @@ export class ApprovalService {
         break;
 
       case 'auction_request':
-        const auction = await this.auctionRepository.findOne({ where: { id: entityId } });
+        const auction = await this.prismaService.auction.findUnique({ where: { id: entityId } });
         if (!auction) throw new NotFoundException('Auction not found');
         break;
 
@@ -258,15 +253,15 @@ export class ApprovalService {
         return { shouldApprove: true, confidence: 80 };
 
       case 'auction_request':
-        const auction = await this.auctionRepository.findOne({ where: { id: entityId } });
+        const auction = await this.prismaService.auction.findUnique({ where: { id: entityId } });
         if (!auction) return { shouldApprove: false, confidence: 0 };
 
         // Use AI service to moderate content
         const moderation = await this.aiService.moderateContent({
           title: auction.title,
-          description: auction.description || '',
-          category: auction.category || 'General',
-          price: Number(auction.startingPrice),
+          description: '', // Prisma schema doesn't have description
+          category: 'General', // Prisma schema doesn't have category
+          price: Number(auction.startPrice),
         });
 
         return {
@@ -324,7 +319,10 @@ export class ApprovalService {
   }
 
   private async approveAuction(auctionId: string, reviewerId: string): Promise<void> {
-    await this.auctionRepository.update(auctionId, { status: 'scheduled' });
+    await this.prismaService.auction.update({
+      where: { id: auctionId },
+      data: { status: 'scheduled' }
+    });
   }
 
   private async approveProductListing(productId: string, reviewerId: string): Promise<void> {
@@ -343,7 +341,10 @@ export class ApprovalService {
   }
 
   private async rejectAuction(auctionId: string, reviewerId: string, reason?: string): Promise<void> {
-    await this.auctionRepository.update(auctionId, { status: 'rejected' });
+    await this.prismaService.auction.update({
+      where: { id: auctionId },
+      data: { status: 'rejected' }
+    });
   }
 
   private generateApprovalId(): string {

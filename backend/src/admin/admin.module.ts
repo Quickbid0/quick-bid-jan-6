@@ -8,13 +8,13 @@ import { AdminUserService } from './admin-user.service';
 import { AdminAuctionService } from './admin-auction.service';
 import { AdminAuctionController } from './admin-auction.controller';
 import { AdminUserController } from './admin-user.controller';
-import { PrismaService } from '../prisma/prisma.service';
 import { AIService } from '../ai/ai.service';
 import { AuctionsModule } from '../auctions/auctions.module';
 import { ObservabilityModule } from '../observability/observability.module';
+import { PrismaModule } from '../prisma/prisma.module';
 
 @Module({
-  imports: [ObservabilityModule, AuctionsModule],
+  imports: [ObservabilityModule, AuctionsModule, PrismaModule],
   controllers: [
     AdminController,
     AdminAuctionController,
@@ -27,7 +27,6 @@ import { ObservabilityModule } from '../observability/observability.module';
     EnhancedProductManagementService,
     AdminUserService,
     AdminAuctionService,
-    PrismaService,
     AIService,
   ],
   exports: [

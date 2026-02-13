@@ -1,7 +1,9 @@
 import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { createHmac, timingSafeEqual } from 'crypto';
-import * as Razorpay from 'razorpay';
+import Razorpay from 'razorpay';
+
+
 
 interface PaymentProvider {
   name: string;

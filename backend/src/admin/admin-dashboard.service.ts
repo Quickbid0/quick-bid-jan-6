@@ -1,7 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, MoreThan, LessThan } from 'typeorm';
-import { Auction, AuctionType, AuctionStatus } from '../auctions/auction.entity';
 import { PrismaService } from '../prisma/prisma.service';
 
 export interface AdminDashboardStats {
@@ -17,7 +14,7 @@ export interface AdminDashboardStats {
   activeAuctions: number;
   endedAuctions: number;
   totalAuctionValue: number;
-  auctionsByType: { type: AuctionType; count: number }[];
+  auctionsByType: { type: string; count: number }[];
 
   // Transaction Statistics
   totalTransactions: number;
@@ -54,8 +51,6 @@ export interface AdminAnalyticsData {
 @Injectable()
 export class AdminDashboardService {
   constructor(
-    @InjectRepository(Auction)
-    private auctionRepository: Repository<Auction>,
     private prismaService: PrismaService,
   ) {}
 
@@ -82,27 +77,26 @@ export class AdminDashboardService {
     });
 
     // Auction Statistics
-    const totalAuctions = await this.auctionRepository.count();
-    const activeAuctions = await this.auctionRepository.count({
+    const totalAuctions = await this.prismaService.auction.count();
+    const activeAuctions = await this.prismaService.auction.count({
       where: { status: 'active' }
     });
-    const endedAuctions = await this.auctionRepository.count({
+    const endedAuctions = await this.prismaService.auction.count({
       where: { status: 'ended' }
     });
 
     // Calculate total auction value (sum of final prices for ended auctions)
-    const endedAuctionsData = await this.auctionRepository.find({
+    const endedAuctionsData = await this.prismaService.auction.findMany({
       where: { status: 'ended' },
-      select: ['currentPrice']
+      select: { currentBid: true }
     });
-    const totalAuctionValue = endedAuctionsData.reduce((sum, auction) => sum + Number(auction.currentPrice), 0);
+    const totalAuctionValue = endedAuctionsData.reduce((sum, auction) => sum + Number(auction.currentBid), 0);
 
-    const auctionsByType = await this.auctionRepository
-      .createQueryBuilder('auction')
-      .select('auction.auctionType', 'type')
-      .addSelect('COUNT(*)', 'count')
-      .groupBy('auction.auctionType')
-      .getRawMany();
+    // Since auctionType doesn't exist in Prisma schema, use status for grouping
+    const auctionsByType = await this.prismaService.auction.groupBy({
+      by: ['status'],
+      _count: { status: true },
+    });
 
     // Transaction Statistics (mock data for now - would come from payments table)
     const totalTransactions = 0; // TODO: Implement when Transaction model is added
@@ -113,7 +107,7 @@ export class AdminDashboardService {
     // Platform Health
     const systemUptime = 99.9; // Mock uptime percentage
     const activeSessions = 150; // Mock active sessions
-    const pendingApprovals = await this.auctionRepository.count({
+    const pendingApprovals = await this.prismaService.auction.count({
       where: { status: 'draft' }
     });
     const reportedIssues = 5; // Mock reported issues
@@ -125,10 +119,10 @@ export class AdminDashboardService {
       select: { id: true, email: true, name: true, role: true, createdAt: true }
     });
 
-    const recentAuctions = await this.auctionRepository.find({
+    const recentAuctions = await this.prismaService.auction.findMany({
       take: 5,
-      order: { createdAt: 'DESC' },
-      select: ['id', 'title', 'auctionType', 'status', 'currentPrice', 'createdAt']
+      orderBy: { createdAt: 'desc' },
+      select: { id: true, title: true, status: true, currentBid: true, createdAt: true }
     });
 
     // Mock recent transactions
@@ -147,7 +141,7 @@ export class AdminDashboardService {
       activeAuctions,
       endedAuctions,
       totalAuctionValue,
-      auctionsByType: auctionsByType.map(item => ({ type: item.type as AuctionType, count: parseInt(item.count) })),
+      auctionsByType: auctionsByType.map(item => ({ type: item.status, count: item._count.status })),
       totalTransactions,
       totalRevenue,
       averageTransactionValue,
@@ -184,8 +178,13 @@ export class AdminDashboardService {
       const nextDate = new Date(date.getTime() + 24 * 60 * 60 * 1000);
       const dateStr = date.toISOString().split('T')[0];
 
-      const auctions = await this.auctionRepository.count({
-        where: { createdAt: Between(date, nextDate) }
+      const auctions = await this.prismaService.auction.count({
+        where: { 
+          createdAt: {
+            gte: date,
+            lt: nextDate
+          }
+        }
       });
 
       // Mock bid count - would come from bids table
@@ -273,7 +272,7 @@ export class AdminDashboardService {
     });
 
     // Count draft auctions (pending approval)
-    const auctionRequests = await this.auctionRepository.count({
+    const auctionRequests = await this.prismaService.auction.count({
       where: { status: 'draft' }
     });
 
@@ -340,7 +339,7 @@ export class AdminDashboardService {
 
   async approveAuction(auctionId: string, adminId: string): Promise<{ success: boolean; message: string }> {
     try {
-      const auction = await this.auctionRepository.findOne({
+      const auction = await this.prismaService.auction.findUnique({
         where: { id: auctionId }
       });
 
@@ -348,7 +347,10 @@ export class AdminDashboardService {
         throw new NotFoundException('Auction not found');
       }
 
-      await this.auctionRepository.update(auctionId, { status: 'scheduled' });
+      await this.prismaService.auction.update({
+        where: { id: auctionId },
+        data: { status: 'scheduled' }
+      });
 
       // Log admin action
       this.logAdminAction(adminId, 'approve_auction', `Approved auction: ${auction.title}`);
