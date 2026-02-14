@@ -35,7 +35,16 @@ export class AuthController {
       maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
-    return res.json({ message: result.message, user: result.user });
+    // Return tokens in JSON response for frontend compatibility
+    return res.json({
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken,
+      user: {
+        id: result.user.id,
+        email: result.user.email,
+        role: result.user.role,
+      },
+    });
   }
 
   @Post('register')

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSession } from '../context/SessionContext';
+import { useUnifiedAuth } from '../context/UnifiedAuthContext';
 import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { Wallet, CreditCard, Plus, ArrowRight, Loader2 } from 'lucide-react';
@@ -7,13 +7,15 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PageContainer from '../components/layout/PageFrame';
 
 const WalletPage = () => {
-  const { user } = useSession();
+  const { user } = useUnifiedAuth();
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [showAddMoney, setShowAddMoney] = useState(false);
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [amount, setAmount] = useState<string>('');
   const [processing, setProcessing] = useState(false);
+  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactionsLoading, setTransactionsLoading] = useState(false);
 
   const quickAmounts = [100, 500, 1000, 2000, 5000, 10000];
 
@@ -47,7 +49,33 @@ const WalletPage = () => {
     };
 
     fetchBalance();
+    fetchTransactions();
   }, [user]);
+
+  const fetchTransactions = async () => {
+    try {
+      setTransactionsLoading(true);
+      
+      // Use backend API for transaction history
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/wallet/transactions`, {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        setTransactions(data || []);
+      } else {
+        setTransactions([]);
+      }
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+      setTransactions([]);
+    } finally {
+      setTransactionsLoading(false);
+    }
+  };
 
   const handleAddMoney = async () => {
     if (!amount || parseFloat(amount) <= 0) {
@@ -158,11 +186,51 @@ const WalletPage = () => {
         <div data-testid="wallet-transactions" className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">Recent Transactions</h3>
           <div className="space-y-4">
-            <div className="text-center py-12">
-              <CreditCard className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-              <p className="text-gray-500 dark:text-gray-400">No transactions yet</p>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Your transaction history will appear here once you start using your wallet.</p>
-            </div>
+            {transactionsLoading ? (
+              <div className="flex justify-center py-8">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-indigo-600"></div>
+              </div>
+            ) : transactions.length === 0 ? (
+              <div className="text-center py-12">
+                <CreditCard className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p className="text-gray-500 dark:text-gray-400">No transactions yet</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">Your transaction history will appear here once you start using your wallet.</p>
+              </div>
+            ) : (
+              transactions.map((transaction, index) => (
+                <div key={index} className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <div className={`p-2 rounded-full ${
+                      transaction.type === 'credit' 
+                        ? 'bg-green-100 text-green-600' 
+                        : 'bg-red-100 text-red-600'
+                    }`}>
+                      {transaction.type === 'credit' ? <Plus className="h-4 w-4" /> : <ArrowRight className="h-4 w-4" />}
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900 dark:text-white">
+                        {transaction.description || 'Transaction'}
+                      </p>
+                      <p className="text-sm text-gray-500 dark:text-gray-400">
+                        {new Date(transaction.createdAt || transaction.date).toLocaleDateString()}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-semibold ${
+                      transaction.type === 'credit' 
+                        ? 'text-green-600' 
+                        : 'text-red-600'
+                    }`}>
+                      {transaction.type === 'credit' ? '+' : '-'}₹{transaction.amount?.toLocaleString()}
+                    </p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">
+                      {transaction.status || 'Completed'}
+                    </p>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </div>

@@ -1,13 +1,14 @@
 functionsDirectory = "/Users/sanieevmusugu/Desktop/quick-bid-jan-6/netlify/functions"
-functionsDirectoryOrigin = "default"
+functionsDirectoryOrigin = "config"
 headersOrigin = "config"
+redirectsOrigin = "config"
 plugins = []
 
 [build]
 publish = "/Users/sanieevmusugu/Desktop/quick-bid-jan-6/dist"
-publishOrigin = "ui"
-commandOrigin = "ui"
-command = "yarn run build"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
 functions = "/Users/sanieevmusugu/Desktop/quick-bid-jan-6/netlify/functions"
 
 [build.environment]
@@ -31,15 +32,12 @@ targetPort = 3007.0
 [functions]
 
 [functions.environment]
-NODE_ENV = "production"
-SUPABASE_URL = "https://vxqvzylhbzgovuorzwqc.supabase.co"
-SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzI4ODAzMzYsImV4cCI6MjA0ODQ1NjMzNn0.2zT2jL3g5mKqHn8wZ9xF6pV7rX4bN0cM3sT8uL5iO"
-SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTczMjg4MDMzNiwiZXhwIjoyMDQ4NDU2MzM2fQ.1zT2jL3g5mKqHn8wZ9xF6pV7rX4bN0cM3sT8uL5iO"
-RAZORPAY_KEY_ID = "rzp_test_key"
-RAZORPAY_KEY_SECRET = "rzp_test_secret"
-RAZORPAY_WEBHOOK_SECRET = "webhook_secret"
-JWT_SECRET = "jwt_secret"
-SESSION_SECRET = "session_secret"
+JWT_SECRET = "gBNcHqUZxM6MWceauiVt51Z4+dMo8+BEe5eL207sfETSOXyUTLFrtCa8yAJN69Ko07TVoy/TXwy1BZE7m0WkhQ=="
+SESSION_SECRET = "6dacc9a1bba26a7201d0f1ea7c6c07e6f5674b165d54127e2b81debe446ba479"
+SUPABASE_SERVICE_ROLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MDU3OTEwOCwiZXhwIjoyMDg2MTU1MTA4fQ.rSL5cfpzRnSfsSoNaQ-3P7ur4sqwsXW6cAVHU74y-9E"
+RAZORPAY_KEY_SECRET = "PNRuVPhuorCCoEbpJ6R6r8k3"
+TWILIO_AUTH_TOKEN = "3f161dd0f0ed1855198dd6dd69306f64"
+SMTP_PASS = "fsur uvqa fytk depj"
 
 [functions."*"]
 
@@ -131,10 +129,12 @@ for = "/*"
 
 [headers.values]
 Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+X-Frame-Options = "DENY"
 X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
 Referrer-Policy = "strict-origin-when-cross-origin"
 Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co wss: https://api.razorpay.com https://checkout.razorpay.com; script-src 'self' 'unsafe-inline' https://checkout.razorpay.com; img-src 'self' data: https://images.unsplash.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; frame-src https://api.razorpay.com https://*.razorpay.com https://checkout.razorpay.com"
+Content-Security-Policy = "default-src 'self'; connect-src 'self' https://*.supabase.co wss: https://api.razorpay.com https://checkout.razorpay.com https://web-production-b7c8b.up.railway.app/; script-src 'self' 'unsafe-inline' data: https://checkout.razorpay.com; img-src 'self' data: https: https://images.unsplash.com https://*.supabase.co; style-src 'self' 'unsafe-inline'; frame-src https://api.razorpay.com https://*.razorpay.com https://checkout.razorpay.com; font-src 'self' data: https:"
 
 [[redirects]]
 from = "/*"

@@ -12,6 +12,8 @@ import { initAnalytics } from './utils/analytics';
 
 // Production utilities
 import { registerServiceWorker, setupErrorReporting, setupAnalytics } from './utils/productionUtils';
+import { performanceMonitor } from './utils/performanceMonitoring';
+import { userFeedback } from './utils/userFeedback';
 
 // Layout Components
 import GlobalLayout from './components/layout/GlobalLayout';
@@ -69,6 +71,7 @@ const WinInvoice = lazy(() => import('./pages/WinInvoice'));
 const MyIssueDetail = lazy(() => import('./pages/MyIssueDetail'));
 const MyInspections = lazy(() => import('./pages/MyInspections'));
 // const AddProduct = lazy(() => import('./pages/AddProductFixed'));
+const AddProduct = lazy(() => import('./pages/AddProductFixed'));
 const AuctionPreview = lazy(() => import('./pages/AuctionPreview'));
 const ProfilePage = lazy(() => import('./pages/ProfileFixed'));
 const VerifySeller = lazy(() => import('./pages/VerifySeller'));
@@ -117,6 +120,7 @@ const BusinessSolutions = lazy(() => import('./pages/BusinessSolutions'));
 const SupportTickets = lazy(() => import('./pages/SupportTickets'));
 const SupportTicketDetail = lazy(() => import('./pages/SupportTicketDetail'));
 const AIDashboard = lazy(() => import('./pages/AIDashboard'));
+const AuctionCreatePage = lazy(() => import('./pages/AuctionCreatePage'));
 
 // Public Events Page
 const EventsPage = lazy(() => import('./pages/EventsPage'));
@@ -189,63 +193,25 @@ const useProductionEnhancements = () => {
     // Initialize analytics
     initAnalytics();
 
-    // Initialize Sentry error tracking
-    if (import.meta.env.PROD && import.meta.env.VITE_SENTRY_DSN) {
-      // Sentry.init({
-      //   dsn: import.meta.env.VITE_SENTRY_DSN,
-      //   environment: import.meta.env.VITE_APP_ENVIRONMENT || 'production',
-      //   integrations: [
-      //     new Sentry.BrowserTracing({
-      //       tracePropagationTargets: [
-      //         /^https:\/\/api\.quickbid\.com/,
-      //         /^https:\/\/.*\.quickbid\.com/,
-      //       ],
-      //     }),
-      //     new Sentry.Replay({
-      //       maskAllText: true,
-      //       blockAllMedia: true,
-      //     }),
-      //   ],
-      //   tracesSampleRate: 0.1,
-      //   replaysSessionSampleRate: 0.1,
-      //   replaysOnErrorSampleRate: 1.0,
-      //   beforeSend(event) {
-      //     // Filter out non-production errors in production
-      //     if (import.meta.env.PROD && event.exception) {
-      //       return event;
-      //     }
-      //     return event;
-      //   },
-      // });
-
-      console.log('✅ Sentry error tracking temporarily disabled - package not installed');
-    }
-
     // Initialize production utilities
     if (import.meta.env.PROD) {
       registerServiceWorker();
       setupErrorReporting();
-      // Setup analytics
       setupAnalytics();
 
-      // Performance monitoring
-      const observer = new PerformanceObserver((list) => {
-        for (const entry of list.getEntries()) {
-          // Log performance metrics in production
-          if (entry.entryType === 'largest-contentful-paint') {
-            console.log('LCP:', entry.startTime);
-          } else if (entry.entryType === 'first-input') {
-            const fidEntry = entry as PerformanceEventTiming;
-            console.log('FID:', fidEntry.processingStart - fidEntry.startTime);
-          }
-        }
-      });
+      // Initialize performance monitoring
+      // performanceMonitor is already initialized on import
 
-      try {
-        observer.observe({ entryTypes: ['largest-contentful-paint', 'first-input'] });
-      } catch (e) {
-        console.log('Performance monitoring not supported');
-      }
+      // Initialize user feedback system
+      // userFeedback is already initialized on import
+
+      // Sync any pending feedback on app load
+      userFeedback.syncPendingFeedback();
+
+      // Performance monitoring - track initial page load
+      setTimeout(() => {
+        performanceMonitor.trackCustomMetric('app_initialization', performance.now());
+      }, 1000);
 
       // Security: Prevent right-click in production
       const handleContextMenu = (e: MouseEvent) => {
@@ -271,11 +237,10 @@ const useProductionEnhancements = () => {
 
       // Production-specific console warnings
       console.log('%c🚀 QuickMela Production Mode', 'color: #2563eb; font-size: 16px; font-weight: bold;');
-      console.log('%cThis is a production build. Some features may be restricted for security.', 'color: #64748b;');
+      console.log('%cReal-time auction platform with advanced analytics and monitoring', 'color: #64748b;');
 
       // Cleanup
       return () => {
-        observer.disconnect();
         document.removeEventListener('contextmenu', handleContextMenu);
         document.removeEventListener('keydown', handleKeyDown);
       };
@@ -439,6 +404,7 @@ const App: React.FC = () => {
               <Route path="/my/wins" element={<ProtectedRoute><MyWins /></ProtectedRoute>} />
               <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
               <Route path="/settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
+              <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
               {/* <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} /> */}
               <Route path="/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
               <Route path="/verify-seller" element={<ProtectedRoute><VerifySeller /></ProtectedRoute>} />
@@ -459,6 +425,7 @@ const App: React.FC = () => {
 
               {/* Auction Pages */}
               <Route path="/auction-preview" element={<ProtectedRoute><AuctionPreview /></ProtectedRoute>} />
+              <Route path="/create-auction" element={<ProtectedRoute><AuctionCreatePage /></ProtectedRoute>} />
               <Route path="/live-auction/:id?" element={<ProtectedRoute><LiveAuctionPage /></ProtectedRoute>} />
               <Route path="/timed-auction/:id?" element={<ProtectedRoute><TimedAuctionPage /></ProtectedRoute>} />
               <Route path="/tender-auction/:id?" element={<ProtectedRoute><TenderAuctionPage /></ProtectedRoute>} />

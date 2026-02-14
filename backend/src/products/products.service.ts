@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 
 export interface UserProfile {
   id: string;
@@ -36,6 +37,7 @@ export interface Bid {
 
 @Injectable()
 export class ProductsService {
+  constructor(private prisma: PrismaService) {}
   private products: any[] = [
     {
       id: 1,
@@ -133,10 +135,11 @@ export class ProductsService {
   ];
 
   async findAll() {
-    return this.products.map(product => ({
-      ...product,
-      status: product.endTime > new Date() ? 'ACTIVE' : 'CLOSED'
-    }));
+    return this.prisma.product.findMany({
+      where: {
+        status: 'ACTIVE',
+      },
+    });
   }
 
   async findOne(id: number) {

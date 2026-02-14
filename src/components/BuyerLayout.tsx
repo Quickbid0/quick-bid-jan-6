@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { 
-  Home, 
-  Package, 
-  Eye, 
-  Trophy, 
-  ShoppingCart, 
-  Search, 
-  Wallet, 
-  DollarSign, 
-  Calendar, 
-  Users, 
-  MessageCircle, 
-  Settings, 
-  LogOut, 
-  Menu, 
-  User, 
+import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  Home,
+  Package,
+  Eye,
+  Trophy,
+  ShoppingCart,
+  Search,
+  Wallet,
+  DollarSign,
+  Calendar,
+  Users,
+  MessageCircle,
+  Settings,
+  LogOut,
+  Menu,
+  User,
   TrendingUp,
   Receipt,
   X,
@@ -23,8 +24,11 @@ import {
   Clock,
   Video,
   BarChart3,
-  CalendarDays
+  CalendarDays,
+  LayoutDashboard,
+  Gavel
 } from 'lucide-react';
+import { useUnifiedAuth } from '../context/UnifiedAuthContext';
 
 interface BuyerLayoutProps {
   children?: React.ReactNode;
@@ -37,7 +41,7 @@ const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { userProfile, logout } = useSession();
+  const { user, logout } = useUnifiedAuth();
 
   // Check if mobile device
   useEffect(() => {
@@ -328,7 +332,10 @@ const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children }) => {
                 Settings
               </Link>
               
-              <button className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full">
+              <button 
+                onClick={logout}
+                className="flex items-center px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors w-full"
+              >
                 <LogOut className="w-4 h-4 mr-3" />
                 Logout
               </button>

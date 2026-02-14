@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User, Phone, MapPin, Loader2, Eye, EyeOff, Building, CheckCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { useUnifiedAuth } from '../context/UnifiedAuthContext';
 
 const RegisterFixed = () => {
   const [formData, setFormData] = useState({
@@ -21,6 +22,7 @@ const RegisterFixed = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
+  const { register, loading: authLoading } = useUnifiedAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -81,29 +83,25 @@ const RegisterFixed = () => {
 
       setLoading(true);
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/auth/register`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            name: formData.name,
-            email: formData.email,
-            password: formData.password,
-            role: formData.userType,
-          }),
-        });
+        // Use UnifiedAuthContext register method
+        const userData = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          role: formData.userType,
+        };
 
-        const data = await response.json();
+        const success = await register(userData);
 
-        if (response.ok) {
+        if (success) {
           toast.success('Registration successful! Please login.');
           navigate('/login');
         } else {
-          setError(data.message || 'Registration failed. Please try again.');
+          // Error is handled by UnifiedAuthContext
+          console.error('Registration failed');
         }
       } catch (error) {
-        setError('Network error. Please try again.');
+        setError('Registration failed. Please try again.');
         console.error('Registration error:', error);
       } finally {
         setLoading(false);

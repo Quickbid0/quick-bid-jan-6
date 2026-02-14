@@ -141,12 +141,12 @@ const ProductCatalog = () => {
   const loadProducts = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from('products')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
+      // Use backend API instead of Supabase
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/products`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data = await response.json();
       
       const productsData = data || [];
       setProducts(productsData);

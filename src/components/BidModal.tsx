@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSession } from '../context/SessionContext';
+import { useUnifiedAuth } from '../context/UnifiedAuthContext';
 import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { X, Gavel, Wallet } from 'lucide-react';
@@ -18,7 +18,7 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
   const [loading, setLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [balanceLoading, setBalanceLoading] = useState(true);
-  const { user } = useSession();
+  const { user } = useUnifiedAuth();
   const navigate = useNavigate();
 
   const currentPrice = product.current_price || product.starting_price || 0;
@@ -60,7 +60,14 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
       
       // Use backend API for wallet balance - PRODUCTION PRIORITY
       const serverUrl = import.meta.env.VITE_SERVER_URL || 'http://localhost:4011';
-      const response = await fetch(`${serverUrl}/api/wallet/balance`);
+      const accessToken = localStorage.getItem('accessToken');
+      
+      const response = await fetch(`${serverUrl}/api/wallet/balance`, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
       
       if (response.ok) {
         const data = await response.json();
@@ -240,16 +247,14 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
           }
       }
 
-      // Use backend API for bidding
-      const response = await fetch(`${process.env.VITE_SERVER_URL || 'http://localhost:4011'}/api/bids`, {
+      // Use backend API for bidding - call auction bidding endpoint
+      const response = await fetch(`${process.env.VITE_SERVER_URL || 'http://localhost:4011'}/api/products/${product.id}/bid`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${session.access_token}`
         },
         body: JSON.stringify({
-          auctionId: product.id, // Use product.id as auctionId for now
-          userId: user?.id || '',
           amount: amount
         })
       });

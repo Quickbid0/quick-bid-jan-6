@@ -49,7 +49,11 @@ async function bootstrap() {
       'OPTIONS',
     ],
 
-    allowedHeaders: '*', // � TEMPORARY: Allow all headers to debug
+    allowedHeaders: [
+      'Content-Type',
+      'Authorization',
+      'x-csrf-token'
+    ],
 
     exposedHeaders: [
       'Authorization',

@@ -29,7 +29,8 @@ export class AuthService {
       { email: 'vijay@quickmela.com', name: 'Vijay Singh', password: 'BuyerPass123!' },
       { email: 'neha@quickmela.com', name: 'Neha Sharma', password: 'BuyerPass123!' },
       { email: 'rahul@quickmela.com', name: 'Rahul Gupta', password: 'BuyerPass123!' },
-      { email: 'priya@quickmela.com', name: 'Priya Patel', password: 'BuyerPass123!' }
+      { email: 'priya@quickmela.com', name: 'Priya Patel', password: 'BuyerPass123!' },
+      { email: 'buyer1@quickmela.com', name: 'Buyer One', password: 'BuyerPass123!' }
     ];
 
     // Create test sellers
@@ -71,64 +72,75 @@ export class AuthService {
   }
 
   async login(loginDto: any) {
-    const { email, password } = loginDto;
-    
-    // Find user
-    const user = this.users.get(email);
-    
-    if (!user) {
-      this.logger.warn(`Failed login attempt: User not found for email ${email}`);
-      throw new Error('Invalid credentials');
-    }
-    
-    // Check if account is locked
-    if (user.lockUntil && user.lockUntil > new Date()) {
-      this.logger.warn(`Login attempt blocked: Account locked for email ${email}`);
-      throw new Error('Account locked due to too many failed attempts. Try again later.');
-    }
-    
-    if (user.password !== password) {
-      // Increment failure count
-      user.failureCount = (user.failureCount || 0) + 1;
-      if (user.failureCount > 5) {
-        user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-        this.logger.warn(`Account locked for email ${email} due to too many failed attempts`);
+    try {
+      const { email, password } = loginDto;
+      
+      this.logger.log(`Login attempt for email: ${email}`);
+      
+      // Find user
+      const user = this.users.get(email);
+      
+      if (!user) {
+        this.logger.warn(`Failed login attempt: User not found for email ${email}`);
+        throw new Error('Invalid credentials');
       }
-      this.logger.warn(`Failed login attempt: Invalid password for email ${email}`);
-      throw new Error('Invalid credentials');
+      
+      // Check if account is locked
+      if (user.lockUntil && user.lockUntil > new Date()) {
+        this.logger.warn(`Login attempt blocked: Account locked for email ${email}`);
+        throw new Error('Account locked due to too many failed attempts. Try again later.');
+      }
+      
+      if (user.password !== password) {
+        // Increment failure count
+        user.failureCount = (user.failureCount || 0) + 1;
+        if (user.failureCount > 5) {
+          user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
+          this.logger.warn(`Account locked for email ${email} due to too many failed attempts`);
+        }
+        this.logger.warn(`Failed login attempt: Invalid password for email ${email}`);
+        throw new Error('Invalid credentials');
+      }
+      
+      // Reset failure count on success
+      user.failureCount = 0;
+      user.lockUntil = null;
+      
+      // Generate tokens - let module config handle expiresIn and algorithm
+      this.logger.log(`Generating JWT tokens for user ${email}`);
+      const payload = { sub: user.id, email: user.email, role: user.role };
+      const accessToken = this.jwtService.sign(payload);
+      const refreshToken = this.jwtService.sign({ sub: user.id });
+      
+      this.logger.log(`JWT tokens generated successfully for user ${email}`);
+      
+      const crypto = require('crypto');
+      const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
+      this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
+      
+      // Update last login
+      user.lastLogin = new Date();
+      
+      this.logger.log(`Successful login for user ${email}`);
+      
+      return {
+        message: 'Login successful',
+        user: {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+          walletBalance: user.walletBalance,
+          kycStatus: user.kycStatus,
+          profile: user.profile
+        },
+        accessToken,
+        refreshToken
+      };
+    } catch (error) {
+      this.logger.error(`LOGIN ERROR for email ${loginDto?.email || 'unknown'}:`, error);
+      throw new Error(`Login failed: ${error.message}`);
     }
-    
-    // Reset failure count on success
-    user.failureCount = 0;
-    user.lockUntil = null;
-    
-    // Generate tokens
-    const payload = { sub: user.id, email: user.email, role: user.role };
-    const accessToken = this.jwtService.sign(payload, { expiresIn: '15m' });
-    const refreshToken = this.jwtService.sign({ sub: user.id }, { expiresIn: '7d' });
-    const crypto = require('crypto');
-    const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
-    this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
-    
-    // Update last login
-    user.lastLogin = new Date();
-    
-    this.logger.log(`Successful login for user ${email}`);
-    
-    return {
-      message: 'Login successful',
-      user: {
-        id: user.id,
-        email: user.email,
-        name: user.name,
-        role: user.role,
-        walletBalance: user.walletBalance,
-        kycStatus: user.kycStatus,
-        profile: user.profile
-      },
-      accessToken,
-      refreshToken
-    };
   }
 
   async register(registerDto: any) {

@@ -32,9 +32,7 @@ const Login = () => {
   const isLoggingIn = useRef(false);
 
   const navigate = useNavigate();
-
-  // Backend API URL
-  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:4011';
+  const { login, user, loading: authLoading } = useUnifiedAuth();
 
   useEffect(() => {
     document.title = 'Login - QuickMela Auction Platform';
@@ -83,7 +81,7 @@ const Login = () => {
     e.preventDefault();
 
     // Prevent multiple simultaneous login attempts
-    if (isLoggingIn.current || loading) {
+    if (isLoggingIn.current || loading || authLoading) {
       return;
     }
 
@@ -118,27 +116,28 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await SecureAPIClient.login({ email, password }) as LoginResponse;
+      // Use UnifiedAuthContext login method
+      const success = await login(email, password);
+      
+      if (success) {
+        toast.success('Login successful!');
 
-      // Store tokens and user data
-      localStorage.setItem('accessToken', response.accessToken);
-      localStorage.setItem('refreshToken', response.refreshToken);
-      localStorage.setItem('user', JSON.stringify(response.user));
-
-      toast.success('Login successful!');
-
-      // Redirect based on role
-      setTimeout(() => {
-        if (response.user.role === 'buyer' || response.user.role === 'BUYER') {
-          navigate('/buyer/dashboard', { replace: true });
-        } else if (response.user.role === 'seller' || response.user.role === 'SELLER') {
-          navigate('/seller/dashboard', { replace: true });
-        } else if (response.user.role === 'admin' || response.user.role === 'ADMIN') {
-          navigate('/admin/dashboard', { replace: true });
-        } else {
-          navigate('/dashboard', { replace: true });
-        }
-      }, 1000);
+        // Redirect based on role using user from context
+        setTimeout(() => {
+          if (user?.role === 'buyer' || user?.role === 'BUYER') {
+            navigate('/buyer/dashboard', { replace: true });
+          } else if (user?.role === 'seller' || user?.role === 'SELLER') {
+            navigate('/seller/dashboard', { replace: true });
+          } else if (user?.role === 'admin' || user?.role === 'ADMIN') {
+            navigate('/admin/dashboard', { replace: true });
+          } else {
+            navigate('/dashboard', { replace: true });
+          }
+        }, 1000);
+      } else {
+        // Error is handled by UnifiedAuthContext
+        console.error('Login failed');
+      }
     } catch (error) {
       console.error('Login error:', error);
       toast.error(error instanceof Error ? error.message : 'Login failed. Please try again.');
@@ -223,9 +222,9 @@ const Login = () => {
 
   const handleDemoLogin = (role: string) => {
     const demoAccounts = {
-      buyer: { email: 'buyer@quickbid.com', password: 'QuickBid2026!' },
-      seller: { email: 'seller@quickbid.com', password: 'QuickBid2026!' },
-      admin: { email: 'founder@quickbid.com', password: 'QuickBid2026!' }
+      buyer: { email: 'arjun@quickmela.com', password: 'BuyerPass123!' },
+      seller: { email: 'seller1@quickmela.com', password: 'SellerPass123!' },
+      admin: { email: 'admin@quickmela.com', password: 'AdminPass123!' }
     };
 
     const account = demoAccounts[role as keyof typeof demoAccounts];

@@ -1,16 +1,10 @@
 // src/utils/analytics.ts
-// import { init, track, identify, reset } from '@amplitude/analytics-browser';
-
-// Mock analytics functions for development
-const mockInit = () => {};
-const mockTrack = () => {};
-const mockIdentify = () => {};
-const mockReset = () => {};
+import { init, track, identify, reset } from '@amplitude/analytics-browser';
 
 // Initialize Amplitude Analytics
 export const initAnalytics = () => {
   if (import.meta.env.PROD && import.meta.env.VITE_AMPLITUDE_API_KEY) {
-    mockInit(import.meta.env.VITE_AMPLITUDE_API_KEY, {
+    init(import.meta.env.VITE_AMPLITUDE_API_KEY, {
       defaultTracking: {
         sessions: true,
         pageViews: true,
@@ -23,21 +17,27 @@ export const initAnalytics = () => {
 
 // Track custom events
 export const trackEvent = (eventName: string, properties?: Record<string, any>) => {
-  if (import.meta.env.PROD) {
+  if (import.meta.env.PROD && amplitude) {
+    amplitude.track(eventName, properties);
+  } else {
     mockTrack(eventName, properties);
   }
 };
 
 // Identify user
 export const identifyUser = (userId: string, traits?: Record<string, any>) => {
-  if (import.meta.env.PROD) {
+  if (import.meta.env.PROD && amplitude) {
+    amplitude.identify(userId, traits);
+  } else {
     mockIdentify(userId, traits);
   }
 };
 
 // Reset user identity
 export const resetUser = () => {
-  if (import.meta.env.PROD) {
+  if (import.meta.env.PROD && amplitude) {
+    amplitude.reset();
+  } else {
     mockReset();
   }
 };
