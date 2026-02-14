@@ -135,11 +135,11 @@ export class ProductsService {
   ];
 
   async findAll() {
-    return this.prisma.product.findMany({
-      where: {
-        status: 'ACTIVE',
-      },
-    });
+    // Temporarily use in-memory data until Prisma database is configured
+    return this.products.map(product => ({
+      ...product,
+      status: product.endTime > new Date() ? 'ACTIVE' : 'CLOSED'
+    })).filter(product => product.status === 'ACTIVE');
   }
 
   async findOne(id: number) {
