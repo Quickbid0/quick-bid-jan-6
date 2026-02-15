@@ -507,10 +507,12 @@ export class EnhancedProductManagementService {
   }
 
   private logProductAction(adminId: string, action: string, productId: string, metadata?: any): void {
-    console.log(`[PRODUCT ACTION] Admin ${adminId} performed ${action} on product ${productId}`, metadata);
+    // In a real implementation, this would log to an audit table
+    // TODO: Implement proper audit logging for product actions
   }
 
   private logBulkOperation(adminId: string, operation: string, processed: number, failed: number, total: number): void {
-    console.log(`[BULK PRODUCT OPERATION] Admin ${adminId} performed ${operation} on ${total} products (${processed} successful, ${failed} failed)`);
+    // In a real implementation, this would log to an audit table
+    // TODO: Implement proper audit logging for bulk product operations
   }
 }

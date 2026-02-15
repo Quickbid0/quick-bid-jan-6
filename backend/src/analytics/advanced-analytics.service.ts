@@ -326,11 +326,11 @@ export class AdvancedAnalyticsService {
     recipients: string[],
     filters?: AnalyticsFilters
   ): Promise<{ success: boolean; reportId: string }> {
-    // In real implementation, this would use a job queue like Bull
+    // In a real implementation, this would use a job queue like Bull
     const reportId = `report_${Date.now()}`;
 
-    // Mock scheduling
-    console.log(`Scheduled ${reportType} report for ${recipients.join(', ')}`);
+    // TODO: Implement actual report scheduling with job queue
+    // For now, return success without actual scheduling
 
     return { success: true, reportId };
   }

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a, _b, _c, _d, _e;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.KYCController = void 0;
 const common_1 = require("@nestjs/common");
@@ -229,7 +230,7 @@ __decorate([
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [typeof (_c = typeof Express !== "undefined" && (_b = Express.Multer) !== void 0 && _b.File) === "function" ? _c : Object, Object]),
     __metadata("design:returntype", Promise)
 ], KYCController.prototype, "verifyFace", null);
 __decorate([
@@ -268,7 +269,7 @@ __decorate([
     __param(0, (0, common_1.UploadedFile)()),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [typeof (_e = typeof Express !== "undefined" && (_d = Express.Multer) !== void 0 && _d.File) === "function" ? _e : Object, Object]),
     __metadata("design:returntype", Promise)
 ], KYCController.prototype, "uploadDocument", null);
 __decorate([
@@ -283,6 +284,6 @@ __decorate([
 exports.KYCController = KYCController = __decorate([
     (0, swagger_1.ApiTags)('kyc'),
     (0, common_1.Controller)('kyc'),
-    __metadata("design:paramtypes", [kyc_service_1.KYCService])
+    __metadata("design:paramtypes", [typeof (_a = typeof kyc_service_1.KYCService !== "undefined" && kyc_service_1.KYCService) === "function" ? _a : Object])
 ], KYCController);
 //# sourceMappingURL=kyc.controller.js.map

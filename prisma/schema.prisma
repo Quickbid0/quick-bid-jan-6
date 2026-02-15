@@ -3,123 +3,493 @@ generator client {
   previewFeatures = ["multiSchema"]
 }
 
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// ============================================================================
+// USER MANAGEMENT & AUTHENTICATION
+// ============================================================================
 
-model Account {
-  id                 String                  @id @default(cuid())
-  email              String                  @unique
-  passwordHash       String                  @map("password_hash")
-  name               String?
-  role               Role                    @default(BUYER)
-  status             UserStatus              @default(ACTIVE)
-  isActive           Boolean                 @default(true)
-  emailVerified      EmailVerificationStatus @default(UNVERIFIED)
-  verificationToken  String?                 @map("verification_token")
-  resetPasswordToken String?                 @map("reset_password_token")
-  resetTokenExpiry   DateTime?               @map("reset_token_expiry")
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
-  auditLogs          AuditLog[]
-  profiles           Profile[]
+model User {
+  id                  String              @id @default(cuid())
+  email               String              @unique
+  passwordHash        String?             @map("password_hash")
+  phoneNumber         String?             @unique @map("phone_number")
+  name                String
+  role                UserRole            @default(BUYER)
+  status              UserStatus          @default(PENDING_VERIFICATION)
+  isActive            Boolean             @default(true) @map("is_active")
+  isVerified          Boolean             @default(false) @map("is_verified")
+  emailVerified       Boolean             @default(false) @map("email_verified")
+  phoneVerified       Boolean             @default(false) @map("phone_verified")
+  faceVerified        Boolean             @default(false) @map("face_verified")
+  kycStatus           KYCStatus           @default(PENDING) @map("kyc_status")
+  lastLogin           DateTime?           @map("last_login")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
 
-  @@index([email], map: "idx_accounts_email")
-  @@index([role], map: "idx_accounts_role")
-  @@index([status], map: "idx_accounts_status")
-  @@map("accounts")
+  // Relations
+  profile             Profile?
+  kyc                 KYC?
+  wallet              Wallet?
+  subscription        Subscription?
+  products            Product[]
+  auctions            Auction[]
+  bids                Bid[]
+  transactions        Transaction[]
+  auditLogs           AuditLog[]
+  branchStaff         BranchStaff?
+  deliveryAssignments DeliveryAssignment[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([phoneNumber], map: "idx_users_phone")
+  @@index([role], map: "idx_users_role")
+  @@index([status], map: "idx_users_status")
+  @@index([isVerified], map: "idx_users_verified")
+  @@map("users")
 }
 
 model Profile {
-  id         String   @id @default(cuid())
-  userId     String   @map("user_id")
-  avatarUrl  String?  @map("avatar_url")
-  bio        String?
-  phone      String?
-  address    String?
-  city       String?
-  country    String?
-  postalCode String?  @map("postal_code")
-  isVerified Boolean  @default(false) @map("is_verified")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-  account    Account  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  id           String   @id @default(cuid())
+  userId       String   @unique @map("user_id")
+  avatarUrl    String?  @map("avatar_url")
+  bio          String?
+  dateOfBirth  DateTime? @map("date_of_birth")
+  gender       String?
+  address      String?
+  city         String?
+  state        String?
+  pincode      String?
+  occupation   String?
+  rating       Float    @default(0)
+  totalReviews Int      @default(0) @map("total_reviews")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId], map: "idx_profiles_user_id")
   @@map("profiles")
 }
 
-model UserSession {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")
-  token        String   @unique
-  refreshToken String?  @map("refresh_token")
-  ipAddress    String?  @map("ip_address")
-  userAgent    String?  @map("user_agent")
-  expiresAt    DateTime @map("expires_at")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+// ============================================================================
+// KYC & VERIFICATION SYSTEM
+// ============================================================================
 
-  @@index([userId], map: "idx_user_sessions_user_id")
-  @@map("user_sessions")
+model KYC {
+  id                String         @id @default(cuid())
+  userId            String         @unique @map("user_id")
+  documentType      DocumentType   @map("document_type")
+  documentNumber    String         @map("document_number")
+  documentFrontUrl  String         @map("document_front_url")
+  documentBackUrl   String?        @map("document_back_url")
+  selfieUrl         String         @map("selfie_url")
+  aadhaarNumber     String?        @unique @map("aadhaar_number")
+  panNumber         String?        @unique @map("pan_number")
+  extractedData     Json?          @map("extracted_data")
+  faceMatchScore    Float?         @map("face_match_score")
+  status            KYCStatus      @default(PENDING)
+  rejectionReason   String?        @map("rejection_reason")
+  verifiedAt        DateTime?      @map("verified_at")
+  verifiedBy        String?        @map("verified_by")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifiedByAdmin   User?          @relation("KYCVerifier", fields: [verifiedBy], references: [id])
+
+  @@index([userId], map: "idx_kyc_user_id")
+  @@index([status], map: "idx_kyc_status")
+  @@index([documentType], map: "idx_kyc_document_type")
+  @@map("kyc")
 }
 
-model AuditLog {
-  id        String   @id @default(cuid())
-  userId    String?  @map("user_id")
-  action    String
-  resource  String?
-  ipAddress String?  @map("ip_address")
-  userAgent String?  @map("user_agent")
-  details   Json?
-  createdAt DateTime @default(now())
-  account   Account? @relation(fields: [userId], references: [id])
+// ============================================================================
+// WALLET & PAYMENT SYSTEM
+// ============================================================================
 
-  @@index([action], map: "idx_audit_logs_action")
-  @@index([userId], map: "idx_audit_logs_user_id")
-  @@map("audit_logs")
+model Wallet {
+  id                String      @id @default(cuid())
+  userId            String      @unique @map("user_id")
+  balance           Float       @default(0)
+  blockedBalance    Float       @default(0) @map("blocked_balance")
+  totalCredits      Float       @default(0) @map("total_credits")
+  totalDebits       Float       @default(0) @map("total_debits")
+  currency          String      @default("INR")
+  isActive          Boolean     @default(true) @map("is_active")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions      Transaction[]
+
+  @@index([userId], map: "idx_wallets_user_id")
+  @@map("wallets")
 }
+
+model Transaction {
+  id                String           @id @default(cuid())
+  userId            String           @map("user_id")
+  walletId          String           @map("wallet_id")
+  type              TransactionType
+  amount            Float
+  balanceBefore     Float            @map("balance_before")
+  balanceAfter      Float            @map("balance_after")
+  description       String
+  referenceId       String?          @map("reference_id") // auction_id, product_id, etc.
+  referenceType     String?          @map("reference_type")
+  paymentMethod     String?          @map("payment_method")
+  razorpayOrderId   String?          @map("razorpay_order_id")
+  razorpayPaymentId String?          @map("razorpay_payment_id")
+  status            TransactionStatus @default(PENDING)
+  isRefundable      Boolean          @default(false) @map("is_refundable")
+  refundAmount      Float?           @map("refund_amount")
+  refundedAt        DateTime?        @map("refunded_at")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  user              User             @relation(fields: [userId], references: [id])
+  wallet            Wallet           @relation(fields: [walletId], references: [id])
+
+  @@index([userId], map: "idx_transactions_user_id")
+  @@index([walletId], map: "idx_transactions_wallet_id")
+  @@index([type], map: "idx_transactions_type")
+  @@index([status], map: "idx_transactions_status")
+  @@index([referenceId], map: "idx_transactions_reference_id")
+  @@map("transactions")
+}
+
+// ============================================================================
+// PRODUCT & AUCTION SYSTEM
+// ============================================================================
 
 model Product {
-  id          String   @id @default(cuid())
-  title       String
-  description String?
-  category    String
-  price       Float
-  images      String[]
-  sellerId    String   @map("seller_id")
-  status      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                    String        @id @default(cuid())
+  title                 String
+  description           String?       @db.Text
+  category              ProductCategory
+  subcategory           String?
+  condition             ProductCondition
+  price                 Float
+  reservePrice          Float?        @map("reserve_price")
+  minimumBid            Float?        @map("minimum_bid")
+  bidIncrement          Float         @default(100) @map("bid_increment")
+  images                String[]      @default([])
+  videoUrl              String?       @map("video_url")
+  handmadeProofVideo    String?       @map("handmade_proof_video")
+  isHandmade            Boolean       @default(false) @map("is_handmade")
+  handmadeRating        Float?        @map("handmade_rating")
+  sellerId              String        @map("seller_id")
+  status                ProductStatus @default(DRAFT)
+  depositAmount         Float         @default(200) @map("deposit_amount")
+  depositRefunded       Boolean       @default(false) @map("deposit_refunded")
+  branchId              String?       @map("branch_id")
+  location              String?
+  views                 Int           @default(0)
+  favorites             Int           @default(0)
+  rating                Float         @default(0)
+  totalReviews          Int           @default(0) @map("total_reviews")
+  approvedAt            DateTime?     @map("approved_at")
+  approvedBy            String?       @map("approved_by")
+  rejectionReason       String?       @map("rejection_reason")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  seller                User          @relation(fields: [sellerId], references: [id])
+  approvedByAdmin       User?         @relation("ProductApprover", fields: [approvedBy], references: [id])
+  branch                Branch?       @relation(fields: [branchId], references: [id])
+  auctions              Auction[]
+  bids                  Bid[]
+  reviews               Review[]
+  favorites             ProductFavorite[]
 
   @@index([sellerId], map: "idx_products_seller_id")
   @@index([status], map: "idx_products_status")
+  @@index([category], map: "idx_products_category")
+  @@index([branchId], map: "idx_products_branch_id")
+  @@index([isHandmade], map: "idx_products_handmade")
   @@map("products")
 }
 
 model Auction {
-  id         String   @id @default(cuid())
-  productId  String   @map("product_id")
-  sellerId   String   @map("seller_id")
-  startPrice Float    @map("start_price")
-  currentBid Float    @map("current_bid")
-  endTime    DateTime @map("end_time")
-  status     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id                String           @id @default(cuid())
+  productId         String           @unique @map("product_id")
+  sellerId          String           @map("seller_id")
+  auctionType       AuctionType      @map("auction_type")
+  startPrice        Float            @map("start_price")
+  reservePrice      Float?           @map("reserve_price")
+  currentBid        Float?           @map("current_bid")
+  bidIncrement      Float            @default(100) @map("bid_increment")
+  startTime         DateTime         @map("start_time")
+  endTime           DateTime         @map("end_time")
+  status            AuctionStatus    @default(SCHEDULED)
+  isLive            Boolean          @default(false) @map("is_live")
+  liveStreamUrl     String?          @map("live_stream_url")
+  winnerId          String?          @map("winner_id")
+  winningBidId      String?          @map("winning_bid_id")
+  totalBids         Int              @default(0) @map("total_bids")
+  uniqueBidders     Int              @default(0) @map("unique_bidders")
+  views             Int              @default(0)
+  autoExtendTime    Int?             @map("auto_extend_time") // minutes
+  fraudAlert        Boolean          @default(false) @map("fraud_alert")
+  fraudScore        Float?           @map("fraud_score")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
 
+  product           Product          @relation(fields: [productId], references: [id])
+  seller            User             @relation(fields: [sellerId], references: [id])
+  winner            User?            @relation("AuctionWinner", fields: [winnerId], references: [id])
+  bids              Bid[]
+
+  @@index([productId], map: "idx_auctions_product_id")
   @@index([sellerId], map: "idx_auctions_seller_id")
   @@index([status], map: "idx_auctions_status")
+  @@index([auctionType], map: "idx_auctions_type")
+  @@index([startTime], map: "idx_auctions_start_time")
+  @@index([endTime], map: "idx_auctions_end_time")
   @@map("auctions")
 }
 
-enum Role {
+model Bid {
+  id                String      @id @default(cuid())
+  auctionId         String      @map("auction_id")
+  bidderId          String      @map("bidder_id")
+  productId         String      @map("product_id")
+  amount            Float
+  isWinning         Boolean     @default(false) @map("is_winning")
+  isAutoBid         Boolean     @default(false) @map("is_auto_bid")
+  maxAutoBidAmount  Float?      @map("max_auto_bid_amount")
+  status            BidStatus   @default(ACTIVE)
+  fraudAlert        Boolean     @default(false) @map("fraud_alert")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  auction           Auction     @relation(fields: [auctionId], references: [id])
+  bidder            User        @relation(fields: [bidderId], references: [id])
+  product           Product     @relation(fields: [productId], references: [id])
+
+  @@index([auctionId], map: "idx_bids_auction_id")
+  @@index([bidderId], map: "idx_bids_bidder_id")
+  @@index([productId], map: "idx_bids_product_id")
+  @@index([status], map: "idx_bids_status")
+  @@map("bids")
+}
+
+// ============================================================================
+// ENTERPRISE MANAGEMENT SYSTEM
+// ============================================================================
+
+model Branch {
+  id              String       @id @default(cuid())
+  name            String
+  code            String       @unique
+  type            BranchType   @default(REGULAR)
+  address         String
+  city            String
+  state           String
+  pincode         String
+  phone           String?
+  email           String?
+  managerId       String?      @map("manager_id")
+  isActive        Boolean      @default(true) @map("is_active")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  manager         User?        @relation("BranchManager", fields: [managerId], references: [id])
+  staff           BranchStaff[]
+  products        Product[]
+  deliveries      Delivery[]
+
+  @@index([code], map: "idx_branches_code")
+  @@index([city], map: "idx_branches_city")
+  @@index([isActive], map: "idx_branches_active")
+  @@map("branches")
+}
+
+model BranchStaff {
+  id              String         @id @default(cuid())
+  userId          String         @unique @map("user_id")
+  branchId        String         @map("branch_id")
+  role            StaffRole
+  permissions     String[]       @default([])
+  isActive        Boolean        @default(true) @map("is_active")
+  assignedAt      DateTime       @default(now()) @map("assigned_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+
+  user            User           @relation(fields: [userId], references: [id])
+  branch          Branch         @relation(fields: [branchId], references: [id])
+
+  @@index([userId], map: "idx_branch_staff_user_id")
+  @@index([branchId], map: "idx_branch_staff_branch_id")
+  @@index([role], map: "idx_branch_staff_role")
+  @@map("branch_staff")
+}
+
+// ============================================================================
+// SUBSCRIPTION SYSTEM
+// ============================================================================
+
+model Subscription {
+  id                String            @id @default(cuid())
+  userId            String            @unique @map("user_id")
+  plan              SubscriptionPlan
+  status            SubscriptionStatus @default(ACTIVE)
+  bidLimit          Int               @map("bid_limit")
+  bidsUsed          Int               @default(0) @map("bids_used")
+  price             Float
+  currency          String            @default("INR")
+  startDate         DateTime          @map("start_date")
+  endDate           DateTime          @map("end_date")
+  autoRenew         Boolean           @default(false) @map("auto_renew")
+  razorpaySubscriptionId String?      @map("razorpay_subscription_id")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  user              User              @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_subscriptions_user_id")
+  @@index([plan], map: "idx_subscriptions_plan")
+  @@index([status], map: "idx_subscriptions_status")
+  @@map("subscriptions")
+}
+
+// ============================================================================
+// DELIVERY & LOGISTICS SYSTEM
+// ============================================================================
+
+model Delivery {
+  id                    String            @id @default(cuid())
+  auctionId             String            @unique @map("auction_id")
+  sellerId              String            @map("seller_id")
+  buyerId               String            @map("buyer_id")
+  deliveryAgentId       String?           @map("delivery_agent_id")
+  branchId              String?           @map("branch_id")
+  status                DeliveryStatus    @default(PENDING_PICKUP)
+  pickupAddress         String            @map("pickup_address")
+  deliveryAddress       String            @map("delivery_address")
+  estimatedPickupTime   DateTime?         @map("estimated_pickup_time")
+  actualPickupTime      DateTime?         @map("actual_pickup_time")
+  estimatedDeliveryTime DateTime?         @map("estimated_delivery_time")
+  actualDeliveryTime    DateTime?         @map("actual_delivery_time")
+  trackingNumber        String?           @unique @map("tracking_number")
+  pickupProofImages     String[]          @default([]) @map("pickup_proof_images")
+  deliveryProofImages   String[]          @default([]) @map("delivery_proof_images")
+  buyerSignature        String?           @map("buyer_signature")
+  notes                 String?
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  auction               Auction           @relation(fields: [auctionId], references: [id])
+  seller                User              @relation(fields: [sellerId], references: [id])
+  buyer                 User              @relation(fields: [buyerId], references: [id])
+  deliveryAgent         User?             @relation("DeliveryAgent", fields: [deliveryAgentId], references: [id])
+  branch                Branch?           @relation(fields: [branchId], references: [id])
+  assignments           DeliveryAssignment[]
+
+  @@index([auctionId], map: "idx_deliveries_auction_id")
+  @@index([sellerId], map: "idx_deliveries_seller_id")
+  @@index([buyerId], map: "idx_deliveries_buyer_id")
+  @@index([deliveryAgentId], map: "idx_deliveries_agent_id")
+  @@index([status], map: "idx_deliveries_status")
+  @@map("deliveries")
+}
+
+model DeliveryAssignment {
+  id              String   @id @default(cuid())
+  deliveryId      String   @map("delivery_id")
+  agentId         String   @map("agent_id")
+  assignedAt      DateTime @default(now()) @map("assigned_at")
+  assignedBy      String   @map("assigned_by")
+
+  delivery        Delivery @relation(fields: [deliveryId], references: [id])
+  agent           User     @relation(fields: [agentId], references: [id])
+  assignedByAdmin User     @relation("AssignmentAdmin", fields: [assignedBy], references: [id])
+
+  @@index([deliveryId], map: "idx_delivery_assignments_delivery_id")
+  @@index([agentId], map: "idx_delivery_assignments_agent_id")
+  @@map("delivery_assignments")
+}
+
+// ============================================================================
+// REVIEWS & RATINGS SYSTEM
+// ============================================================================
+
+model Review {
+  id          String   @id @default(cuid())
+  productId   String   @map("product_id")
+  reviewerId  String   @map("reviewer_id")
+  rating      Int      // 1-5 stars
+  title       String?
+  comment     String?  @db.Text
+  images      String[] @default([])
+  isVerified  Boolean  @default(false) @map("is_verified")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  product     Product  @relation(fields: [productId], references: [id])
+  reviewer    User     @relation(fields: [reviewerId], references: [id])
+
+  @@index([productId], map: "idx_reviews_product_id")
+  @@index([reviewerId], map: "idx_reviews_reviewer_id")
+  @@index([rating], map: "idx_reviews_rating")
+  @@map("reviews")
+}
+
+model ProductFavorite {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  productId  String   @map("product_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId], map: "unique_user_product_favorite")
+  @@index([userId], map: "idx_favorites_user_id")
+  @@index([productId], map: "idx_favorites_product_id")
+  @@map("product_favorites")
+}
+
+// ============================================================================
+// AUDIT & COMPLIANCE SYSTEM
+// ============================================================================
+
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String?     @map("user_id")
+  action      AuditAction
+  resource    String      // table/model name
+  resourceId  String?     @map("resource_id")
+  oldValues   Json?       @map("old_values")
+  newValues   Json?       @map("new_values")
+  ipAddress   String?     @map("ip_address")
+  userAgent   String?     @map("user_agent")
+  metadata    Json?       // additional context
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  user        User?       @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_audit_logs_user_id")
+  @@index([action], map: "idx_audit_logs_action")
+  @@index([resource], map: "idx_audit_logs_resource")
+  @@index([createdAt], map: "idx_audit_logs_created_at")
+  @@map("audit_logs")
+}
+
+// ============================================================================
+// ENUMS & TYPES
+// ============================================================================
+
+enum UserRole {
+  SUPER_ADMIN
   ADMIN
   SELLER
   BUYER
+  DELIVERY_AGENT
+  TELECALLER
 }
 
 enum UserStatus {
@@ -127,16 +497,138 @@ enum UserStatus {
   INACTIVE
   SUSPENDED
   PENDING_VERIFICATION
+  BANNED
 }
 
-enum EmailVerificationStatus {
-  VERIFIED
-  UNVERIFIED
+enum KYCStatus {
   PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
 }
 
-enum PasswordResetStatus {
-  NONE
+enum DocumentType {
+  AADHAAR
+  PAN
+  PASSPORT
+  DRIVING_LICENSE
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  REFUND
+  DEPOSIT
+  COMMISSION
+  WITHDRAWAL
+}
+
+enum TransactionStatus {
   PENDING
   COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum ProductCategory {
+  ELECTRONICS
+  VEHICLES
+  REAL_ESTATE
+  GOLD_JEWELLERY
+  INDUSTRIAL_EQUIPMENT
+  HANDMADE_ART
+  COLLECTIBLES
+  OTHERS
+}
+
+enum ProductCondition {
+  NEW
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+enum ProductStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  ACTIVE
+  SOLD
+  EXPIRED
+}
+
+enum AuctionType {
+  TIMED
+  LIVE
+  FLASH
+  DUTCH
+  RESERVE
+}
+
+enum AuctionStatus {
+  SCHEDULED
+  ACTIVE
+  EXTENDED
+  CLOSED
+  CANCELLED
+  COMPLETED
+}
+
+enum BidStatus {
+  ACTIVE
+  OUTBID
+  WINNING
+  CANCELLED
+}
+
+enum BranchType {
+  HEAD_OFFICE
+  REGULAR
+  FRANCHISE
+}
+
+enum StaffRole {
+  MANAGER
+  SUPERVISOR
+  EXECUTIVE
+  AGENT
+}
+
+enum SubscriptionPlan {
+  FREE
+  SILVER
+  GOLD
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  SUSPENDED
+}
+
+enum DeliveryStatus {
+  PENDING_PICKUP
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  APPROVE
+  REJECT
+  PAYMENT
+  REFUND
 }

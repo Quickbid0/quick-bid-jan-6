@@ -33,7 +33,14 @@ export declare class PaymentController {
         paymentId: string;
         amount?: number;
         notes?: Record<string, string>;
-    }): Promise<any>;
+    }): Promise<{
+        success: boolean;
+        transactionId: string;
+        refundAmount: any;
+        reason: string;
+        newBalance: any;
+        message: string;
+    }>;
     getPayment(paymentId: string): Promise<{
         success: boolean;
         payment: any;

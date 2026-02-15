@@ -12,53 +12,33 @@ var AuctionsService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuctionsService = void 0;
 const common_1 = require("@nestjs/common");
-const event_emitter_1 = require("@nestjs/event-emitter");
 const prisma_service_1 = require("../prisma/prisma.service");
-var AuctionType;
-(function (AuctionType) {
-    AuctionType["LIVE"] = "live";
-    AuctionType["TIMED"] = "timed";
-    AuctionType["FLASH"] = "flash";
-    AuctionType["TENDER"] = "tender";
-})(AuctionType || (AuctionType = {}));
-var AuctionStatus;
-(function (AuctionStatus) {
-    AuctionStatus["DRAFT"] = "draft";
-    AuctionStatus["ACTIVE"] = "active";
-    AuctionStatus["PAUSED"] = "paused";
-    AuctionStatus["ENDED"] = "ended";
-})(AuctionStatus || (AuctionStatus = {}));
+const wallet_service_1 = require("../wallet/wallet.service");
+const event_emitter_1 = require("@nestjs/event-emitter");
 let AuctionsService = AuctionsService_1 = class AuctionsService {
-    constructor(eventEmitter, prisma) {
-        this.eventEmitter = eventEmitter;
+    constructor(prisma, walletService, eventEmitter) {
         this.prisma = prisma;
+        this.walletService = walletService;
+        this.eventEmitter = eventEmitter;
         this.logger = new common_1.Logger(AuctionsService_1.name);
         this.auctionStates = new Map();
         this.activeTimers = new Map();
         this.auctionConfigs = {
-            live: {
-                requiresTokenDeposit: true,
-                tokenDepositAmount: 5000,
-                hasLiveStream: true,
-                allowsChat: true,
-                realTimeBidding: true,
-            },
             timed: {
-                autoExtend: true,
-                extensionTime: 2 * 60 * 1000,
                 triggerTime: 5 * 60 * 1000,
-                hasAntiSniping: true,
+                extensionTime: 5 * 60 * 1000,
+            },
+            live: {
+                tokenDepositRequired: false,
+                minimumDeposit: 1000,
             },
             flash: {
-                durationMinutes: 5,
-                noExtensions: true,
-                highFrequencyBidding: true,
+                rapidBidding: true,
+                minimumIncrement: 50,
             },
             tender: {
                 minimumBidders: 3,
                 qualificationRequired: true,
-                businessOnly: true,
-                longerDuration: true,
             },
         };
     }
@@ -444,7 +424,8 @@ let AuctionsService = AuctionsService_1 = class AuctionsService {
 exports.AuctionsService = AuctionsService;
 exports.AuctionsService = AuctionsService = AuctionsService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [event_emitter_1.EventEmitter2,
-        prisma_service_1.PrismaService])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
+        wallet_service_1.WalletService,
+        event_emitter_1.EventEmitter2])
 ], AuctionsService);
 //# sourceMappingURL=auctions.service.js.map

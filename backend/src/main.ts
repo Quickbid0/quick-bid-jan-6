@@ -1,3 +1,7 @@
+// IMPORTANT: Import instrument.ts BEFORE any other imports
+// This ensures Sentry is initialized before NestJS application starts
+import './instrument';
+
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
@@ -64,14 +68,6 @@ async function bootstrap() {
   app.getHttpAdapter().getInstance().options('*', (req, res) => {
     res.sendStatus(200);
   });
-
-  console.log('🚀 CORS CONFIG LOADED');
-
-  /**
-   * ========================================
-   * SECURITY & BODY LIMITS
-   * ========================================
-   */
 
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ limit: '1mb', extended: true }));
@@ -141,8 +137,6 @@ async function bootstrap() {
 
   const port = process.env.PORT || 3000;
   await app.listen(port);
-
-  console.log(`🔥 Server running on port ${port}`);
 }
 
 bootstrap();

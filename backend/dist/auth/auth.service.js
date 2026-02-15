@@ -14,10 +14,14 @@ exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
 const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
+const prisma_service_1 = require("../prisma/prisma.service");
+const referral_service_1 = require("../referral/referral.service");
 let AuthService = AuthService_1 = class AuthService {
-    constructor(jwtService, configService) {
+    constructor(jwtService, configService, prisma, referralService) {
         this.jwtService = jwtService;
         this.configService = configService;
+        this.prisma = prisma;
+        this.referralService = referralService;
         this.users = new Map();
         this.nextUserId = 1;
         this.otpStore = new Map();
@@ -30,82 +34,248 @@ let AuthService = AuthService_1 = class AuthService {
         }
         this.initializeTestUsers();
     }
-    initializeTestUsers() {
-        const buyers = [
-            { email: 'arjun@quickmela.com', name: 'Arjun Kumar', password: 'BuyerPass123!' },
-            { email: 'kavya@quickmela.com', name: 'Kavya Reddy', password: 'BuyerPass123!' },
-            { email: 'vijay@quickmela.com', name: 'Vijay Singh', password: 'BuyerPass123!' },
-            { email: 'neha@quickmela.com', name: 'Neha Sharma', password: 'BuyerPass123!' },
-            { email: 'rahul@quickmela.com', name: 'Rahul Gupta', password: 'BuyerPass123!' },
-            { email: 'priya@quickmela.com', name: 'Priya Patel', password: 'BuyerPass123!' },
-            { email: 'buyer1@quickmela.com', name: 'Buyer One', password: 'BuyerPass123!' }
-        ];
-        const sellers = [
-            { email: 'seller1@quickmela.com', name: 'Seller One', password: 'SellerPass123!' },
-            { email: 'seller2@quickmela.com', name: 'Seller Two', password: 'SellerPass123!' },
-            { email: 'seller3@quickmela.com', name: 'Seller Three', password: 'SellerPass123!' }
-        ];
-        const company = [
-            { email: 'admin@quickmela.com', name: 'QuickMela Admin', password: 'AdminPass123!' }
-        ];
-        [...buyers, ...sellers, ...company].forEach(userData => {
-            const role = userData.email.includes('admin') ? 'company' : userData.email.includes('seller') ? 'seller' : 'buyer';
-            const user = {
-                id: (this.nextUserId++).toString(),
-                email: userData.email,
-                name: userData.name,
-                password: userData.password,
-                role,
-                createdAt: new Date(),
-                isActive: true,
+    async initializeTestUsers() {
+        const users = [
+            {
+                email: 'superadmin@quickmela.com',
+                name: 'QuickMela Super Admin',
+                password: 'SuperAdmin123!',
+                role: 'SUPER_ADMIN',
+                phoneNumber: '+919876543210',
+                status: 'ACTIVE',
                 isVerified: true,
-                walletBalance: role === 'company' ? 500000 : 100000,
-                kycStatus: 'verified',
-                profile: {
-                    phone: '',
-                    address: '',
-                    pincode: ''
-                },
-                lastLogin: null,
-                failureCount: 0,
-                lockUntil: null
-            };
-            this.users.set(user.email, user);
-        });
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'admin@quickmela.com',
+                name: 'QuickMela Admin',
+                password: 'AdminPass123!',
+                role: 'ADMIN',
+                phoneNumber: '+919876543211',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'seller.hyderabad@quickmela.com',
+                name: 'Hyderabad Seller',
+                password: 'SellerPass123!',
+                role: 'SELLER',
+                phoneNumber: '+919876543212',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'seller.mumbai@quickmela.com',
+                name: 'Mumbai Seller',
+                password: 'SellerPass123!',
+                role: 'SELLER',
+                phoneNumber: '+919876543213',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'arjun@quickmela.com',
+                name: 'Arjun Kumar',
+                password: 'BuyerPass123!',
+                role: 'BUYER',
+                phoneNumber: '+919876543214',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'kavya@quickmela.com',
+                name: 'Kavya Reddy',
+                password: 'BuyerPass123!',
+                role: 'BUYER',
+                phoneNumber: '+919876543215',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'rahul@quickmela.com',
+                name: 'Rahul Gupta',
+                password: 'BuyerPass123!',
+                role: 'BUYER',
+                phoneNumber: '+919876543216',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'agent.hyderabad@quickmela.com',
+                name: 'Hyderabad Delivery Agent',
+                password: 'AgentPass123!',
+                role: 'DELIVERY_AGENT',
+                phoneNumber: '+919876543217',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            },
+            {
+                email: 'telecaller@quickmela.com',
+                name: 'QuickMela Telecaller',
+                password: 'TelePass123!',
+                role: 'TELECALLER',
+                phoneNumber: '+919876543218',
+                status: 'ACTIVE',
+                isVerified: true,
+                emailVerified: true,
+                phoneVerified: true,
+                faceVerified: true,
+                kycStatus: 'APPROVED'
+            }
+        ];
+        for (const userData of users) {
+            try {
+                const existingUser = await this.prisma.user.findUnique({
+                    where: { email: userData.email }
+                });
+                if (!existingUser) {
+                    const hashedPassword = await this.hashPassword(userData.password);
+                    const user = await this.prisma.user.create({
+                        data: {
+                            email: userData.email,
+                            name: userData.name,
+                            passwordHash: hashedPassword,
+                            phoneNumber: userData.phoneNumber,
+                            role: userData.role,
+                            status: userData.status,
+                            isVerified: userData.isVerified,
+                            emailVerified: userData.emailVerified,
+                            phoneVerified: userData.phoneVerified,
+                            faceVerified: userData.faceVerified,
+                            kycStatus: userData.kycStatus,
+                            profile: {
+                                create: {
+                                    bio: `Professional ${userData.role.toLowerCase()} on QuickMela platform`,
+                                    city: userData.role === 'SELLER' ? 'Hyderabad' : userData.role === 'BUYER' ? 'Mumbai' : 'Delhi',
+                                    state: userData.role === 'SELLER' ? 'Telangana' : userData.role === 'BUYER' ? 'Maharashtra' : 'Delhi',
+                                    pincode: userData.role === 'SELLER' ? '500001' : userData.role === 'BUYER' ? '400001' : '110001'
+                                }
+                            },
+                            wallet: {
+                                create: {
+                                    balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000,
+                                    totalCredits: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
+                                }
+                            },
+                            subscription: {
+                                create: {
+                                    plan: userData.role === 'BUYER' ? 'SILVER' : 'ENTERPRISE',
+                                    status: 'ACTIVE',
+                                    bidLimit: userData.role === 'BUYER' ? 10 : 1000,
+                                    price: userData.role === 'BUYER' ? 499 : 9999,
+                                    startDate: new Date(),
+                                    endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                                }
+                            }
+                        }
+                    });
+                    this.logger.log(`Created test user: ${user.email} (${user.role})`);
+                }
+            }
+            catch (error) {
+                this.logger.error(`Failed to create user ${userData.email}:`, error);
+            }
+        }
     }
     async login(loginDto) {
         try {
             const { email, password } = loginDto;
             this.logger.log(`Login attempt for email: ${email}`);
-            const user = this.users.get(email);
+            const user = await this.prisma.user.findUnique({
+                where: { email },
+                include: {
+                    profile: true,
+                    wallet: true,
+                    subscription: true
+                }
+            });
             if (!user) {
                 this.logger.warn(`Failed login attempt: User not found for email ${email}`);
                 throw new Error('Invalid credentials');
             }
-            if (user.lockUntil && user.lockUntil > new Date()) {
-                this.logger.warn(`Login attempt blocked: Account locked for email ${email}`);
-                throw new Error('Account locked due to too many failed attempts. Try again later.');
+            if (!user.isActive || user.status !== 'ACTIVE') {
+                this.logger.warn(`Login attempt blocked: Account not active for email ${email}`);
+                throw new Error('Account is not active. Please contact support.');
             }
-            if (user.password !== password) {
-                user.failureCount = (user.failureCount || 0) + 1;
-                if (user.failureCount > 5) {
-                    user.lockUntil = new Date(Date.now() + 15 * 60 * 1000);
-                    this.logger.warn(`Account locked for email ${email} due to too many failed attempts`);
-                }
+            if ((user.role === 'BUYER' || user.role === 'SELLER') && !user.isVerified) {
+                this.logger.warn(`Login attempt blocked: Unverified account for email ${email}`);
+                throw new Error('Account not verified. Please complete KYC verification.');
+            }
+            const isPasswordValid = await this.verifyPassword(password, user.passwordHash);
+            if (!isPasswordValid) {
                 this.logger.warn(`Failed login attempt: Invalid password for email ${email}`);
                 throw new Error('Invalid credentials');
             }
-            user.failureCount = 0;
-            user.lockUntil = null;
-            this.logger.log(`Generating JWT tokens for user ${email}`);
-            const payload = { sub: user.id, email: user.email, role: user.role };
-            const accessToken = this.jwtService.sign(payload);
-            const refreshToken = this.jwtService.sign({ sub: user.id });
+            const jwtSecret = this.configService.get('JWT_SECRET');
+            if (!jwtSecret || jwtSecret.length < 32) {
+                throw new Error('JWT_SECRET must be at least 32 characters long');
+            }
+            this.logger.log(`Generating secure JWT tokens for user ${email}`);
+            const payload = {
+                sub: user.id,
+                email: user.email,
+                role: user.role,
+                isVerified: user.isVerified,
+                kycStatus: user.kycStatus,
+                iat: Math.floor(Date.now() / 1000),
+            };
+            const accessToken = this.jwtService.sign(payload, {
+                expiresIn: '15m',
+                algorithm: 'HS256'
+            });
+            const refreshToken = this.jwtService.sign({ sub: user.id, type: 'refresh' }, {
+                expiresIn: '7d',
+                algorithm: 'HS256'
+            });
             this.logger.log(`JWT tokens generated successfully for user ${email}`);
             const crypto = require('crypto');
             const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
             this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
-            user.lastLogin = new Date();
+            await this.prisma.user.update({
+                where: { id: user.id },
+                data: { lastLogin: new Date() }
+            });
+            await this.prisma.auditLog.create({
+                data: {
+                    userId: user.id,
+                    action: 'LOGIN',
+                    resource: 'auth',
+                    resourceId: user.id,
+                    ipAddress: 'system',
+                    userAgent: 'system'
+                }
+            });
             this.logger.log(`Successful login for user ${email}`);
             return {
                 message: 'Login successful',
@@ -114,8 +284,11 @@ let AuthService = AuthService_1 = class AuthService {
                     email: user.email,
                     name: user.name,
                     role: user.role,
-                    walletBalance: user.walletBalance,
+                    phoneNumber: user.phoneNumber,
+                    isVerified: user.isVerified,
                     kycStatus: user.kycStatus,
+                    walletBalance: user.wallet?.balance || 0,
+                    subscriptionPlan: user.subscription?.plan || 'FREE',
                     profile: user.profile
                 },
                 accessToken,
@@ -128,28 +301,31 @@ let AuthService = AuthService_1 = class AuthService {
         }
     }
     async register(registerDto) {
-        const { email, password, name } = registerDto;
-        if (this.users.has(email)) {
+        const { email, password, name, referralCode } = registerDto;
+        const existingUser = await this.prisma.user.findUnique({
+            where: { email },
+        });
+        if (existingUser) {
             throw new Error('User already exists');
         }
-        const newUser = {
-            id: (this.nextUserId++).toString(),
-            email,
-            name,
-            password,
-            role: 'buyer',
-            createdAt: new Date(),
-            isActive: true,
-            isVerified: false,
-            walletBalance: 0,
-            kycStatus: 'pending',
-            profile: {
-                phone: '',
-                address: '',
-                pincode: ''
-            }
-        };
-        this.users.set(email, newUser);
+        const hashedPassword = await this.hashPassword(password);
+        const newUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        const referralCodeForNewUser = this.referralService.generateReferralCode(newUserId);
+        const newUser = await this.prisma.user.create({
+            data: {
+                email,
+                passwordHash: hashedPassword,
+                name,
+                role: 'BUYER',
+                status: 'ACTIVE',
+                isVerified: false,
+                referralCode: referralCodeForNewUser,
+            },
+        });
+        if (referralCode) {
+            await this.referralService.processReferralOnRegistration(newUser.id, referralCode, undefined, undefined);
+        }
+        this.logger.log(`New user registered: ${email} with referral code: ${referralCodeForNewUser}`);
         return {
             message: 'Registration successful',
             user: {
@@ -157,9 +333,8 @@ let AuthService = AuthService_1 = class AuthService {
                 email: newUser.email,
                 name: newUser.name,
                 role: newUser.role,
-                walletBalance: newUser.walletBalance,
-                kycStatus: newUser.kycStatus
-            }
+                referralCode: newUser.referralCode,
+            },
         };
     }
     async getProfile(req) {
@@ -294,14 +469,19 @@ let AuthService = AuthService_1 = class AuthService {
         return this.users.get(email);
     }
     async generateCsrfToken(userId) {
-        const token = Math.random().toString(36).substring(2);
+        const crypto = require('crypto');
+        const token = crypto.randomBytes(32).toString('hex');
         this.csrfTokens.set(userId, token);
+        this.logger.debug(`Generated secure CSRF token for user ${userId}`);
         return token;
     }
 };
 exports.AuthService = AuthService;
 exports.AuthService = AuthService = AuthService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [jwt_1.JwtService, config_1.ConfigService])
+    __metadata("design:paramtypes", [jwt_1.JwtService,
+        config_1.ConfigService,
+        prisma_service_1.PrismaService,
+        referral_service_1.ReferralService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

@@ -580,7 +580,7 @@ QuickMela Admin System`,
 
   private async sendPushNotification(request: NotificationRequest): Promise<any> {
     // Mock push notification - in real implementation, use FCM/APNs
-    console.log(`Push notification to ${request.recipientId}: ${request.content}`);
+    // TODO: Implement actual push notification service (FCM/APNs)
     return { messageId: `push_${Date.now()}` };
   }
 
@@ -606,14 +606,6 @@ QuickMela Admin System`,
 
   private async logNotification(logData: Partial<NotificationLog>): Promise<void> {
     // Mock logging - in real implementation, save to notification_logs table
-    console.log('Notification logged:', {
-      id: logData.id || `log_${Date.now()}`,
-      type: logData.type,
-      recipientId: logData.recipientId,
-      status: logData.status,
-      templateId: logData.templateId,
-      sentAt: logData.sentAt,
-      errorMessage: logData.errorMessage,
-    });
+    // TODO: Implement proper notification logging to database
   }
 }

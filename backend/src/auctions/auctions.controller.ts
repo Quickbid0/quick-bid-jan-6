@@ -1,33 +1,34 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, Req, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, Req, Query, UseGuards } from '@nestjs/common';
 import { AuctionsService } from './auctions.service';
+import { CreateAuctionDto, PlaceBidDto, UpdateAuctionDto, AuctionQueryDto } from './dto/auction.dto';
 
 @Controller('auctions')
 export class AuctionsController {
   constructor(private readonly auctionsService: AuctionsService) {}
 
   @Post()
-  async create(@Body() createAuctionDto: any, @Req() req: any) {
+  async create(@Body() createAuctionDto: CreateAuctionDto, @Req() req: any) {
     const sellerId = req.user?.id || 'seller1';
     return this.auctionsService.createAuction(createAuctionDto);
   }
 
   @Get()
-  async findAll() {
-    return this.auctionsService.getAuctionsByType('active');
+  async findAll(@Query() query: AuctionQueryDto) {
+    return this.auctionsService.getAuctionsByType(query.status || 'active');
   }
 
   @Get('active')
-  async findActive() {
+  async findActive(@Query() query: AuctionQueryDto) {
     return this.auctionsService.getAuctionsByType('active');
   }
 
   @Get('draft')
-  async findDraft() {
+  async findDraft(@Query() query: AuctionQueryDto) {
     return this.auctionsService.getAuctionsByType('draft');
   }
 
   @Get('ended')
-  async findEnded() {
+  async findEnded(@Query() query: AuctionQueryDto) {
     return this.auctionsService.getAuctionsByType('ended');
   }
 
@@ -55,7 +56,7 @@ export class AuctionsController {
   }
 
   @Post(':id/bid')
-  async placeBid(@Param('id') id: string, @Body() bidDto: any, @Req() req: any) {
+  async placeBid(@Param('id') id: string, @Body() bidDto: PlaceBidDto, @Req() req: any) {
     const userId = req.user?.id || 'bidder1';
     const userName = req.user?.name || 'Demo Bidder';
     return this.auctionsService.placeBid({
@@ -67,7 +68,7 @@ export class AuctionsController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: string, @Body() updateAuctionDto: any) {
+  async update(@Param('id') id: string, @Body() updateAuctionDto: UpdateAuctionDto) {
     return this.auctionsService.updateAuctionSettings(id, updateAuctionDto);
   }
 

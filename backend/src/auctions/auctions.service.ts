@@ -1,90 +1,104 @@
-import { Injectable, Logger, BadRequestException, NotFoundException } from '@nestjs/common';
-import { EventEmitter2 } from '@nestjs/event-emitter';
+import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
-import { Auction } from '@prisma/client';
+import { WalletService } from '../wallet/wallet.service';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
-enum AuctionType {
-  LIVE = 'live',
-  TIMED = 'timed',
-  FLASH = 'flash',
-  TENDER = 'tender',
-}
-
-enum AuctionStatus {
-  DRAFT = 'draft',
-  ACTIVE = 'active',
-  PAUSED = 'paused',
-  ENDED = 'ended',
-}
-
-interface BidRequest {
-  auctionId: string;
-  userId: string;
-  amount: number;
-  userName: string;
-}
-
+// Type definitions for auction operations
 export interface AuctionState {
   auctionId: string;
   status: 'waiting' | 'active' | 'paused' | 'ended';
   currentPrice: number;
   startPrice: number;
   endTime: Date;
-  timeLeft: number; // seconds
+  timeLeft: number;
   totalBids: number;
   activeUsers: number;
   isExtended: boolean;
+  auctionType: 'timed' | 'live' | 'flash' | 'tender';
+  requiresTokenDeposit: boolean;
+  minimumBidders: number;
+  buyNowPrice?: number;
   lastBid?: {
     userId: string;
     userName: string;
     amount: number;
     timestamp: Date;
   };
-  buyNowPrice?: number;
-  auctionType: string;
-  requiresTokenDeposit?: boolean;
-  minimumBidders?: number;
+}
+
+export interface BidRequest {
+  auctionId: string;
+  userId: string;
+  amount: number;
+  userName: string;
+}
+
+export interface Auction {
+  id: string;
+  title: string;
+  productId: string;
+  sellerId: string;
+  startPrice: number;
+  currentBid: number;
+  endTime: Date;
+  status: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export type AuctionType = 'timed' | 'live' | 'flash' | 'tender';
+
+export interface AuctionConfig {
+  timed: {
+    triggerTime: number; // milliseconds before end to trigger extension
+    extensionTime: number; // milliseconds to extend
+  };
+  live: {
+    tokenDepositRequired: boolean;
+    minimumDeposit: number;
+  };
+  flash: {
+    rapidBidding: boolean;
+    minimumIncrement: number;
+  };
+  tender: {
+    minimumBidders: number;
+    qualificationRequired: boolean;
+  };
 }
 
 @Injectable()
 export class AuctionsService {
   private readonly logger = new Logger(AuctionsService.name);
 
-  // In-memory auction state (in production, use Redis or database)
-  private auctionStates = new Map<string, AuctionState>();
-  private activeTimers = new Map<string, NodeJS.Timeout>();
+  // In-memory storage for active auctions (should be Redis in production)
+  private auctionStates: Map<string, AuctionState> = new Map();
+  private activeTimers: Map<string, NodeJS.Timeout> = new Map();
 
-  // Auction type specific configurations
-  private auctionConfigs = {
-    live: {
-      requiresTokenDeposit: true,
-      tokenDepositAmount: 5000, // ₹5,000
-      hasLiveStream: true,
-      allowsChat: true,
-      realTimeBidding: true,
-    },
+  // Auction configuration
+  private auctionConfigs: AuctionConfig = {
     timed: {
-      autoExtend: true,
-      extensionTime: 2 * 60 * 1000, // 2 minutes
-      triggerTime: 5 * 60 * 1000, // Last 5 minutes
-      hasAntiSniping: true,
+      triggerTime: 5 * 60 * 1000, // 5 minutes
+      extensionTime: 5 * 60 * 1000, // 5 minutes
+    },
+    live: {
+      tokenDepositRequired: false,
+      minimumDeposit: 1000,
     },
     flash: {
-      durationMinutes: 5, // 5 minutes
-      noExtensions: true,
-      highFrequencyBidding: true,
+      rapidBidding: true,
+      minimumIncrement: 50,
     },
     tender: {
       minimumBidders: 3,
       qualificationRequired: true,
-      businessOnly: true,
-      longerDuration: true,
     },
   };
 
   constructor(
-    private eventEmitter: EventEmitter2,
     private prisma: PrismaService,
+    private walletService: WalletService,
+    private eventEmitter: EventEmitter2,
   ) {}
 
   async getAuctionState(auctionId: string): Promise<AuctionState> {

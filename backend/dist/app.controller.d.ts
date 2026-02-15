@@ -12,4 +12,10 @@ export declare class AppController {
         environment: string;
         database: string;
     };
+    triggerSentryError(): {
+        message: string;
+        timestamp: string;
+        environment: string;
+        sentryConfigured: boolean;
+    };
 }

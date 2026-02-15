@@ -1,6 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma/prisma.service';
+import { ReferralService } from '../referral/referral.service';
 
 @Injectable()
 export class AuthService {
@@ -11,7 +13,12 @@ export class AuthService {
   private refreshTokens = new Map<string, {userId: string, expiresAt: Date}>();
   private csrfTokens = new Map<string, string>();
 
-  constructor(private jwtService: JwtService, private configService: ConfigService) {
+  constructor(
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private prisma: PrismaService,
+    private referralService: ReferralService,
+  ) {
     // Validate JWT_SECRET at startup
     const jwtSecret = this.configService.get<string>('JWT_SECRET');
     if (!jwtSecret) {
@@ -21,108 +28,287 @@ export class AuthService {
     this.initializeTestUsers();
   }
 
-  private initializeTestUsers() {
-    // Create test buyers
-    const buyers = [
-      { email: 'arjun@quickmela.com', name: 'Arjun Kumar', password: 'BuyerPass123!' },
-      { email: 'kavya@quickmela.com', name: 'Kavya Reddy', password: 'BuyerPass123!' },
-      { email: 'vijay@quickmela.com', name: 'Vijay Singh', password: 'BuyerPass123!' },
-      { email: 'neha@quickmela.com', name: 'Neha Sharma', password: 'BuyerPass123!' },
-      { email: 'rahul@quickmela.com', name: 'Rahul Gupta', password: 'BuyerPass123!' },
-      { email: 'priya@quickmela.com', name: 'Priya Patel', password: 'BuyerPass123!' },
-      { email: 'buyer1@quickmela.com', name: 'Buyer One', password: 'BuyerPass123!' }
-    ];
-
-    // Create test sellers
-    const sellers = [
-      { email: 'seller1@quickmela.com', name: 'Seller One', password: 'SellerPass123!' },
-      { email: 'seller2@quickmela.com', name: 'Seller Two', password: 'SellerPass123!' },
-      { email: 'seller3@quickmela.com', name: 'Seller Three', password: 'SellerPass123!' }
-    ];
-
-    // Create test company (admin)
-    const company = [
-      { email: 'admin@quickmela.com', name: 'QuickMela Admin', password: 'AdminPass123!' }
-    ];
-
-    [...buyers, ...sellers, ...company].forEach(userData => {
-      const role = userData.email.includes('admin') ? 'company' : userData.email.includes('seller') ? 'seller' : 'buyer';
-      const user = {
-        id: (this.nextUserId++).toString(),
-        email: userData.email,
-        name: userData.name,
-        password: userData.password,
-        role,
-        createdAt: new Date(),
-        isActive: true,
+  private async initializeTestUsers() {
+    // Create test users with QuickMela roles
+    const users = [
+      // Super Admin
+      {
+        email: 'superadmin@quickmela.com',
+        name: 'QuickMela Super Admin',
+        password: 'SuperAdmin123!',
+        role: 'SUPER_ADMIN' as const,
+        phoneNumber: '+919876543210',
+        status: 'ACTIVE' as const,
         isVerified: true,
-        walletBalance: role === 'company' ? 500000 : 100000,
-        kycStatus: 'verified',
-        profile: {
-          phone: '',
-          address: '',
-          pincode: ''
-        },
-        lastLogin: null,
-        failureCount: 0,
-        lockUntil: null
-      };
-      this.users.set(user.email, user);
-    });
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      // Admins
+      {
+        email: 'admin@quickmela.com',
+        name: 'QuickMela Admin',
+        password: 'AdminPass123!',
+        role: 'ADMIN' as const,
+        phoneNumber: '+919876543211',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      // Sellers
+      {
+        email: 'seller.hyderabad@quickmela.com',
+        name: 'Hyderabad Seller',
+        password: 'SellerPass123!',
+        role: 'SELLER' as const,
+        phoneNumber: '+919876543212',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      {
+        email: 'seller.mumbai@quickmela.com',
+        name: 'Mumbai Seller',
+        password: 'SellerPass123!',
+        role: 'SELLER' as const,
+        phoneNumber: '+919876543213',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      // Buyers
+      {
+        email: 'arjun@quickmela.com',
+        name: 'Arjun Kumar',
+        password: 'BuyerPass123!',
+        role: 'BUYER' as const,
+        phoneNumber: '+919876543214',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      {
+        email: 'kavya@quickmela.com',
+        name: 'Kavya Reddy',
+        password: 'BuyerPass123!',
+        role: 'BUYER' as const,
+        phoneNumber: '+919876543215',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      {
+        email: 'rahul@quickmela.com',
+        name: 'Rahul Gupta',
+        password: 'BuyerPass123!',
+        role: 'BUYER' as const,
+        phoneNumber: '+919876543216',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      // Delivery Agents
+      {
+        email: 'agent.hyderabad@quickmela.com',
+        name: 'Hyderabad Delivery Agent',
+        password: 'AgentPass123!',
+        role: 'DELIVERY_AGENT' as const,
+        phoneNumber: '+919876543217',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      },
+      // Telecallers
+      {
+        email: 'telecaller@quickmela.com',
+        name: 'QuickMela Telecaller',
+        password: 'TelePass123!',
+        role: 'TELECALLER' as const,
+        phoneNumber: '+919876543218',
+        status: 'ACTIVE' as const,
+        isVerified: true,
+        emailVerified: true,
+        phoneVerified: true,
+        faceVerified: true,
+        kycStatus: 'APPROVED' as const
+      }
+    ];
+
+    // Create users in database (skip if already exist)
+    for (const userData of users) {
+      try {
+        const existingUser = await this.prisma.user.findUnique({
+          where: { email: userData.email }
+        });
+
+        if (!existingUser) {
+          const hashedPassword = await this.hashPassword(userData.password);
+          const user = await this.prisma.user.create({
+            data: {
+              email: userData.email,
+              name: userData.name,
+              passwordHash: hashedPassword, // Now properly hashed
+              phoneNumber: userData.phoneNumber,
+              role: userData.role,
+              status: userData.status,
+              isVerified: userData.isVerified,
+              emailVerified: userData.emailVerified,
+              phoneVerified: userData.phoneVerified,
+              faceVerified: userData.faceVerified,
+              kycStatus: userData.kycStatus,
+              profile: {
+                create: {
+                  bio: `Professional ${userData.role.toLowerCase()} on QuickMela platform`,
+                  city: userData.role === 'SELLER' ? 'Hyderabad' : userData.role === 'BUYER' ? 'Mumbai' : 'Delhi',
+                  state: userData.role === 'SELLER' ? 'Telangana' : userData.role === 'BUYER' ? 'Maharashtra' : 'Delhi',
+                  pincode: userData.role === 'SELLER' ? '500001' : userData.role === 'BUYER' ? '400001' : '110001'
+                }
+              },
+              wallet: {
+                create: {
+                  balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000,
+                  totalCredits: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
+                }
+              },
+              subscription: {
+                create: {
+                  plan: userData.role === 'BUYER' ? 'SILVER' : 'ENTERPRISE',
+                  status: 'ACTIVE',
+                  bidLimit: userData.role === 'BUYER' ? 10 : 1000,
+                  price: userData.role === 'BUYER' ? 499 : 9999,
+                  startDate: new Date(),
+                  endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year
+                }
+              }
+            }
+          });
+          this.logger.log(`Created test user: ${user.email} (${user.role})`);
+        }
+      } catch (error) {
+        this.logger.error(`Failed to create user ${userData.email}:`, error);
+      }
+    }
   }
 
   async login(loginDto: any) {
     try {
       const { email, password } = loginDto;
-      
+
       this.logger.log(`Login attempt for email: ${email}`);
-      
-      // Find user
-      const user = this.users.get(email);
-      
+
+      // Find user in database
+      const user = await this.prisma.user.findUnique({
+        where: { email },
+        include: {
+          profile: true,
+          wallet: true,
+          subscription: true
+        }
+      });
+
       if (!user) {
         this.logger.warn(`Failed login attempt: User not found for email ${email}`);
         throw new Error('Invalid credentials');
       }
-      
-      // Check if account is locked
-      if (user.lockUntil && user.lockUntil > new Date()) {
-        this.logger.warn(`Login attempt blocked: Account locked for email ${email}`);
-        throw new Error('Account locked due to too many failed attempts. Try again later.');
+
+      // Check if account is active
+      if (!user.isActive || user.status !== 'ACTIVE') {
+        this.logger.warn(`Login attempt blocked: Account not active for email ${email}`);
+        throw new Error('Account is not active. Please contact support.');
       }
-      
-      if (user.password !== password) {
-        // Increment failure count
-        user.failureCount = (user.failureCount || 0) + 1;
-        if (user.failureCount > 5) {
-          user.lockUntil = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes
-          this.logger.warn(`Account locked for email ${email} due to too many failed attempts`);
-        }
+
+      // Check KYC verification for buyers and sellers
+      if ((user.role === 'BUYER' || user.role === 'SELLER') && !user.isVerified) {
+        this.logger.warn(`Login attempt blocked: Unverified account for email ${email}`);
+        throw new Error('Account not verified. Please complete KYC verification.');
+      }
+
+      // Verify password against stored hash
+      const isPasswordValid = await this.verifyPassword(password, user.passwordHash);
+      if (!isPasswordValid) {
         this.logger.warn(`Failed login attempt: Invalid password for email ${email}`);
         throw new Error('Invalid credentials');
       }
-      
-      // Reset failure count on success
-      user.failureCount = 0;
-      user.lockUntil = null;
-      
-      // Generate tokens - let module config handle expiresIn and algorithm
-      this.logger.log(`Generating JWT tokens for user ${email}`);
-      const payload = { sub: user.id, email: user.email, role: user.role };
-      const accessToken = this.jwtService.sign(payload);
-      const refreshToken = this.jwtService.sign({ sub: user.id });
-      
+
+      // Generate tokens with explicit expiration and security settings
+      const jwtSecret = this.configService.get<string>('JWT_SECRET');
+      if (!jwtSecret || jwtSecret.length < 32) {
+        throw new Error('JWT_SECRET must be at least 32 characters long');
+      }
+
+      this.logger.log(`Generating secure JWT tokens for user ${email}`);
+      const payload = {
+        sub: user.id,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
+        kycStatus: user.kycStatus,
+        iat: Math.floor(Date.now() / 1000), // Issued at time
+      };
+
+      // Access token: 15 minutes
+      const accessToken = this.jwtService.sign(payload, {
+        expiresIn: '15m',
+        algorithm: 'HS256'
+      });
+
+      // Refresh token: 7 days
+      const refreshToken = this.jwtService.sign(
+        { sub: user.id, type: 'refresh' },
+        {
+          expiresIn: '7d',
+          algorithm: 'HS256'
+        }
+      );
+
       this.logger.log(`JWT tokens generated successfully for user ${email}`);
-      
+
       const crypto = require('crypto');
       const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');
       this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
-      
+
       // Update last login
-      user.lastLogin = new Date();
-      
+      await this.prisma.user.update({
+        where: { id: user.id },
+        data: { lastLogin: new Date() }
+      });
+
+      // Create audit log
+      await this.prisma.auditLog.create({
+        data: {
+          userId: user.id,
+          action: 'LOGIN',
+          resource: 'auth',
+          resourceId: user.id,
+          ipAddress: 'system', // Would be from request in real implementation
+          userAgent: 'system'
+        }
+      });
+
       this.logger.log(`Successful login for user ${email}`);
-      
+
       return {
         message: 'Login successful',
         user: {
@@ -130,8 +316,11 @@ export class AuthService {
           email: user.email,
           name: user.name,
           role: user.role,
-          walletBalance: user.walletBalance,
+          phoneNumber: user.phoneNumber,
+          isVerified: user.isVerified,
           kycStatus: user.kycStatus,
+          walletBalance: user.wallet?.balance || 0,
+          subscriptionPlan: user.subscription?.plan || 'FREE',
           profile: user.profile
         },
         accessToken,
@@ -144,34 +333,52 @@ export class AuthService {
   }
 
   async register(registerDto: any) {
-    const { email, password, name } = registerDto;
-    
+    const { email, password, name, referralCode } = registerDto;
+
     // Check if user already exists
-    if (this.users.has(email)) {
+    const existingUser = await this.prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (existingUser) {
       throw new Error('User already exists');
     }
-    
-    // Create new user - always assign 'buyer' role for security
-    const newUser = {
-      id: (this.nextUserId++).toString(),
-      email,
-      name,
-      password,
-      role: 'buyer', // Strict RBAC: new users are buyers only
-      createdAt: new Date(),
-      isActive: true,
-      isVerified: false,
-      walletBalance: 0,
-      kycStatus: 'pending',
-      profile: {
-        phone: '',
-        address: '',
-        pincode: ''
-      }
-    };
-    
-    this.users.set(email, newUser);
-    
+
+    // Hash password
+    const hashedPassword = await this.hashPassword(password);
+
+    // Generate referral code for new user
+    const newUserId = `user_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const referralCodeForNewUser = this.referralService.generateReferralCode(newUserId);
+
+    // Create new user - always assign 'BUYER' role for security
+    const newUser = await this.prisma.user.create({
+      data: {
+        email,
+        passwordHash: hashedPassword,
+        name,
+        role: 'BUYER', // Strict RBAC: new users are buyers only
+        status: 'ACTIVE',
+        isVerified: false,
+        referralCode: referralCodeForNewUser,
+      },
+    });
+
+    // Process referral if referral code provided
+    if (referralCode) {
+      await this.referralService.processReferralOnRegistration(
+        newUser.id,
+        referralCode,
+        undefined, // ipAddress - would be from request
+        undefined, // userAgent - would be from request
+      );
+    }
+
+    // Send welcome notification via WhatsApp if opted in
+    // Note: WhatsApp opt-in would happen separately after registration
+
+    this.logger.log(`New user registered: ${email} with referral code: ${referralCodeForNewUser}`);
+
     return {
       message: 'Registration successful',
       user: {
@@ -179,9 +386,8 @@ export class AuthService {
         email: newUser.email,
         name: newUser.name,
         role: newUser.role,
-        walletBalance: newUser.walletBalance,
-        kycStatus: newUser.kycStatus
-      }
+        referralCode: newUser.referralCode,
+      },
     };
   }
 
@@ -351,8 +557,11 @@ export class AuthService {
   }
 
   async generateCsrfToken(userId: string): Promise<string> {
-    const token = Math.random().toString(36).substring(2);
+    // Use cryptographically secure random bytes for CSRF token
+    const crypto = require('crypto');
+    const token = crypto.randomBytes(32).toString('hex'); // 64 character hex string
     this.csrfTokens.set(userId, token);
+    this.logger.debug(`Generated secure CSRF token for user ${userId}`);
     return token;
   }
 }

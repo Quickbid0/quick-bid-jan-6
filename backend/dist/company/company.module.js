@@ -9,14 +9,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.CompanyModule = void 0;
 const common_1 = require("@nestjs/common");
 const company_controller_1 = require("./company.controller");
+const company_service_1 = require("./company.service");
+const prisma_module_1 = require("../prisma/prisma.module");
+const company_security_middleware_1 = require("../middleware/company-security.middleware");
+const auth_module_1 = require("../auth/auth.module");
 let CompanyModule = class CompanyModule {
+    configure(consumer) {
+        consumer
+            .apply(company_security_middleware_1.CompanySecurityMiddleware)
+            .forRoutes(company_controller_1.CompanyController);
+    }
 };
 exports.CompanyModule = CompanyModule;
 exports.CompanyModule = CompanyModule = __decorate([
     (0, common_1.Module)({
+        imports: [prisma_module_1.PrismaModule, auth_module_1.AuthModule],
         controllers: [company_controller_1.CompanyController],
-        providers: [],
-        exports: [],
+        providers: [company_service_1.CompanyService],
+        exports: [company_service_1.CompanyService],
     })
 ], CompanyModule);
 //# sourceMappingURL=company.module.js.map

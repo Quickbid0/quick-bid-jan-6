@@ -41,7 +41,7 @@ export declare class PenaltyController {
             score: number;
             grade: string;
             status: string;
-            riskLevel: "low" | "medium" | "high" | "critical";
+            riskLevel: "medium" | "low" | "high" | "critical";
             componentScores: {
                 delivery: number;
                 quality: number;

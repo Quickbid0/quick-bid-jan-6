@@ -1,8 +1,7 @@
 // UX States Components - Consistent Empty, Error, and Disabled States
 import React from 'react';
-import { designTokens } from '../design-system/tokens-fixed';
 
-interface EmptyStateProps {
+export interface EmptyStateProps {
   title: string;
   description?: string;
   icon?: React.ReactNode;

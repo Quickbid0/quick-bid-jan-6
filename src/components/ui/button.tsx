@@ -5,17 +5,17 @@ export type ButtonVariant = 'primary' | 'secondary' | 'outline' | 'ghost' | 'dan
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 const variantClassMap: Record<ButtonVariant, string> = {
-  primary: `bg-[${colors.primary}] text-white shadow-[${shadows.sm}] hover:brightness-95`,
-  secondary: `bg-[${colors.secondary}] text-white shadow-[${shadows.xs}] hover:brightness-95`,
-  outline: `border border-[${colors.border}] text-[${colors.primary}] bg-transparent shadow-none hover:bg-[${colors.surface}]`,
-  ghost: `bg-transparent text-[${colors.primary}] shadow-none hover:bg-[${colors.surface}]`,
-  danger: `bg-[${colors.error}] text-white shadow-[${shadows.xs}] hover:brightness-95`,
+  primary: 'bg-primary-500 text-white shadow-sm hover:brightness-95',
+  secondary: 'bg-secondary-500 text-white shadow-xs hover:brightness-95',
+  outline: 'border border-gray-300 text-primary-600 bg-transparent shadow-none hover:bg-gray-50',
+  ghost: 'bg-transparent text-primary-600 shadow-none hover:bg-gray-50',
+  danger: 'bg-red-500 text-white shadow-xs hover:brightness-95',
 };
 
 const sizeClassMap: Record<ButtonSize, string> = {
-  sm: `py-${spacing.sm} px-${spacing.md} text-[${typography.caption.fontSize}]`,
-  md: `py-${spacing.md} px-${spacing.xl} text-[${typography.body.fontSize}]`,
-  lg: `py-${spacing.xxl} px-${spacing.xxxl} text-[${typography.h2.fontSize}]`,
+  sm: 'py-2 px-3 text-sm',
+  md: 'py-2 px-4 text-base',
+  lg: 'py-3 px-6 text-lg',
 };
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -36,7 +36,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>((props, r
     children,
     ...rest
   } = props;
-  const baseClasses = `inline-flex items-center justify-center gap-2 rounded-[${radii.md}] font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[${colors.primary}] focus-visible:ring-offset-[${colors.surface}] disabled:opacity-60 disabled:pointer-events-none`;
+  const baseClasses = 'inline-flex items-center justify-center gap-2 rounded-md font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary-500 focus-visible:ring-offset-gray-50 disabled:opacity-60 disabled:pointer-events-none';
   const variantClasses = variantClassMap[variant];
   const sizeClasses = sizeClassMap[size];
 

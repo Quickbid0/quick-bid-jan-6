@@ -16,6 +16,7 @@ export interface PageMetrics {
 class PerformanceMonitor {
   private static instance: PerformanceMonitor;
   private metrics: PageMetrics[] = [];
+  private customMetrics: Record<string, any> = {};
   private startTime: number = 0;
   private observers: PerformanceObserver[] = [];
 
@@ -256,6 +257,12 @@ class PerformanceMonitor {
       slowestPages,
       totalPageViews: this.metrics.length,
     };
+  }
+
+  // Track custom metric
+  trackCustomMetric(name: string, value: any): void {
+    this.customMetrics[name] = value;
+    console.log(`Custom metric: ${name} = ${value}`);
   }
 
   // Clear metrics

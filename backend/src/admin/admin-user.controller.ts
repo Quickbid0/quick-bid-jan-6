@@ -8,7 +8,8 @@ import {
   UseGuards, 
   HttpCode, 
   HttpStatus,
-  Body 
+  Body,
+  Req
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { RolesGuard } from '../auth/roles.guard';
@@ -32,8 +33,13 @@ export class AdminUserController {
   @ApiResponse({ status: 400, description: 'Invalid request' })
   async createUser(
     @Body() createUserDto: CreateUserDto,
-    @Body('adminId') adminId: string,
+    @Req() req: any,
   ) {
+    // Extract admin ID from authenticated JWT token - prevents IDOR
+    const adminId = req.user?.id;
+    if (!adminId) {
+      throw new Error('Admin authentication required');
+    }
     return await this.adminUserService.createUser(createUserDto, adminId);
   }
 
@@ -43,8 +49,13 @@ export class AdminUserController {
   @ApiResponse({ status: 200, description: 'Users retrieved successfully' })
   async listUsers(
     @Query() userListDto: UserListDto,
-    @Query('adminId') adminId: string,
+    @Req() req: any,
   ) {
+    // Extract admin ID from authenticated JWT token - prevents IDOR
+    const adminId = req.user?.id;
+    if (!adminId) {
+      throw new Error('Admin authentication required');
+    }
     return await this.adminUserService.listUsers(userListDto, adminId);
   }
 
@@ -52,7 +63,12 @@ export class AdminUserController {
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Get user statistics' })
   @ApiResponse({ status: 200, description: 'Statistics retrieved successfully' })
-  async getUserStats(@Query('adminId') adminId: string) {
+  async getUserStats(@Req() req: any) {
+    // Extract admin ID from authenticated JWT token - prevents IDOR
+    const adminId = req.user?.id;
+    if (!adminId) {
+      throw new Error('Admin authentication required');
+    }
     return await this.adminUserService.getUserStats(adminId);
   }
 
@@ -63,8 +79,13 @@ export class AdminUserController {
   @ApiResponse({ status: 404, description: 'User not found' })
   async getUserById(
     @Param('id') userId: string,
-    @Query('adminId') adminId: string,
+    @Req() req: any,
   ) {
+    // Extract admin ID from authenticated JWT token - prevents IDOR
+    const adminId = req.user?.id;
+    if (!adminId) {
+      throw new Error('Admin authentication required');
+    }
     return await this.adminUserService.getUserById(userId, adminId);
   }
 
@@ -77,8 +98,13 @@ export class AdminUserController {
   async updateUser(
     @Param('id') userId: string,
     @Body() updateUserDto: UpdateUserDto,
-    @Body('adminId') adminId: string,
+    @Req() req: any,
   ) {
+    // Extract admin ID from authenticated JWT token - prevents IDOR
+    const adminId = req.user?.id;
+    if (!adminId) {
+      throw new Error('Admin authentication required');
+    }
     return await this.adminUserService.updateUser(userId, updateUserDto, adminId);
   }
 }

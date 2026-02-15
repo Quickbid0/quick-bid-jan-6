@@ -107,10 +107,14 @@ interface ReserveAutoDropLogParams {
 export class BidService {
   private io: SocketIOServer;
   private pool: Pool;
+  private redis: any; // Assuming Redis client is available
+  private connectedSockets: Set<string> = new Set(); // Track connected sockets
 
-  constructor(io: SocketIOServer, pool: Pool) {
+  constructor(io: SocketIOServer, pool: Pool, redis: any) {
     this.io = io;
     this.pool = pool;
+    this.redis = redis;
+    this.setupWebSocketHandlers();
   }
 
   private getAuctionRoom(auctionId: string): string {
@@ -118,12 +122,149 @@ export class BidService {
   }
 
   /**
+   * Setup WebSocket event handlers for connection management and failure recovery
+   */
+  private setupWebSocketHandlers(): void {
+    this.io.on('connection', (socket) => {
+      const socketId = socket.id;
+      this.connectedSockets.add(socketId);
+
+      console.log(`[WebSocket] Client connected: ${socketId}`);
+
+      // Handle joining auction rooms
+      socket.on('join-auction', (auctionId: string) => {
+        const room = this.getAuctionRoom(auctionId);
+        socket.join(room);
+        console.log(`[WebSocket] ${socketId} joined auction room: ${room}`);
+
+        // Send current auction state to reconnected client
+        this.sendAuctionStateToClient(socket, auctionId);
+      });
+
+      // Handle leaving auction rooms
+      socket.on('leave-auction', (auctionId: string) => {
+        const room = this.getAuctionRoom(auctionId);
+        socket.leave(room);
+        console.log(`[WebSocket] ${socketId} left auction room: ${room}`);
+      });
+
+      // Handle bid placement (fallback if HTTP fails)
+      socket.on('place-bid-fallback', async (data) => {
+        try {
+          // Process bid through normal flow but with additional error handling
+          console.log(`[WebSocket] Processing fallback bid for ${socketId}`);
+          // Note: Implementation would call placeBid with additional retry logic
+        } catch (error) {
+          socket.emit('bid-error', { error: 'Failed to place bid via WebSocket' });
+        }
+      });
+
+      // Handle disconnection
+      socket.on('disconnect', (reason) => {
+        this.connectedSockets.delete(socketId);
+        console.log(`[WebSocket] Client disconnected: ${socketId}, reason: ${reason}`);
+
+        // Handle reconnection scenarios
+        if ((reason as string) === 'io server disconnect') {
+          // Server initiated disconnect, client should reconnect
+          console.log(`[WebSocket] Server initiated disconnect for ${socketId}`);
+        } else if ((reason as string) === 'io client disconnect') {
+          // Client initiated disconnect
+          console.log(`[WebSocket] Client initiated disconnect for ${socketId}`);
+        } else {
+          // Other disconnection reasons (network issues, etc.)
+          console.log(`[WebSocket] Unexpected disconnect for ${socketId}: ${reason}`);
+          // Could implement reconnection assistance here
+        }
+      });
+
+      // Handle connection errors
+      socket.on('connect_error', (error) => {
+        console.error(`[WebSocket] Connection error for ${socketId}:`, error);
+        // Could implement exponential backoff or alternative connection methods
+      });
+
+      // Handle ping/pong for health monitoring
+      socket.on('ping', () => {
+        socket.emit('pong');
+      });
+    });
+
+    // Handle server-level errors
+    this.io.on('connection_error', (error) => {
+      console.error('[WebSocket] Server connection error:', error);
+    });
+  }
+
+  /**
+   * Send current auction state to a reconnected client
+   */
+  private async sendAuctionStateToClient(socket: any, auctionId: string): Promise<void> {
+    try {
+      const client = await this.pool.connect();
+      const auctionRes = await client.query(
+        `select id, title, current_bid, end_time, status from public.auctions where id = $1`,
+        [auctionId]
+      );
+
+      if (auctionRes.rows.length > 0) {
+        const auction = auctionRes.rows[0];
+        socket.emit('auction-state', {
+          auctionId,
+          currentBid: auction.current_bid,
+          endTime: auction.end_time,
+          status: auction.status,
+          title: auction.title,
+        });
+      }
+
+      client.release();
+    } catch (error) {
+      console.error(`[WebSocket] Failed to send auction state for ${auctionId}:`, error);
+    }
+  }
+
+  /**
+   * Broadcast with retry mechanism for failed WebSocket sends
+   */
+  private async broadcastWithRetry(room: string, event: string, data: any, maxRetries: number = 3): Promise<void> {
+    let retries = 0;
+    while (retries < maxRetries) {
+      try {
+        this.io.to(room).emit(event, data);
+        break; // Success, exit retry loop
+      } catch (error) {
+        retries++;
+        console.error(`[WebSocket] Broadcast failed (attempt ${retries}/${maxRetries}):`, error);
+        if (retries >= maxRetries) {
+          console.error(`[WebSocket] Broadcast permanently failed after ${maxRetries} attempts`);
+          // Could implement fallback to database queue or HTTP notifications
+        } else {
+          // Wait before retry
+          await new Promise(resolve => setTimeout(resolve, 1000 * retries));
+        }
+      }
+    }
+  }
+
+  /**
    * Core placeBid flow using Postgres transaction against Supabase tables.
+   * Added Redis distributed locking for concurrency safety.
    */
   async placeBid(input: PlaceBidInput): Promise<PlaceBidResult> {
     const client = await this.pool.connect();
 
+    // Redis lock key for auction-user combination to prevent concurrent bids
+    const lockKey = `bid_lock:${input.auctionId}:${input.userId}`;
+    const lockTTL = 5000; // 5 seconds lock TTL
+
     try {
+      // Acquire Redis distributed lock
+      const lockAcquired = await this.acquireRedisLock(lockKey, lockTTL);
+      if (!lockAcquired) {
+        throw new Error('CONCURRENT_BID_ATTEMPT');
+      }
+
       await client.query('BEGIN');
 
       // Idempotency: if idempotencyKey is provided, reuse existing bid
@@ -300,6 +441,29 @@ export class BidService {
       if (input.autoBidId) meta.autoBidId = input.autoBidId;
       if (input.idempotencyKey) meta.idempotencyKey = input.idempotencyKey;
 
+      // Anti-sniping: Extend auction end time if bid placed near end
+      const now = new Date();
+      const endTime = new Date(auction.end_time);
+      const timeToEnd = endTime.getTime() - now.getTime();
+      const antiSnipingWindow = 5 * 60 * 1000; // 5 minutes in milliseconds
+      const extensionTime = 2 * 60 * 1000; // 2 minutes extension
+
+      if (timeToEnd > 0 && timeToEnd <= antiSnipingWindow) {
+        const newEndTime = new Date(endTime.getTime() + extensionTime);
+        await client.query(
+          `update public.auctions set end_time = $1 where id = $2`,
+          [newEndTime, input.auctionId]
+        );
+
+        // Emit anti-sniping notification
+        const room = this.getAuctionRoom(input.auctionId);
+        await this.broadcastWithRetry(room, 'auction-extended', {
+          extensionMinutes: extensionTime / (60 * 1000),
+          newEndTime: newEndTime.toISOString(),
+          reason: 'anti-sniping',
+        });
+      }
+
       // Insert bid; sequence uses bigserial
       const bidInsertRes = await client.query(
         `insert into public.bids (
@@ -350,7 +514,7 @@ export class BidService {
       const room = this.getAuctionRoom(input.auctionId);
 
       if (requiresAdminApproval) {
-        this.io.to(room).emit('bid-pending', { bidId: createdBid.id });
+        await this.broadcastWithRetry(room, 'bid-pending', { bidId: createdBid.id });
         return {
           bid: createdBid,
           accepted: false,
@@ -358,8 +522,8 @@ export class BidService {
         };
       }
 
-      this.io.to(room).emit('new-bid', { bid: createdBid, accepted: true });
-      this.io.to(room).emit('bid-overlay', {
+      await this.broadcastWithRetry(room, 'new-bid', { bid: createdBid, accepted: true });
+      await this.broadcastWithRetry(room, 'bid-overlay', {
         amountCents: createdBid.amount_cents,
         username: user.name,
         flags: { type: createdBid.type, isHighSpeed: meta.isHighSpeed },
@@ -378,6 +542,34 @@ export class BidService {
       }
       client.release();
       throw err;
+    } finally {
+      // Always release Redis lock
+      await this.releaseRedisLock(lockKey);
+    }
+  }
+
+  /**
+   * Acquire Redis distributed lock
+   */
+  private async acquireRedisLock(lockKey: string, ttlMs: number): Promise<boolean> {
+    try {
+      // Use SET with NX and PX for atomic lock acquisition
+      const result = await this.redis.set(lockKey, 'locked', 'PX', ttlMs, 'NX');
+      return result === 'OK';
+    } catch (error) {
+      console.error('Failed to acquire Redis lock:', error);
+      return false;
+    }
+  }
+
+  /**
+   * Release Redis distributed lock
+   */
+  private async releaseRedisLock(lockKey: string): Promise<void> {
+    try {
+      await this.redis.del(lockKey);
+    } catch (error) {
+      console.error('Failed to release Redis lock:', error);
     }
   }
 

@@ -5,10 +5,11 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var SocialMediaService_1;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.SocialMediaService = void 0;
 const common_1 = require("@nestjs/common");
-let SocialMediaService = class SocialMediaService {
+let SocialMediaService = SocialMediaService_1 = class SocialMediaService {
     constructor() {
         this.platforms = [
             {
@@ -61,6 +62,7 @@ let SocialMediaService = class SocialMediaService {
             }
         ];
         this.mockShares = [];
+        this.logger = new common_1.Logger(SocialMediaService_1.name);
     }
     async shareAuction(options) {
         const platform = this.platforms.find(p => p.code === options.platform);
@@ -95,7 +97,7 @@ let SocialMediaService = class SocialMediaService {
             };
         }
         catch (error) {
-            console.error(`Error sharing to ${options.platform}:`, error);
+            this.logger.error(`Error sharing to ${options.platform}:`, error);
             return {
                 success: false,
                 message: `Failed to share on ${platform.name}. Please try again.`
@@ -173,7 +175,7 @@ let SocialMediaService = class SocialMediaService {
     }
 };
 exports.SocialMediaService = SocialMediaService;
-exports.SocialMediaService = SocialMediaService = __decorate([
+exports.SocialMediaService = SocialMediaService = SocialMediaService_1 = __decorate([
     (0, common_1.Injectable)()
 ], SocialMediaService);
 //# sourceMappingURL=social-media.service.js.map

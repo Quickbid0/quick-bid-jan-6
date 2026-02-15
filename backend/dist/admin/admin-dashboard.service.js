@@ -247,7 +247,6 @@ let AdminDashboardService = class AdminDashboardService {
         }
     }
     logAdminAction(adminId, action, details) {
-        console.log(`[ADMIN ACTION] ${adminId} - ${action}: ${details}`);
     }
 };
 exports.AdminDashboardService = AdminDashboardService;

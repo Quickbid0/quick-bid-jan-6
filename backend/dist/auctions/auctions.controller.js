@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuctionsController = void 0;
 const common_1 = require("@nestjs/common");
 const auctions_service_1 = require("./auctions.service");
+const auction_dto_1 = require("./dto/auction.dto");
 let AuctionsController = class AuctionsController {
     constructor(auctionsService) {
         this.auctionsService = auctionsService;
@@ -23,16 +24,16 @@ let AuctionsController = class AuctionsController {
         const sellerId = req.user?.id || 'seller1';
         return this.auctionsService.createAuction(createAuctionDto);
     }
-    async findAll() {
+    async findAll(query) {
+        return this.auctionsService.getAuctionsByType(query.status || 'active');
+    }
+    async findActive(query) {
         return this.auctionsService.getAuctionsByType('active');
     }
-    async findActive() {
-        return this.auctionsService.getAuctionsByType('active');
-    }
-    async findDraft() {
+    async findDraft(query) {
         return this.auctionsService.getAuctionsByType('draft');
     }
-    async findEnded() {
+    async findEnded(query) {
         return this.auctionsService.getAuctionsByType('ended');
     }
     async findOne(id) {
@@ -76,31 +77,35 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [auction_dto_1.CreateAuctionDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "create", null);
 __decorate([
     (0, common_1.Get)(),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [auction_dto_1.AuctionQueryDto]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "findAll", null);
 __decorate([
     (0, common_1.Get)('active'),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [auction_dto_1.AuctionQueryDto]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "findActive", null);
 __decorate([
     (0, common_1.Get)('draft'),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [auction_dto_1.AuctionQueryDto]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "findDraft", null);
 __decorate([
     (0, common_1.Get)('ended'),
+    __param(0, (0, common_1.Query)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [auction_dto_1.AuctionQueryDto]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "findEnded", null);
 __decorate([
@@ -140,7 +145,7 @@ __decorate([
     __param(1, (0, common_1.Body)()),
     __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, Object]),
+    __metadata("design:paramtypes", [String, auction_dto_1.PlaceBidDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "placeBid", null);
 __decorate([
@@ -148,7 +153,7 @@ __decorate([
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:paramtypes", [String, auction_dto_1.UpdateAuctionDto]),
     __metadata("design:returntype", Promise)
 ], AuctionsController.prototype, "update", null);
 __decorate([

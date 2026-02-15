@@ -153,8 +153,6 @@ export class AdminUserService {
 
         // In production, send actual email
         // For now, log the invitation details
-        console.log(`Invitation email prepared for ${email}: ${subject}`);
-
         // TODO: Implement actual email sending
         // await this.emailService.sendEmail({
         //   to: email,
@@ -179,7 +177,8 @@ export class AdminUserService {
         });
 
       } catch (error) {
-        console.error(`Failed to send invitation email to ${email}:`, error);
+        // Log the error through proper logging service
+        this.logger.error(`Failed to send invitation email to ${email}:`, error);
         // Don't fail the user creation if email sending fails
       }
     }

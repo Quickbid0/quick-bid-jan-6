@@ -230,7 +230,7 @@ export class SecurityService {
   // Data Encryption
   encryptData(data: string): string {
     const iv = crypto.randomBytes(16);
-    const cipher = crypto.createCipher(this.config.encryption.algorithm, this.encryptionKey);
+    const cipher = crypto.createCipheriv(this.config.encryption.algorithm, this.encryptionKey, iv);
 
     let encrypted = cipher.update(data, 'utf8', 'hex');
     encrypted += cipher.final('hex');
@@ -247,7 +247,7 @@ export class SecurityService {
     const iv = Buffer.from(parts[0], 'hex');
     const encrypted = parts[1];
 
-    const decipher = crypto.createDecipher(this.config.encryption.algorithm, this.encryptionKey);
+    const decipher = crypto.createDecipheriv(this.config.encryption.algorithm, this.encryptionKey, iv);
 
     let decrypted = decipher.update(encrypted, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
@@ -322,7 +322,11 @@ export class SecurityService {
     };
 
     // In real implementation, store in security_logs table
-    console.log('Security Event Logged:', securityLog);
+    // For now, use structured logging instead of console.log
+    this.logger.warn(`Security Event: ${event.type} | User: ${event.userId || 'unknown'} | IP: ${event.ipAddress} | Severity: ${event.severity}`, {
+      securityEvent: securityLog,
+      details: event.details,
+    });
 
     // Emit security alert for high-severity events
     if (event.severity === 'high' || event.severity === 'critical') {

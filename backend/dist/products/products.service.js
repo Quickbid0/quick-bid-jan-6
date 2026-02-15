@@ -97,26 +97,11 @@ let ProductsService = class ProductsService {
             { id: 2, productId: 1, amount: 12000, bidderId: 'bidder2', bidderName: 'Bob Johnson', createdAt: new Date() },
             { id: 3, productId: 2, amount: 7500, bidderId: 'bidder2', bidderName: 'Bob Johnson', createdAt: new Date() }
         ];
-        this.wallets = [
-            { userId: 'buyer1', balance: 50000, currency: 'INR' },
-            { userId: 'buyer2', balance: 25000, currency: 'INR' },
-            { userId: 'seller1', balance: 100000, currency: 'INR' },
-            { userId: 'seller2', balance: 75000, currency: 'INR' },
-            { userId: 'bidder1', balance: 30000, currency: 'INR' },
-            { userId: 'bidder2', balance: 20000, currency: 'INR' }
-        ];
-    }
-    async findAll() {
-        return this.prisma.product.findMany({
-            where: {
-                status: 'ACTIVE',
-            },
-        });
     }
     async findOne(id) {
         const product = this.products.find(p => p.id === id);
         if (!product) {
-            return null;
+            throw new Error('Product not found');
         }
         const productBids = this.bids
             .filter(bid => bid.productId === id)

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../config/supabaseClient';
+import { QuickMelaRoleGuard, AdminLayout } from '../components/auth/QuickMelaAuth';
 import { toast } from 'react-hot-toast';
 import {
   Users, Gavel, DollarSign, TrendingUp, Shield, Settings,
@@ -8,457 +8,365 @@ import {
 } from 'lucide-react';
 
 interface AdminStats {
-  totalUsers: number;
+  totalSellers: number;
   activeAuctions: number;
-  totalRevenue: number;
-  pendingPayments: number;
+  pendingApprovals: number;
+  monthlyRevenue: number;
+  totalUsers: number;
   completedAuctions: number;
-  reportedIssues: number;
 }
 
-interface Auction {
+interface PendingApproval {
+  id: string;
+  type: 'seller' | 'product' | 'auction';
+  name?: string;
+  title?: string;
+  seller?: string;
+  status: string;
+  submittedAt: string;
+}
+
+interface RecentAuction {
   id: string;
   title: string;
-  status: string;
-  current_price: number;
-  end_date: string;
-  seller: { full_name: string };
+  currentBid: number;
+  bidders: number;
+  timeLeft: string;
 }
 
-interface Payment {
-  id: string;
-  amount: number;
-  status: string;
-  type: string;
-  user: { full_name: string };
-  created_at: string;
-}
-
-const AdminDashboard = () => {
+const AdminDashboard: React.FC = () => {
   const [stats, setStats] = useState<AdminStats>({
-    totalUsers: 0,
+    totalSellers: 0,
     activeAuctions: 0,
-    totalRevenue: 0,
-    pendingPayments: 0,
-    completedAuctions: 0,
-    reportedIssues: 0
+    pendingApprovals: 0,
+    monthlyRevenue: 0,
+    totalUsers: 0,
+    completedAuctions: 0
   });
-  const [auctions, setAuctions] = useState<Auction[]>([]);
-  const [payments, setPayments] = useState<Payment[]>([]);
+
+  const [pendingApprovals, setPendingApprovals] = useState<PendingApproval[]>([]);
+  const [recentAuctions, setRecentAuctions] = useState<RecentAuction[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
-    loadDashboardData();
+    fetchBranchData();
   }, []);
 
-  const loadDashboardData = async () => {
+  const fetchBranchData = async () => {
     try {
       setLoading(true);
 
-      // Load stats from backend APIs
-      const [usersRes, auctionsRes, paymentsRes] = await Promise.all([
-        fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats/users`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        }),
-        fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats/auctions`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        }),
-        fetch(`${import.meta.env.VITE_API_URL}/api/admin/stats/payments`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('accessToken')}` }
-        })
-      ]);
+      // Fetch branch statistics
+      const statsResponse = await fetch('/api/admin/branch-stats', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
 
-      if (usersRes.ok) {
-        const usersData = await usersRes.json();
-        setStats(prev => ({ ...prev, totalUsers: usersData.count || 0 }));
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        setStats(statsData);
       }
 
-      if (auctionsRes.ok) {
-        const auctionsData = await auctionsRes.json();
-        setStats(prev => ({
-          ...prev,
-          activeAuctions: auctionsData.active || 0,
-          completedAuctions: auctionsData.completed || 0
-        }));
-        setAuctions(auctionsData.auctions || []);
+      // Fetch pending approvals
+      const approvalsResponse = await fetch('/api/admin/pending-approvals', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
+
+      if (approvalsResponse.ok) {
+        const approvalsData = await approvalsResponse.json();
+        setPendingApprovals(approvalsData);
       }
 
-      if (paymentsRes.ok) {
-        const paymentsData = await paymentsRes.json();
-        setStats(prev => ({
-          ...prev,
-          totalRevenue: paymentsData.totalRevenue || 0,
-          pendingPayments: paymentsData.pending || 0
-        }));
-        setPayments(paymentsData.payments || []);
+      // Fetch recent auctions
+      const auctionsResponse = await fetch('/api/admin/recent-auctions', {
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        }
+      });
+
+      if (auctionsResponse.ok) {
+        const auctionsData = await auctionsResponse.json();
+        setRecentAuctions(auctionsData);
       }
 
     } catch (error) {
       console.error('Error loading admin dashboard data:', error);
       toast.error('Failed to load dashboard data');
+
+      // Mock data for development
+      setStats({
+        totalSellers: 45,
+        activeAuctions: 23,
+        pendingApprovals: 8,
+        monthlyRevenue: 125000,
+        totalUsers: 156,
+        completedAuctions: 89
+      });
     } finally {
       setLoading(false);
     }
   };
 
-  const handleAuctionAction = async (auctionId: string, action: string) => {
+  const handleApproval = async (id: string, action: 'approve' | 'reject') => {
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/auctions/${auctionId}/${action}`, {
+      const response = await fetch(`/api/admin/approve/${id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
+        },
+        body: JSON.stringify({ action })
       });
 
       if (response.ok) {
-        toast.success(`Auction ${action} successful`);
-        loadDashboardData(); // Refresh data
+        toast.success(`${action === 'approve' ? 'Approved' : 'Rejected'} successfully`);
+        fetchBranchData(); // Refresh data
       } else {
-        toast.error(`Failed to ${action} auction`);
+        toast.error(`Failed to ${action}`);
       }
     } catch (error) {
-      console.error(`Error ${action} auction:`, error);
-      toast.error('Action failed');
-    }
-  };
-
-  const handlePaymentAction = async (paymentId: string, action: string) => {
-    try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/admin/payments/${paymentId}/${action}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-        }
-      });
-
-      if (response.ok) {
-        toast.success(`Payment ${action} successful`);
-        loadDashboardData(); // Refresh data
-      } else {
-        toast.error(`Failed to ${action} payment`);
-      }
-    } catch (error) {
-      console.error(`Error ${action} payment:`, error);
+      console.error(`Approval action failed:`, error);
       toast.error('Action failed');
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
+      <QuickMelaRoleGuard allowedRoles={['ADMIN']} requireVerification={true}>
+        <AdminLayout>
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
+          </div>
+        </AdminLayout>
+      </QuickMelaRoleGuard>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-          <p className="text-gray-600 mt-2">Manage auctions, payments, and users</p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center">
-              <Users className="w-8 h-8 text-blue-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Users</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totalUsers}</p>
-              </div>
+    <QuickMelaRoleGuard allowedRoles={['ADMIN']} requireVerification={true}>
+      <AdminLayout>
+        <div className="space-y-6">
+          {/* Header */}
+          <div className="flex justify-between items-center">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">Branch Admin Dashboard</h1>
+              <p className="text-gray-600 mt-2">Manage local operations and oversee sellers</p>
+            </div>
+            <div className="flex space-x-3">
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">
+                Approve Sellers
+              </button>
+              <button className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                Branch Settings
+              </button>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center">
-              <Gavel className="w-8 h-8 text-green-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Active Auctions</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.activeAuctions}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center">
-              <DollarSign className="w-8 h-8 text-yellow-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Total Revenue</p>
-                <p className="text-2xl font-bold text-gray-900">₹{stats.totalRevenue.toLocaleString()}</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-lg shadow-sm border">
-            <div className="flex items-center">
-              <Clock className="w-8 h-8 text-orange-600" />
-              <div className="ml-4">
-                <p className="text-sm font-medium text-gray-600">Pending Payments</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.pendingPayments}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="mb-6">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              {[
-                { id: 'overview', label: 'Overview', icon: BarChart3 },
-                { id: 'auctions', label: 'Auctions', icon: Gavel },
-                { id: 'payments', label: 'Payments', icon: Wallet },
-                { id: 'users', label: 'Users', icon: Users },
-                { id: 'reports', label: 'Reports', icon: FileText }
-              ].map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
-                      activeTab === tab.id
-                        ? 'border-blue-500 text-blue-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{tab.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        </div>
-
-        {/* Tab Content */}
-        <div className="bg-white rounded-lg shadow-sm border">
-          {activeTab === 'overview' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">System Overview</h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-3">Recent Activity</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm">
-                      <CheckCircle className="w-4 h-4 text-green-500 mr-2" />
-                      <span>{stats.completedAuctions} auctions completed this week</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <Users className="w-4 h-4 text-blue-500 mr-2" />
-                      <span>{stats.totalUsers} active users</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <DollarSign className="w-4 h-4 text-yellow-500 mr-2" />
-                      <span>₹{stats.totalRevenue.toLocaleString()} revenue generated</span>
-                    </div>
-                  </div>
+          {/* Branch Metrics */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Users className="w-6 h-6 text-blue-600" />
                 </div>
-                <div>
-                  <h3 className="font-medium text-gray-900 mb-3">System Status</h3>
-                  <div className="space-y-3">
-                    <div className="flex items-center text-sm">
-                      <Activity className="w-4 h-4 text-green-500 mr-2" />
-                      <span>All systems operational</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <Shield className="w-4 h-4 text-blue-500 mr-2" />
-                      <span>Security systems active</span>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <TrendingUp className="w-4 h-4 text-purple-500 mr-2" />
-                      <span>Performance monitoring enabled</span>
-                    </div>
-                  </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Total Sellers</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.totalSellers}</p>
+                  <p className="text-sm text-green-600">+12% this month</p>
                 </div>
               </div>
             </div>
-          )}
 
-          {activeTab === 'auctions' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Auction Management</h2>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Auction
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Seller
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Current Bid
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {auctions.map((auction) => (
-                      <tr key={auction.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{auction.title}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{auction.seller?.full_name}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">₹{auction.current_price.toLocaleString()}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            auction.status === 'active' ? 'bg-green-100 text-green-800' :
-                            auction.status === 'ended' ? 'bg-gray-100 text-gray-800' :
-                            'bg-yellow-100 text-yellow-800'
-                          }`}>
-                            {auction.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                          {auction.status === 'active' && (
-                            <button
-                              onClick={() => handleAuctionAction(auction.id, 'pause')}
-                              className="text-yellow-600 hover:text-yellow-900"
-                            >
-                              Pause
-                            </button>
-                          )}
-                          <button
-                            onClick={() => handleAuctionAction(auction.id, 'end')}
-                            className="text-red-600 hover:text-red-900"
-                          >
-                            End
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'payments' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Payment Management</h2>
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        User
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Amount
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Type
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {payments.map((payment) => (
-                      <tr key={payment.id}>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm font-medium text-gray-900">{payment.user?.full_name}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-900">₹{payment.amount.toLocaleString()}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">{payment.type}</div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            payment.status === 'completed' ? 'bg-green-100 text-green-800' :
-                            payment.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
-                            {payment.status}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="text-sm text-gray-500">
-                            {new Date(payment.created_at).toLocaleDateString()}
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium space-x-2">
-                          {payment.status === 'pending' && (
-                            <>
-                              <button
-                                onClick={() => handlePaymentAction(payment.id, 'approve')}
-                                className="text-green-600 hover:text-green-900"
-                              >
-                                Approve
-                              </button>
-                              <button
-                                onClick={() => handlePaymentAction(payment.id, 'reject')}
-                                className="text-red-600 hover:text-red-900"
-                              >
-                                Reject
-                              </button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === 'users' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">User Management</h2>
-              <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 mb-4">
-                <div className="flex">
-                  <AlertTriangle className="w-5 h-5 text-yellow-400 mr-2" />
-                  <div className="text-sm text-yellow-700">
-                    User management features are being implemented. Basic user statistics are shown above.
-                  </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <Gavel className="w-6 h-6 text-green-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Active Auctions</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.activeAuctions}</p>
+                  <p className="text-sm text-blue-600">5 ending soon</p>
                 </div>
               </div>
             </div>
-          )}
 
-          {activeTab === 'reports' && (
-            <div className="p-6">
-              <h2 className="text-xl font-semibold mb-4">Reports & Analytics</h2>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <div className="flex">
-                  <BarChart3 className="w-5 h-5 text-blue-400 mr-2" />
-                  <div className="text-sm text-blue-700">
-                    Advanced reporting and analytics features are being implemented.
-                  </div>
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center">
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <AlertTriangle className="w-6 h-6 text-yellow-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Pending Approvals</p>
+                  <p className="text-2xl font-bold text-gray-900">{stats.pendingApprovals}</p>
+                  <p className="text-sm text-orange-600">Requires attention</p>
                 </div>
               </div>
             </div>
-          )}
+
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <div className="flex items-center">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <DollarSign className="w-6 h-6 text-purple-600" />
+                </div>
+                <div className="ml-4">
+                  <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
+                  <p className="text-2xl font-bold text-gray-900">₹{stats.monthlyRevenue.toLocaleString()}</p>
+                  <p className="text-sm text-green-600">+18% vs last month</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Pending Approvals */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">Pending Approvals</h2>
+              <span className="text-sm text-gray-500">{pendingApprovals.length} items need review</span>
+            </div>
+            <div className="space-y-4">
+              {pendingApprovals.map((item) => (
+                <div key={item.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex items-center space-x-4">
+                    <div className={`w-3 h-3 rounded-full ${
+                      item.type === 'seller' ? 'bg-blue-500' :
+                      item.type === 'product' ? 'bg-green-500' : 'bg-purple-500'
+                    }`}></div>
+                    <div>
+                      <p className="font-medium text-gray-900">
+                        {item.type === 'seller' ? item.name :
+                         item.type === 'product' ? item.title : item.title}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {item.type === 'seller' ? 'Seller Registration' :
+                         item.type === 'product' ? `Seller: ${item.seller}` : `Seller: ${item.seller}`}
+                      </p>
+                      <p className="text-xs text-gray-500">Submitted: {item.submittedAt}</p>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleApproval(item.id, 'approve')}
+                      className="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      onClick={() => handleApproval(item.id, 'reject')}
+                      className="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700"
+                    >
+                      Reject
+                    </button>
+                    <button className="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700">
+                      Review
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Active Auctions Monitor */}
+          <div className="bg-white p-6 rounded-lg shadow-sm border">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-900">Active Auctions Monitor</h2>
+              <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                View All Auctions
+              </button>
+            </div>
+            <div className="space-y-4">
+              {recentAuctions.map((auction) => (
+                <div key={auction.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex-1">
+                    <h3 className="font-medium text-gray-900">{auction.title}</h3>
+                    <div className="flex items-center space-x-4 mt-1">
+                      <span className="text-sm text-gray-600">
+                        Current Bid: ₹{auction.currentBid.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-gray-600">
+                        {auction.bidders} bidders
+                      </span>
+                      <span className={`text-sm ${
+                        auction.timeLeft.includes('m') && parseInt(auction.timeLeft) < 60
+                          ? 'text-red-600 font-medium'
+                          : 'text-gray-600'
+                      }`}>
+                        Time Left: {auction.timeLeft}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex space-x-2">
+                    <button className="text-indigo-600 hover:text-indigo-800 text-sm font-medium">
+                      Monitor
+                    </button>
+                    {auction.timeLeft.includes('m') && parseInt(auction.timeLeft) < 30 && (
+                      <button className="text-orange-600 hover:text-orange-800 text-sm font-medium">
+                        Extend Time
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Branch Performance & Quick Actions */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Performance Metrics */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Branch Performance</h2>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-600">Seller Satisfaction</span>
+                  <span className="text-sm font-bold text-green-600">94%</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-600">Average Auction Time</span>
+                  <span className="text-sm font-bold text-gray-900">3.2 days</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-600">Dispute Resolution</span>
+                  <span className="text-sm font-bold text-blue-600">98% resolved</span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-sm font-medium text-gray-600">Branch Efficiency</span>
+                  <span className="text-sm font-bold text-purple-600">87%</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-white p-6 rounded-lg shadow-sm border">
+              <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+              <div className="grid grid-cols-2 gap-4">
+                <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-colors text-center">
+                  <UserCheck className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-900">Add New Seller</p>
+                </button>
+
+                <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-colors text-center">
+                  <Gavel className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-900">Create Auction</p>
+                </button>
+
+                <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-colors text-center">
+                  <BarChart3 className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-900">Branch Reports</p>
+                </button>
+
+                <button className="p-4 border-2 border-dashed border-gray-300 rounded-lg hover:border-indigo-500 hover:bg-indigo-50 transition-colors text-center">
+                  <Shield className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-gray-900">Support Center</p>
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
+      </AdminLayout>
+    </QuickMelaRoleGuard>
   );
 };
 

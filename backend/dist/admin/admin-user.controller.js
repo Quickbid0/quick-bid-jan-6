@@ -22,19 +22,39 @@ let AdminUserController = class AdminUserController {
     constructor(adminUserService) {
         this.adminUserService = adminUserService;
     }
-    async createUser(createUserDto, adminId) {
+    async createUser(createUserDto, req) {
+        const adminId = req.user?.id;
+        if (!adminId) {
+            throw new Error('Admin authentication required');
+        }
         return await this.adminUserService.createUser(createUserDto, adminId);
     }
-    async listUsers(userListDto, adminId) {
+    async listUsers(userListDto, req) {
+        const adminId = req.user?.id;
+        if (!adminId) {
+            throw new Error('Admin authentication required');
+        }
         return await this.adminUserService.listUsers(userListDto, adminId);
     }
-    async getUserStats(adminId) {
+    async getUserStats(req) {
+        const adminId = req.user?.id;
+        if (!adminId) {
+            throw new Error('Admin authentication required');
+        }
         return await this.adminUserService.getUserStats(adminId);
     }
-    async getUserById(userId, adminId) {
+    async getUserById(userId, req) {
+        const adminId = req.user?.id;
+        if (!adminId) {
+            throw new Error('Admin authentication required');
+        }
         return await this.adminUserService.getUserById(userId, adminId);
     }
-    async updateUser(userId, updateUserDto, adminId) {
+    async updateUser(userId, updateUserDto, req) {
+        const adminId = req.user?.id;
+        if (!adminId) {
+            throw new Error('Admin authentication required');
+        }
         return await this.adminUserService.updateUser(userId, updateUserDto, adminId);
     }
 };
@@ -47,9 +67,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 409, description: 'User already exists' }),
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid request' }),
     __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_1.Body)('adminId')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminUserController.prototype, "createUser", null);
 __decorate([
@@ -58,9 +78,9 @@ __decorate([
     (0, swagger_1.ApiOperation)({ summary: 'List users with filtering and pagination' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Users retrieved successfully' }),
     __param(0, (0, common_1.Query)()),
-    __param(1, (0, common_1.Query)('adminId')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, String]),
+    __metadata("design:paramtypes", [Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminUserController.prototype, "listUsers", null);
 __decorate([
@@ -68,9 +88,9 @@ __decorate([
     (0, common_1.HttpCode)(common_1.HttpStatus.OK),
     (0, swagger_1.ApiOperation)({ summary: 'Get user statistics' }),
     (0, swagger_1.ApiResponse)({ status: 200, description: 'Statistics retrieved successfully' }),
-    __param(0, (0, common_1.Query)('adminId')),
+    __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AdminUserController.prototype, "getUserStats", null);
 __decorate([
@@ -80,9 +100,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 200, description: 'User retrieved successfully' }),
     (0, swagger_1.ApiResponse)({ status: 404, description: 'User not found' }),
     __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Query)('adminId')),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [String, Object]),
     __metadata("design:returntype", Promise)
 ], AdminUserController.prototype, "getUserById", null);
 __decorate([
@@ -94,9 +114,9 @@ __decorate([
     (0, swagger_1.ApiResponse)({ status: 400, description: 'Invalid request' }),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
-    __param(2, (0, common_1.Body)('adminId')),
+    __param(2, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, Object, String]),
+    __metadata("design:paramtypes", [String, Object, Object]),
     __metadata("design:returntype", Promise)
 ], AdminUserController.prototype, "updateUser", null);
 exports.AdminUserController = AdminUserController = __decorate([

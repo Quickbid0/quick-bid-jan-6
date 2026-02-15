@@ -1,29 +1,36 @@
 import { WalletService } from './wallet.service';
+import { AddFundsDto, PlaceBidDto, RefundBidDto, WalletTransactionQueryDto } from './dto/wallet.dto';
 export declare class WalletController {
     private readonly walletService;
     constructor(walletService: WalletService);
     getBalance(req: any): Promise<{
-        balance: import("./wallet.service").WalletBalance;
+        balance: {
+            userId: string;
+            availableBalance: number;
+            heldBalance: any;
+            totalBalance: any;
+            currency: any;
+            lastUpdated: any;
+            transactions: any;
+        };
         currency: string;
     }>;
-    addFunds(addFundsDto: {
-        amount: number;
-    }, req: any): Promise<{
+    addFunds(addFundsDto: AddFundsDto, req: any): Promise<{
         success: boolean;
         transactionId: string;
         newBalance: import("./wallet.service").WalletBalance;
     }>;
-    getTransactions(req: any): Promise<import("./wallet.service").WalletTransaction[]>;
-    placeBid(bidDto: {
-        amount: number;
-    }, req: any): Promise<{
+    getTransactions(query: WalletTransactionQueryDto, req: any): Promise<{
+        transactions: import("./wallet.service").WalletTransaction[];
+        totalCount: number;
+        hasMore: boolean;
+    }>;
+    placeBid(bidDto: PlaceBidDto, req: any): Promise<{
         success: boolean;
         transactionId: string;
         newBalance: import("./wallet.service").WalletBalance;
     }>;
-    refundBid(refundDto: {
-        amount: number;
-    }, req: any): Promise<{
+    refundBid(refundDto: RefundBidDto, req: any): Promise<{
         success: boolean;
         transactionId: string;
         newBalance: import("./wallet.service").WalletBalance;

@@ -1,11 +1,14 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-const express = require("express");
-const cors = require("cors");
+const express_1 = __importDefault(require("express"));
+const cors_1 = __importDefault(require("cors"));
 const path_1 = require("path");
-const app = express();
+const app = (0, express_1.default)();
 const PORT = process.env.PORT || 4011;
-app.use(cors({
+app.use((0, cors_1.default)({
     origin: [
         'http://localhost:3021',
         'http://localhost:3024',
@@ -16,9 +19,9 @@ app.use(cors({
     ],
     credentials: true,
 }));
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use('/assets', express.static((0, path_1.join)(__dirname, 'assets')));
+app.use(express_1.default.json());
+app.use(express_1.default.urlencoded({ extended: true }));
+app.use('/assets', express_1.default.static((0, path_1.join)(__dirname, 'assets')));
 const mockUsers = [
     {
         id: '1',

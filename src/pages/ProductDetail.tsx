@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
-import { Eye, Shield, Star, Clock, Heart, Gavel, MapPin, Trophy, CheckCircle, ArrowLeft, Share2, ChevronRight, Zap, Users, AlertCircle, Tag } from 'lucide-react';
+import { Eye, Shield, Star, Clock, Heart, Gavel, MapPin, Trophy, CheckCircle, ArrowLeft, Share2, ChevronRight, Zap, Users, AlertCircle, Tag, MessageCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { supabase } from '../config/supabaseClient';
 import { useCountdown } from '../hooks/useCountdown';
@@ -73,6 +73,55 @@ const ProductDetail = () => {
       setLoading(false);
     }
   }, [id]);
+
+  const generateWhatsAppShareUrl = useCallback(() => {
+    if (!product || !session?.user) return '';
+
+    // Get user's referral code (assuming it's stored in user profile)
+    const referralCode = session.user.referralCode || 'QUICKMELA';
+
+    // Generate dynamic message
+    const message = `🚗 *Repo Vehicle Alert!*
+
+🏷️ *${product.title}*
+💰 Base Price: ₹${product.starting_price.toLocaleString()}
+🔍 Condition: ${product.condition}
+📍 Location: ${product.location}
+🛡️ *Escrow Protected* ✅
+
+🏆 Current Bid: ₹${product.current_price.toLocaleString()}
+⏰ Ends: ${new Date(product.end_date).toLocaleDateString()}
+
+🎯 *Bid Now on QuickMela* - India's Trusted Auction Platform!
+🔗 ${window.location.origin}/product/${id}?ref=${referralCode}
+
+#QuickMela #Auctions #RepoVehicles #${product.category.replace(/\s+/g, '')} #Bidding
+
+💡 *Share & Earn:* Use referral code *${referralCode}* to earn rewards on every successful referral!`;
+
+    // Encode the message for WhatsApp URL
+    const encodedMessage = encodeURIComponent(message);
+    return `https://wa.me/?text=${encodedMessage}`;
+  }, [product, session, id]);
+
+  const handleWhatsAppShare = useCallback(() => {
+    const shareUrl = generateWhatsAppShareUrl();
+    if (shareUrl) {
+      window.open(shareUrl, '_blank');
+      toast.success('Sharing on WhatsApp...');
+
+      // Track share event (could be sent to analytics)
+      if (typeof window !== 'undefined' && (window as any).gtag) {
+        (window as any).gtag('event', 'share', {
+          method: 'whatsapp',
+          content_type: 'product',
+          item_id: id,
+        });
+      }
+    } else {
+      toast.error('Unable to generate share link');
+    }
+  }, [generateWhatsAppShareUrl, id]);
 
   useEffect(() => { loadProduct(); }, [loadProduct]);
 
@@ -388,6 +437,18 @@ const ProductDetail = () => {
               >
                 <Gavel className="h-5 w-5 mr-2" />
                 {product.auction_status === 'live' ? 'Place Bid' : 'Join Auction'}
+              </button>
+              
+              {/* WhatsApp Share Button */}
+              <button 
+                onClick={handleWhatsAppShare}
+                className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all shadow-lg font-semibold text-lg flex items-center justify-center gap-2"
+              >
+                <MessageCircle className="h-5 w-5" />
+                Share on WhatsApp
+                <span className="text-sm bg-white/20 px-2 py-1 rounded-full">
+                  Earn Rewards 💰
+                </span>
               </button>
               
               <Link

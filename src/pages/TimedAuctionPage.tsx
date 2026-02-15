@@ -7,7 +7,7 @@ import { Timer, Clock, Gavel, Eye, Shield, Calendar, DollarSign, TrendingUp, Use
 import { auctionService } from '../services/auctionService';
 import AuctionTypeBadge from '../components/auctions/AuctionTypeBadge';
 import SellerTrustSummary from '../components/auctions/SellerTrustSummary';
-import { AuctionCard } from '@/components/AuctionCard';
+import AuctionCard from '../components/AuctionCard';
 
 interface TimedAuction {
   id: string;

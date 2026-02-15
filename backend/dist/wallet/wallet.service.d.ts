@@ -1,3 +1,4 @@
+import { PrismaService } from '../prisma/prisma.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 export interface WalletTransaction {
     id: string;
@@ -5,16 +6,15 @@ export interface WalletTransaction {
     amount: number;
     type: 'credit' | 'debit' | 'hold' | 'release';
     purpose: 'wallet_topup' | 'bid_placement' | 'bid_refund' | 'auction_win' | 'auction_payout' | 'security_deposit' | 'commission' | 'penalty' | 'refund';
-    status: 'pending' | 'completed' | 'failed' | 'cancelled';
+    status: 'pending' | 'completed' | 'failed';
     referenceId?: string;
     referenceType?: string;
-    description: string;
+    description?: string;
     metadata?: Record<string, any>;
     createdAt: Date;
     updatedAt: Date;
 }
 export interface WalletBalance {
-    userId: string;
     availableBalance: number;
     heldBalance: number;
     totalBalance: number;
@@ -30,10 +30,19 @@ export interface RefundRequest {
     originalTransactionId?: string;
 }
 export declare class WalletService {
+    private prisma;
     private eventEmitter;
     private readonly logger;
-    constructor(eventEmitter: EventEmitter2);
-    getBalance(userId: string): Promise<WalletBalance>;
+    constructor(prisma: PrismaService, eventEmitter: EventEmitter2);
+    getBalance(userId: string): Promise<{
+        userId: string;
+        availableBalance: number;
+        heldBalance: any;
+        totalBalance: any;
+        currency: any;
+        lastUpdated: any;
+        transactions: any;
+    }>;
     addFunds(userId: string, amount: number, purpose?: WalletTransaction['purpose'], referenceId?: string, referenceType?: string, description?: string, metadata?: Record<string, any>): Promise<{
         success: boolean;
         transactionId: string;
@@ -93,8 +102,6 @@ export declare class WalletService {
         averageTransaction: number;
         lastTransactionDate?: Date;
     }>;
-    private updateWalletBalance;
     private generateTransactionId;
     private getTransactionDescription;
-    private recordPlatformFee;
 }

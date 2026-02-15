@@ -7,18 +7,7 @@ export declare class ProductsController {
         message: string;
         products: any[];
     }>;
-    findAll(): Promise<{
-        id: string;
-        createdAt: Date;
-        description: string | null;
-        title: string;
-        category: string;
-        price: number;
-        images: string[];
-        sellerId: string;
-        status: string;
-        updatedAt: Date;
-    }[]>;
+    findAll(): any;
     getMyProducts(req: any): Promise<{
         products: any[];
         total: number;

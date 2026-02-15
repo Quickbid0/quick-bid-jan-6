@@ -27,6 +27,7 @@ interface ShareResult {
 export declare class SocialMediaService {
     private platforms;
     private mockShares;
+    private readonly logger;
     shareAuction(options: ShareOptions): Promise<ShareResult>;
     getShareHistory(userId?: string): Promise<any[]>;
     getShareAnalytics(shareId: string): Promise<any>;

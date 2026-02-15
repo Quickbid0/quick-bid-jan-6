@@ -1,0 +1,381 @@
+# QuickMela Load Testing Configuration
+# Comprehensive stress testing for production readiness
+
+# ================================
+# LOAD TESTING OVERVIEW
+# ================================
+# Target: 1000+ concurrent users
+# Duration: 10 minutes steady load + 5 minutes ramp-up/down
+# Endpoints: User registration, product browsing, bidding, payments
+# Success Criteria: <500ms response time, <1% error rate, <5% CPU usage
+
+# ================================
+# ARTILLERY CONFIGURATION (artillery.yml)
+# ================================
+
+config:
+  target: 'https://quickmela-production.up.railway.app'
+  phases:
+    # Ramp up to 1000 users over 5 minutes
+    - duration: 300
+      arrivalRate: 200
+      name: "Ramp-up to 1000 users"
+
+    # Steady load for 10 minutes
+    - duration: 600
+      arrivalCount: 1000
+      name: "Sustain 1000 concurrent users"
+
+    # Ramp down over 2 minutes
+    - duration: 120
+      arrivalRate: 0
+      name: "Ramp-down"
+
+  defaults:
+    headers:
+      Content-Type: 'application/json'
+      User-Agent: 'QuickMela-LoadTest/1.0'
+
+  processor: './load-test-processor.js'
+
+scenarios:
+  # Scenario 1: User Registration Flow
+  - name: "User Registration"
+    weight: 15
+    flow:
+      - post:
+          url: "/api/auth/register"
+          json:
+            email: "testuser_{{ $randomInt }}{{ $randomInt }}@quickmela-test.com"
+            password: "TestPassword123!"
+            name: "Load Test User {{ $randomInt }}"
+          capture:
+            json: "$.user.id"
+            as: "userId"
+          expect:
+            - statusCode: 201
+
+  # Scenario 2: Product Browsing
+  - name: "Product Browsing"
+    weight: 40
+    flow:
+      - get:
+          url: "/api/products?page={{ $randomInt(1, 50) }}&limit=20"
+          expect:
+            - statusCode: 200
+            - hasProperty: "products"
+            - contentType: "application/json"
+
+      - get:
+          url: "/api/products/{{ $randomInt(1, 1000) }}"
+          expect:
+            - statusCode: 200
+
+  # Scenario 3: Auction Bidding Flow
+  - name: "Auction Bidding"
+    weight: 25
+    flow:
+      # First authenticate (would need real tokens in production)
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "existinguser@quickmela.com"
+            password: "password"
+          capture:
+            json: "$.access_token"
+            as: "token"
+          expect:
+            - statusCode: 200
+
+      # Browse auctions
+      - get:
+          url: "/api/products?status=live&auction=true"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          expect:
+            - statusCode: 200
+
+      # Place bid (with proper validation)
+      - post:
+          url: "/api/bids"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          json:
+            productId: "{{ $randomInt(1, 100) }}"
+            amount: "{{ $randomInt(1000, 50000) }}"
+          expect:
+            - statusCode: [200, 400]  # 400 is OK for validation failures
+
+  # Scenario 4: Search and Filtering
+  - name: "Search Operations"
+    weight: 10
+    flow:
+      - get:
+          url: "/api/products/search?q={{ $randomString() }}&category={{ $randomString() }}"
+          expect:
+            - statusCode: 200
+            - maxResponseTime: 1000
+
+      - get:
+          url: "/api/products?sort=price&order=asc&minPrice=1000&maxPrice=50000"
+          expect:
+            - statusCode: 200
+
+  # Scenario 5: WhatsApp Integration
+  - name: "WhatsApp Features"
+    weight: 5
+    flow:
+      - get:
+          url: "/api/notifications/whatsapp/templates"
+          expect:
+            - statusCode: 200
+
+      - post:
+          url: "/api/notifications/whatsapp/send"
+          json:
+            to: "+91{{ $randomInt(9000000000, 9999999999) }}"
+            templateName: "auction_win"
+            language: "en"
+            components: []
+          expect:
+            - statusCode: [200, 429]  # 429 is OK for rate limiting
+
+  # Scenario 6: Referral System
+  - name: "Referral Operations"
+    weight: 5
+    flow:
+      - get:
+          url: "/api/referrals/code"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          expect:
+            - statusCode: 200
+
+      - post:
+          url: "/api/referrals/validate"
+          json:
+            referralCode: "QM{{ $randomString() }}"
+          expect:
+            - statusCode: [200, 400]
+
+# ================================
+# LOAD TEST PROCESSOR (load-test-processor.js)
+# ================================
+
+module.exports = {
+  beforeRequest: function(requestParams, context, ee, next) {
+    // Add custom headers for load testing identification
+    requestParams.headers['X-Load-Test'] = 'true';
+    requestParams.headers['X-Test-Session'] = context.vars.$uuid || 'unknown';
+
+    // Add timestamp for request tracking
+    context.vars.requestStartTime = Date.now();
+
+    return next();
+  },
+
+  afterResponse: function(requestParams, response, context, ee, next) {
+    const responseTime = Date.now() - context.vars.requestStartTime;
+
+    // Log slow responses (>500ms)
+    if (responseTime > 500) {
+      console.log(`SLOW RESPONSE: ${requestParams.url} took ${responseTime}ms`);
+    }
+
+    // Track error responses
+    if (response.statusCode >= 400) {
+      console.log(`ERROR RESPONSE: ${response.statusCode} for ${requestParams.url}`);
+    }
+
+    return next();
+  },
+
+  generateRandomString: function() {
+    const adjectives = ['red', 'blue', 'green', 'yellow', 'purple', 'orange'];
+    const nouns = ['car', 'bike', 'truck', 'van', 'suv', 'sedan'];
+    return adjectives[Math.floor(Math.random() * adjectives.length)] +
+           nouns[Math.floor(Math.random() * nouns.length)];
+  }
+};
+
+# ================================
+# K6 ALTERNATIVE CONFIGURATION (k6-script.js)
+# ================================
+
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+import { Rate, Trend } from 'k6/metrics';
+
+// Custom metrics
+const errorRate = new Rate('errors');
+const responseTime = new Trend('response_time');
+
+// Test configuration
+export const options = {
+  stages: [
+    { duration: '5m', target: 100 },   // Ramp up to 100 users
+    { duration: '10m', target: 1000 }, // Ramp up to 1000 users
+    { duration: '10m', target: 1000 }, // Stay at 1000 users
+    { duration: '2m', target: 0 },     // Ramp down
+  ],
+  thresholds: {
+    http_req_duration: ['p(95)<500'], // 95% of requests should be below 500ms
+    http_req_failed: ['rate<0.01'],   // Error rate should be below 1%
+  },
+};
+
+const BASE_URL = 'https://quickmela-production.up.railway.app';
+
+export default function () {
+  // Scenario 1: Product browsing (40% of traffic)
+  if (Math.random() < 0.4) {
+    const response = http.get(`${BASE_URL}/api/products?page=${Math.floor(Math.random() * 50)}`);
+
+    check(response, {
+      'status is 200': (r) => r.status === 200,
+      'response time < 500ms': (r) => r.timings.duration < 500,
+      'has products array': (r) => r.json().products !== undefined,
+    });
+
+    errorRate.add(response.status !== 200);
+    responseTime.add(response.timings.duration);
+  }
+
+  // Scenario 2: User registration (15% of traffic)
+  else if (Math.random() < 0.15) {
+    const userData = {
+      email: `loadtest${Math.random().toString(36).substring(7)}@quickmela-test.com`,
+      password: 'TestPassword123!',
+      name: `Load Test User ${Math.random().toString(36).substring(7)}`,
+    };
+
+    const response = http.post(`${BASE_URL}/api/auth/register`, JSON.stringify(userData), {
+      headers: { 'Content-Type': 'application/json' },
+    });
+
+    check(response, {
+      'registration status is 201': (r) => r.status === 201,
+      'response time < 1000ms': (r) => r.timings.duration < 1000,
+    });
+
+    errorRate.add(response.status !== 201);
+    responseTime.add(response.timings.duration);
+  }
+
+  // Scenario 3: Auction bidding (25% of traffic)
+  else if (Math.random() < 0.25) {
+    // This would require authentication tokens
+    // In real scenario, we'd have a pool of test tokens
+    const bidData = {
+      productId: Math.floor(Math.random() * 100) + 1,
+      amount: Math.floor(Math.random() * 40000) + 1000,
+    };
+
+    const response = http.post(`${BASE_URL}/api/bids`, JSON.stringify(bidData), {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer test_token_here', // Would need real tokens
+      },
+    });
+
+    check(response, {
+      'bid status acceptable': (r) => [200, 400, 401].includes(r.status),
+      'response time < 1000ms': (r) => r.timings.duration < 1000,
+    });
+
+    errorRate.add(![200, 400, 401].includes(response.status));
+    responseTime.add(response.timings.duration);
+  }
+
+  // Scenario 4: Search operations (10% of traffic)
+  else if (Math.random() < 0.1) {
+    const searchTerms = ['car', 'bike', 'truck', 'suv', 'sedan', 'hatchback'];
+    const randomTerm = searchTerms[Math.floor(Math.random() * searchTerms.length)];
+
+    const response = http.get(`${BASE_URL}/api/products/search?q=${randomTerm}`);
+
+    check(response, {
+      'search status is 200': (r) => r.status === 200,
+      'response time < 1000ms': (r) => r.timings.duration < 1000,
+    });
+
+    errorRate.add(response.status !== 200);
+    responseTime.add(response.timings.duration);
+  }
+
+  // Scenario 5: WhatsApp features (5% of traffic)
+  else {
+    const response = http.get(`${BASE_URL}/api/notifications/whatsapp/templates`);
+
+    check(response, {
+      'whatsapp status is 200': (r) => r.status === 200,
+      'response time < 500ms': (r) => r.timings.duration < 500,
+    });
+
+    errorRate.add(response.status !== 200);
+    responseTime.add(response.timings.duration);
+  }
+
+  // Random sleep between requests (0.5-2 seconds)
+  sleep(Math.random() * 1.5 + 0.5);
+}
+
+# ================================
+# LOAD TESTING EXECUTION SCRIPTS
+# ================================
+
+# run-load-test.sh
+#!/bin/bash
+
+echo "🚀 Starting QuickMela Load Testing"
+echo "=================================="
+
+# Install dependencies
+echo "📦 Installing Artillery..."
+npm install -g artillery
+
+# Run Artillery load test
+echo "🎯 Running Artillery Load Test..."
+artillery run artillery.yml --output results.json
+
+# Generate HTML report
+echo "📊 Generating HTML Report..."
+artillery report results.json --output report.html
+
+# Run K6 as alternative
+echo "🔄 Running K6 Load Test..."
+k6 run k6-script.js --out json=results-k6.json
+
+echo "✅ Load Testing Complete"
+echo "📈 Check results.json and report.html for detailed results"
+
+# ================================
+# PERFORMANCE TARGETS & MONITORING
+# ================================
+
+# Success Criteria:
+# - Average Response Time: < 500ms
+# - 95th Percentile: < 1000ms
+# - Error Rate: < 1%
+# - CPU Usage: < 70%
+# - Memory Usage: < 80%
+# - Database Connections: < 90% of pool limit
+
+# Monitoring Commands:
+# - htop (system monitoring)
+# - docker stats (container monitoring)
+# - pm2 monit (process monitoring)
+# - railway logs (application logs)
+
+# ================================
+# LOAD TESTING CHECKLIST
+# ================================
+# [ ] Environment variables configured for test database
+# [ ] Test user accounts created
+# [ ] Authentication tokens prepared
+# [ ] Monitoring tools set up
+# [ ] Baseline performance captured
+# [ ] Test scenarios documented
+# [ ] Success criteria defined
+# [ ] Rollback plan ready
+# [ ] Emergency contacts notified

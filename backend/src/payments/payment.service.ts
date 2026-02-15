@@ -1,988 +1,552 @@
 import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { createHmac, timingSafeEqual } from 'crypto';
-const Razorpay = require('razorpay');
+import { PrismaService } from '../prisma/prisma.service';
+import { WalletService } from '../wallet/wallet.service';
+import * as crypto from 'crypto';
 
-interface PaymentProvider {
-  name: string;
-  code: string;
-  supportedMethods: string[];
-  baseUrl: string;
-  apiKey: string;
-  isActive: boolean;
-}
-
-interface PaymentMethod {
-  code: string;
-  name: string;
-  type: string;
-  icon: string;
-  description: string;
-  fees: number;
-  processingTime: string;
-  limits: {
-    min: number;
-    max: number;
-  };
-  providers: string[];
-  isActive?: boolean;
-}
-
-interface CreateOrderDto {
-  amount: number;
-  currency?: string;
-  receipt?: string;
-  notes?: Record<string, any>;
-}
-
-interface VerifyPaymentDto {
-  paymentId: string;
-  orderId: string;
-  signature: string;
-}
-
-interface RefundDto {
-  paymentId: string;
-  amount?: number;
-  notes?: Record<string, any>;
-}
-
-interface AuctionPaymentDto {
-  auctionId: string;
-  amount: number;
-  paymentId: string;
-  orderId: string;
-  userId: string;
-  sellerId: string;
-}
-
-enum EscrowState {
-  PENDING = 'pending',
-  FUNDED = 'funded',
-  DELIVERED = 'delivered',
-  RELEASED = 'released',
-  CANCELLED = 'cancelled',
-  REFUNDED = 'refunded',
-}
-
+// QuickMela Payment Service - Enterprise-grade payment processing
 @Injectable()
 export class PaymentService {
   private readonly logger = new Logger(PaymentService.name);
-  private razorpay: any;
-  private supabase: any;
+  private readonly razorpayKeyId: string;
+  private readonly razorpayKeySecret: string;
+  private readonly razorpayWebhookSecret: string;
 
-  private providers: PaymentProvider[];
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService,
+    private walletService: WalletService
+  ) {
+    this.razorpayKeyId = this.configService.get<string>('RAZORPAY_KEY_ID') || '';
+    this.razorpayKeySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET') || '';
+    this.razorpayWebhookSecret = this.configService.get<string>('RAZORPAY_WEBHOOK_SECRET') || '';
 
-  private paymentMethods: PaymentMethod[] = [
-    {
-      code: 'gpay',
-      name: 'Google Pay',
-      type: 'upi',
-      icon: '💰',
-      description: 'Pay with Google Pay UPI',
-      fees: 0,
-      processingTime: 'Instant',
-      limits: { min: 1, max: 100000 },
-      providers: ['razorpay', 'paytm']
-    },
-    {
-      code: 'paytm',
-      name: 'Paytm',
-      type: 'wallet',
-      icon: '🟡',
-      description: 'Pay with Paytm Wallet',
-      fees: 0,
-      processingTime: 'Instant',
-      limits: { min: 1, max: 50000 },
-      providers: ['paytm']
-    },
-    {
-      code: 'phonepe',
-      name: 'PhonePe',
-      type: 'upi',
-      icon: '🟣',
-      description: 'Pay with PhonePe UPI',
-      fees: 0,
-      processingTime: 'Instant',
-      limits: { min: 1, max: 100000 },
-      providers: ['phonepe']
-    },
-    {
-      code: 'amazonpay',
-      name: 'Amazon Pay',
-      type: 'wallet',
-      icon: '📦',
-      description: 'Pay with Amazon Pay',
-      fees: 0,
-      processingTime: 'Instant',
-      limits: { min: 1, max: 50000 },
-      providers: ['razorpay']
-    },
-    {
-      code: 'card',
-      name: 'Credit/Debit Card',
-      type: 'card',
-      icon: '💳',
-      description: 'Pay with Visa, Mastercard, RuPay',
-      fees: 1.5,
-      processingTime: 'Instant',
-      limits: { min: 1, max: 200000 },
-      providers: ['razorpay', 'paytm']
-    },
-    {
-      code: 'netbanking',
-      name: 'Net Banking',
-      type: 'netbanking',
-      icon: '🏦',
-      description: 'Pay using online banking',
-      fees: 0,
-      processingTime: '2-3 minutes',
-      limits: { min: 1, max: 500000 },
-      providers: ['razorpay']
-    },
-    {
-      code: 'upi',
-      name: 'UPI',
-      type: 'upi',
-      icon: '📱',
-      description: 'Pay using any UPI app',
-      fees: 0,
-      processingTime: 'Instant',
-      limits: { min: 1, max: 100000 },
-      providers: ['razorpay', 'paytm', 'phonepe']
-    }
-  ];
-
-  constructor(private configService: ConfigService) {
-    this.initializeRazorpay();
-    this.providers = [
-      {
-        name: 'Razorpay',
-        code: 'razorpay',
-        supportedMethods: ['card', 'upi', 'netbanking', 'wallet'],
-        baseUrl: 'https://api.razorpay.com/v1',
-        apiKey: this.configService.get<string>('RAZORPAY_KEY_ID') || 'demo_key',
-        isActive: true
-      },
-      {
-        name: 'Paytm',
-        code: 'paytm',
-        supportedMethods: ['upi', 'wallet', 'card'],
-        baseUrl: 'https://securegw.paytm.in',
-        apiKey: this.configService.get<string>('PAYTM_MERCHANT_KEY') || 'demo_key',
-        isActive: true
-      },
-      {
-        name: 'PhonePe',
-        code: 'phonepe',
-        supportedMethods: ['upi', 'wallet'],
-        baseUrl: 'https://api.phonepe.com/apis/hermes',
-        apiKey: this.configService.get<string>('PHONEPE_MERCHANT_ID') || 'demo_key',
-        isActive: true
-      }
-    ];
-  }
-
-  private computePaymentAmount(auctionId: string): number {
-    // Server-side computation - never trust client amount
-    // For now, mock - in real app, fetch from DB
-    return 10000; // ₹100
-  }
-
-  private initializeRazorpay() {
-    const keyId = this.configService.get<string>('RAZORPAY_KEY_ID');
-    const keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET');
-
-    // For development/testing, allow dummy credentials
-    if (!keyId || !keySecret || keyId === 'dummy_key_id' || keySecret === 'dummy_key_secret') {
-      this.logger.warn('Using mock Razorpay configuration for development/testing');
-      this.razorpay = {
-        orders: {
-          create: async (data: any) => ({
-            id: `order_${Date.now()}`,
-            entity: 'order',
-            amount: data.amount,
-            amount_paid: 0,
-            amount_due: data.amount,
-            currency: data.currency || 'INR',
-            receipt: data.receipt,
-            offer_id: null,
-            status: 'created',
-            attempts: 0,
-            notes: data.notes || [],
-            created_at: Date.now()
-          })
-        },
-        payments: {
-          fetch: async (paymentId: string) => ({
-            id: paymentId,
-            entity: 'payment',
-            amount: 10000,
-            currency: 'INR',
-            status: 'captured',
-            order_id: null,
-            invoice_id: null,
-            international: false,
-            method: 'card',
-            amount_refunded: 0,
-            refund_status: null,
-            captured: true,
-            description: 'Test payment',
-            card_id: null,
-            bank: null,
-            wallet: null,
-            vpa: null,
-            email: 'test@example.com',
-            contact: '+919876543210',
-            notes: [],
-            fee: 0,
-            tax: 0,
-            error_code: null,
-            error_description: null,
-            created_at: Date.now()
-          }),
-          refund: async (paymentId: string, refundData: any) => ({
-            id: `refund_${Date.now()}`,
-            entity: 'refund',
-            amount: refundData.amount,
-            currency: 'INR',
-            payment_id: paymentId,
-            status: 'processed',
-            speed_processed: 'normal',
-            speed_requested: 'normal',
-            receipt: null,
-            notes: refundData.notes || [],
-            created_at: Date.now()
-          })
-        }
-      };
-    } else {
-      this.razorpay = new Razorpay({
-        key_id: keyId,
-        key_secret: keySecret
-      });
+    if (!this.razorpayKeyId || !this.razorpayKeySecret) {
+      this.logger.warn('Razorpay credentials not configured - payment features will not work');
     }
   }
 
-  async createOrder(createOrderDto: any): Promise<any> {
+  async createWalletTopupOrder(userId: string, amount: number, currency: string = 'INR') {
     try {
-      const { amount, currency = 'INR', receipt, notes } = createOrderDto;
-
-      // Compute amount server-side - never trust client amount
-      const computedAmount = this.computePaymentAmount(notes?.auctionId || 'default');
-      if (computedAmount < 1) {
-        throw new BadRequestException('Invalid payment amount');
+      if (amount <= 0) {
+        throw new BadRequestException('Amount must be greater than 0');
       }
 
-      // Convert amount to paisa (multiply by 100)
-      const amountInPaisa = Math.round(computedAmount * 100);
+      // Verify user exists
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          phoneNumber: true
+        }
+      });
 
-      const orderOptions = {
-        amount: amountInPaisa,
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      const orderId = `order_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
+
+      const order = await this.prisma.transaction.create({
+        data: {
+          userId,
+          walletId: userId,
+          type: 'CREDIT',
+          amount,
+          description: `Wallet top-up order ${orderId}`,
+          referenceId: orderId,
+          referenceType: 'razorpay_order',
+          status: 'PENDING',
+          paymentMethod: 'RAZORPAY'
+        }
+      });
+
+      const razorpayOrder = {
+        id: orderId,
+        amount: amount * 100,
         currency,
-        receipt: receipt || `receipt_${Date.now()}`,
-        notes: notes || {},
-        payment_capture: 1, // Auto capture payment
+        receipt: orderId,
+        status: 'created'
       };
 
-      this.logger.log(`Creating Razorpay order: ${JSON.stringify(orderOptions)}`);
+      await this.prisma.auditLog.create({
+        data: {
+          userId,
+          action: 'CREATE',
+          resource: 'payment_order',
+          resourceId: order.id,
+          metadata: {
+            razorpayOrderId: orderId,
+            amount,
+            currency
+          }
+        }
+      });
 
-      const order = await this.razorpay.orders.create(orderOptions);
-
-      this.logger.log(`Razorpay order created: ${order.id}`);
+      this.logger.log(`Wallet top-up order created: ₹${amount} for user ${user.email}`);
 
       return {
-        orderId: order.id,
-        amount: order.amount,
-        currency: order.currency,
-        status: order.status,
-        key: this.configService.get<string>('RAZORPAY_KEY_ID'),
-        receipt: order.receipt,
-        notes: order.notes,
-        createdAt: order.created_at,
+        orderId: razorpayOrder.id,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        key: this.razorpayKeyId,
+        user: {
+          name: user.name,
+          email: user.email,
+          contact: user.phoneNumber
+        }
       };
     } catch (error) {
-      this.logger.error(`Failed to create Razorpay order: ${error.message}`, error.stack);
+      this.logger.error(`Create wallet top-up order error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Failed to create payment order');
     }
   }
 
-  async verifyPayment(verifyPaymentDto: any): Promise<boolean> {
+  async verifyPayment(paymentData: {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+    userId: string;
+  }) {
     try {
-      const { paymentId, orderId, signature } = verifyPaymentDto;
+      const { razorpay_order_id, razorpay_payment_id, razorpay_signature, userId } = paymentData;
 
-      const secret = this.configService.get<string>('RAZORPAY_KEY_SECRET');
-      if (!secret) {
-        throw new Error('Razorpay secret not configured');
-      }
-
-      // Create expected signature
-      const expectedSignature = createHmac('sha256', secret)
-        .update(`${orderId}|${paymentId}`)
+      const sign = crypto
+        .createHmac('sha256', this.razorpayKeySecret)
+        .update(`${razorpay_order_id}|${razorpay_payment_id}`)
         .digest('hex');
 
-      const isValid = timingSafeEqual(
-        Buffer.from(expectedSignature, 'hex'),
-        Buffer.from(signature, 'hex')
-      );
-
-      if (isValid) {
-        this.logger.log(`Payment verification successful for order: ${orderId}, payment: ${paymentId}`);
-      } else {
-        this.logger.warn(`Payment verification failed for order: ${orderId}, payment: ${paymentId}`);
+      if (sign !== razorpay_signature) {
+        throw new BadRequestException('Payment signature verification failed');
       }
 
-      return isValid;
-    } catch (error) {
-      this.logger.error(`Payment verification error: ${error.message}`, error.stack);
-      return false;
-    }
-  }
-
-  async processAuctionPayment(auctionPaymentDto: AuctionPaymentDto): Promise<any> {
-    try {
-      const { auctionId, amount, paymentId, orderId, userId, sellerId } = auctionPaymentDto;
-
-      // Verify payment first
-      const isVerified = await this.verifyPayment({
-        paymentId,
-        orderId,
-        signature: '', // Signature would be provided by frontend
+      const transaction = await this.prisma.transaction.findFirst({
+        where: {
+          userId,
+          referenceId: razorpay_order_id,
+          referenceType: 'razorpay_order',
+          status: 'PENDING'
+        }
       });
 
-      if (!isVerified) {
-        throw new BadRequestException('Payment verification failed');
+      if (!transaction) {
+        throw new BadRequestException('Payment order not found');
       }
 
-      // Fetch payment details from Razorpay to confirm
-      const payment = await this.razorpay.payments.fetch(paymentId);
+      await this.prisma.transaction.update({
+        where: { id: transaction.id },
+        data: {
+          status: 'COMPLETED',
+          razorpayOrderId: razorpay_order_id,
+          razorpayPaymentId: razorpay_payment_id
+        }
+      });
 
-      if (payment.status !== 'captured') {
-        throw new BadRequestException('Payment not captured');
+      await this.walletService.addMoney(userId, transaction.amount, 'RAZORPAY', razorpay_order_id);
+
+      await this.prisma.auditLog.create({
+        data: {
+          userId,
+          action: 'UPDATE',
+          resource: 'payment',
+          resourceId: transaction.id,
+          oldValues: { status: 'PENDING' },
+          newValues: {
+            status: 'COMPLETED',
+            razorpayOrderId: razorpay_order_id,
+            razorpayPaymentId: razorpay_payment_id
+          }
+        }
+      });
+
+      this.logger.log(`Payment verified and processed: ₹${transaction.amount} credited to user ${userId}`);
+
+      return {
+        success: true,
+        transactionId: transaction.id,
+        amount: transaction.amount,
+        message: `₹${transaction.amount} successfully added to wallet`
+      };
+    } catch (error) {
+      this.logger.error(`Verify payment error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Payment verification failed');
+    }
+  }
+
+  async processSubscriptionPayment(userId: string, plan: 'SILVER' | 'GOLD' | 'ENTERPRISE') {
+    try {
+      const planPricing = {
+        'SILVER': 499,
+        'GOLD': 1999,
+        'ENTERPRISE': 9999
+      };
+
+      const amount = planPricing[plan];
+      if (!amount) {
+        throw new BadRequestException('Invalid subscription plan');
       }
 
-      // Here you would:
-      // 1. Update auction winner status
-      // 2. Transfer funds to seller (minus platform fees)
-      // 3. Update wallet balances
-      // 4. Send notifications
-      // 5. Create transaction records
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { userId }
+      });
 
-      const platformFee = amount * 0.05; // 5% platform fee
-      const sellerAmount = amount - platformFee;
+      if (!wallet) {
+        throw new BadRequestException('Wallet not found');
+      }
 
-      this.logger.log(`Auction payment processed: Auction ${auctionId}, Amount ₹${amount}, Seller gets ₹${sellerAmount}`);
+      const availableBalance = wallet.balance - wallet.blockedBalance;
+      if (availableBalance < amount) {
+        throw new BadRequestException('Insufficient wallet balance for subscription');
+      }
 
-      // Mock database operations (replace with actual DB calls)
-      const transaction = {
-        id: `txn_${Date.now()}`,
-        auctionId,
-        buyerId: userId,
-        sellerId,
+      await this.prisma.wallet.update({
+        where: { id: wallet.id },
+        data: {
+          balance: wallet.balance - amount,
+          totalDebits: wallet.totalDebits + amount
+        }
+      });
+
+      const startDate = new Date();
+      const endDate = new Date(startDate.getTime() + 365 * 24 * 60 * 60 * 1000);
+
+      const bidLimits = {
+        'SILVER': 10,
+        'GOLD': 50,
+        'ENTERPRISE': 1000
+      };
+
+      const subscription = await this.prisma.subscription.upsert({
+        where: { userId },
+        update: {
+          plan,
+          status: 'ACTIVE',
+          bidLimit: bidLimits[plan],
+          price: amount,
+          startDate,
+          endDate,
+          bidsUsed: 0,
+          updatedAt: new Date()
+        },
+        create: {
+          userId,
+          plan,
+          status: 'ACTIVE',
+          bidLimit: bidLimits[plan],
+          price: amount,
+          startDate,
+          endDate,
+          bidsUsed: 0
+        }
+      });
+
+      await this.prisma.transaction.create({
+        data: {
+          userId,
+          walletId: wallet.id,
+          type: 'DEBIT',
+          amount,
+          balanceBefore: wallet.balance,
+          balanceAfter: wallet.balance - amount,
+          description: `${plan} subscription purchase`,
+          referenceId: subscription.id,
+          referenceType: 'subscription',
+          status: 'COMPLETED'
+        }
+      });
+
+      await this.prisma.auditLog.create({
+        data: {
+          userId,
+          action: 'CREATE',
+          resource: 'subscription',
+          resourceId: subscription.id,
+          metadata: {
+            plan,
+            amount,
+            bidLimit: bidLimits[plan]
+          }
+        }
+      });
+
+      this.logger.log(`Subscription purchased: ${plan} for user ${userId}, amount: ₹${amount}`);
+
+      return {
+        success: true,
+        subscriptionId: subscription.id,
+        plan,
         amount,
-        platformFee,
-        sellerAmount,
-        paymentId,
-        orderId,
-        status: 'completed',
-        createdAt: new Date(),
+        bidLimit: bidLimits[plan],
+        validUntil: endDate,
+        message: `${plan} subscription activated successfully`
       };
+    } catch (error) {
+      this.logger.error(`Process subscription payment error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Subscription payment failed');
+    }
+  }
+
+  async processAuctionSettlement(auctionId: string) {
+    try {
+      const auction = await this.prisma.auction.findUnique({
+        where: { id: auctionId },
+        include: {
+          bids: {
+            where: { status: 'ACTIVE' },
+            orderBy: { amount: 'desc' },
+            include: {
+              bidder: {
+                include: {
+                  wallet: true
+                }
+              }
+            }
+          },
+          winner: {
+            select: {
+              id: true,
+              name: true,
+              email: true
+            }
+          }
+        }
+      });
+
+      if (!auction) {
+        throw new BadRequestException('Auction not found');
+      }
+
+      if (auction.status !== 'COMPLETED') {
+        throw new BadRequestException('Auction is not completed');
+      }
+
+      if (!auction.winnerId || !auction.winningBidId) {
+        throw new BadRequestException('Auction has no winner');
+      }
+
+      const winningBid = auction.bids.find(bid => bid.id === auction.winningBidId);
+      if (!winningBid) {
+        throw new BadRequestException('Winning bid not found');
+      }
+
+      const finalPrice = winningBid.amount;
+      const commission = 0;
+      const sellerPayout = finalPrice - commission;
+
+      const winnerPaymentResult = await this.walletService.confirmBidPayment(
+        auction.winnerId,
+        auctionId,
+        auction.winningBidId,
+        finalPrice
+      );
+
+      const sellerPayoutResult = await this.walletService.paySeller(
+        auction.product.seller.id,
+        auctionId,
+        sellerPayout
+      );
+
+      await this.prisma.auction.update({
+        where: { id: auctionId },
+        data: {
+          // Additional settlement metadata could be stored here
+        }
+      });
+
+      await this.prisma.auditLog.create({
+        data: {
+          userId: auction.winnerId,
+          action: 'CREATE',
+          resource: 'auction_settlement',
+          resourceId: auctionId,
+          metadata: {
+            finalPrice,
+            commission,
+            sellerPayout,
+            sellerId: auction.product.seller.id
+          }
+        }
+      });
+
+      this.logger.log(`Auction settlement completed: ${auctionId}, winner: ${auction.winnerId}, seller: ${auction.product.seller.id}, amount: ₹${finalPrice}`);
 
       return {
         success: true,
-        transaction,
-        message: 'Auction payment processed successfully',
+        auctionId,
+        winnerId: auction.winnerId,
+        sellerId: auction.product.seller.id,
+        finalPrice,
+        commission,
+        sellerPayout,
+        winnerPayment: winnerPaymentResult,
+        sellerPayment: sellerPayoutResult
       };
     } catch (error) {
-      this.logger.error(`Auction payment processing failed: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to process auction payment');
+      this.logger.error(`Process auction settlement error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('Auction settlement failed');
     }
   }
 
-  async processRefund(refundDto: any): Promise<any> {
+  async processRefund(transactionId: string, refundAmount?: number, reason: string = 'Transaction cancelled') {
     try {
-      const { paymentId, amount, notes } = refundDto;
+      const transaction = await this.prisma.transaction.findUnique({
+        where: { id: transactionId },
+        include: {
+          user: true,
+          wallet: true
+        }
+      });
 
-      // First, fetch the payment to get details
-      const payment = await this.razorpay.payments.fetch(paymentId);
-
-      if (!payment) {
-        throw new BadRequestException('Payment not found');
+      if (!transaction) {
+        throw new BadRequestException('Transaction not found');
       }
 
-      // Calculate refund amount (full payment if not specified)
-      const refundAmount = amount ? Math.round(amount * 100) : payment.amount;
-
-      if (refundAmount > payment.amount) {
-        throw new BadRequestException('Refund amount cannot exceed payment amount');
+      if (!transaction.isRefundable || transaction.refundedAt) {
+        throw new BadRequestException('Transaction is not refundable or already refunded');
       }
 
-      const refundOptions = {
-        payment_id: paymentId,
-        amount: refundAmount,
-        notes: notes || {},
-      };
+      const refundAmt = refundAmount || transaction.amount;
 
-      this.logger.log(`Processing refund: ${JSON.stringify(refundOptions)}`);
+      if (refundAmt > transaction.amount) {
+        throw new BadRequestException('Refund amount cannot exceed transaction amount');
+      }
 
-      const refund = await this.razorpay.payments.refund(paymentId, refundOptions);
+      const refundResult = await this.walletService.addMoney(
+        transaction.userId,
+        refundAmt,
+        'REFUND',
+        transactionId
+      );
 
-      this.logger.log(`Refund processed successfully: ${refund.id}`);
+      await this.prisma.transaction.update({
+        where: { id: transactionId },
+        data: {
+          refundedAt: new Date(),
+          refundAmount: refundAmt,
+          description: `${transaction.description} - Refunded: ${reason}`
+        }
+      });
+
+      await this.prisma.auditLog.create({
+        data: {
+          userId: transaction.userId,
+          action: 'CREATE',
+          resource: 'refund',
+          resourceId: transactionId,
+          metadata: {
+            refundAmount: refundAmt,
+            reason,
+            originalAmount: transaction.amount
+          }
+        }
+      });
+
+      this.logger.log(`Refund processed: ₹${refundAmt} for transaction ${transactionId}, reason: ${reason}`);
 
       return {
         success: true,
-        refundId: refund.id,
-        amount: refund.amount / 100, // Convert back to rupees
-        status: refund.status,
-        paymentId: refund.payment_id,
-        createdAt: refund.created_at,
+        transactionId,
+        refundAmount: refundAmt,
+        reason,
+        newBalance: refundResult.newBalance,
+        message: `₹${refundAmt} refunded successfully`
       };
     } catch (error) {
-      this.logger.error(`Refund processing failed: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to process refund');
-    }
-  }
-
-  async getPayment(paymentId: string): Promise<any> {
-    try {
-      const payment = await this.razorpay.payments.fetch(paymentId);
-
-      return {
-        id: payment.id,
-        amount: Number(payment.amount) / 100,
-        currency: payment.currency,
-        status: payment.status,
-        method: payment.method,
-        orderId: payment.order_id,
-        captured: payment.captured,
-        description: payment.description,
-        email: payment.email,
-        contact: payment.contact,
-        fee: payment.fee ? Number(payment.fee) / 100 : 0,
-        tax: payment.tax ? Number(payment.tax) / 100 : 0,
-        createdAt: payment.created_at,
-      };
-    } catch (error) {
-      this.logger.error(`Failed to fetch payment: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to fetch payment details');
-    }
-  }
-
-  async getOrder(orderId: string): Promise<any> {
-    try {
-      const order = await this.razorpay.orders.fetch(orderId);
-
-      return {
-        id: order.id,
-        amount: Number(order.amount) / 100,
-        currency: order.currency,
-        status: order.status,
-        receipt: order.receipt,
-        notes: order.notes,
-        createdAt: order.created_at,
-      };
-    } catch (error) {
-      this.logger.error(`Failed to fetch order: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to fetch order details');
-    }
-  }
-
-  async createCustomer(customerData: {
-    name: string;
-    email: string;
-    contact: string;
-    notes?: Record<string, string>;
-  }): Promise<any> {
-    try {
-      const customer = await this.razorpay.customers.create(customerData);
-
-      this.logger.log(`Customer created: ${customer.id}`);
-
-      return {
-        id: customer.id,
-        name: customer.name,
-        email: customer.email,
-        contact: customer.contact,
-        notes: customer.notes,
-        createdAt: customer.created_at,
-      };
-    } catch (error) {
-      this.logger.error(`Failed to create customer: ${error.message}`, error.stack);
-      throw new InternalServerErrorException('Failed to create customer');
-    }
-  }
-
-  async handleWebhook(webhookData: any, signature: string): Promise<boolean> {
-    try {
-      const secret = this.configService.get<string>('RAZORPAY_WEBHOOK_SECRET');
-      if (!secret) {
-        throw new Error('Webhook secret not configured');
+      this.logger.error(`Process refund error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
       }
+      throw new InternalServerErrorException('Refund processing failed');
+    }
+  }
 
-      // Verify webhook signature with timing-safe comparison
-      const expectedSignature = createHmac('sha256', secret)
+  async handleWebhook(webhookData: any, signature: string) {
+    try {
+      const expectedSignature = crypto
+        .createHmac('sha256', this.razorpayWebhookSecret)
         .update(JSON.stringify(webhookData))
         .digest('hex');
 
-      const isValid = timingSafeEqual(
-        Buffer.from(expectedSignature, 'hex'),
-        Buffer.from(signature, 'hex')
-      );
-
-      if (isValid) {
-        this.logger.log(`Webhook verified and processing: ${webhookData.event}`);
-
-        // Additional validations
-        const { event, data } = webhookData;
-
-        // Validate orderId exists and amount/currency match DB
-        if (event === 'payment.captured' || event === 'payment.failed') {
-          const payment = data.payment;
-          if (!payment.order_id) {
-            this.logger.warn(`Webhook missing order_id: ${event}`);
-            return false;
-          }
-          // In production: Validate amount and currency against DB record
-          // if (payment.amount !== dbAmount || payment.currency !== dbCurrency) {
-          //   this.logger.warn(`Webhook amount/currency mismatch: ${event}`);
-          //   return false;
-          // }
-        }
-
-        // Process webhook event with idempotency
-        await this.processWebhookEventIdempotent(webhookData);
-      } else {
-        this.logger.warn(`Invalid webhook signature for event: ${webhookData.event}`);
+      if (expectedSignature !== signature) {
+        throw new BadRequestException('Invalid webhook signature');
       }
 
-      return isValid;
-    } catch (error) {
-      this.logger.error(`Webhook processing failed: ${error.message}`, error.stack);
-      return false;
-    }
-  }
-
-  private async processWebhookEventIdempotent(webhookData: any): Promise<void> {
-    const { event, data } = webhookData;
-
-    try {
-      // Extract razorpay_id based on event type
-      let razorpayId: string;
-      let eventType: string;
+      const { event, payment } = webhookData;
 
       switch (event) {
         case 'payment.captured':
-          razorpayId = data.payment.id;
-          eventType = 'payment.captured';
+          await this.handlePaymentCaptured(payment);
           break;
         case 'payment.failed':
-          razorpayId = data.payment.id;
-          eventType = 'payment.failed';
+          await this.handlePaymentFailed(payment);
           break;
-        case 'refund.created':
-          razorpayId = data.refund.id;
-          eventType = 'refund.created';
-          break;
-        default:
-          this.logger.log(`Unhandled webhook event: ${event}`);
-          return;
-      }
-
-      // Check idempotency - has this event already been processed?
-      const alreadyProcessed = await this.isEventAlreadyProcessed(razorpayId);
-      if (alreadyProcessed) {
-        this.logger.log(`Webhook event ${event} for ${razorpayId} already processed - skipping`);
-        return; // Already processed, safe to ignore
-      }
-
-      // Process the event
-      await this.processWebhookEvent(webhookData);
-
-      // Mark as processed (idempotency record)
-      await this.markEventAsProcessed(razorpayId, eventType, webhookData);
-
-      this.logger.log(`Successfully processed webhook event: ${event} for ${razorpayId}`);
-
-    } catch (error) {
-      this.logger.error(`Failed to process webhook event ${event}: ${error.message}`, error.stack);
-      // Don't throw - we want to acknowledge the webhook even if processing fails
-      // Razorpay will retry if we return non-200, but for idempotency we need to be careful
-    }
-  }
-
-  private async isEventAlreadyProcessed(razorpayId: string): Promise<boolean> {
-    try {
-      if (!this.supabase) {
-        this.logger.warn('Supabase not initialized - assuming event not processed');
-        return false;
-      }
-
-      const { data, error } = await this.supabase
-        .from('processed_webhook_events')
-        .select('id')
-        .eq('razorpay_id', razorpayId)
-        .single();
-
-      if (error && error.code !== 'PGRST116') { // PGRST116 = no rows returned
-        this.logger.error(`Error checking webhook idempotency: ${error.message}`, error);
-        // On database error, assume not processed to avoid blocking legitimate events
-        return false;
-      }
-
-      const alreadyProcessed = !!data;
-      if (alreadyProcessed) {
-        this.logger.log(`Webhook event for razorpay_id ${razorpayId} already processed`);
-      }
-
-      return alreadyProcessed;
-
-    } catch (error) {
-      this.logger.error(`Error checking event processing status: ${error.message}`, error.stack);
-      // On error, assume not processed to avoid blocking legitimate events
-      return false;
-    }
-  }
-
-  private async markEventAsProcessed(razorpayId: string, eventType: string, webhookData: any): Promise<void> {
-    try {
-      if (!this.supabase) {
-        throw new Error('Supabase not initialized - cannot mark event as processed');
-      }
-
-      const { data, error } = await this.supabase
-        .from('processed_webhook_events')
-        .insert({
-          razorpay_id: razorpayId,
-          event_type: eventType,
-          event_data: webhookData,
-          processed_at: new Date().toISOString()
-        })
-        .select();
-
-      if (error) {
-        // Handle unique constraint violation (duplicate razorpay_id)
-        if (error.code === '23505') { // PostgreSQL unique constraint violation
-          this.logger.warn(`Duplicate webhook event detected for razorpay_id: ${razorpayId}`);
-          return; // Already processed, this is expected
-        }
-
-        this.logger.error(`Error marking webhook event as processed: ${error.message}`, error);
-        throw new Error(`Failed to mark webhook event as processed: ${error.message}`);
-      }
-
-      this.logger.log(`Successfully marked webhook event as processed: ${eventType} for ${razorpayId}`);
-
-    } catch (error) {
-      this.logger.error(`Error marking event as processed: ${error.message}`, error.stack);
-      // If we can't mark as processed, we should throw to prevent duplicate processing
-      throw error;
-    }
-  }
-
-  private async processWebhookEvent(webhookData: any): Promise<void> {
-    const { event, data } = webhookData;
-
-    try {
-      switch (event) {
-        case 'payment.captured':
-          await this.handlePaymentCaptured(data.payment);
-          break;
-        case 'payment.failed':
-          await this.handlePaymentFailed(data.payment);
-          break;
-        case 'refund.created':
-          await this.handleRefundCreated(data.refund);
+        case 'refund.processed':
+          await this.handleRefundProcessed(payment);
           break;
         default:
           this.logger.log(`Unhandled webhook event: ${event}`);
       }
+
+      return { success: true, event };
     } catch (error) {
-      this.logger.error(`Failed to process webhook event ${event}: ${error.message}`, error.stack);
-      // Don't throw - we want to acknowledge the webhook even if processing fails
-    }
-  }
-
-  async getAvailablePaymentMethods(amount?: number): Promise<PaymentMethod[]> {
-    let methods = this.paymentMethods.filter(method => method.isActive !== false);
-
-    if (amount) {
-      methods = methods.filter(method =>
-        amount >= method.limits.min && amount <= method.limits.max
-      );
-    }
-
-    return methods;
-  }
-
-  getSupportedMethods(): string[] {
-    const allMethods = new Set<string>();
-    this.providers.forEach(provider => {
-      if (provider.isActive) {
-        provider.supportedMethods.forEach(method => allMethods.add(method));
+      this.logger.error(`Webhook handling error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
       }
-    });
-    return Array.from(allMethods);
-  }
-
-  async createPaymentWithMethod(
-    amount: number,
-    method: string,
-    orderId: string,
-    customerDetails?: any
-  ): Promise<any> {
-    const paymentMethod = this.paymentMethods.find(m => m.code === method);
-    if (!paymentMethod) {
-      throw new BadRequestException('Payment method not supported');
-    }
-
-    // Find best provider for this method
-    const provider = this.providers.find(p =>
-      p.isActive && p.supportedMethods.includes(paymentMethod.type)
-    );
-
-    if (!provider) {
-      throw new BadRequestException('No provider available for this payment method');
-    }
-
-    // For demo/development, return mock payment data
-    if (provider.code === 'razorpay' && this.isMockMode()) {
-      return this.createMockPayment(amount, method, orderId, paymentMethod);
-    }
-
-    // In production, integrate with actual payment providers
-    switch (provider.code) {
-      case 'razorpay':
-        return this.createRazorpayPayment(amount, method, orderId, customerDetails);
-      case 'paytm':
-        return this.createPaytmPayment(amount, method, orderId, customerDetails);
-      case 'phonepe':
-        return this.createPhonePePayment(amount, method, orderId, customerDetails);
-      default:
-        throw new BadRequestException('Provider not implemented');
+      throw new InternalServerErrorException('Webhook processing failed');
     }
   }
 
-  private createMockPayment(amount: number, method: string, orderId: string, paymentMethod: PaymentMethod): any {
-    const mockPaymentId = `QM${Date.now().toString().slice(-10)}`;
-
-    const response: any = {
-      success: true,
-      paymentId: mockPaymentId,
-      orderId,
-      amount,
-      method,
-      status: 'pending',
-      provider: 'mock'
-    };
-
-    // Add method-specific mock data
-    switch (method) {
-      case 'gpay':
-      case 'phonepe':
-      case 'upi':
-        response.upiId = `quickmela@upi`;
-        response.qrCode = `https://api.quickmela.com/payments/qr/${mockPaymentId}`;
-        break;
-      case 'paytm':
-      case 'amazonpay':
-        response.paymentUrl = `https://payments.quickmela.com/${mockPaymentId}`;
-        break;
-      case 'card':
-        response.paymentUrl = `https://payments.quickmela.com/card/${mockPaymentId}`;
-        break;
-    }
-
-    return response;
-  }
-
-  private async createRazorpayPayment(amount: number, method: string, orderId: string, customerDetails?: any): Promise<any> {
-    // Create Razorpay order and return payment details
-    const order = await this.createOrder({
-      amount,
-      currency: 'INR',
-      receipt: orderId,
-      notes: { payment_method: method, ...customerDetails }
-    });
-
-    return {
-      success: true,
-      paymentId: order.orderId,
-      orderId,
-      amount,
-      method,
-      status: 'created',
-      provider: 'razorpay',
-      razorpayKey: this.configService.get<string>('RAZORPAY_KEY_ID'),
-      orderData: order
-    };
-  }
-
-  private async createPaytmPayment(amount: number, method: string, orderId: string, customerDetails?: any): Promise<any> {
-    // Mock Paytm integration - in production, integrate with Paytm APIs
-    this.logger.log(`Creating Paytm payment: ${orderId}, amount: ${amount}`);
-
-    return {
-      success: true,
-      paymentId: `PAYTM${Date.now()}`,
-      orderId,
-      amount,
-      method,
-      status: 'pending',
-      provider: 'paytm',
-      paymentUrl: `https://securegw.paytm.in/pay?orderId=${orderId}`
-    };
-  }
-
-  private async createPhonePePayment(amount: number, method: string, orderId: string, customerDetails?: any): Promise<any> {
-    // Mock PhonePe integration - in production, integrate with PhonePe APIs
-    this.logger.log(`Creating PhonePe payment: ${orderId}, amount: ${amount}`);
-
-    return {
-      success: true,
-      paymentId: `PHONEPE${Date.now()}`,
-      orderId,
-      amount,
-      method,
-      status: 'pending',
-      provider: 'phonepe',
-      upiId: `quickmela@phonepe`,
-      qrCode: `https://api.phonepe.com/qr/${orderId}`
-    };
-  }
-
-  private isMockMode(): boolean {
-    const keyId = this.configService.get<string>('RAZORPAY_KEY_ID');
-    const keySecret = this.configService.get<string>('RAZORPAY_KEY_SECRET');
-    return !keyId || !keySecret || keyId === 'dummy_key_id' || keySecret === 'dummy_key_secret';
-  }
-
-  private async handlePaymentCaptured(payment: any): Promise<void> {
+  async getPaymentStats() {
     try {
-      const { id: paymentId, amount, order_id, notes } = payment;
-      const amountInRupees = Number(amount) / 100;
+      const transactions = await this.prisma.transaction.findMany();
 
-      this.logger.log(`Processing payment capture: ${paymentId}, amount: ₹${amountInRupees}`);
+      const stats = {
+        totalTransactions: transactions.length,
+        totalVolume: transactions.reduce((sum, tx) => sum + tx.amount, 0),
+        successfulPayments: transactions.filter(tx => tx.status === 'COMPLETED').length,
+        failedPayments: transactions.filter(tx => tx.status === 'FAILED').length,
+        refundedAmount: transactions
+          .filter(tx => tx.refundedAt)
+          .reduce((sum, tx) => sum + (tx.refundAmount || 0), 0),
+        byType: {
+          CREDIT: transactions.filter(tx => tx.type === 'CREDIT').length,
+          DEBIT: transactions.filter(tx => tx.type === 'DEBIT').length,
+          REFUND: transactions.filter(tx => tx.type === 'REFUND').length,
+          COMMISSION: transactions.filter(tx => tx.type === 'COMMISSION').length
+        }
+      };
 
-      // Extract metadata from notes (set during order creation)
-      const { user_id: userId, bid_id: bidId, type } = notes || {};
-
-      if (type === 'wallet_topup' && userId) {
-        // Handle wallet topup
-        await this.processWalletTopupFromWebhook(userId, amountInRupees, paymentId);
-      } else if (bidId && userId) {
-        // Handle auction payment
-        await this.processAuctionPaymentFromWebhook(bidId, userId, amountInRupees, paymentId);
-      } else {
-        this.logger.warn(`Unknown payment type or missing metadata for payment: ${paymentId}`);
-      }
-
-      // Send success notification
-      // if (userId) {
-      //   await this.sendPaymentSuccessNotification(userId, amountInRupees, paymentId);
-      // }
-
+      return stats;
     } catch (error) {
-      this.logger.error(`Failed to handle payment capture ${payment.id}: ${error.message}`, error.stack);
+      this.logger.error(`Get payment stats error: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Failed to fetch payment statistics');
     }
   }
 
-  private async handlePaymentFailed(payment: any): Promise<void> {
-    try {
-      const { id: paymentId, amount, order_id, error_code, error_description, notes } = payment;
-      const amountInRupees = Number(amount) / 100;
-
-      this.logger.log(`Processing payment failure: ${paymentId}, amount: ₹${amountInRupees}, error: ${error_description}`);
-
-      // Extract metadata from notes
-      const { user_id: userId, bid_id: bidId } = notes || {};
-
-      // Mark bid as failed if applicable
-      if (bidId) {
-        await this.markBidAsFailed(bidId, error_description);
-      }
-
-      // Send failure notification
-      // if (userId) {
-      //   await this.sendPaymentFailureNotification(userId, amountInRupees, error_description);
-      // }
-
-    } catch (error) {
-      this.logger.error(`Failed to handle payment failure ${payment.id}: ${error.message}`, error.stack);
-    }
+  private async handlePaymentCaptured(payment: any) {
+    this.logger.log(`Payment captured: ${payment.id}, amount: ₹${payment.amount / 100}`);
   }
 
-  private async handleRefundCreated(refund: any): Promise<void> {
-    try {
-      const { id: refundId, payment_id: paymentId, amount, status, notes } = refund;
-      const amountInRupees = Number(amount) / 100;
-
-      this.logger.log(`Processing refund creation: ${refundId}, amount: ₹${amountInRupees}`);
-
-      // Extract metadata from notes
-      const { user_id: userId, reason } = notes || {};
-
-      if (userId) {
-        // Credit wallet
-        await this.processRefundToWallet(userId, amountInRupees, refundId, reason);
-
-        // Send refund notification
-        // await this.sendRefundNotification(userId, amountInRupees, refundId);
-      }
-
-    } catch (error) {
-      this.logger.error(`Failed to handle refund creation ${refund.id}: ${error.message}`, error.stack);
-    }
+  private async handlePaymentFailed(payment: any) {
+    this.logger.log(`Payment failed: ${payment.id}, reason: ${payment.error_description}`);
   }
 
-  private async processWalletTopupFromWebhook(userId: string, amount: number, paymentId: string): Promise<void> {
-    // Implementation would update wallet balance in database
-    this.logger.log(`Wallet topup processed for user ${userId}: ₹${amount} (payment: ${paymentId})`);
-
-    // TODO: Implement actual database operations
-    // await this.walletService.addFunds(userId, amount, paymentId);
+  private async handleRefundProcessed(refund: any) {
+    this.logger.log(`Refund processed: ${refund.id}, amount: ₹${refund.amount / 100}`);
   }
-
-  private async processAuctionPaymentFromWebhook(bidId: string, userId: string, amount: number, paymentId: string): Promise<void> {
-    // Implementation would mark auction as won and process payment
-    this.logger.log(`Auction payment processed for bid ${bidId}: ₹${amount} (payment: ${paymentId})`);
-
-    // TODO: Implement actual database operations
-    // await this.auctionService.markBidAsWon(bidId);
-    // await this.walletService.processAuctionPayment(bidId, userId, amount);
-  }
-
-  private async markBidAsFailed(bidId: string, reason: string): Promise<void> {
-    this.logger.log(`Marking bid ${bidId} as failed: ${reason}`);
-
-    // TODO: Implement actual database operations
-    // await this.auctionService.markBidAsFailed(bidId, reason);
-  }
-
-  private async processRefundToWallet(userId: string, amount: number, refundId: string, reason?: string): Promise<void> {
-    this.logger.log(`Processing refund to wallet for user ${userId}: ₹${amount} (refund: ${refundId})`);
-
-    // TODO: Implement actual database operations
-    // await this.walletService.addRefund(userId, amount, refundId, reason);
-  }
-
-  // private async sendPaymentSuccessNotification(userId: string, amount: number, paymentId: string): Promise<void> {
-  //   this.logger.log(`Sending payment success notification to user ${userId}`);
-
-  //   // TODO: Implement notification service
-  //   // await this.notificationService.sendPaymentSuccess(userId, amount, paymentId);
-  // }
-
-  // private async sendPaymentFailureNotification(userId: string, amount: number, error: string): Promise<void> {
-  //   this.logger.log(`Sending payment failure notification to user ${userId}`);
-
-  //   // TODO: Implement notification service
-  //   // await this.notificationService.sendPaymentFailure(userId, amount, error);
-  // }
-
-  // private async sendRefundNotification(userId: string, amount: number, refundId: string): Promise<void> {
-  //   this.logger.log(`Sending refund notification to user ${userId}`);
-
-  //   // TODO: Implement notification service
-  //   // await this.notificationService.sendRefundProcessed(userId, amount, refundId);
-  // }
 }

@@ -1,25 +1,26 @@
 import { Injectable, Logger, BadRequestException, NotFoundException, InternalServerErrorException } from '@nestjs/common';
+import { PrismaService } from '../prisma/prisma.service';
 import { EventEmitter2 } from '@nestjs/event-emitter';
 
+// Type definitions for wallet operations
 export interface WalletTransaction {
   id: string;
   userId: string;
   amount: number;
   type: 'credit' | 'debit' | 'hold' | 'release';
   purpose: 'wallet_topup' | 'bid_placement' | 'bid_refund' | 'auction_win' | 'auction_payout' | 'security_deposit' | 'commission' | 'penalty' | 'refund';
-  status: 'pending' | 'completed' | 'failed' | 'cancelled';
-  referenceId?: string; // auction_id, payment_id, etc.
-  referenceType?: string; // auction, payment, etc.
-  description: string;
+  status: 'pending' | 'completed' | 'failed';
+  referenceId?: string;
+  referenceType?: string;
+  description?: string;
   metadata?: Record<string, any>;
   createdAt: Date;
   updatedAt: Date;
 }
 
 export interface WalletBalance {
-  userId: string;
   availableBalance: number;
-  heldBalance: number; // For security deposits, pending bids
+  heldBalance: number;
   totalBalance: number;
   currency: string;
   lastUpdated: Date;
@@ -39,34 +40,56 @@ export class WalletService {
   private readonly logger = new Logger(WalletService.name);
 
   constructor(
+    private prisma: PrismaService,
     private eventEmitter: EventEmitter2,
   ) {}
 
   /**
    * Get wallet balance for a user
    */
-  async getBalance(userId: string): Promise<WalletBalance> {
+  async getBalance(userId: string) {
     try {
-      // In production, fetch from database
-      // For now, return mock data with proper structure
-      const mockBalance: WalletBalance = {
-        userId,
-        availableBalance: 50000, // Mock available balance
-        heldBalance: 5000, // Mock held amount (security deposits, pending bids)
-        totalBalance: 55000,
-        currency: 'INR',
-        lastUpdated: new Date(),
-      };
+      const wallet = await this.prisma.wallet.findUnique({
+        where: { userId },
+        include: {
+          transactions: {
+            orderBy: { createdAt: 'desc' },
+            take: 10
+          }
+        }
+      });
 
-      return mockBalance;
+      if (!wallet) {
+        throw new NotFoundException('Wallet not found');
+      }
+
+      return {
+        userId,
+        availableBalance: wallet.balance - wallet.blockedBalance,
+        heldBalance: wallet.blockedBalance,
+        totalBalance: wallet.balance,
+        currency: wallet.currency,
+        lastUpdated: wallet.updatedAt,
+        transactions: wallet.transactions.map(tx => ({
+          id: tx.id,
+          amount: tx.amount,
+          type: tx.type,
+          description: tx.description,
+          status: tx.status,
+          createdAt: tx.createdAt
+        }))
+      };
     } catch (error) {
       this.logger.error(`Failed to get wallet balance for user ${userId}:`, error);
+      if (error instanceof NotFoundException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Failed to fetch wallet balance');
     }
   }
 
   /**
-   * Add funds to wallet (credit transaction)
+   * Add funds to wallet (credit transaction) - ATOMIC OPERATION
    */
   async addFunds(
     userId: string,
@@ -84,32 +107,68 @@ export class WalletService {
 
       const transactionId = this.generateTransactionId();
 
-      const transaction: WalletTransaction = {
-        id: transactionId,
-        userId,
-        amount,
-        type: 'credit',
-        purpose,
-        status: 'completed',
-        referenceId,
-        referenceType,
-        description: description || this.getTransactionDescription(purpose, amount),
-        metadata,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      // Execute wallet update and transaction creation in a single database transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // 1. Create the transaction record first
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            id: transactionId,
+            userId,
+            amount,
+            type: 'credit',
+            purpose,
+            status: 'completed',
+            referenceId,
+            referenceType,
+            description: description || this.getTransactionDescription(purpose, amount),
+            metadata,
+          },
+        });
+
+        // 2. Update wallet balance atomically
+        const wallet = await tx.wallet.findUnique({
+          where: { userId },
+        });
+
+        if (!wallet) {
+          throw new NotFoundException('Wallet not found');
+        }
+
+        const updatedWallet = await tx.wallet.update({
+          where: { userId },
+          data: {
+            balance: wallet.balance + amount,
+            updatedAt: new Date(),
+          },
+          select: {
+            balance: true,
+            blockedBalance: true,
+            currency: true,
+            updatedAt: true,
+          },
+        });
+
+        return {
+          transaction,
+          wallet: updatedWallet,
+        };
+      });
+
+      const newBalance: WalletBalance = {
+        availableBalance: result.wallet.balance - result.wallet.blockedBalance,
+        heldBalance: result.wallet.blockedBalance,
+        totalBalance: result.wallet.balance,
+        currency: result.wallet.currency,
+        lastUpdated: result.wallet.updatedAt,
       };
-
-      // In production, save to database within transaction
-      this.logger.log(`Credit transaction created: ${transactionId} for user ${userId}, amount: ₹${amount}`);
-
-      // Update wallet balance
-      const newBalance = await this.updateWalletBalance(userId, amount, 'credit');
 
       // Emit wallet event
       this.eventEmitter.emit('wallet.transaction.completed', {
-        transaction,
+        transaction: result.transaction,
         newBalance,
       });
+
+      this.logger.log(`Credit transaction completed: ${transactionId} for user ${userId}, amount: ₹${amount}`);
 
       return {
         success: true,
@@ -118,7 +177,7 @@ export class WalletService {
       };
     } catch (error) {
       this.logger.error(`Failed to add funds for user ${userId}:`, error);
-      if (error instanceof BadRequestException) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
       throw new InternalServerErrorException('Failed to add funds to wallet');
@@ -126,7 +185,7 @@ export class WalletService {
   }
 
   /**
-   * Deduct funds from wallet (debit transaction)
+   * Deduct funds from wallet (debit transaction) - ATOMIC OPERATION
    */
   async deductFunds(
     userId: string,
@@ -142,40 +201,77 @@ export class WalletService {
         throw new BadRequestException('Amount must be positive');
       }
 
-      // Check available balance
-      const currentBalance = await this.getBalance(userId);
-      if (currentBalance.availableBalance < amount) {
-        throw new BadRequestException('Insufficient funds in wallet');
-      }
-
       const transactionId = this.generateTransactionId();
 
-      const transaction: WalletTransaction = {
-        id: transactionId,
-        userId,
-        amount,
-        type: 'debit',
-        purpose,
-        status: 'completed',
-        referenceId,
-        referenceType,
-        description: description || this.getTransactionDescription(purpose, amount),
-        metadata,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      // Execute wallet check and update in a single database transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // 1. Get current wallet balance
+        const wallet = await tx.wallet.findUnique({
+          where: { userId },
+        });
+
+        if (!wallet) {
+          throw new NotFoundException('Wallet not found');
+        }
+
+        // 2. Check available balance
+        const availableBalance = wallet.balance - wallet.blockedBalance;
+        if (availableBalance < amount) {
+          throw new BadRequestException('Insufficient funds in wallet');
+        }
+
+        // 3. Create the transaction record
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            id: transactionId,
+            userId,
+            amount,
+            type: 'debit',
+            purpose,
+            status: 'completed',
+            referenceId,
+            referenceType,
+            description: description || this.getTransactionDescription(purpose, amount),
+            metadata,
+          },
+        });
+
+        // 4. Update wallet balance atomically
+        const updatedWallet = await tx.wallet.update({
+          where: { userId },
+          data: {
+            balance: wallet.balance - amount,
+            updatedAt: new Date(),
+          },
+          select: {
+            balance: true,
+            blockedBalance: true,
+            currency: true,
+            updatedAt: true,
+          },
+        });
+
+        return {
+          transaction,
+          wallet: updatedWallet,
+        };
+      });
+
+      const newBalance: WalletBalance = {
+        availableBalance: result.wallet.balance - result.wallet.blockedBalance,
+        heldBalance: result.wallet.blockedBalance,
+        totalBalance: result.wallet.balance,
+        currency: result.wallet.currency,
+        lastUpdated: result.wallet.updatedAt,
       };
-
-      // In production, save to database within transaction
-      this.logger.log(`Debit transaction created: ${transactionId} for user ${userId}, amount: ₹${amount}`);
-
-      // Update wallet balance
-      const newBalance = await this.updateWalletBalance(userId, amount, 'debit');
 
       // Emit wallet event
       this.eventEmitter.emit('wallet.transaction.completed', {
-        transaction,
+        transaction: result.transaction,
         newBalance,
       });
+
+      this.logger.log(`Debit transaction completed: ${transactionId} for user ${userId}, amount: ₹${amount}`);
 
       return {
         success: true,
@@ -184,7 +280,7 @@ export class WalletService {
       };
     } catch (error) {
       this.logger.error(`Failed to deduct funds for user ${userId}:`, error);
-      if (error instanceof BadRequestException) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
       throw new InternalServerErrorException('Failed to deduct funds from wallet');
@@ -192,7 +288,7 @@ export class WalletService {
   }
 
   /**
-   * Hold funds (for security deposits, pending bids)
+   * Hold funds (for security deposits, pending bids) - ATOMIC OPERATION
    */
   async holdFunds(
     userId: string,
@@ -208,34 +304,71 @@ export class WalletService {
         throw new BadRequestException('Amount must be positive');
       }
 
-      // Check available balance
-      const currentBalance = await this.getBalance(userId);
-      if (currentBalance.availableBalance < amount) {
-        throw new BadRequestException('Insufficient funds in wallet');
-      }
-
       const transactionId = this.generateTransactionId();
 
-      const transaction: WalletTransaction = {
-        id: transactionId,
-        userId,
-        amount,
-        type: 'hold',
-        purpose,
-        status: 'completed',
-        referenceId,
-        referenceType,
-        description: description || this.getTransactionDescription(purpose, amount),
-        metadata,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      // Execute wallet check and hold operation in a single database transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // 1. Get current wallet balance
+        const wallet = await tx.wallet.findUnique({
+          where: { userId },
+        });
+
+        if (!wallet) {
+          throw new NotFoundException('Wallet not found');
+        }
+
+        // 2. Check available balance
+        const availableBalance = wallet.balance - wallet.blockedBalance;
+        if (availableBalance < amount) {
+          throw new BadRequestException('Insufficient funds in wallet');
+        }
+
+        // 3. Create the hold transaction record
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            id: transactionId,
+            userId,
+            amount,
+            type: 'hold',
+            purpose,
+            status: 'completed',
+            referenceId,
+            referenceType,
+            description: description || this.getTransactionDescription(purpose, amount),
+            metadata,
+          },
+        });
+
+        // 4. Update wallet balance atomically (move from available to held)
+        const updatedWallet = await tx.wallet.update({
+          where: { userId },
+          data: {
+            blockedBalance: wallet.blockedBalance + amount,
+            updatedAt: new Date(),
+          },
+          select: {
+            balance: true,
+            blockedBalance: true,
+            currency: true,
+            updatedAt: true,
+          },
+        });
+
+        return {
+          transaction,
+          wallet: updatedWallet,
+        };
+      });
+
+      const newBalance: WalletBalance = {
+        availableBalance: result.wallet.balance - result.wallet.blockedBalance,
+        heldBalance: result.wallet.blockedBalance,
+        totalBalance: result.wallet.balance,
+        currency: result.wallet.currency,
+        lastUpdated: result.wallet.updatedAt,
       };
 
-      // In production, save to database
-      this.logger.log(`Hold transaction created: ${transactionId} for user ${userId}, amount: ₹${amount}`);
-
-      // Update wallet balance (move from available to held)
-      const newBalance = await this.updateWalletBalance(userId, amount, 'hold');
+      this.logger.log(`Hold transaction completed: ${transactionId} for user ${userId}, amount: ₹${amount}`);
 
       return {
         success: true,
@@ -244,7 +377,7 @@ export class WalletService {
       };
     } catch (error) {
       this.logger.error(`Failed to hold funds for user ${userId}:`, error);
-      if (error instanceof BadRequestException) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
       throw new InternalServerErrorException('Failed to hold funds');
@@ -252,7 +385,7 @@ export class WalletService {
   }
 
   /**
-   * Release held funds back to available balance
+   * Release held funds back to available balance - ATOMIC OPERATION
    */
   async releaseFunds(
     userId: string,
@@ -268,26 +401,68 @@ export class WalletService {
 
       const transactionId = this.generateTransactionId();
 
-      const transaction: WalletTransaction = {
-        id: transactionId,
-        userId,
-        amount,
-        type: 'release',
-        purpose: 'refund',
-        status: 'completed',
-        referenceId: originalTransactionId,
-        referenceType: 'transaction',
-        description: description || `Funds released: ₹${amount}`,
-        metadata,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+      // Execute wallet check and release operation in a single database transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // 1. Get current wallet balance
+        const wallet = await tx.wallet.findUnique({
+          where: { userId },
+        });
+
+        if (!wallet) {
+          throw new NotFoundException('Wallet not found');
+        }
+
+        // 2. Check if sufficient held funds exist
+        if (wallet.blockedBalance < amount) {
+          throw new BadRequestException('Insufficient held funds to release');
+        }
+
+        // 3. Create the release transaction record
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            id: transactionId,
+            userId,
+            amount,
+            type: 'release',
+            purpose: 'refund',
+            status: 'completed',
+            referenceId: originalTransactionId,
+            referenceType: 'transaction',
+            description: description || `Funds released: ₹${amount}`,
+            metadata,
+          },
+        });
+
+        // 4. Update wallet balance atomically (move from held to available)
+        const updatedWallet = await tx.wallet.update({
+          where: { userId },
+          data: {
+            blockedBalance: wallet.blockedBalance - amount,
+            updatedAt: new Date(),
+          },
+          select: {
+            balance: true,
+            blockedBalance: true,
+            currency: true,
+            updatedAt: true,
+          },
+        });
+
+        return {
+          transaction,
+          wallet: updatedWallet,
+        };
+      });
+
+      const newBalance: WalletBalance = {
+        availableBalance: result.wallet.balance - result.wallet.blockedBalance,
+        heldBalance: result.wallet.blockedBalance,
+        totalBalance: result.wallet.balance,
+        currency: result.wallet.currency,
+        lastUpdated: result.wallet.updatedAt,
       };
 
-      // In production, save to database
-      this.logger.log(`Release transaction created: ${transactionId} for user ${userId}, amount: ₹${amount}`);
-
-      // Update wallet balance (move from held to available)
-      const newBalance = await this.updateWalletBalance(userId, amount, 'release');
+      this.logger.log(`Release transaction completed: ${transactionId} for user ${userId}, amount: ₹${amount}`);
 
       return {
         success: true,
@@ -296,7 +471,7 @@ export class WalletService {
       };
     } catch (error) {
       this.logger.error(`Failed to release funds for user ${userId}:`, error);
-      if (error instanceof BadRequestException) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
       throw new InternalServerErrorException('Failed to release funds');
@@ -304,7 +479,7 @@ export class WalletService {
   }
 
   /**
-   * Process refund for failed bids or cancelled auctions
+   * Process refund for failed bids or cancelled auctions - ATOMIC OPERATION
    */
   async processRefund(refundRequest: RefundRequest): Promise<{ success: boolean; transactionId: string; newBalance: WalletBalance }> {
     try {
@@ -314,35 +489,86 @@ export class WalletService {
         throw new BadRequestException('Refund amount must be positive');
       }
 
-      // Create refund transaction
-      const result = await this.addFunds(
-        userId,
-        amount,
-        'refund',
-        referenceId,
-        referenceType,
-        `Refund: ${reason} - ₹${amount}`,
-        {
-          originalTransactionId,
-          refundReason: reason,
-          processedAt: new Date(),
-        }
-      );
+      const transactionId = this.generateTransactionId();
 
-      this.logger.log(`Refund processed for user ${userId}: ₹${amount}, reason: ${reason}`);
+      // Execute refund in a single database transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // 1. Create the refund transaction record
+        const transaction = await tx.walletTransaction.create({
+          data: {
+            id: transactionId,
+            userId,
+            amount,
+            type: 'credit',
+            purpose: 'refund',
+            status: 'completed',
+            referenceId,
+            referenceType,
+            description: `Refund: ${reason} - ₹${amount}`,
+            metadata: {
+              originalTransactionId,
+              refundReason: reason,
+              processedAt: new Date(),
+            },
+          },
+        });
+
+        // 2. Update wallet balance atomically
+        const wallet = await tx.wallet.findUnique({
+          where: { userId },
+        });
+
+        if (!wallet) {
+          throw new NotFoundException('Wallet not found');
+        }
+
+        const updatedWallet = await tx.wallet.update({
+          where: { userId },
+          data: {
+            balance: wallet.balance + amount,
+            updatedAt: new Date(),
+          },
+          select: {
+            balance: true,
+            blockedBalance: true,
+            currency: true,
+            updatedAt: true,
+          },
+        });
+
+        return {
+          transaction,
+          wallet: updatedWallet,
+        };
+      });
+
+      const newBalance: WalletBalance = {
+        availableBalance: result.wallet.balance - result.wallet.blockedBalance,
+        heldBalance: result.wallet.blockedBalance,
+        totalBalance: result.wallet.balance,
+        currency: result.wallet.currency,
+        lastUpdated: result.wallet.updatedAt,
+      };
 
       // Emit refund event
       this.eventEmitter.emit('wallet.refund.processed', {
         userId,
         amount,
         reason,
-        transactionId: result.transactionId,
+        transactionId,
+        newBalance,
       });
 
-      return result;
+      this.logger.log(`Refund processed for user ${userId}: ₹${amount}, reason: ${reason}, transaction: ${transactionId}`);
+
+      return {
+        success: true,
+        transactionId,
+        newBalance,
+      };
     } catch (error) {
       this.logger.error(`Failed to process refund for user ${refundRequest.userId}:`, error);
-      if (error instanceof BadRequestException) {
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
         throw error;
       }
       throw new InternalServerErrorException('Failed to process refund');
@@ -350,7 +576,7 @@ export class WalletService {
   }
 
   /**
-   * Process auction settlement (winner pays, seller receives payout)
+   * Process auction settlement (winner pays, seller receives payout) - ATOMIC OPERATION
    */
   async processAuctionSettlement(
     auctionId: string,
@@ -366,45 +592,155 @@ export class WalletService {
     sellerPayout: number;
   }> {
     try {
-      const platformFee = finalPrice * (platformFeePercent / 100);
+      const platformFee = Math.round(finalPrice * (platformFeePercent / 100) * 100) / 100; // Round to 2 decimal places
       const sellerPayout = finalPrice - platformFee;
 
-      // Deduct from winner's wallet
-      const winnerResult = await this.deductFunds(
+      if (sellerPayout <= 0) {
+        throw new BadRequestException('Invalid seller payout calculation');
+      }
+
+      const winnerTransactionId = this.generateTransactionId();
+      const sellerTransactionId = this.generateTransactionId();
+
+      // Execute entire auction settlement in a single database transaction
+      const result = await this.prisma.$transaction(async (tx) => {
+        // 1. Verify winner has sufficient funds and deduct payment
+        const winnerWallet = await tx.wallet.findUnique({
+          where: { userId: winnerId },
+        });
+
+        if (!winnerWallet) {
+          throw new NotFoundException('Winner wallet not found');
+        }
+
+        const winnerAvailableBalance = winnerWallet.balance - winnerWallet.blockedBalance;
+        if (winnerAvailableBalance < finalPrice) {
+          throw new BadRequestException('Winner has insufficient funds');
+        }
+
+        // 2. Create winner's debit transaction
+        const winnerTransaction = await tx.walletTransaction.create({
+          data: {
+            id: winnerTransactionId,
+            userId: winnerId,
+            amount: finalPrice,
+            type: 'debit',
+            purpose: 'auction_win',
+            status: 'completed',
+            referenceId: auctionId,
+            referenceType: 'auction',
+            description: `Auction win payment for ${auctionId}`,
+            metadata: {
+              sellerId,
+              platformFee,
+              sellerPayout,
+              finalPrice,
+            },
+          },
+        });
+
+        // 3. Update winner's wallet balance
+        await tx.wallet.update({
+          where: { userId: winnerId },
+          data: {
+            balance: winnerWallet.balance - finalPrice,
+            updatedAt: new Date(),
+          },
+        });
+
+        // 4. Create seller's credit transaction
+        const sellerTransaction = await tx.walletTransaction.create({
+          data: {
+            id: sellerTransactionId,
+            userId: sellerId,
+            amount: sellerPayout,
+            type: 'credit',
+            purpose: 'auction_payout',
+            status: 'completed',
+            referenceId: auctionId,
+            referenceType: 'auction',
+            description: `Auction payout for ${auctionId} (₹${finalPrice} - ₹${platformFee} fee)`,
+            metadata: {
+              winnerId,
+              finalPrice,
+              platformFee,
+              sellerPayout,
+            },
+          },
+        });
+
+        // 5. Update seller's wallet balance
+        const sellerWallet = await tx.wallet.findUnique({
+          where: { userId: sellerId },
+        });
+
+        if (!sellerWallet) {
+          throw new NotFoundException('Seller wallet not found');
+        }
+
+        await tx.wallet.update({
+          where: { userId: sellerId },
+          data: {
+            balance: sellerWallet.balance + sellerPayout,
+            updatedAt: new Date(),
+          },
+        });
+
+        // 6. Record platform fee (could be stored separately for accounting)
+        await tx.platformFee.create({
+          data: {
+            auctionId,
+            amount: platformFee,
+            winnerId,
+            sellerId,
+            processedAt: new Date(),
+          },
+        });
+
+        return {
+          winnerTransaction,
+          sellerTransaction,
+          platformFee,
+          sellerPayout,
+        };
+      });
+
+      // Emit auction settlement event
+      this.eventEmitter.emit('auction.settlement.completed', {
+        auctionId,
         winnerId,
-        finalPrice,
-        'auction_win',
-        auctionId,
-        'auction',
-        `Auction win payment for ${auctionId}`,
-        { sellerId, platformFee, sellerPayout }
-      );
-
-      // Credit to seller's wallet (minus platform fee)
-      const sellerResult = await this.addFunds(
         sellerId,
-        sellerPayout,
-        'auction_payout',
-        auctionId,
-        'auction',
-        `Auction payout for ${auctionId} (₹${finalPrice} - ₹${platformFee} fee)`,
-        { winnerId, finalPrice, platformFee }
-      );
+        finalPrice,
+        platformFee: result.platformFee,
+        sellerPayout: result.sellerPayout,
+        winnerTransactionId,
+        sellerTransactionId,
+      });
 
-      // Record platform fee as commission (mock for now)
-      await this.recordPlatformFee(auctionId, platformFee, winnerId, sellerId);
-
-      this.logger.log(`Auction settlement completed: ${auctionId}, winner: ${winnerId}, seller: ${sellerId}, amount: ₹${finalPrice}`);
+      this.logger.log(`Auction settlement completed: ${auctionId}, winner: ${winnerId}, seller: ${sellerId}, amount: ₹${finalPrice}, fee: ₹${result.platformFee}, payout: ₹${result.sellerPayout}`);
 
       return {
         success: true,
-        winnerTransactionId: winnerResult.transactionId,
-        sellerTransactionId: sellerResult.transactionId,
-        platformFee,
-        sellerPayout,
+        winnerTransactionId,
+        sellerTransactionId,
+        platformFee: result.platformFee,
+        sellerPayout: result.sellerPayout,
       };
     } catch (error) {
       this.logger.error(`Auction settlement failed for ${auctionId}:`, error);
+
+      // Emit settlement failure event
+      this.eventEmitter.emit('auction.settlement.failed', {
+        auctionId,
+        winnerId,
+        sellerId,
+        finalPrice,
+        error: error.message,
+      });
+
+      if (error instanceof BadRequestException || error instanceof NotFoundException) {
+        throw error;
+      }
       throw new InternalServerErrorException('Failed to process auction settlement');
     }
   }
@@ -571,46 +907,6 @@ export class WalletService {
 
   // Private helper methods
 
-  private async updateWalletBalance(
-    userId: string,
-    amount: number,
-    operation: 'credit' | 'debit' | 'hold' | 'release'
-  ): Promise<WalletBalance> {
-    // In production, update database within transaction
-    // For now, return mock updated balance
-    const currentBalance = await this.getBalance(userId);
-
-    let newAvailableBalance = currentBalance.availableBalance;
-    let newHeldBalance = currentBalance.heldBalance;
-
-    switch (operation) {
-      case 'credit':
-        newAvailableBalance += amount;
-        break;
-      case 'debit':
-        newAvailableBalance -= amount;
-        break;
-      case 'hold':
-        newAvailableBalance -= amount;
-        newHeldBalance += amount;
-        break;
-      case 'release':
-        newAvailableBalance += amount;
-        newHeldBalance -= amount;
-        break;
-    }
-
-    const newBalance: WalletBalance = {
-      ...currentBalance,
-      availableBalance: newAvailableBalance,
-      heldBalance: newHeldBalance,
-      totalBalance: newAvailableBalance + newHeldBalance,
-      lastUpdated: new Date(),
-    };
-
-    return newBalance;
-  }
-
   private generateTransactionId(): string {
     return `txn_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
@@ -629,15 +925,5 @@ export class WalletService {
     };
 
     return descriptions[purpose] || `Transaction: ₹${amount}`;
-  }
-
-  private async recordPlatformFee(
-    auctionId: string,
-    feeAmount: number,
-    winnerId: string,
-    sellerId: string
-  ): Promise<void> {
-    // In production, record platform fee in separate ledger
-    this.logger.log(`Platform fee recorded: ₹${feeAmount} for auction ${auctionId}`);
   }
 }

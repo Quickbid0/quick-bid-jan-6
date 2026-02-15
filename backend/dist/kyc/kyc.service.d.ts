@@ -1,4 +1,5 @@
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma/prisma.service';
 interface AadhaarVerificationRequest {
     aadhaarNumber: string;
     name: string;
@@ -23,56 +24,28 @@ interface BankAccountVerificationRequest {
     name: string;
     consent?: boolean;
 }
-interface KYCSubmissionRequest {
-    userId: string;
-    aadhaarVerified: boolean;
-    panVerified: boolean;
-    faceVerified: boolean;
-    bankVerified?: boolean;
-    documents: {
-        aadhaarFront?: string;
-        aadhaarBack?: string;
-        panCard?: string;
-        selfie?: string;
-        bankStatement?: string;
-    };
-    personalInfo: {
-        name: string;
-        email: string;
-        phone: string;
-        dob: string;
-        address: {
-            line1: string;
-            line2?: string;
-            city: string;
-            state: string;
-            pincode: string;
-        };
-    };
-}
-interface KYCStatusResponse {
-    userId: string;
-    status: 'not_started' | 'in_progress' | 'pending_review' | 'approved' | 'rejected' | 'expired';
-    verificationProgress: {
-        aadhaar: boolean;
-        pan: boolean;
-        face: boolean;
-        bank?: boolean;
-        documents: boolean;
-    };
-    submittedAt?: Date;
-    reviewedAt?: Date;
-    approvedAt?: Date;
-    rejectionReason?: string;
-    expiryDate?: Date;
-}
-export declare class KYCService {
+export declare class KycService {
     private configService;
+    private prisma;
     private readonly logger;
     private readonly kycProviderUrl;
     private readonly apiKey;
     private readonly apiSecret;
-    constructor(configService: ConfigService);
+    constructor(configService: ConfigService, prisma: PrismaService);
+    reviewKYC(kycId: string, adminId: string, decision: 'APPROVE' | 'REJECT', rejectionReason?: string): Promise<{
+        success: boolean;
+        kycId: string;
+        status: string;
+        message: string;
+    }>;
+    getPendingKYCReviews(): Promise<any[]>;
+    getKYCStats(): Promise<{
+        total: number;
+        pending: number;
+        underReview: number;
+        approved: number;
+        rejected: number;
+    }>;
     verifyAadhaar(request: AadhaarVerificationRequest): Promise<{
         success: boolean;
         verified: boolean;
@@ -102,14 +75,6 @@ export declare class KYCService {
         message: string;
         details?: any;
     }>;
-    submitKYCApplication(request: KYCSubmissionRequest): Promise<{
-        success: boolean;
-        applicationId: string;
-        status: string;
-        message: string;
-        estimatedProcessingTime: string;
-    }>;
-    getKYCStatus(userId: string): Promise<KYCStatusResponse>;
     uploadDocument(userId: string, documentType: string, file: Buffer, filename: string): Promise<{
         success: boolean;
         documentUrl: string;

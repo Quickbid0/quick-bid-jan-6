@@ -1,68 +1,83 @@
 import { ConfigService } from '@nestjs/config';
-interface PaymentMethod {
-    code: string;
-    name: string;
-    type: string;
-    icon: string;
-    description: string;
-    fees: number;
-    processingTime: string;
-    limits: {
-        min: number;
-        max: number;
-    };
-    providers: string[];
-    isActive?: boolean;
-}
-interface AuctionPaymentDto {
-    auctionId: string;
-    amount: number;
-    paymentId: string;
-    orderId: string;
-    userId: string;
-    sellerId: string;
-}
+import { PrismaService } from '../prisma/prisma.service';
+import { WalletService } from '../wallet/wallet.service';
 export declare class PaymentService {
     private configService;
+    private prisma;
+    private walletService;
     private readonly logger;
-    private razorpay;
-    private supabase;
-    private providers;
-    private paymentMethods;
-    constructor(configService: ConfigService);
-    private computePaymentAmount;
-    private initializeRazorpay;
-    createOrder(createOrderDto: any): Promise<any>;
-    verifyPayment(verifyPaymentDto: any): Promise<boolean>;
-    processAuctionPayment(auctionPaymentDto: AuctionPaymentDto): Promise<any>;
-    processRefund(refundDto: any): Promise<any>;
-    getPayment(paymentId: string): Promise<any>;
-    getOrder(orderId: string): Promise<any>;
-    createCustomer(customerData: {
-        name: string;
-        email: string;
-        contact: string;
-        notes?: Record<string, string>;
-    }): Promise<any>;
-    handleWebhook(webhookData: any, signature: string): Promise<boolean>;
-    private processWebhookEventIdempotent;
-    private isEventAlreadyProcessed;
-    private markEventAsProcessed;
-    private processWebhookEvent;
-    getAvailablePaymentMethods(amount?: number): Promise<PaymentMethod[]>;
-    getSupportedMethods(): string[];
-    createPaymentWithMethod(amount: number, method: string, orderId: string, customerDetails?: any): Promise<any>;
-    private createMockPayment;
-    private createRazorpayPayment;
-    private createPaytmPayment;
-    private createPhonePePayment;
-    private isMockMode;
+    private readonly razorpayKeyId;
+    private readonly razorpayKeySecret;
+    private readonly razorpayWebhookSecret;
+    constructor(configService: ConfigService, prisma: PrismaService, walletService: WalletService);
+    createWalletTopupOrder(userId: string, amount: number, currency?: string): Promise<{
+        orderId: string;
+        amount: number;
+        currency: string;
+        key: string;
+        user: {
+            name: string;
+            email: string;
+            contact: any;
+        };
+    }>;
+    verifyPayment(paymentData: {
+        razorpay_order_id: string;
+        razorpay_payment_id: string;
+        razorpay_signature: string;
+        userId: string;
+    }): Promise<{
+        success: boolean;
+        transactionId: any;
+        amount: any;
+        message: string;
+    }>;
+    processSubscriptionPayment(userId: string, plan: 'SILVER' | 'GOLD' | 'ENTERPRISE'): Promise<{
+        success: boolean;
+        subscriptionId: any;
+        plan: "SILVER" | "ENTERPRISE" | "GOLD";
+        amount: number;
+        bidLimit: number;
+        validUntil: Date;
+        message: string;
+    }>;
+    processAuctionSettlement(auctionId: string): Promise<{
+        success: boolean;
+        auctionId: string;
+        winnerId: any;
+        sellerId: any;
+        finalPrice: any;
+        commission: number;
+        sellerPayout: number;
+        winnerPayment: any;
+        sellerPayment: any;
+    }>;
+    processRefund(transactionId: string, refundAmount?: number, reason?: string): Promise<{
+        success: boolean;
+        transactionId: string;
+        refundAmount: any;
+        reason: string;
+        newBalance: any;
+        message: string;
+    }>;
+    handleWebhook(webhookData: any, signature: string): Promise<{
+        success: boolean;
+        event: any;
+    }>;
+    getPaymentStats(): Promise<{
+        totalTransactions: any;
+        totalVolume: any;
+        successfulPayments: any;
+        failedPayments: any;
+        refundedAmount: any;
+        byType: {
+            CREDIT: any;
+            DEBIT: any;
+            REFUND: any;
+            COMMISSION: any;
+        };
+    }>;
     private handlePaymentCaptured;
     private handlePaymentFailed;
-    private handleRefundCreated;
-    private processWalletTopupFromWebhook;
-    private processAuctionPaymentFromWebhook;
-    private markBidAsFailed;
-    private processRefundToWallet;
+    private handleRefundProcessed;
 }
-export {};

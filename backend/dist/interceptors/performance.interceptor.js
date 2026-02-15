@@ -43,9 +43,6 @@ let PerformanceInterceptor = PerformanceInterceptor_1 = class PerformanceInterce
         return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
     }
     logPerformanceMetrics(metrics) {
-        if (process.env.NODE_ENV === 'production') {
-            console.log('PERFORMANCE_METRICS:', JSON.stringify(metrics));
-        }
     }
 };
 exports.PerformanceInterceptor = PerformanceInterceptor;

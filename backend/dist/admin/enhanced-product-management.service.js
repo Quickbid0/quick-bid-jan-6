@@ -342,10 +342,8 @@ let EnhancedProductManagementService = class EnhancedProductManagementService {
         return similarProducts.filter(p => p.id !== product.id);
     }
     logProductAction(adminId, action, productId, metadata) {
-        console.log(`[PRODUCT ACTION] Admin ${adminId} performed ${action} on product ${productId}`, metadata);
     }
     logBulkOperation(adminId, operation, processed, failed, total) {
-        console.log(`[BULK PRODUCT OPERATION] Admin ${adminId} performed ${operation} on ${total} products (${processed} successful, ${failed} failed)`);
     }
 };
 exports.EnhancedProductManagementService = EnhancedProductManagementService;

@@ -354,12 +354,12 @@ export class ApprovalService {
   // Mock database methods - in real implementation, these would interact with actual database
   private storeApprovalRequest(request: ApprovalRequest): void {
     // Mock storage
-    console.log('Storing approval request:', request.id);
+    // TODO: Implement actual approval request persistence
   }
 
   private updateApprovalRequest(request: ApprovalRequest): void {
     // Mock update
-    console.log('Updating approval request:', request.id);
+    // TODO: Implement actual approval request updates
   }
 
   private async getApprovalRequest(approvalId: string): Promise<ApprovalRequest | null> {

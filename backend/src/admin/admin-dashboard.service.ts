@@ -363,6 +363,6 @@ export class AdminDashboardService {
 
   private logAdminAction(adminId: string, action: string, details: string): void {
     // In a real implementation, this would log to an audit table
-    console.log(`[ADMIN ACTION] ${adminId} - ${action}: ${details}`);
+    // TODO: Implement proper audit logging
   }
 }

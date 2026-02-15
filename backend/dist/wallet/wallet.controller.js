@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletController = void 0;
 const common_1 = require("@nestjs/common");
 const wallet_service_1 = require("./wallet.service");
+const wallet_dto_1 = require("./dto/wallet.dto");
 let WalletController = class WalletController {
     constructor(walletService) {
         this.walletService = walletService;
@@ -28,10 +29,10 @@ let WalletController = class WalletController {
         const userId = req.user?.id || 'buyer1';
         return this.walletService.addFunds(userId, addFundsDto.amount);
     }
-    async getTransactions(req) {
+    async getTransactions(query, req) {
         const userId = req.user?.id || 'buyer1';
-        const result = await this.walletService.getTransactionHistory(userId);
-        return result.transactions;
+        const result = await this.walletService.getTransactionHistory(userId, query.limit || 20, ((query.page || 1) - 1) * (query.limit || 20), query.type, query.purpose);
+        return result;
     }
     async placeBid(bidDto, req) {
         const userId = req.user?.id || 'buyer1';
@@ -42,7 +43,7 @@ let WalletController = class WalletController {
         return this.walletService.processRefund({
             userId,
             amount: refundDto.amount,
-            reason: 'Bid refund'
+            reason: refundDto.reason || 'Bid refund'
         });
     }
 };
@@ -59,14 +60,15 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [wallet_dto_1.AddFundsDto, Object]),
     __metadata("design:returntype", Promise)
 ], WalletController.prototype, "addFunds", null);
 __decorate([
     (0, common_1.Get)('transactions'),
-    __param(0, (0, common_1.Req)()),
+    __param(0, (0, common_1.Query)()),
+    __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [wallet_dto_1.WalletTransactionQueryDto, Object]),
     __metadata("design:returntype", Promise)
 ], WalletController.prototype, "getTransactions", null);
 __decorate([
@@ -74,7 +76,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [wallet_dto_1.PlaceBidDto, Object]),
     __metadata("design:returntype", Promise)
 ], WalletController.prototype, "placeBid", null);
 __decorate([
@@ -82,7 +84,7 @@ __decorate([
     __param(0, (0, common_1.Body)()),
     __param(1, (0, common_1.Req)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:paramtypes", [wallet_dto_1.RefundBidDto, Object]),
     __metadata("design:returntype", Promise)
 ], WalletController.prototype, "refundBid", null);
 exports.WalletController = WalletController = __decorate([

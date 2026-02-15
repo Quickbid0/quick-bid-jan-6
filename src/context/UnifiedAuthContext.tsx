@@ -523,7 +523,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const getAvailableAuthOptions = (): ('demo' | 'real')[] => {
     try {
-      const options = getAvailableAuthOptions();
+      const options: ('demo' | 'real')[] = ['demo', 'real'];
       // In production, prioritize real auth
       if (import.meta.env.PROD || import.meta.env.VITE_AUTH_MODE === 'real') {
         return options.filter(opt => opt === 'real');

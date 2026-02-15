@@ -1,3 +1,7 @@
+// IMPORTANT: Import Sentry BEFORE any other imports
+// This ensures Sentry is initialized before React application starts
+import './sentry';
+
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';

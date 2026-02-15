@@ -9,11 +9,10 @@ export declare class AuthController {
         message: string;
         user: {
             id: string;
-            email: any;
-            name: any;
-            role: string;
-            walletBalance: number;
-            kycStatus: string;
+            email: string;
+            name: string;
+            role: import(".prisma/client").$Enums.Role;
+            referralCode: any;
         };
     }>;
     refresh(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;

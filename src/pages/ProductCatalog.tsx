@@ -26,7 +26,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { AuctionCard } from '@/components/AuctionCard';
+import AuctionCard from '../components/AuctionCard';
 
 interface Product {
   id: string;
@@ -64,6 +64,7 @@ interface Filters {
   brand: string;
   fuelType: string;
   bodyType: string;
+  transmission: string;
   location: string;
   minYear: string;
   maxYear: string;
@@ -75,6 +76,8 @@ interface Filters {
   showPremium: boolean;
   showFeatured: boolean;
   verifiedOnly: boolean;
+  hasWarranty: boolean;
+  hasInspection: boolean;
 }
 
 const ProductCatalog = () => {
@@ -102,6 +105,7 @@ const ProductCatalog = () => {
     brand: '',
     fuelType: '',
     bodyType: '',
+    transmission: '',
     location: '',
     minYear: '',
     maxYear: '',
@@ -112,7 +116,9 @@ const ProductCatalog = () => {
     showTrending: false,
     showPremium: false,
     showFeatured: false,
-    verifiedOnly: false
+    verifiedOnly: false,
+    hasWarranty: false,
+    hasInspection: false
   });
 
   // Update URL parameters when filters change
@@ -199,9 +205,51 @@ const ProductCatalog = () => {
       filtered = filtered.filter(product => product.auction_type === filters.auctionType);
     }
 
-    // Verified seller filter
-    if (filters.verifiedOnly) {
-      filtered = filtered.filter(product => product.seller.verified);
+    // Brand filter
+    if (filters.brand) {
+      filtered = filtered.filter(product => product.make === filters.brand);
+    }
+
+    // Condition filter
+    if (filters.condition) {
+      filtered = filtered.filter(product => product.condition === filters.condition);
+    }
+
+    // Location filter
+    if (filters.location) {
+      filtered = filtered.filter(product =>
+        product.location.toLowerCase().includes(filters.location.toLowerCase())
+      );
+    }
+
+    // Fuel type filter (assuming added to product data)
+    if (filters.fuelType) {
+      filtered = filtered.filter(product => (product as any).fuelType === filters.fuelType);
+    }
+
+    // Transmission filter (assuming added to product data)
+    if (filters.transmission) {
+      filtered = filtered.filter(product => (product as any).transmission === filters.transmission);
+    }
+
+    // Body type filter (assuming added to product data)
+    if (filters.bodyType) {
+      filtered = filtered.filter(product => (product as any).bodyType === filters.bodyType);
+    }
+
+    // Warranty filter
+    if (filters.hasWarranty) {
+      filtered = filtered.filter(product => (product as any).hasWarranty === true);
+    }
+
+    // Inspection filter
+    if (filters.hasInspection) {
+      filtered = filtered.filter(product => (product as any).hasInspection === true);
+    }
+
+    // Trending filter
+    if (filters.showTrending) {
+      filtered = filtered.filter(product => product.is_trending);
     }
 
     // Sort
@@ -325,6 +373,114 @@ const ProductCatalog = () => {
                     </div>
 
                     <div className="space-y-1.5">
+                      <label htmlFor="brand-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Brand</label>
+                      <select
+                        id="brand-select"
+                        value={filters.brand}
+                        onChange={(e) => setFilters(prev => ({ ...prev, brand: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                      >
+                        <option value="">All Brands</option>
+                        <option value="Toyota">Toyota</option>
+                        <option value="Honda">Honda</option>
+                        <option value="BMW">BMW</option>
+                        <option value="Mercedes">Mercedes</option>
+                        <option value="Audi">Audi</option>
+                        <option value="Ford">Ford</option>
+                        <option value="Chevrolet">Chevrolet</option>
+                        <option value="Nissan">Nissan</option>
+                        <option value="Hyundai">Hyundai</option>
+                        <option value="Kia">Kia</option>
+                        <option value="Volkswagen">Volkswagen</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="condition-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Condition</label>
+                      <select
+                        id="condition-select"
+                        value={filters.condition}
+                        onChange={(e) => setFilters(prev => ({ ...prev, condition: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                      >
+                        <option value="">All Conditions</option>
+                        <option value="New">New</option>
+                        <option value="Like New">Like New</option>
+                        <option value="Excellent">Excellent</option>
+                        <option value="Good">Good</option>
+                        <option value="Fair">Fair</option>
+                        <option value="Poor">Poor</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="fuel-type-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Fuel Type</label>
+                      <select
+                        id="fuel-type-select"
+                        value={filters.fuelType}
+                        onChange={(e) => setFilters(prev => ({ ...prev, fuelType: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                      >
+                        <option value="">All Fuel Types</option>
+                        <option value="Petrol">Petrol</option>
+                        <option value="Diesel">Diesel</option>
+                        <option value="Electric">Electric</option>
+                        <option value="Hybrid">Hybrid</option>
+                        <option value="CNG">CNG</option>
+                        <option value="LPG">LPG</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="transmission-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Transmission</label>
+                      <select
+                        id="transmission-select"
+                        value={filters.transmission}
+                        onChange={(e) => setFilters(prev => ({ ...prev, transmission: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                      >
+                        <option value="">All Transmissions</option>
+                        <option value="Manual">Manual</option>
+                        <option value="Automatic">Automatic</option>
+                        <option value="CVT">CVT</option>
+                        <option value="AMT">AMT</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="body-type-select" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Body Type</label>
+                      <select
+                        id="body-type-select"
+                        value={filters.bodyType}
+                        onChange={(e) => setFilters(prev => ({ ...prev, bodyType: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                      >
+                        <option value="">All Body Types</option>
+                        <option value="Sedan">Sedan</option>
+                        <option value="SUV">SUV</option>
+                        <option value="Hatchback">Hatchback</option>
+                        <option value="Coupe">Coupe</option>
+                        <option value="Convertible">Convertible</option>
+                        <option value="Wagon">Wagon</option>
+                        <option value="Pickup">Pickup</option>
+                        <option value="Van">Van</option>
+                      </select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <label htmlFor="location-input" className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Location</label>
+                      <input
+                        id="location-input"
+                        type="text"
+                        placeholder="City, State"
+                        value={filters.location}
+                        onChange={(e) => setFilters(prev => ({ ...prev, location: e.target.value }))}
+                        className="w-full px-3 py-2 border rounded-lg text-sm bg-gray-50 focus:bg-white transition-colors"
+                        aria-label="Location filter"
+                      />
+                    </div>
+
+                    <div className="space-y-1.5">
                       <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Price Range</label>
                       <div className="flex gap-2">
                         <input
@@ -400,6 +556,46 @@ const ProductCatalog = () => {
                       </select>
                     </div>
                   </div>
+                  
+                  {/* Additional Checkboxes */}
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={filters.verifiedOnly}
+                        onChange={(e) => setFilters(prev => ({ ...prev, verifiedOnly: e.target.checked }))}
+                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Verified Sellers</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={filters.hasWarranty}
+                        onChange={(e) => setFilters(prev => ({ ...prev, hasWarranty: e.target.checked }))}
+                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Has Warranty</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={filters.hasInspection}
+                        onChange={(e) => setFilters(prev => ({ ...prev, hasInspection: e.target.checked }))}
+                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Inspected</span>
+                    </label>
+                    <label className="flex items-center space-x-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={filters.showTrending}
+                        onChange={(e) => setFilters(prev => ({ ...prev, showTrending: e.target.checked }))}
+                        className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                      />
+                      <span className="text-sm text-gray-700 dark:text-gray-300">Trending Only</span>
+                    </label>
+                  </div>
                  
                   <div className="flex justify-between items-center pt-4 border-t border-gray-100 dark:border-gray-700">
                     <div className="text-xs text-gray-500">
@@ -411,6 +607,7 @@ const ProductCatalog = () => {
                         brand: '',
                         fuelType: '',
                         bodyType: '',
+                        transmission: '',
                         location: '',
                         minYear: '',
                         maxYear: '',
@@ -421,7 +618,9 @@ const ProductCatalog = () => {
                         showTrending: false,
                         showPremium: false,
                         showFeatured: false,
-                        verifiedOnly: false
+                        verifiedOnly: false,
+                        hasWarranty: false,
+                        hasInspection: false
                       })}
                       className="text-xs text-red-600 hover:text-red-700 font-medium hover:underline"
                     >

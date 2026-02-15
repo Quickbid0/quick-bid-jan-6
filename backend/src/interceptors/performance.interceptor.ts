@@ -53,11 +53,9 @@ export class PerformanceInterceptor implements NestInterceptor {
     statusCode: number;
     timestamp: string;
   }): void {
-    // In production, this would send to a monitoring service
-    if (process.env.NODE_ENV === 'production') {
-      // Send to monitoring service (e.g., DataDog, New Relic, etc.)
-      console.log('PERFORMANCE_METRICS:', JSON.stringify(metrics));
-    }
+    // In production, this would send to a monitoring service like DataDog, New Relic, etc.
+    // TODO: Implement proper monitoring service integration
+    // For now, metrics are not logged to avoid console spam in production
   }
 }
 

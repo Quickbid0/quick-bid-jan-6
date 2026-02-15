@@ -1,12 +1,15 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createOrLoadUserKey } from '../security/keyring';
 import { encryptProfileFields } from '../security/secureFields';
 import { useUnifiedAuth } from '../context/UnifiedAuthContext';
 import SecureAPIClient from '../utils/secureAPIClient';
 import { validateEmail, validatePassword } from '../utils/securityUtils';
-import { LogIn, Mail, Lock, Eye, EyeOff, User, MessageSquare } from 'lucide-react';
+import { LogIn, Mail, Lock, Phone } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { supabase } from '../config/supabaseClient';
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 interface LoginResponse {
   accessToken: string;
@@ -19,9 +22,15 @@ interface LoginResponse {
   };
 }
 
-const Login = () => {
+const Login: FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [phone, setPhone] = useState('');
+  const [loginMethod, setLoginMethod] = useState<'email' | 'phone'>('email');
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [forgotEmail, setForgotEmail] = useState('');
+  const [forgotOTP, setForgotOTP] = useState('');
+  const [newPassword, setNewPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [showOTP, setShowOTP] = useState(false);
   const [otp, setOTP] = useState('');
@@ -124,11 +133,11 @@ const Login = () => {
 
         // Redirect based on role using user from context
         setTimeout(() => {
-          if (user?.role === 'buyer' || user?.role === 'BUYER') {
+          if (user?.role?.toLowerCase() === 'buyer') {
             navigate('/buyer/dashboard', { replace: true });
-          } else if (user?.role === 'seller' || user?.role === 'SELLER') {
+          } else if (user?.role?.toLowerCase() === 'seller') {
             navigate('/seller/dashboard', { replace: true });
-          } else if (user?.role === 'admin' || user?.role === 'ADMIN') {
+          } else if (user?.role?.toLowerCase() === 'admin') {
             navigate('/admin/dashboard', { replace: true });
           } else {
             navigate('/dashboard', { replace: true });
@@ -235,240 +244,420 @@ const Login = () => {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/dashboard`
+        }
+      });
+
+      if (error) {
+        toast.error(error.message);
+      }
+      // OAuth will redirect, no need to handle success here
+    } catch (error) {
+      console.error('Google login error:', error);
+      toast.error('Failed to initiate Google login');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePhoneLogin = async () => {
+    if (!phone) {
+      toast.error('Please enter your phone number');
+      return;
+    }
+
+    // Basic phone validation (Indian format)
+    const phoneRegex = /^[6-9]\d{9}$/;
+    if (!phoneRegex.test(phone.replace(/\+91/, ''))) {
+      toast.error('Please enter a valid Indian phone number');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        phone: `+91${phone.replace(/\+91/, '')}`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('OTP sent to your phone number');
+        setShowOTP(true);
+      }
+    } catch (error) {
+      console.error('Phone login error:', error);
+      toast.error('Failed to send OTP');
+    }
+  };
+
+  const handleForgotPasswordSendOTP = async () => {
+    if (!forgotEmail) {
+      toast.error('Please enter your email address');
+      return;
+    }
+
+    if (!validateEmail(forgotEmail)) {
+      toast.error('Please enter a valid email address');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data, error } = await supabase.auth.resetPasswordForEmail(forgotEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast.error(error.message);
+      } else {
+        toast.success('Password reset email sent! Check your inbox.');
+        setShowForgotPassword(false);
+      }
+    } catch (error) {
+      console.error('Forgot password error:', error);
+      toast.error('Failed to send reset email');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+// ... (rest of the code remains the same)
   return (
     <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-blue-900 dark:to-indigo-900">
         <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:top-0 focus:left-0 bg-blue-600 text-white p-2 z-50">Skip to main content</a>
         <main id="main-content" className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-          <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-gray-800 rounded-lg shadow-lg" aria-labelledby="login-heading">
-          <h1 id="login-heading" className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Welcome to QuickMela
-          </h1>
-          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400" aria-describedby="login-description">
-            Sign in to your account (Local Backend)
-          </p>
-          <div id="login-description" className="sr-only">
-            Enter your email and password to access your QuickMela account. New users can create an account using the registration link below.
-          </div>
-
-        {!showOTP ? (
-          <form className="mt-8 space-y-6" onSubmit={handleLogin} role="form" aria-labelledby="login-form-heading">
-            <div className="space-y-4" role="group" aria-labelledby="credentials-heading">
-              <h3 id="credentials-heading" className="sr-only">Login Credentials</h3>
-              <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Email Address
-                </label>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  data-testid="email-input"
-                  autoComplete="email"
-                  required
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
-              </div>
-              <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                  Password
-                </label>
-                <input
-                  id="password"
-                  name="password"
-                  type="password"
-                  data-testid="password-input"
-                  autoComplete="current-password"
-                  required
-                  placeholder="••••••••"
-                  className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  aria-describedby="password-help"
-                  aria-required="true"
-                />
-                <div id="password-help" className="sr-only">
-                  Enter your password to sign in to your account
-                </div>
-                {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
-              </div>
-            </div>
-
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
-                  Remember me
-                </label>
-              </div>
-
-              <div className="text-sm">
-                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400">
-                  Forgot your password?
-                </a>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <button
-                type="submit"
-                data-testid="login-button"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                disabled={loading}
-                aria-describedby={loading ? "login-status" : undefined}
-              >
-                {loading ? 'Signing in...' : 'Sign in'}
-              </button>
-              <div id="login-status" className="sr-only" aria-live="polite">
-                {loading ? 'Signing in to your account' : ''}
-              </div>
-
-              <button
-                type="button"
-                onClick={handleSendOTP}
-                disabled={loading}
-                className="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-                aria-describedby={loading ? "otp-status" : undefined}
-              >
-                <MessageSquare className="h-4 w-4 mr-2" aria-hidden="true" />
-                {loading ? 'Sending OTP...' : 'Send Email OTP'}
-              </button>
-              <div id="otp-status" className="sr-only" aria-live="polite">
-                {loading ? 'Sending one-time password to your email' : ''}
-              </div>
-            </div>
-          </form>
-        ) : (
-          <div className="mt-8 space-y-6" role="region" aria-labelledby="otp-heading">
+          <div className="w-full max-w-md space-y-8">
+            {/* Header */}
             <div className="text-center">
-              <h3 id="otp-heading" className="text-lg font-medium text-gray-900 dark:text-white">
-                Enter OTP
-              </h3>
-              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400" aria-describedby="otp-description">
-                We've sent a 6-digit code to your email
+              <div className="mx-auto h-12 w-12 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                <LogIn className="h-6 w-6 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-white tracking-tight">
+                {showForgotPassword ? 'Reset Password' : 'Welcome to QuickMela'}
+              </h1>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                {showForgotPassword ? 'Enter your email to reset your password' : 'Sign in to your account to continue'}
               </p>
-              <div id="otp-description" className="sr-only">
-                A one-time password has been sent to your email address. Enter the 6-digit code to complete verification.
-              </div>
-              {generatedOTP && (
-                <p className="mt-1 text-xs text-indigo-600 dark:text-indigo-400" aria-live="polite">
-                  Development OTP: {generatedOTP}
-                </p>
-              )}
             </div>
 
-            <div>
-              <label htmlFor="otp" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                OTP Code
-              </label>
-              <input
-                id="otp"
-                name="otp"
-                type="text"
-                maxLength={6}
-                placeholder="123456"
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition duration-150 ease-in-out dark:bg-gray-700 dark:border-gray-600 dark:text-white text-center text-lg"
-                value={otp}
-                onChange={(e) => setOTP(e.target.value.replace(/\D/g, ''))}
-                aria-describedby="otp-input-help"
-                aria-required="true"
-                inputMode="numeric"
-                pattern="[0-9]{6}"
-              />
-              <div id="otp-input-help" className="sr-only">
-                Enter the 6-digit one-time password sent to your email
-              </div>
-            </div>
+            {showForgotPassword ? (
+              /* Forgot Password UI */
+              <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
+                <button
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setShowOTP(false);
+                    setForgotEmail('');
+                    setForgotOTP('');
+                    setNewPassword('');
+                  }}
+                  className="flex items-center text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 transition-colors"
+                >
+                  ← Back to Login
+                </button>
 
-            <div className="space-y-3">
-              <button
-                onClick={handleVerifyOTP}
-                disabled={loading}
-                className="w-full flex justify-center py-2.5 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 disabled:opacity-50"
-                aria-describedby={loading ? "verify-status" : undefined}
-              >
-                {loading ? 'Verifying...' : 'Verify OTP'}
-              </button>
-              <div id="verify-status" className="sr-only" aria-live="polite">
-                {loading ? 'Verifying your one-time password' : ''}
-              </div>
+                <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handleForgotPasswordSendOTP(); }} >
+                  <div>
+                    <label htmlFor="forgot-email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Email Address
+                    </label>
+                    <div className="relative">
+                      <input
+                        id="forgot-email"
+                        name="forgot-email"
+                        type="email"
+                        autoComplete="email"
+                        required
+                        className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                        placeholder="Enter your email"
+                        value={forgotEmail}
+                        onChange={(e) => setForgotEmail(e.target.value)}
+                      />
+                      <Mail className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                    </div>
+                  </div>
 
-              <button
-                type="button"
-                onClick={() => setShowOTP(false)}
-                className="w-full flex justify-center py-2.5 px-4 border border-gray-300 rounded-lg shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600"
-              >
-                Back to Login
-              </button>
-            </div>
+                  <button
+                    type="submit"
+                    className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                    disabled={loading}
+                  >
+                    {loading ? 'Sending Reset Email...' : 'Send Reset Email'}
+                  </button>
+                </form>
+              </div>
+            ) : (
+              <>
+                {/* Google Login Button */}
+                <button
+                  onClick={handleGoogleLogin}
+                  disabled={loading}
+                  className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="text-sm font-medium text-gray-700">Continue with Google</span>
+                </button>
+
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-gray-300" />
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-900 dark:to-blue-900 text-gray-500">
+                      Or continue with
+                    </span>
+                  </div>
+                </div>
+
+                {/* Login Method Tabs */}
+                <div className="flex rounded-lg bg-gray-100 dark:bg-gray-800 p-1">
+                  <button
+                    onClick={() => setLoginMethod('email')}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 ${
+                      loginMethod === 'email'
+                        ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    <Mail className="h-4 w-4 inline mr-2" />
+                    Email
+                  </button>
+                  <button
+                    onClick={() => setLoginMethod('phone')}
+                    className={`flex-1 py-2 px-4 text-sm font-medium rounded-md transition-all duration-200 ${
+                      loginMethod === 'phone'
+                        ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm'
+                        : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                    }`}
+                  >
+                    <Phone className="h-4 w-4 inline mr-2" />
+                    Phone
+                  </button>
+                </div>
+
+                {/* Login Forms */}
+                {loginMethod === 'email' ? (
+                  /* Email Login Form */
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
+                    <form className="space-y-6" onSubmit={handleLogin}>
+                      <div>
+                        <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Email Address
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="email"
+                            name="email"
+                            type="email"
+                            autoComplete="email"
+                            required
+                            className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                            placeholder="Enter your email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                          />
+                          <Mail className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                        </div>
+                        {emailError && <p className="text-red-500 text-sm mt-1">{emailError}</p>}
+                      </div>
+
+                      <div>
+                        <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                          Password
+                        </label>
+                        <div className="relative">
+                          <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            autoComplete="current-password"
+                            required
+                            className="appearance-none rounded-lg relative block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                            placeholder="••••••••"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                          />
+                          <Lock className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                        </div>
+                        {passwordError && <p className="text-red-500 text-sm mt-1">{passwordError}</p>}
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center">
+                          <input
+                            id="remember-me"
+                            name="remember-me"
+                            type="checkbox"
+                            className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          />
+                          <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900 dark:text-gray-300">
+                            Remember me
+                          </label>
+                        </div>
+
+                        <div className="text-sm">
+                          <button
+                            type="button"
+                            onClick={() => setShowForgotPassword(true)}
+                            className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 transition-colors duration-200"
+                          >
+                            Forgot password?
+                          </button>
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                        disabled={loading}
+                      >
+                        {loading ? 'Signing in...' : 'Sign in'}
+                      </button>
+                    </form>
+                  </div>
+                ) : (
+                  /* Phone Login Form */
+                  <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-8 space-y-6">
+                    {!showOTP ? (
+                      <form className="space-y-6" onSubmit={(e) => { e.preventDefault(); handlePhoneLogin(); }} >
+                        <div>
+                          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            Phone Number
+                          </label>
+                          <div className="relative">
+                            <input
+                              id="phone"
+                              name="phone"
+                              type="tel"
+                              autoComplete="tel"
+                              required
+                              className="appearance-none rounded-lg relative block w-full pl-16 pr-4 py-3 border border-gray-300 dark:border-gray-700 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white bg-white dark:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+                              placeholder="Enter 10-digit number"
+                              value={phone}
+                              onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                            />
+                            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                              <span className="text-gray-500 dark:text-gray-400 text-sm font-medium">+91</span>
+                            </div>
+                            <Phone className="absolute right-3 top-3 h-5 w-5 text-gray-400" />
+                          </div>
+                          <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                            Enter your 10-digit mobile number
+                          </p>
+                        </div>
+
+                        <button
+                          type="submit"
+                          className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl"
+                          disabled={loading}
+                        >
+                          {loading ? 'Sending OTP...' : 'Send SMS OTP'}
+                        </button>
+                      </form>
+                    ) : (
+                      /* Phone OTP Verification */
+                      <div className="space-y-6">
+                        <div className="text-center">
+                          <h3 className="text-lg font-medium text-gray-900 dark:text-white">
+                            Enter OTP
+                          </h3>
+                          <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                            We've sent a 6-digit code to +91{phone}
+                          </p>
+                        </div>
+
+                        <div>
+                          <label htmlFor="phone-otp" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                            OTP Code
+                          </label>
+                          <input
+                            id="phone-otp"
+                            name="phone-otp"
+                            type="text"
+                            maxLength={6}
+                            placeholder="123456"
+                            className="block w-full px-4 py-3 border border-gray-300 dark:border-gray-700 rounded-lg text-center text-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-colors duration-200"
+                            value={otp}
+                            onChange={(e) => setOTP(e.target.value.replace(/\D/g, ''))}
+                          />
+                        </div>
+
+                        <div className="space-y-3">
+                          <button
+                            onClick={handleVerifyOTP}
+                            disabled={loading}
+                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-medium text-white bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200 disabled:opacity-50"
+                          >
+                            {loading ? 'Verifying...' : 'Verify OTP'}
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setShowOTP(false);
+                              setOTP('');
+                            }}
+                            className="w-full flex justify-center py-2.5 px-4 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors duration-200"
+                          >
+                            Back to Phone Login
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Footer Links */}
+                <div className="text-center space-y-4">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Don't have an account?{' '}
+                    <Link
+                      to="/register"
+                      className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 transition-colors duration-200"
+                    >
+                      Create one
+                    </Link>
+                  </p>
+
+                  {/* Demo Accounts */}
+                  <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                    <p className="text-xs text-gray-500 mb-3 text-center">Demo Accounts:</p>
+                    <div className="flex gap-2 justify-center">
+                      <button
+                        onClick={() => handleDemoLogin('buyer')}
+                        className="px-3 py-2 text-xs bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-colors"
+                      >
+                        Buyer
+                      </button>
+                      <button
+                        onClick={() => handleDemoLogin('seller')}
+                        className="px-3 py-2 text-xs bg-green-50 text-green-700 rounded-lg hover:bg-green-100 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 transition-colors"
+                      >
+                        Seller
+                      </button>
+                      <button
+                        onClick={() => handleDemoLogin('admin')}
+                        className="px-3 py-2 text-xs bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition-colors"
+                      >
+                        Admin
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                </>
+            )}
           </div>
-        )}
-
-        </div>
-
-        <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6" role="region" aria-labelledby="account-options">
-          <div className="flex flex-col gap-3">
-            <p className="text-center text-sm text-gray-500" aria-describedby="registration-help">
-              Don't have an account?
-            </p>
-            <div id="registration-help" className="sr-only">
-              Create a new account to start buying and selling on QuickMela
-            </div>
-            <Link
-              to="/register"
-              className="w-full flex justify-center py-2 px-4 border border-indigo-600 rounded-md shadow-sm text-sm font-medium text-indigo-600 bg-transparent hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-              aria-describedby="register-help"
-            >
-              Create an account
-            </Link>
-            <div id="register-help" className="sr-only">
-              Navigate to the registration page to create a new QuickMela account
-            </div>
-            
-            <div className="text-center" role="region" aria-labelledby="demo-accounts">
-              <p id="demo-accounts" className="text-xs text-gray-500 mb-2">Demo Accounts:</p>
-              <div className="flex gap-2 justify-center" role="group" aria-label="Demo account options">
-                <button
-                  onClick={() => handleDemoLogin('buyer')}
-                  className="px-3 py-1 text-xs bg-blue-100 text-blue-700 rounded hover:bg-blue-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 transition-colors"
-                  aria-label="Load demo buyer account credentials"
-                >
-                  Buyer
-                </button>
-                <button
-                  onClick={() => handleDemoLogin('seller')}
-                  className="px-3 py-1 text-xs bg-green-100 text-green-700 rounded hover:bg-green-200 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-1 transition-colors"
-                  aria-label="Load demo seller account credentials"
-                >
-                  Seller
-                </button>
-                <button
-                  onClick={() => handleDemoLogin('admin')}
-                  className="px-3 py-1 text-xs bg-purple-100 text-purple-700 rounded hover:bg-purple-200 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-1 transition-colors"
-                  aria-label="Load demo admin account credentials"
-                >
-                  Admin
-                </button>
-              </div>
-              <div className="sr-only" aria-live="polite" id="demo-status">
-                {email && password ? `Demo credentials loaded: ${email}` : ''}
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
     </>
   );
 };
 
-export default Login;
+export { Login as default };

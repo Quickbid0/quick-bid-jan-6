@@ -1,190 +1,480 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Shield, Wallet, CheckCircle, Truck, Star, ArrowRight } from 'lucide-react';
+import {
+  Search,
+  Shield,
+  CheckCircle,
+  Star,
+  TrendingUp,
+  Users,
+  Award,
+  ArrowRight,
+  Play,
+  ChevronRight
+} from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const LandingPage = () => {
-  const [activeBanner, setActiveBanner] = useState(0);
+// =============================================================================
+// ELITE HOMEPAGE - Series B Ready
+// VC-Backed Indian Marketplace (₹500 Crore Valuation)
+// Apple Clean + Stripe Confident + Amazon Conversion
+// =============================================================================
 
-  useEffect(() => {
-    const id = setInterval(() => {
-      setActiveBanner((prev) => (prev + 1) % 3);
-    }, 5000);
-    return () => clearInterval(id);
-  }, []);
+const EliteLandingPage = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [activeCategory, setActiveCategory] = useState('vehicles');
 
-  const features = [
-    {
-      icon: <Shield className="h-12 w-12 text-blue-600 mx-auto mb-4" />,
-      title: 'Verified Vehicles',
-      desc: 'All vehicles undergo 147-point inspection. Complete documentation and service history provided.',
-    },
-    {
-      icon: <Wallet className="h-12 w-12 text-green-600 mx-auto mb-4" />,
-      title: 'Secure Payments',
-      desc: 'Escrow protection for all transactions. Money released only after successful delivery.',
-    },
-    {
-      icon: <Truck className="h-12 w-12 text-orange-600 mx-auto mb-4" />,
-      title: 'Pan India Delivery',
-      desc: 'Free delivery to 20,000+ pin codes. Doorstep inspection and document handover.',
-    },
+  const categories = [
+    { id: 'vehicles', name: 'Vehicles', count: '2,847', icon: '🚗' },
+    { id: 'art', name: 'Art & Paintings', count: '1,203', icon: '🎨' },
+    { id: 'jewelry', name: 'Jewelry', count: '856', icon: '💎' },
+    { id: 'equipment', name: 'Equipment', count: '642', icon: '⚙️' },
+    { id: 'antiques', name: 'Antiques', count: '423', icon: '🏺' },
+    { id: 'handmade', name: 'Handmade', count: '298', icon: '🎨' },
   ];
 
-  const bannerSlogans = [
-    'Buy Better. Sell Smarter on QuickMela.',
-    'Best Deals Every Day on QuickMela.',
-    'Sell Your Vehicle in Minutes with QuickMela.',
+  const trustSignals = [
+    { icon: Shield, text: 'Bank-Grade Security', color: 'text-emerald-500' },
+    { icon: CheckCircle, text: 'AI-Verified Auctions', color: 'text-blue-600' },
+    { icon: Award, text: 'Trusted by 500K+ Users', color: 'text-purple-600' },
+  ];
+
+  const stats = [
+    { value: '₹2.5M+', label: 'Auctions Completed', change: '+127%' },
+    { value: '500K+', label: 'Happy Users', change: '+89%' },
+    { value: '98%', label: 'Success Rate', change: '+12%' },
+    { value: '50+', label: 'Countries', change: '+25%' },
   ];
 
   return (
-    <div className="flex flex-col min-h-screen font-inter bg-white dark:bg-gray-900 transition-all">
-      
-      {/* Hero Section - Cars24/Spinny inspired */}
-      <section className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white">
-        <div className="absolute inset-0 bg-black/20" />
-        <div className="relative max-w-7xl mx-auto px-6 py-16 sm:py-24 lg:py-32">
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight">
-                India's Most Trusted
-                <br />
-                <span className="text-yellow-300">Vehicle Auction Platform</span>
-              </h1>
-              <p className="mt-6 text-xl sm:text-2xl text-blue-100 max-w-3xl mx-auto">
-                Bank-seized cars, pre-owned vehicles & exclusive auctions
-                <br />
-                <span className="text-yellow-300 font-semibold">147-point inspection</span> on every vehicle
-              </p>
-            </motion.div>
+    <div className="min-h-screen bg-white">
+      {/* Navigation - Clean & Minimal */}
+      <nav className="border-b border-neutral-200 bg-white/80 backdrop-blur-sm sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center">
+              <Link to="/" className="text-2xl font-bold text-primary-600">
+                QuickMela
+              </Link>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="mt-10 flex flex-col sm:flex-row gap-4 justify-center"
-            >
-              <Link
-                to="/buyer/auctions"
-                className="px-8 py-4 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg"
-              >
+            <div className="hidden md:flex items-center space-x-8">
+              <Link to="/auctions" className="text-neutral-600 hover:text-primary-600 transition-colors duration-200">
                 Browse Auctions
               </Link>
-              <Link
-                to="/register"
-                className="px-8 py-4 bg-yellow-400 text-gray-900 font-semibold rounded-lg hover:bg-yellow-300 transition-colors shadow-lg"
-              >
-                Start Selling
+              <Link to="/sell" className="text-neutral-600 hover:text-primary-600 transition-colors duration-200">
+                Sell with Us
               </Link>
-            </motion.div>
+              <Link to="/about" className="text-neutral-600 hover:text-primary-600 transition-colors duration-200">
+                About
+              </Link>
+            </div>
 
-            {/* Trust Indicators */}
+            <div className="flex items-center space-x-4">
+              <Link to="/login">
+                <button className="text-neutral-600 hover:text-primary-600 px-4 py-2 rounded-lg transition-colors duration-200">
+                  Sign In
+                </button>
+              </Link>
+              <Link to="/register">
+                <button className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-all duration-250 hover:shadow-lg hover:shadow-primary-500/25">
+                  Get Started
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero Section - Large & Confident */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-neutral-50 to-white">
+        <div className="absolute inset-0 bg-grid-neutral-100 bg-[size:32px_32px] opacity-30" />
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 lg:py-32">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left: Hero Content */}
+            <div className="space-y-8">
+              {/* Trust Badge */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2"
+              >
+                <Shield className="w-4 h-4 text-emerald-600" />
+                <span className="text-sm font-medium text-emerald-700">Trusted by 500K+ Users</span>
+              </motion.div>
+
+              {/* Hero Headline */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.1 }}
+                className="space-y-4"
+              >
+                <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
+                  India's Most
+                  <span className="block text-primary-600">Trusted Auction</span>
+                  <span className="block">Platform</span>
+                </h1>
+                <p className="text-xl text-neutral-600 max-w-lg leading-relaxed">
+                  Experience secure, transparent auctions with AI-powered insights and real-time bidding. Join India's fastest-growing marketplace.
+                </p>
+              </motion.div>
+
+              {/* Search-First UX */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.2 }}
+                className="max-w-md"
+              >
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400 w-5 h-5" />
+                  <input
+                    type="text"
+                    placeholder="Search auctions, vehicles, art..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 border border-neutral-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-lg"
+                  />
+                  <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 transition-all duration-250 hover:shadow-lg">
+                    Search
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* CTA Buttons */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.3 }}
+                className="flex flex-col sm:flex-row gap-4"
+              >
+                <Link to="/register">
+                  <button className="w-full sm:w-auto bg-primary-600 text-white px-8 py-4 rounded-xl font-semibold hover:bg-primary-700 transition-all duration-250 hover:shadow-xl hover:shadow-primary-500/25 flex items-center justify-center gap-2">
+                    Start Bidding Today
+                    <ArrowRight className="w-5 h-5" />
+                  </button>
+                </Link>
+                <button className="w-full sm:w-auto border border-neutral-300 text-neutral-700 px-8 py-4 rounded-xl font-semibold hover:bg-neutral-50 transition-all duration-250 flex items-center justify-center gap-2">
+                  <Play className="w-5 h-5" />
+                  Watch Demo
+                </button>
+              </motion.div>
+
+              {/* Social Proof */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+                className="flex items-center gap-8 pt-8"
+              >
+                <div className="flex items-center gap-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 fill-yellow-400 text-yellow-400" />
+                  ))}
+                  <span className="text-sm text-neutral-600 ml-2">4.9/5 (50K+ reviews)</span>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right: Hero Visual */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
-              className="mt-12 flex flex-wrap justify-center gap-8 text-sm"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="relative"
             >
-              <div className="flex items-center gap-2">
-                <CheckCircle className="w-5 h-5 text-yellow-300" />
-                <span>100% Verified Vehicles</span>
+              {/* Main Auction Card */}
+              <div className="bg-white rounded-2xl shadow-xl p-8 border border-neutral-200">
+                <div className="flex items-start gap-4 mb-6">
+                  <div className="w-16 h-16 bg-primary-100 rounded-xl flex items-center justify-center">
+                    <span className="text-2xl">🚗</span>
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-semibold text-neutral-900">BMW X5 2020</h3>
+                    <p className="text-neutral-600">Premium Luxury SUV • Verified</p>
+                    <div className="flex items-center gap-2 mt-2">
+                      <CheckCircle className="w-4 h-4 text-emerald-500" />
+                      <span className="text-sm text-emerald-600">AI-Verified</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4 mb-6">
+                  <div>
+                    <div className="text-sm text-neutral-600">Current Bid</div>
+                    <div className="text-2xl font-bold text-emerald-600">₹8.75L</div>
+                  </div>
+                  <div>
+                    <div className="text-sm text-neutral-600">Time Left</div>
+                    <div className="text-2xl font-bold text-amber-600">4:23</div>
+                  </div>
+                </div>
+
+                <button className="w-full bg-primary-600 text-white py-4 rounded-xl font-semibold hover:bg-primary-700 transition-all duration-250 hover:shadow-lg">
+                  Place Bid
+                </button>
               </div>
-              <div className="flex items-center gap-2">
-                <Wallet className="w-5 h-5 text-yellow-300" />
-                <span>Secure Payments</span>
+
+              {/* Floating Stats */}
+              <div className="absolute -top-4 -right-4 bg-white rounded-xl shadow-lg p-4 border border-neutral-200">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-primary-600" />
+                  <span className="text-sm font-medium">247 watching</span>
+                </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Truck className="w-5 h-5 text-yellow-300" />
-                <span>Pan India Delivery</span>
+
+              <div className="absolute -bottom-4 -left-4 bg-white rounded-xl shadow-lg p-4 border border-neutral-200">
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-emerald-600" />
+                  <span className="text-sm font-medium">+23% value</span>
+                </div>
               </div>
             </motion.div>
           </div>
         </div>
-
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
-          <div className="absolute top-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-3xl" />
-          <div className="absolute top-0 right-0 w-60 h-60 bg-white/5 rounded-full blur-3xl" />
-          <div className="absolute bottom-0 left-1/4 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
-        </div>
       </section>
 
-      {/* Features Section */}
-      <section className="py-24 bg-white dark:bg-gray-800">
-        <div className="max-w-7xl mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center text-gray-900 dark:text-white mb-16">
-            Why QuickMela is Trusted by Thousands
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            {features.map((feature, idx) => (
+      {/* Trust Strip */}
+      <section className="bg-neutral-900 py-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-center gap-12">
+            {trustSignals.map((signal, index) => (
               <motion.div
-                key={idx}
-                className="text-center p-6 bg-gray-50 dark:bg-gray-700 rounded-xl shadow-lg"
+                key={signal.text}
                 initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="flex items-center gap-2 text-white"
               >
-                {feature.icon}
-                <div className="font-semibold text-gray-900 dark:text-white mt-4">{feature.title}</div>
-                <div className="text-gray-600 dark:text-gray-400 text-sm mt-2">{feature.desc}</div>
+                <signal.icon className={`w-5 h-5 ${signal.color}`} />
+                <span className="text-sm font-medium">{signal.text}</span>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-blue-50 dark:bg-gray-900">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <div className="text-3xl font-bold text-blue-600">50,000+</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">Verified Vehicles</div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <div className="text-3xl font-bold text-green-600">₹100Cr+</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">Transactions Processed</div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <div className="text-3xl font-bold text-orange-600">20,000+</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">Happy Customers</div>
-            </div>
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-md">
-              <div className="text-3xl font-bold text-purple-600">4.9/5</div>
-              <div className="text-gray-600 dark:text-gray-400 mt-2">Customer Rating</div>
-            </div>
+      {/* Category Grid */}
+      <section className="py-24 bg-neutral-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-neutral-900 mb-4">
+              Browse by Category
+            </h2>
+            <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
+              Discover premium items across India's most trusted auction categories
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {categories.map((category, index) => (
+              <motion.div
+                key={category.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                whileHover={{ y: -4 }}
+                className={`relative bg-white rounded-2xl p-8 border-2 transition-all duration-250 cursor-pointer ${
+                  activeCategory === category.id
+                    ? 'border-primary-500 shadow-xl shadow-primary-500/10'
+                    : 'border-neutral-200 hover:border-neutral-300 hover:shadow-lg'
+                }`}
+                onClick={() => setActiveCategory(category.id)}
+              >
+                <div className="text-4xl mb-4">{category.icon}</div>
+                <h3 className="text-xl font-semibold text-neutral-900 mb-2">{category.name}</h3>
+                <p className="text-neutral-600 mb-4">{category.count} active auctions</p>
+                <div className="flex items-center text-primary-600 font-medium">
+                  Browse Now
+                  <ChevronRight className="w-4 h-4 ml-1" />
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-blue-700 text-white">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h2 className="text-3xl font-bold mb-8">
-            Ready to Start Your Auction Journey?
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              to="/register"
-              className="px-8 py-4 bg-white text-blue-700 font-semibold rounded-lg hover:bg-gray-100 transition-colors shadow-lg"
-            >
-              Register Now
-            </Link>
-            <Link
-              to="/buyer/auctions"
-              className="px-8 py-4 bg-transparent border-2 border-white text-white font-semibold rounded-lg hover:bg-white hover:text-blue-700 transition-colors"
-            >
-              Browse Vehicles
-            </Link>
+      {/* Social Proof Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-center mb-16"
+          >
+            <h2 className="text-4xl font-bold text-neutral-900 mb-4">
+              Trusted by Industry Leaders
+            </h2>
+            <p className="text-xl text-neutral-600">
+              Join thousands of satisfied users who've transformed their auction experience
+            </p>
+          </motion.div>
+
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
+            {stats.map((stat, index) => (
+              <motion.div
+                key={stat.label}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="text-center"
+              >
+                <div className="text-4xl font-bold text-primary-600 mb-2">{stat.value}</div>
+                <div className="text-neutral-900 font-semibold mb-1">{stat.label}</div>
+                <div className="text-emerald-600 text-sm font-medium">{stat.change} this quarter</div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Testimonial Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                name: 'Rajesh Kumar',
+                role: 'Verified Seller',
+                content: 'Sold my vintage car for 40% above market value. The AI insights were game-changing.',
+                avatar: 'RK'
+              },
+              {
+                name: 'Priya Sharma',
+                role: 'Premium Buyer',
+                content: 'Found incredible art pieces at fair prices. The verification process gives complete peace of mind.',
+                avatar: 'PS'
+              },
+              {
+                name: 'Amit Patel',
+                role: 'Company Director',
+                content: 'Our bulk auctions run smoothly with enterprise-grade security and real-time analytics.',
+                avatar: 'AP'
+              }
+            ].map((testimonial, index) => (
+              <motion.div
+                key={testimonial.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                className="bg-neutral-50 rounded-2xl p-8 border border-neutral-200"
+              >
+                <div className="flex items-center gap-4 mb-4">
+                  <div className="w-12 h-12 bg-primary-600 rounded-full flex items-center justify-center text-white font-semibold">
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <div className="font-semibold text-neutral-900">{testimonial.name}</div>
+                    <div className="text-sm text-neutral-600">{testimonial.role}</div>
+                  </div>
+                </div>
+                <p className="text-neutral-700 leading-relaxed">"{testimonial.content}"</p>
+                <div className="flex items-center gap-1 mt-4">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Final CTA */}
+      <section className="py-24 bg-primary-600">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <h2 className="text-4xl font-bold text-white mb-4">
+              Ready to Start Your Auction Journey?
+            </h2>
+            <p className="text-xl text-primary-100 mb-8">
+              Join India's most trusted auction platform. Start bidding or selling today.
+            </p>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/register">
+                <button className="w-full sm:w-auto bg-white text-primary-600 px-8 py-4 rounded-xl font-semibold hover:bg-neutral-50 transition-all duration-250 hover:shadow-xl flex items-center justify-center gap-2">
+                  Get Started Free
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+              </Link>
+              <Link to="/auctions">
+                <button className="w-full sm:w-auto border-2 border-white text-white px-8 py-4 rounded-xl font-semibold hover:bg-white/10 transition-all duration-250">
+                  Browse Auctions
+                </button>
+              </Link>
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Footer - VC Startup Clean */}
+      <footer className="bg-neutral-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+              <div className="text-2xl font-bold text-white mb-4">QuickMela</div>
+              <p className="text-neutral-400 leading-relaxed">
+                India's most trusted auction platform with AI-powered insights and enterprise-grade security.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-white mb-4">Platform</h3>
+              <ul className="space-y-2 text-neutral-400">
+                <li><Link to="/auctions" className="hover:text-white transition-colors">Browse Auctions</Link></li>
+                <li><Link to="/sell" className="hover:text-white transition-colors">Sell with Us</Link></li>
+                <li><Link to="/how-it-works" className="hover:text-white transition-colors">How It Works</Link></li>
+                <li><Link to="/pricing" className="hover:text-white transition-colors">Pricing</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-white mb-4">Company</h3>
+              <ul className="space-y-2 text-neutral-400">
+                <li><Link to="/about" className="hover:text-white transition-colors">About Us</Link></li>
+                <li><Link to="/careers" className="hover:text-white transition-colors">Careers</Link></li>
+                <li><Link to="/press" className="hover:text-white transition-colors">Press</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition-colors">Contact</Link></li>
+              </ul>
+            </div>
+
+            <div>
+              <h3 className="font-semibold text-white mb-4">Support</h3>
+              <ul className="space-y-2 text-neutral-400">
+                <li><Link to="/help" className="hover:text-white transition-colors">Help Center</Link></li>
+                <li><Link to="/security" className="hover:text-white transition-colors">Security</Link></li>
+                <li><Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
+                <li><Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link></li>
+              </ul>
+            </div>
+          </div>
+
+          <div className="border-t border-neutral-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p className="text-neutral-400 text-sm">
+              © 2024 QuickMela. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6 mt-4 md:mt-0">
+              <span className="text-neutral-400 text-sm">Made with ❤️ in India</span>
+              <div className="flex items-center gap-2">
+                <Shield className="w-4 h-4 text-emerald-500" />
+                <span className="text-neutral-400 text-sm">ISO 27001 Certified</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };
 
-export default LandingPage;
+export default EliteLandingPage;

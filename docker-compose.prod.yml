@@ -1,0 +1,315 @@
+version: '3.8'
+
+# QuickMela Production Environment
+# AI-Powered Global Auction Platform
+
+services:
+  # ======================================
+  # MAIN APPLICATION SERVICES
+  # ======================================
+
+  quickmela-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.production
+    container_name: quickmela-backend-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - TZ=Asia/Kolkata
+    env_file:
+      - .env.production
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    networks:
+      - quickmela-network
+    deploy:
+      resources:
+        limits:
+          cpus: '2.0'
+          memory: 4G
+        reservations:
+          cpus: '1.0'
+          memory: 2G
+
+  quickmela-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    container_name: quickmela-worker-prod
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+      - WORKER_MODE=true
+      - TZ=Asia/Kolkata
+    env_file:
+      - .env.production
+    volumes:
+      - uploads:/app/uploads
+      - logs:/app/logs
+    depends_on:
+      - postgres
+      - redis
+      - rabbitmq
+    networks:
+      - quickmela-network
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  # ======================================
+  # DATABASE SERVICES
+  # ======================================
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: quickmela-postgres-prod
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=quickmela_prod
+      - POSTGRES_USER=quickmela_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_INITDB_ARGS=--encoding=UTF-8
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/production_schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./prisma/seed.sql:/docker-entrypoint-initdb.d/02-seed.sql
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U quickmela_user -d quickmela_prod"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quickmela-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1.0'
+          memory: 2G
+
+  redis:
+    image: redis:7-alpine
+    container_name: quickmela-redis-prod
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --tcp-keepalive 300
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quickmela-network
+
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: quickmela-rabbitmq-prod
+    restart: unless-stopped
+    environment:
+      - RABBITMQ_DEFAULT_USER=quickmela
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASSWORD}
+      - RABBITMQ_DEFAULT_VHOST=quickmela
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quickmela-network
+
+  # ======================================
+  # MONITORING & LOGGING
+  # ======================================
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: quickmela-prometheus-prod
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=30d'
+      - '--web.enable-lifecycle'
+    ports:
+      - "9090:9090"
+    networks:
+      - quickmela-network
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: quickmela-grafana-prod
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-piechart-panel,grafana-worldmap-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    networks:
+      - quickmela-network
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: quickmela-node-exporter-prod
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    ports:
+      - "9100:9100"
+    networks:
+      - quickmela-network
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:latest
+    container_name: quickmela-postgres-exporter-prod
+    restart: unless-stopped
+    environment:
+      - DATA_SOURCE_NAME=postgresql://quickmela_user:${DB_PASSWORD}@postgres:5432/quickmela_prod?sslmode=disable
+    ports:
+      - "9187:9187"
+    depends_on:
+      - postgres
+    networks:
+      - quickmela-network
+
+  redis-exporter:
+    image: oliver006/redis_exporter:latest
+    container_name: quickmela-redis-exporter-prod
+    restart: unless-stopped
+    environment:
+      - REDIS_ADDR=redis://redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+    ports:
+      - "9121:9121"
+    depends_on:
+      - redis
+    networks:
+      - quickmela-network
+
+  # ======================================
+  # BACKUP & SECURITY
+  # ======================================
+
+  backup-service:
+    image: postgres:15-alpine
+    container_name: quickmela-backup-prod
+    restart: "no"
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_DB=quickmela_prod
+      - POSTGRES_USER=quickmela_user
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - backup_data:/backup
+      - ./scripts/backup.sh:/usr/local/bin/backup.sh
+    command: ["sh", "/usr/local/bin/backup.sh"]
+    depends_on:
+      - postgres
+    networks:
+      - quickmela-network
+
+  # ======================================
+  # WEB SERVER & PROXY
+  # ======================================
+
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: quickmela-nginx-prod
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - ./nginx/logs:/var/log/nginx
+      - uploads:/var/www/uploads:ro
+    depends_on:
+      - quickmela-backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    networks:
+      - quickmela-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  rabbitmq_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  uploads:
+    driver: local
+  logs:
+    driver: local
+  backup_data:
+    driver: local
+
+networks:
+  quickmela-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16

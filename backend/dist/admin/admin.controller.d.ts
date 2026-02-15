@@ -115,18 +115,17 @@ export declare class AdminController {
         }[];
         totalDuplicates: number;
     }>;
-    detectFraud(bidData: any): Promise<import("../ai/ai.service").FraudDetectionResult>;
-    predictPrice(productData: any): Promise<import("../ai/ai.service").PricePrediction>;
-    getRecommendations(userId: string, context: any): Promise<import("../ai/ai.service").ProductRecommendation[]>;
-    moderateContent(contentData: any): Promise<import("../ai/ai.service").SmartModerationResult>;
+    detectFraud(bidData: any): Promise<FraudDetectionResult>;
+    predictPrice(productData: any): Promise<PricePrediction>;
+    getRecommendations(userId: string, context: any): Promise<ProductRecommendation[]>;
+    moderateContent(contentData: any): Promise<SmartModerationResult>;
     categorizeProduct(productData: any): Promise<{
         primaryCategory: string;
         subcategories: string[];
         confidence: number;
-        alternatives: {
-            category: string;
-            confidence: number;
-        }[];
+        const: any;
+        scores: Record<string, number>;
+        for(: any, [category, keywords]: [any, any], of: any, Object: any): any;
     }>;
     approveUserRegistration(userId: string, data: {
         adminId: string;

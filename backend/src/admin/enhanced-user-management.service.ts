@@ -363,7 +363,8 @@ export class EnhancedUserManagementService {
     }
 
     // In a real implementation, this would send a notification via email/SMS/push
-    console.log(`Sending notification to user ${userId}: ${message}`);
+    // TODO: Implement actual notification sending
+    // await this.notificationService.sendNotification(userId, message);
 
     // Log notification
     this.logUserAction(adminId, 'send_notification', userId, { message });
@@ -384,10 +385,11 @@ export class EnhancedUserManagementService {
 
   private logUserAction(adminId: string, action: string, targetUserId: string, metadata?: any): void {
     // In a real implementation, this would log to an audit table
-    console.log(`[USER ACTION] Admin ${adminId} performed ${action} on user ${targetUserId}`, metadata);
+    // TODO: Implement proper audit logging
   }
 
   private logBulkOperation(adminId: string, operation: string, processed: number, failed: number, total: number): void {
-    console.log(`[BULK OPERATION] Admin ${adminId} performed ${operation} on ${total} users (${processed} successful, ${failed} failed)`);
+    // In a real implementation, this would log to an audit table
+    // TODO: Implement proper audit logging for bulk operations
   }
 }

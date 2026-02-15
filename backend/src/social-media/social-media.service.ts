@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 interface SocialMediaPlatform {
   name: string;
@@ -85,6 +85,8 @@ export class SocialMediaService {
   // Mock social media posts for demo
   private mockShares: any[] = [];
 
+  private readonly logger = new Logger(SocialMediaService.name);
+
   async shareAuction(options: ShareOptions): Promise<ShareResult> {
     const platform = this.platforms.find(p => p.code === options.platform);
 
@@ -128,7 +130,7 @@ export class SocialMediaService {
       };
 
     } catch (error) {
-      console.error(`Error sharing to ${options.platform}:`, error);
+      this.logger.error(`Error sharing to ${options.platform}:`, error);
       return {
         success: false,
         message: `Failed to share on ${platform.name}. Please try again.`

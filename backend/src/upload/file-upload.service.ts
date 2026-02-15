@@ -2,7 +2,7 @@ import { Injectable, BadRequestException, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as sharp from 'sharp';
+import sharp from 'sharp';
 import { v4 as uuidv4 } from 'uuid';
 
 export interface FileUploadConfig {
@@ -433,7 +433,7 @@ export class FileUploadService {
   // Private helper methods
   private async saveFileMetadata(file: UploadedFile): Promise<void> {
     // Mock implementation - in real app, save to files table
-    console.log('Saving file metadata:', file.id);
+    // TODO: Implement actual file metadata persistence
   }
 
   private async getFileMetadata(fileId: string): Promise<UploadedFile | null> {
@@ -454,6 +454,6 @@ export class FileUploadService {
 
   private async deleteFileMetadata(fileId: string): Promise<void> {
     // Mock implementation
-    console.log('Deleting file metadata:', fileId);
+    // TODO: Implement actual file metadata deletion
   }
 }

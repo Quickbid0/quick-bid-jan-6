@@ -248,7 +248,6 @@ let EnhancedUserManagementService = class EnhancedUserManagementService {
         if (!user) {
             throw new common_1.NotFoundException('User not found');
         }
-        console.log(`Sending notification to user ${userId}: ${message}`);
         this.logUserAction(adminId, 'send_notification', userId, { message });
     }
     async getUserActivity(userId) {
@@ -263,10 +262,8 @@ let EnhancedUserManagementService = class EnhancedUserManagementService {
         };
     }
     logUserAction(adminId, action, targetUserId, metadata) {
-        console.log(`[USER ACTION] Admin ${adminId} performed ${action} on user ${targetUserId}`, metadata);
     }
     logBulkOperation(adminId, operation, processed, failed, total) {
-        console.log(`[BULK OPERATION] Admin ${adminId} performed ${operation} on ${total} users (${processed} successful, ${failed} failed)`);
     }
 };
 exports.EnhancedUserManagementService = EnhancedUserManagementService;

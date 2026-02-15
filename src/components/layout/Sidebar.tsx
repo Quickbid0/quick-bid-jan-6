@@ -5,14 +5,13 @@ import {
   LayoutDashboard,
   PackageSearch,
   Gavel,
-  Users,
   Wallet as WalletIcon,
-  Rocket,
-  Package,
-  Archive,
+  Shield,
+  TrendingUp,
   Settings,
-  Star,
-  Search
+  Heart,
+  Clock,
+  Award
 } from 'lucide-react';
 
 interface NavItem {
@@ -20,7 +19,9 @@ interface NavItem {
   to: string;
   icon: React.ReactNode;
   section: string;
-  roles?: string[]; // Allowed roles. If undefined, allowed for everyone including guests.
+  roles?: string[];
+  badge?: string;
+  priority?: 'high' | 'medium' | 'low'; // Hide low priority items
 }
 
 interface SidebarProps {
@@ -29,132 +30,255 @@ interface SidebarProps {
   className?: string;
 }
 
-const navItems: NavItem[] = [
-  { 
-    label: 'Dashboard', 
-    to: '/dashboard', 
-    icon: <LayoutDashboard size={18} />, 
-    section: 'Core',
-    roles: ['buyer', 'seller', 'company', 'admin', 'superadmin']
-  },
-  { 
-    label: 'Catalog', 
-    to: '/catalog', 
-    icon: <PackageSearch size={18} />, 
-    section: 'Catalog' 
-    // Publicly accessible
-  },
-  { 
-    label: 'Saved Searches', 
-    to: '/advanced-search', 
-    icon: <Search size={18} />, 
-    section: 'Catalog',
-    roles: ['buyer', 'seller', 'company']
-  },
-  { 
-    label: 'Products', 
-    to: '/products', 
-    icon: <Package size={18} />, 
-    section: 'Catalog',
-    roles: ['seller', 'company', 'admin', 'superadmin']
-  },
-  { 
-    label: 'Auctions', 
-    to: '/live-auction', 
-    icon: <Gavel size={18} />, 
-    section: 'Commerce',
-    roles: ['buyer', 'seller', 'company', 'admin']
-  },
-  { 
-    label: 'My Orders', 
-    to: '/my/orders', 
-    icon: <Archive size={18} />, 
-    section: 'Commerce',
-    roles: ['buyer', 'company']
-  },
-  { 
-    label: 'Growth Services', 
-    to: '/campaigns', 
-    icon: <Rocket size={18} />, 
-    section: 'Growth',
-    roles: ['seller', 'company']
-  },
-  { 
-    label: 'For Businesses', 
-    to: '/business-solutions', 
-    icon: <Users size={18} />, 
-    section: 'Growth',
-    roles: ['company', 'admin']
-  },
-  { 
-    label: 'Invest • Earn', 
-    to: '/invest', 
-    icon: <WalletIcon size={18} />, 
-    section: 'Finance',
-    roles: ['buyer', 'company']
-  },
-  { 
-    label: 'Top Sellers', 
-    to: '/top-sellers', 
-    icon: <Star size={18} />, 
-    section: 'Finance'
-    // Public
-  },
-  { 
-    label: 'Admin', 
-    to: '/admin', 
-    icon: <Settings size={18} />, 
-    section: 'Admin',
-    roles: ['admin', 'superadmin']
-  },
-];
+// Role-based navigation structure
+const getNavItemsByRole = (role: string): NavItem[] => {
+  const commonItems: NavItem[] = [
+    {
+      label: 'Dashboard',
+      to: '/dashboard',
+      icon: <LayoutDashboard size={18} />,
+      section: 'Marketplace',
+      roles: ['buyer', 'seller', 'company', 'admin', 'superadmin'],
+      priority: 'high'
+    }
+  ];
+
+  const buyerItems: NavItem[] = [
+    {
+      label: 'Explore Auctions',
+      to: '/buyer/auctions',
+      icon: <PackageSearch size={18} />,
+      section: 'Marketplace',
+      roles: ['buyer'],
+      priority: 'high'
+    },
+    {
+      label: 'My Bids',
+      to: '/buyer/bids',
+      icon: <Gavel size={18} />,
+      section: 'Marketplace',
+      roles: ['buyer'],
+      priority: 'high'
+    },
+    {
+      label: 'Watchlist',
+      to: '/buyer/watchlist',
+      icon: <Heart size={18} />,
+      section: 'Marketplace',
+      roles: ['buyer'],
+      priority: 'medium'
+    },
+    {
+      label: 'Wallet',
+      to: '/wallet',
+      icon: <WalletIcon size={18} />,
+      section: 'Finance',
+      roles: ['buyer'],
+      priority: 'high'
+    },
+    {
+      label: 'My Orders',
+      to: '/buyer/orders',
+      icon: <Clock size={18} />,
+      section: 'Risk',
+      roles: ['buyer'],
+      priority: 'medium'
+    },
+    {
+      label: 'Referrals',
+      to: '/buyer/referrals',
+      icon: <Award size={18} />,
+      section: 'Growth',
+      roles: ['buyer'],
+      priority: 'medium'
+    }
+  ];
+
+  const sellerItems: NavItem[] = [
+    {
+      label: 'Listings',
+      to: '/seller/listings',
+      icon: <PackageSearch size={18} />,
+      section: 'Marketplace',
+      roles: ['seller'],
+      priority: 'high'
+    },
+    {
+      label: 'Orders',
+      to: '/seller/orders',
+      icon: <Clock size={18} />,
+      section: 'Marketplace',
+      roles: ['seller'],
+      priority: 'high'
+    },
+    {
+      label: 'Wallet',
+      to: '/wallet',
+      icon: <WalletIcon size={18} />,
+      section: 'Finance',
+      roles: ['seller'],
+      priority: 'high'
+    },
+    {
+      label: 'Inspection',
+      to: '/seller/inspection',
+      icon: <Shield size={18} />,
+      section: 'Risk',
+      roles: ['seller'],
+      priority: 'high'
+    },
+    {
+      label: 'Analytics',
+      to: '/seller/analytics',
+      icon: <TrendingUp size={18} />,
+      section: 'Growth',
+      roles: ['seller'],
+      priority: 'medium'
+    }
+  ];
+
+  const companyItems: NavItem[] = [
+    {
+      label: 'Bulk Upload',
+      to: '/company/bulk-upload',
+      icon: <PackageSearch size={18} />,
+      section: 'Marketplace',
+      roles: ['company'],
+      priority: 'high'
+    },
+    {
+      label: 'Inventory',
+      to: '/company/inventory',
+      icon: <PackageSearch size={18} />,
+      section: 'Marketplace',
+      roles: ['company'],
+      priority: 'high'
+    },
+    {
+      label: 'Reports',
+      to: '/company/reports',
+      icon: <TrendingUp size={18} />,
+      section: 'Marketplace',
+      roles: ['company'],
+      priority: 'medium'
+    },
+    {
+      label: 'Team',
+      to: '/company/team',
+      icon: <Settings size={18} />,
+      section: 'System',
+      roles: ['company'],
+      priority: 'medium'
+    },
+    {
+      label: 'Wallet',
+      to: '/wallet',
+      icon: <WalletIcon size={18} />,
+      section: 'Finance',
+      roles: ['company'],
+      priority: 'high'
+    }
+  ];
+
+  const adminItems: NavItem[] = [
+    {
+      label: 'Moderation',
+      to: '/admin/moderation',
+      icon: <Shield size={18} />,
+      section: 'Risk',
+      roles: ['admin', 'superadmin'],
+      priority: 'high'
+    },
+    {
+      label: 'Analytics',
+      to: '/admin/analytics',
+      icon: <TrendingUp size={18} />,
+      section: 'Growth',
+      roles: ['admin', 'superadmin'],
+      priority: 'high'
+    },
+    {
+      label: 'System',
+      to: '/admin/system',
+      icon: <Settings size={18} />,
+      section: 'System',
+      roles: ['admin', 'superadmin'],
+      priority: 'high'
+    }
+  ];
+
+  // Combine items based on role
+  switch (role) {
+    case 'buyer':
+      return [...commonItems, ...buyerItems];
+    case 'seller':
+      return [...commonItems, ...sellerItems];
+    case 'company':
+      return [...commonItems, ...companyItems];
+    case 'admin':
+    case 'superadmin':
+      return [...commonItems, ...adminItems];
+    default:
+      // Guest/unauthenticated users
+      return [
+        ...commonItems,
+        {
+          label: 'Explore Auctions',
+          to: '/products',
+          icon: <PackageSearch size={18} />,
+          section: 'Marketplace',
+          priority: 'high'
+        },
+        {
+          label: 'How It Works',
+          to: '/about',
+          icon: <Shield size={18} />,
+          section: 'Marketplace',
+          priority: 'medium'
+        }
+      ];
+  }
+};
 
 const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, className }) => {
   const location = useLocation();
   const { user, loading } = useSession();
 
-  // Determine current user role; prefer normalized user_type ('buyer' | 'seller' | 'company')
+  // Determine current user role
   const currentRole = (user?.user_type || user?.role || 'guest') as string;
 
-  // Filter items based on role
-  const filteredItems = navItems.filter(item => {
-    if (!item.roles) return true; // Public
-    return item.roles.includes(currentRole);
-  });
+  // Get navigation items for current role
+  const navItems = getNavItemsByRole(currentRole);
 
-  const computedItems = filteredItems.map((item) => {
-    if (item.label === 'Dashboard') {
-      const to =
-        currentRole === 'buyer' ? '/buyer/dashboard' :
-        currentRole === 'seller' ? '/seller/dashboard' :
-        currentRole === 'company' ? '/company/dashboard' :
-        item.to;
-      return { ...item, to };
-    }
-    return item;
-  });
+  // Filter out low priority items to reduce clutter
+  const filteredItems = navItems.filter(item => item.priority !== 'low');
 
-  const grouped = computedItems.reduce<Record<string, NavItem[]>>((acc, item) => {
+  // Group items by section
+  const grouped = filteredItems.reduce<Record<string, NavItem[]>>((acc, item) => {
     if (!acc[item.section]) acc[item.section] = [];
     acc[item.section].push(item);
     return acc;
   }, {});
 
+  // Define section order for consistent display
+  const sectionOrder = ['Marketplace', 'Finance', 'Risk', 'Growth', 'System'];
+
   const isActive = (path: string) => location.pathname.startsWith(path);
 
   return (
     <aside
-      className={`h-screen sticky top-0 left-0 z-20 w-64 flex-col border-r border-gray-200 bg-white/70 px-4 py-6 shadow-sm backdrop-blur backdrop-filter transition-all duration-200 dark:border-gray-800 dark:bg-gray-900/90 ${collapsed ? 'w-20' : ''} ${className || ''}`.trim()}
+      className={`h-screen sticky top-0 left-0 z-20 w-64 flex-col border-r border-neutral-200 bg-white px-4 py-6 shadow-sm transition-all duration-200 ${collapsed ? 'w-20' : ''} ${className || ''}`.trim()}
     >
+      {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className={`flex items-center gap-3 ${collapsed ? 'justify-center w-full' : ''}`}>
-          <div className="h-10 w-10 rounded-2xl bg-indigo-600 text-white grid place-items-center font-bold">QM</div>
-          {!collapsed && <span className="text-lg font-semibold text-gray-900 dark:text-white">QuickMela</span>}
+          <div className="h-10 w-10 rounded-2xl bg-primary-600 text-white grid place-items-center font-bold text-sm">QM</div>
+          {!collapsed && <span className="text-lg font-semibold text-neutral-900">QuickMela</span>}
         </div>
         {!collapsed && (
           <button
             type="button"
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-700"
+            className="text-sm font-medium text-primary-600 hover:text-primary-700"
             onClick={onToggle}
             aria-label="Collapse sidebar"
           >
@@ -162,45 +286,68 @@ const Sidebar: React.FC<SidebarProps> = ({ collapsed, onToggle, className }) => 
           </button>
         )}
         {collapsed && (
-          <button className="text-gray-500 hover:text-gray-900" onClick={onToggle} aria-label="Expand sidebar">
-            <div className="h-8 w-2 rounded-full bg-gray-400" />
+          <button
+            className="text-neutral-500 hover:text-neutral-900"
+            onClick={onToggle}
+            aria-label="Expand sidebar"
+          >
+            <div className="h-8 w-2 rounded-full bg-neutral-400" />
           </button>
         )}
       </div>
 
+      {/* Navigation */}
       <div className="space-y-6">
-        {Object.entries(grouped).map(([section, items]) => (
-          <div key={section} className="space-y-2">
-            {!collapsed && <p className="text-xs font-semibold uppercase tracking-widest text-gray-500 dark:text-gray-400">{section}</p>}
-            <div className="space-y-1">
-              {items.map((item) => (
-                <Link
-                  key={item.label}
-                  to={item.to}
-                  className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium transition hover:bg-gray-100 hover:text-indigo-600 dark:hover:bg-gray-800 ${
-                    isActive(item.to) ? 'bg-indigo-100 text-indigo-700 dark:bg-indigo-700/20' : 'text-gray-600 dark:text-gray-300'
-                  } ${collapsed ? 'justify-center' : ''}`}
-                >
-                  {item.icon}
-                  {!collapsed && item.label}
-                </Link>
-              ))}
+        {sectionOrder.map(section => {
+          const items = grouped[section];
+          if (!items || items.length === 0) return null;
+
+          return (
+            <div key={section} className="space-y-2">
+              {!collapsed && (
+                <p className="text-xs font-semibold uppercase tracking-widest text-neutral-500">
+                  {section}
+                </p>
+              )}
+              <div className="space-y-1">
+                {items.map((item) => (
+                  <Link
+                    key={item.label}
+                    to={item.to}
+                    className={`flex items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium transition hover:bg-neutral-100 hover:text-primary-600 ${
+                      isActive(item.to)
+                        ? 'bg-primary-100 text-primary-700'
+                        : 'text-neutral-600'
+                    } ${collapsed ? 'justify-center' : ''}`}
+                  >
+                    {item.icon}
+                    {!collapsed && (
+                      <span className="truncate">{item.label}</span>
+                    )}
+                    {!collapsed && item.badge && (
+                      <span className="ml-auto rounded-full bg-primary-100 px-2 py-0.5 text-xs text-primary-700">
+                        {item.badge}
+                      </span>
+                    )}
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
-      <div className="mt-auto">
-        <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-3 text-xs text-gray-500 dark:border-gray-700 dark:bg-gray-800">
-          {!collapsed && (
-            <>
-              <p className="font-semibold text-gray-900 dark:text-white">Need a boost?</p>
-              <p className="text-xs">Access growth boosters, marketing campaigns, and verified buyers.</p>
-            </>
-          )}
-          {collapsed && <p>Need a boost?</p>}
+      {/* Footer - Trust indicator */}
+      {!collapsed && (
+        <div className="mt-auto">
+          <div className="rounded-2xl border border-neutral-200 bg-neutral-50 p-3">
+            <div className="flex items-center gap-2 text-xs text-neutral-600">
+              <Shield size={14} />
+              <span>Escrow Protected</span>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </aside>
   );
 };

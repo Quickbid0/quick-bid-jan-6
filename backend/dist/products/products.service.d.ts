@@ -35,19 +35,6 @@ export declare class ProductsService {
     private products;
     private userProfiles;
     private bids;
-    private wallets;
-    findAll(): Promise<{
-        id: string;
-        createdAt: Date;
-        description: string | null;
-        title: string;
-        category: string;
-        price: number;
-        images: string[];
-        sellerId: string;
-        status: string;
-        updatedAt: Date;
-    }[]>;
     findOne(id: number): Promise<any>;
     create(createProductDto: any, sellerId: string): Promise<any>;
     placeBid(productId: number, bidAmount: number, bidderId: string, bidderName: string): Promise<{

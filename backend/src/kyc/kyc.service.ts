@@ -1,5 +1,6 @@
 import { Injectable, Logger, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { PrismaService } from '../prisma/prisma.service';
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
@@ -34,30 +35,13 @@ interface BankAccountVerificationRequest {
 
 interface KYCSubmissionRequest {
   userId: string;
-  aadhaarVerified: boolean;
-  panVerified: boolean;
-  faceVerified: boolean;
-  bankVerified?: boolean;
-  documents: {
-    aadhaarFront?: string;
-    aadhaarBack?: string;
-    panCard?: string;
-    selfie?: string;
-    bankStatement?: string;
-  };
-  personalInfo: {
-    name: string;
-    email: string;
-    phone: string;
-    dob: string;
-    address: {
-      line1: string;
-      line2?: string;
-      city: string;
-      state: string;
-      pincode: string;
-    };
-  };
+  documentType: 'AADHAAR' | 'PAN' | 'PASSPORT' | 'DRIVING_LICENSE';
+  documentNumber: string;
+  documentFrontUrl: string;
+  documentBackUrl?: string;
+  selfieUrl: string;
+  aadhaarNumber?: string;
+  panNumber?: string;
 }
 
 interface KYCStatusResponse {
@@ -78,18 +62,341 @@ interface KYCStatusResponse {
 }
 
 @Injectable()
-export class KYCService {
-  private readonly logger = new Logger(KYCService.name);
+export class KycService {
+  private readonly logger = new Logger(KycService.name);
   private readonly kycProviderUrl = 'https://api.signzy.com'; // Example: Signzy API
   private readonly apiKey: string;
   private readonly apiSecret: string;
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private prisma: PrismaService
+  ) {
     // In production, configure these from environment variables
     this.apiKey = this.configService.get<string>('SIGNZY_API_KEY') || 'demo_api_key';
     this.apiSecret = this.configService.get<string>('SIGNZY_API_SECRET') || 'demo_api_secret';
 
-    this.logger.log('KYC Service initialized with provider integration');
+    this.logger.log('KYC Service initialized with Prisma integration');
+  }
+
+  /**
+   * Submit KYC application using QuickMela schema
+   */
+  async submitKYCApplication(request: KYCSubmissionRequest): Promise<{
+    success: boolean;
+    applicationId: string;
+    status: string;
+    message: string;
+    estimatedProcessingTime: string;
+  }> {
+    try {
+      // Validate user exists
+      const user = await this.prisma.user.findUnique({
+        where: { id: request.userId }
+      });
+
+      if (!user) {
+        throw new BadRequestException('User not found');
+      }
+
+      // Check if KYC already exists
+      const existingKyc = await this.prisma.kYC.findUnique({
+        where: { userId: request.userId }
+      });
+
+      if (existingKyc && existingKyc.status === 'APPROVED') {
+        throw new BadRequestException('KYC already approved for this user');
+      }
+
+      // Validate document data
+      this.validateDocumentData(request);
+
+      this.logger.log(`Submitting KYC application for user: ${request.userId}`);
+
+      // Simulate OCR and face matching (in production, call real APIs)
+      const extractedData = await this.simulateOCR(request);
+      const faceMatchScore = await this.simulateFaceMatch(request);
+
+      // Create or update KYC record
+      const kycRecord = await this.prisma.kYC.upsert({
+        where: { userId: request.userId },
+        update: {
+          documentType: request.documentType,
+          documentNumber: request.documentNumber,
+          documentFrontUrl: request.documentFrontUrl,
+          documentBackUrl: request.documentBackUrl,
+          selfieUrl: request.selfieUrl,
+          aadhaarNumber: request.aadhaarNumber,
+          panNumber: request.panNumber,
+          extractedData,
+          faceMatchScore,
+          status: 'PENDING'
+        },
+        create: {
+          userId: request.userId,
+          documentType: request.documentType,
+          documentNumber: request.documentNumber,
+          documentFrontUrl: request.documentFrontUrl,
+          documentBackUrl: request.documentBackUrl,
+          selfieUrl: request.selfieUrl,
+          aadhaarNumber: request.aadhaarNumber,
+          panNumber: request.panNumber,
+          extractedData,
+          faceMatchScore
+        }
+      });
+
+      // Create audit log
+      await this.prisma.auditLog.create({
+        data: {
+          userId: request.userId,
+          action: 'CREATE',
+          resource: 'kyc',
+          resourceId: kycRecord.id,
+          metadata: {
+            documentType: request.documentType,
+            faceMatchScore
+          }
+        }
+      });
+
+      return {
+        success: true,
+        applicationId: kycRecord.id,
+        status: 'pending',
+        message: 'KYC application submitted successfully. Processing typically takes 24-48 hours.',
+        estimatedProcessingTime: '24-48 hours',
+      };
+    } catch (error) {
+      this.logger.error(`KYC submission error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('KYC submission failed');
+    }
+  }
+
+  /**
+   * Review KYC application (admin only)
+   */
+  async reviewKYC(kycId: string, adminId: string, decision: 'APPROVE' | 'REJECT', rejectionReason?: string): Promise<{
+    success: boolean;
+    kycId: string;
+    status: string;
+    message: string;
+  }> {
+    try {
+      // Verify admin permissions
+      const admin = await this.prisma.user.findUnique({
+        where: { id: adminId }
+      });
+
+      if (!admin || !['SUPER_ADMIN', 'ADMIN'].includes(admin.role)) {
+        throw new BadRequestException('Unauthorized: Only admins can review KYC');
+      }
+
+      const kycRecord = await this.prisma.kYC.findUnique({
+        where: { id: kycId },
+        include: { user: true }
+      });
+
+      if (!kycRecord) {
+        throw new BadRequestException('KYC record not found');
+      }
+
+      if (kycRecord.status !== 'PENDING' && kycRecord.status !== 'UNDER_REVIEW') {
+        throw new BadRequestException('KYC is not in a reviewable state');
+      }
+
+      const newStatus = decision === 'APPROVE' ? 'APPROVED' : 'REJECTED';
+
+      // Update KYC record
+      const updatedKyc = await this.prisma.kYC.update({
+        where: { id: kycId },
+        data: {
+          status: newStatus,
+          verifiedAt: decision === 'APPROVE' ? new Date() : null,
+          verifiedBy: decision === 'APPROVE' ? adminId : null,
+          rejectionReason: decision === 'REJECT' ? rejectionReason : null
+        }
+      });
+
+      // Update user verification status
+      await this.prisma.user.update({
+        where: { id: kycRecord.userId },
+        data: {
+          isVerified: decision === 'APPROVE',
+          kycStatus: newStatus
+        }
+      });
+
+      // Create audit log
+      await this.prisma.auditLog.create({
+        data: {
+          userId: adminId,
+          action: 'UPDATE',
+          resource: 'kyc',
+          resourceId: kycId,
+          oldValues: { status: kycRecord.status },
+          newValues: {
+            status: newStatus,
+            verifiedAt: updatedKyc.verifiedAt,
+            verifiedBy: updatedKyc.verifiedBy,
+            rejectionReason: updatedKyc.rejectionReason
+          }
+        }
+      });
+
+      this.logger.log(`KYC ${decision.toLowerCase()}d for user ${kycRecord.user.email} by admin ${admin.email}`);
+
+      return {
+        success: true,
+        kycId: updatedKyc.id,
+        status: newStatus,
+        message: `KYC application ${decision.toLowerCase()}d successfully`
+      };
+    } catch (error) {
+      this.logger.error(`KYC review error: ${error.message}`, error.stack);
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      throw new InternalServerErrorException('KYC review failed');
+    }
+  }
+
+  /**
+   * Get KYC status for a user
+   */
+  async getKYCStatus(userId: string): Promise<KYCStatusResponse> {
+    try {
+      const kyc = await this.prisma.kYC.findUnique({
+        where: { userId },
+        include: { user: true }
+      });
+
+      if (!kyc) {
+        return {
+          userId,
+          status: 'not_started',
+          verificationProgress: {
+            aadhaar: false,
+            pan: false,
+            face: false,
+            bank: false,
+            documents: false
+          }
+        };
+      }
+
+      // Map QuickMela KYC status to response format
+      const statusMap = {
+        'PENDING': 'pending_review' as const,
+        'UNDER_REVIEW': 'pending_review' as const,
+        'APPROVED': 'approved' as const,
+        'REJECTED': 'rejected' as const
+      };
+
+      const status = statusMap[kyc.status] || 'in_progress';
+
+      const response: KYCStatusResponse = {
+        userId,
+        status,
+        verificationProgress: {
+          aadhaar: !!(kyc.aadhaarNumber && kyc.extractedData),
+          pan: !!(kyc.panNumber && kyc.extractedData),
+          face: !!kyc.faceMatchScore,
+          bank: false, // Not implemented yet
+          documents: !!(kyc.documentFrontUrl && kyc.selfieUrl)
+        },
+        submittedAt: kyc.createdAt,
+        reviewedAt: kyc.verifiedAt,
+        approvedAt: kyc.status === 'APPROVED' ? kyc.verifiedAt : undefined,
+        rejectionReason: kyc.rejectionReason || undefined
+      };
+
+      if (kyc.status === 'APPROVED') {
+        response.expiryDate = new Date(Date.now() + 365 * 24 * 60 * 60 * 1000); // 1 year
+      }
+
+      return response;
+    } catch (error) {
+      this.logger.error(`KYC status check error: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Unable to check KYC status');
+    }
+  }
+
+  /**
+   * Get pending KYC reviews for admin
+   */
+  async getPendingKYCReviews(): Promise<any[]> {
+    try {
+      const pendingKyc = await this.prisma.kYC.findMany({
+        where: {
+          status: {
+            in: ['PENDING', 'UNDER_REVIEW']
+          }
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              name: true,
+              email: true,
+              phoneNumber: true,
+              createdAt: true
+            }
+          }
+        },
+        orderBy: { createdAt: 'asc' }
+      });
+
+      return pendingKyc.map(kyc => ({
+        id: kyc.id,
+        user: kyc.user,
+        documentType: kyc.documentType,
+        documentNumber: kyc.documentNumber,
+        extractedData: kyc.extractedData,
+        faceMatchScore: kyc.faceMatchScore,
+        submittedAt: kyc.createdAt,
+        status: kyc.status
+      }));
+    } catch (error) {
+      this.logger.error(`Get pending KYC reviews error: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Unable to fetch pending KYC reviews');
+    }
+  }
+
+  /**
+   * Get KYC statistics for admin dashboard
+   */
+  async getKYCStats(): Promise<{
+    total: number;
+    pending: number;
+    underReview: number;
+    approved: number;
+    rejected: number;
+  }> {
+    try {
+      const stats = await this.prisma.kYC.groupBy({
+        by: ['status'],
+        _count: {
+          status: true
+        }
+      });
+
+      const total = stats.reduce((sum, stat) => sum + stat._count.status, 0);
+
+      return {
+        total,
+        pending: stats.find(s => s.status === 'PENDING')?._count.status || 0,
+        underReview: stats.find(s => s.status === 'UNDER_REVIEW')?._count.status || 0,
+        approved: stats.find(s => s.status === 'APPROVED')?._count.status || 0,
+        rejected: stats.find(s => s.status === 'REJECTED')?._count.status || 0
+      };
+    } catch (error) {
+      this.logger.error(`Get KYC stats error: ${error.message}`, error.stack);
+      throw new InternalServerErrorException('Unable to fetch KYC statistics');
+    }
   }
 
   /**

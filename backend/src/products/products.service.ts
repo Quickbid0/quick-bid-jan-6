@@ -124,28 +124,10 @@ export class ProductsService {
     { id: 3, productId: 2, amount: 7500, bidderId: 'bidder2', bidderName: 'Bob Johnson', createdAt: new Date() }
   ];
 
-  // In-memory wallet storage
-  private wallets: Wallet[] = [
-    { userId: 'buyer1', balance: 50000, currency: 'INR' },
-    { userId: 'buyer2', balance: 25000, currency: 'INR' },
-    { userId: 'seller1', balance: 100000, currency: 'INR' },
-    { userId: 'seller2', balance: 75000, currency: 'INR' },
-    { userId: 'bidder1', balance: 30000, currency: 'INR' },
-    { userId: 'bidder2', balance: 20000, currency: 'INR' }
-  ];
-
-  async findAll() {
-    // Temporarily use in-memory data until Prisma database is configured
-    return this.products.map(product => ({
-      ...product,
-      status: product.endTime > new Date() ? 'ACTIVE' : 'CLOSED'
-    })).filter(product => product.status === 'ACTIVE');
-  }
-
   async findOne(id: number) {
     const product = this.products.find(p => p.id === id);
     if (!product) {
-      return null;
+      throw new Error('Product not found');
     }
 
     const productBids = this.bids

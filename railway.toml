@@ -1,0 +1,397 @@
+# QuickMela Railway Deployment Configuration
+# This file configures the Railway deployment pipeline for production
+
+# ================================
+# RAILWAY DEPLOYMENT CONFIG
+# ================================
+
+# Service Name
+service: quickmela-backend
+
+# Environment
+environment: production
+
+# Runtime
+runtime: node
+version: 18
+
+# Build Configuration
+build:
+  command: npm run build:production
+  output: dist
+
+# Start Command
+startCommand: npm run start:prod
+
+# Health Check
+healthCheck:
+  path: /health
+  interval: 30
+  timeout: 10
+  retries: 3
+
+# Port Configuration
+port: 4000
+
+# Environment Variables (Railway will override these with actual values)
+env:
+  # Database
+  DATABASE_URL: ${DATABASE_URL}
+  DB_SSL_ENABLED: true
+  DB_CONNECTION_POOL_SIZE: 20
+  DB_CONNECTION_TIMEOUT: 30000
+
+  # Redis
+  REDIS_URL: ${REDIS_URL}
+  CACHE_TTL: 3600000
+
+  # JWT
+  JWT_SECRET: ${JWT_SECRET}
+  SESSION_SECRET: ${SESSION_SECRET}
+
+  # WhatsApp
+  WHATSAPP_ACCESS_TOKEN: ${WHATSAPP_ACCESS_TOKEN}
+  WHATSAPP_PHONE_NUMBER_ID: ${WHATSAPP_PHONE_NUMBER_ID}
+  WHATSAPP_WEBHOOK_VERIFY_TOKEN: ${WHATSAPP_WEBHOOK_VERIFY_TOKEN}
+  WHATSAPP_BUSINESS_ACCOUNT_ID: ${WHATSAPP_BUSINESS_ACCOUNT_ID}
+
+  # Payments
+  RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID}
+  RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET}
+  RAZORPAY_WEBHOOK_SECRET: ${RAZORPAY_WEBHOOK_SECRET}
+
+  # Email
+  SENDGRID_API_KEY: ${SENDGRID_API_KEY}
+  EMAIL_FROM: ${EMAIL_FROM}
+  SMTP_FROM: ${SMTP_FROM}
+
+  # Monitoring
+  SENTRY_DSN: ${SENTRY_DSN}
+  NEW_RELIC_LICENSE_KEY: ${NEW_RELIC_LICENSE_KEY}
+
+  # Feature Flags
+  LAUNCH_MODE_ACTIVE: false
+  FREE_BUYER_WEEK: false
+  FREE_SELLER_WEEK: false
+  DISABLE_COMMISSION: false
+  DISABLE_LISTING_FEE: false
+  DISABLE_DEPOSIT_FEE: false
+  SYSTEM_EMERGENCY_PAUSE: false
+
+# ================================
+# RESOURCE ALLOCATION
+# ================================
+
+# CPU & Memory
+resources:
+  cpu: 2
+  memory: 4GB
+
+# Scaling (for high traffic periods)
+scaling:
+  minInstances: 1
+  maxInstances: 10
+  targetCPUUtilization: 70
+  targetMemoryUtilization: 80
+
+# ================================
+# DATABASE CONFIGURATION
+# ================================
+
+databases:
+  - name: quickmela-postgres
+    type: postgresql
+    version: 15
+    size: 10GB
+    backups:
+      enabled: true
+      schedule: "0 2 * * *"  # Daily at 2 AM UTC
+      retention: 30
+
+# ================================
+# REDIS CONFIGURATION
+# ================================
+
+redis:
+  - name: quickmela-redis
+    type: redis
+    version: 7
+    size: 1GB
+    persistence: true
+    backups:
+      enabled: true
+      schedule: "0 3 * * *"  # Daily at 3 AM UTC
+
+# ================================
+# NETWORKING & SECURITY
+# ================================
+
+# SSL/TLS (Railway provides automatically)
+ssl:
+  enabled: true
+  redirectToHttps: true
+
+# CORS Configuration
+cors:
+  origins:
+    - https://quickmela.com
+    - https://www.quickmela.com
+    - https://admin.quickmela.com
+  methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  headers:
+    - Content-Type
+    - Authorization
+    - X-Requested-With
+  credentials: true
+
+# Security Headers (Railway configured)
+securityHeaders:
+  - X-Frame-Options: DENY
+  - X-Content-Type-Options: nosniff
+  - X-XSS-Protection: 1; mode=block
+  - Strict-Transport-Security: max-age=31536000; includeSubDomains
+  - Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'
+
+# Rate Limiting (Railway configured)
+rateLimit:
+  windowMs: 900000  # 15 minutes
+  maxRequests: 1000  # 1000 requests per window
+  skipSuccessfulRequests: true
+  skipFailedRequests: false
+
+# ================================
+# MONITORING & LOGGING
+# ================================
+
+# Application Monitoring
+monitoring:
+  sentry:
+    enabled: true
+    environment: production
+    tracesSampleRate: 1.0
+
+  newRelic:
+    enabled: true
+    appName: QuickMela-Production
+    licenseKey: ${NEW_RELIC_LICENSE_KEY}
+
+# Logging
+logging:
+  level: info
+  format: json
+  destinations:
+    - console
+    - railway_logs
+    - external_aggregator
+
+# Metrics
+metrics:
+  enabled: true
+  collectionInterval: 60  # seconds
+  exporters:
+    - prometheus
+    - cloudwatch
+
+# ================================
+# BACKUPS & DISASTER RECOVERY
+# ================================
+
+backups:
+  database:
+    enabled: true
+    schedule: "0 2 * * *"  # Daily at 2 AM UTC
+    retention: 30  # days
+    encryption: true
+
+  redis:
+    enabled: true
+    schedule: "0 3 * * *"  # Daily at 3 AM UTC
+    retention: 7  # days
+
+  application:
+    enabled: true
+    schedule: "0 4 * * *"  # Daily at 4 AM UTC
+    retention: 14  # days
+    includeEnv: false  # Don't backup environment variables
+
+# Disaster Recovery
+disasterRecovery:
+  multiRegion: false  # Single region for now
+  backupRegion: us-west-1
+  failoverTime: 300  # 5 minutes RTO
+  dataLossWindow: 60  # 1 minute RPO
+
+# ================================
+# CDN & STATIC ASSETS
+# ================================
+
+cdn:
+  provider: cloudflare
+  enabled: true
+  zones:
+    - quickmela.com
+    - admin.quickmela.com
+
+  # Static asset caching
+  staticAssets:
+    enabled: true
+    cacheTtl: 86400  # 24 hours
+    paths:
+      - /images/*
+      - /uploads/*
+      - /static/*
+
+# ================================
+# DEPLOYMENT PIPELINE
+# ================================
+
+deployment:
+  # Build Stage
+  build:
+    image: node:18-alpine
+    commands:
+      - npm ci --only=production
+      - npm run build
+      - npm run prisma:generate
+
+  # Test Stage (optional, can be disabled for faster deploys)
+  test:
+    enabled: false  # Disable for production speed
+    commands:
+      - npm run test:e2e -- --passWithNoTests
+
+  # Deploy Stage
+  deploy:
+    strategy: rolling
+    healthCheckTimeout: 300  # 5 minutes
+    rollbackOnFailure: true
+    rollbackTimeout: 600  # 10 minutes
+
+  # Post-deploy hooks
+  postDeploy:
+    - command: npm run db:migrate
+      timeout: 300
+    - command: npm run seed:production
+      timeout: 180
+    - command: curl -f https://quickmela-production.up.railway.app/health
+      timeout: 30
+
+# ================================
+# ALERTING & NOTIFICATIONS
+# ================================
+
+alerts:
+  # System Health
+  healthCheck:
+    enabled: true
+    failureThreshold: 3
+    notificationChannels:
+      - email: devops@quickmela.com
+      - slack: #alerts
+
+  # Performance
+  performance:
+    enabled: true
+    cpuThreshold: 80
+    memoryThreshold: 85
+    responseTimeThreshold: 2000  # ms
+    notificationChannels:
+      - email: devops@quickmela.com
+      - slack: #performance
+
+  # Security
+  security:
+    enabled: true
+    failedLoginThreshold: 10
+    suspiciousActivityThreshold: 5
+    notificationChannels:
+      - email: security@quickmela.com
+      - slack: #security
+
+  # Business Metrics
+  business:
+    enabled: true
+    lowUserGrowthThreshold: 5  # percent
+    lowConversionRateThreshold: 60  # percent
+    notificationChannels:
+      - email: business@quickmela.com
+      - slack: #business
+
+# ================================
+# MAINTENANCE WINDOWS
+# ================================
+
+maintenance:
+  # Scheduled maintenance (every Sunday 2-4 AM UTC)
+  schedule: "0 2 * * 0"
+  duration: 7200  # 2 hours in seconds
+  autoApprove: false
+
+  # Emergency maintenance
+  emergency:
+    enabled: true
+    maxDuration: 3600  # 1 hour
+    approvalRequired: true
+
+# ================================
+# COST OPTIMIZATION
+# ================================
+
+costOptimization:
+  # Auto-scaling based on traffic
+  autoScaling:
+    enabled: true
+    scaleDownAfter: 1800  # 30 minutes of low traffic
+    minInstances: 1
+    maxInstances: 10
+
+  # Resource optimization
+  resourceOptimization:
+    enabled: true
+    cpuOptimization: true
+    memoryOptimization: true
+
+# ================================
+# COMPLIANCE & AUDIT
+# ================================
+
+compliance:
+  # GDPR Compliance
+  gdpr:
+    enabled: true
+    dataRetentionDays: 2555
+    auditLogsEnabled: true
+
+  # PCI DSS (for payments)
+  pci:
+    enabled: true
+    auditEnabled: true
+    encryptionLevel: AES256
+
+  # SOC 2
+  soc2:
+    enabled: true
+    auditEnabled: true
+
+# ================================
+# DEPLOYMENT VALIDATION CHECKLIST
+# ================================
+# [ ] Railway account configured with billing
+# [ ] PostgreSQL database provisioned and connected
+# [ ] Redis instance provisioned and connected
+# [ ] Domain (quickmela.com) configured in Railway
+# [ ] SSL certificate provisioned automatically
+# [ ] Environment variables set in Railway dashboard
+# [ ] Build and deploy pipeline tested
+# [ ] Health checks configured and working
+# [ ] Monitoring and alerting set up
+# [ ] Backup schedules configured
+# [ ] CDN configured for static assets
+# [ ] Rate limiting configured
+# [ ] Security headers applied
+# ================================

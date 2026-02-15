@@ -3,7 +3,10 @@ import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { colors, spacing, typography, radii } from '@/design-system';
-import { Heart, Eye, Zap, Shield, Star, Award, TrendingUp, Clock, MapPin, Users, Tag } from 'lucide-react';
+import { Heart, Eye, Zap, Shield, Star, Award, TrendingUp, Clock, MapPin, Users, Tag, Calculator } from 'lucide-react';
+import { useState } from 'react';
+import InspectionReportModal from './InspectionReportModal';
+import EMICalculatorModal from './EMICalculatorModal';
 
 export type AuctionCardVariant = 'timed' | 'live' | 'tender' | 'catalog' | 'dashboard' | 'compact';
 
@@ -56,6 +59,14 @@ const formatCurrency = (value?: number | null) => {
   return `₹${value.toLocaleString('en-IN')}`;
 };
 
+const calculateEMI = (principal: number, interestRate: number = 12, tenureYears: number = 5, downPaymentPercent: number = 20) => {
+  const loanAmount = principal * (1 - downPaymentPercent / 100);
+  const monthlyRate = interestRate / 100 / 12;
+  const totalMonths = tenureYears * 12;
+  const emi = (loanAmount * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) / (Math.pow(1 + monthlyRate, totalMonths) - 1);
+  return Math.round(emi);
+};
+
 export interface AuctionCardProps {
   id: string;
   image?: string;
@@ -63,6 +74,7 @@ export interface AuctionCardProps {
   description?: string;
   price?: number;
   currentBid?: number;
+  marketPrice?: number;
   bidCount?: number;
   buyersCount?: number;
   views?: number;
@@ -88,6 +100,10 @@ export interface AuctionCardProps {
   isFeatured?: boolean;
   isCertified?: boolean;
   noReturns?: boolean;
+  isVerifiedSeller?: boolean;
+  hasWarranty?: boolean;
+  hasInspectionReport?: boolean;
+  hasMoneyBack?: boolean;
   tags?: string[];
   onClick?: () => void;
   onWatchToggle?: () => void;
@@ -98,12 +114,16 @@ export interface AuctionCardProps {
 }
 
 export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((props, ref) => {
+  const [showInspectionModal, setShowInspectionModal] = useState(false);
+  const [showEMIModal, setShowEMIModal] = useState(false);
   const {
+    id,
     image,
     title,
     description,
     price,
     currentBid,
+    marketPrice,
     bidCount,
     buyersCount,
     views,
@@ -129,6 +149,10 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
     isFeatured,
     isCertified,
     noReturns,
+    isVerifiedSeller,
+    hasWarranty,
+    hasInspectionReport,
+    hasMoneyBack,
     tags,
     ...rest
   } = props;
@@ -248,7 +272,27 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
         
         {/* Top Left Badges Stack */}
         <div className="absolute top-3 left-3 flex flex-col gap-1 items-start">
-           {isCertified && (
+           {isVerifiedSeller && (
+            <Badge className="bg-blue-500 hover:bg-blue-600 text-white border-0 flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium">
+              <Shield className="h-3 w-3" /> Verified Seller
+            </Badge>
+          )}
+          {hasWarranty && (
+            <Badge className="bg-teal-500 hover:bg-teal-600 text-white border-0 flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium">
+              <Award className="h-3 w-3" /> Warranty
+            </Badge>
+          )}
+          {hasInspectionReport && (
+            <Badge className="bg-orange-500 hover:bg-orange-600 text-white border-0 flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium">
+              <Eye className="h-3 w-3" /> Inspected
+            </Badge>
+          )}
+          {hasMoneyBack && (
+            <Badge className="bg-indigo-500 hover:bg-indigo-600 text-white border-0 flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium">
+              <Shield className="h-3 w-3" /> Money Back
+            </Badge>
+          )}
+          {isCertified && (
             <Badge className="bg-green-500 hover:bg-green-600 text-white border-0 flex items-center gap-1 px-2 py-0.5 text-[10px] font-medium">
               <Shield className="h-3 w-3" /> QuickMela Certified
             </Badge>
@@ -385,6 +429,30 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
                </p>
              )}
           </div>
+          {marketPrice && marketPrice > priceValue && (
+            <div className="mt-1">
+              <p className="text-xs text-gray-500">
+                Market value: <span className="line-through">{formatCurrency(marketPrice)}</span>
+              </p>
+              <p className="text-sm font-medium text-green-600">
+                Save {formatCurrency(marketPrice - priceValue)} ({Math.round(((marketPrice - priceValue) / marketPrice) * 100)}% off)
+              </p>
+            </div>
+          )}
+          {priceValue && priceValue > 50000 && (
+            <div className="mt-2 flex items-center gap-2 text-sm">
+              <Calculator className="h-4 w-4 text-blue-500" />
+              <span className="text-gray-600">
+                EMI from <span className="font-semibold text-blue-600">{formatCurrency(calculateEMI(priceValue))}</span>/month
+              </span>
+              <button
+                className="text-xs text-blue-500 hover:text-blue-700 underline"
+                onClick={() => setShowEMIModal(true)}
+              >
+                Calculate
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Tags */}
@@ -407,6 +475,16 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
           >
             {buttonText}
           </Button>
+          {hasInspectionReport && (
+            <Button
+              variant="outline"
+              className="h-9 px-3 border-blue-200 text-blue-600 hover:bg-blue-50 flex items-center justify-center gap-1"
+              onClick={() => setShowInspectionModal(true)}
+            >
+              <Eye className="h-4 w-4" />
+              Report
+            </Button>
+          )}
           {onWatchToggle && (
             <Button
               variant="outline"
@@ -421,6 +499,22 @@ export const AuctionCard = React.forwardRef<HTMLDivElement, AuctionCardProps>((p
           )}
         </div>
       </div>
+
+      {/* Inspection Report Modal */}
+      <InspectionReportModal
+        isOpen={showInspectionModal}
+        onClose={() => setShowInspectionModal(false)}
+        itemId={id}
+        title={`${title || 'Item'} Inspection Report`}
+      />
+
+      {/* EMI Calculator Modal */}
+      <EMICalculatorModal
+        isOpen={showEMIModal}
+        onClose={() => setShowEMIModal(false)}
+        itemPrice={priceValue}
+        title={`${title || 'Item'} EMI Calculator`}
+      />
     </Card>
   );
 });

@@ -1,7 +1,7 @@
 import React, { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { UnifiedAuthProvider } from './context/UnifiedAuthContext';
+import LoanEligibilityModal from './components/LoanEligibilityModal';
+// import { UnifiedAuthProvider } from './context/UnifiedAuthContext';
 
 // i18n setup
 import './i18n';
@@ -10,10 +10,16 @@ import './i18n';
 import { initAnalytics } from './utils/analytics';
 // import * as Sentry from "@sentry/react";
 
-// Production utilities
+// World-Class Stability Features for Indian Market Impact
+import {
+  initWorldClassQuickMela,
+  trackIndianUserExperience,
+  initEmergencyRecovery
+} from './utils/worldClassConfig';
+
 import { registerServiceWorker, setupErrorReporting, setupAnalytics } from './utils/productionUtils';
-import { performanceMonitor } from './utils/performanceMonitoring';
 import { userFeedback } from './utils/userFeedback';
+import { performanceMonitor } from './lib/performance';
 
 // Layout Components
 import GlobalLayout from './components/layout/GlobalLayout';
@@ -25,6 +31,9 @@ import CookieConsent from './components/CookieConsent';
 import RoleGuard from './components/RoleGuard';
 import SalesProtectedRoute from './components/SalesProtectedRoute';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+import UnifiedAuthProvider from './context/UnifiedAuthContext.tsx';
+
+import { Toaster } from 'react-hot-toast';
 
 // Public Pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));
@@ -78,6 +87,18 @@ const VerifySeller = lazy(() => import('./pages/VerifySeller'));
 const SellerAnalytics = lazy(() => import('./pages/SellerAnalytics'));
 const SellerDashboard = lazy(() => import('./pages/SellerDashboardFixed'));
 const SellerMembership = lazy(() => import('./pages/SellerMembership'));
+const AuctionAnalyticsDashboard = lazy(() => import('./pages/AuctionAnalyticsDashboard'));
+const ReferralSystem = lazy(() => import('./pages/ReferralSystem'));
+const MarketingAutomation = lazy(() => import('./pages/MarketingAutomation'));
+const DealerDashboard = lazy(() => import('./pages/DealerDashboard'));
+const LoanEligibilityPage = lazy(() => import('./pages/LoanEligibilityPage'));
+const AdminDashboardEnterprise = lazy(() => import('./pages/AdminDashboardEnterprise'));
+const AuctionCreatePageEnterprise = lazy(() => import('./pages/AuctionCreatePageEnterprise'));
+const AuctionListingPage = lazy(() => import('./pages/AuctionListingPage'));
+const LiveBiddingPage = lazy(() => import('./pages/LiveBiddingPage'));
+const HomePage = lazy(() => import('./pages/HomePage'));
+const WinnerConfirmationPage = lazy(() => import('./pages/WinnerConfirmationPage'));
+const UserOnboardingPage = lazy(() => import('./pages/UserOnboardingPage'));
 const WinnerConfirmation = lazy(() => import('./pages/WinnerConfirmation'));
 const PayForWin = lazy(() => import('./pages/PayForWin'));
 const InspectionReport = lazy(() => import('./pages/InspectionReport'));
@@ -178,6 +199,9 @@ const InvestorRelations = lazy(() => import('./pages/InvestorRelations'));
 const InvestorMarketplace = lazy(() => import('./pages/InvestorMarketplace'));
 const InvestorPitch = lazy(() => import('./pages/InvestorPitch'));
 
+// Demo Showcase
+const DemoShowcase = lazy(() => import('./pages/DemoShowcase'));
+
 // Scroll to Top on Route Change
 const ScrollToTop: React.FC = () => {
   const { pathname } = useLocation();
@@ -192,6 +216,11 @@ const useProductionEnhancements = () => {
   useEffect(() => {
     // Initialize analytics
     initAnalytics();
+
+    // Initialize WORLD-CLASS features for Indian market impact
+    initWorldClassQuickMela();
+    trackIndianUserExperience();
+    initEmergencyRecovery();
 
     // Initialize production utilities
     if (import.meta.env.PROD) {
@@ -265,6 +294,7 @@ const App: React.FC = () => {
                   <Route path="/login" element={<RouteErrorBoundary routeName="Login"><Login /></RouteErrorBoundary>} />
                   <Route path="/register" element={<RouteErrorBoundary routeName="Register"><Register /></RouteErrorBoundary>} />
                   <Route path="/demo" element={<RouteErrorBoundary routeName="Demo Login"><DemoLogin /></RouteErrorBoundary>} />
+                  <Route path="/demo-showcase" element={<RouteErrorBoundary routeName="Demo Showcase"><DemoShowcase /></RouteErrorBoundary>} />
                   <Route path="/unauthorized" element={<RouteErrorBoundary routeName="Unauthorized"><Unauthorized /></RouteErrorBoundary>} />
                   <Route path="/test" element={<TestPage />} />
                   <Route path="/product/:id" element={<RouteErrorBoundary routeName="Product Detail"><ProductDetail /></RouteErrorBoundary>} />
@@ -422,6 +452,18 @@ const App: React.FC = () => {
               <Route path="/payment-gateway" element={<ProtectedRoute><PaymentGateway /></ProtectedRoute>} />
               <Route path="/security-center" element={<ProtectedRoute><SecurityCenter /></ProtectedRoute>} />
               <Route path="/reports" element={<ProtectedRoute><ReportsAnalytics /></ProtectedRoute>} />
+              <Route path="/analytics" element={<ProtectedRoute><AuctionAnalyticsDashboard /></ProtectedRoute>} />
+              <Route path="/referrals" element={<ProtectedRoute><ReferralSystem /></ProtectedRoute>} />
+              <Route path="/marketing" element={<ProtectedRoute><MarketingAutomation /></ProtectedRoute>} />
+              <Route path="/dealer-dashboard" element={<ProtectedRoute><DealerDashboard /></ProtectedRoute>} />
+              <Route path="/loan-eligibility" element={<ProtectedRoute><LoanEligibilityPage /></ProtectedRoute>} />
+              <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboardEnterprise /></ProtectedRoute>} />
+              <Route path="/create-auction-enterprise" element={<ProtectedRoute><AuctionCreatePageEnterprise /></ProtectedRoute>} />
+              <Route path="/auctions" element={<ProtectedRoute><AuctionListingPage /></ProtectedRoute>} />
+              <Route path="/live-bidding" element={<ProtectedRoute><LiveBiddingPage /></ProtectedRoute>} />
+              <Route path="/" element={<HomePage />} />
+              <Route path="/onboarding" element={<UserOnboardingPage />} />
+              <Route path="/winner-confirmation" element={<ProtectedRoute><WinnerConfirmationPage /></ProtectedRoute>} />
 
               {/* Auction Pages */}
               <Route path="/auction-preview" element={<ProtectedRoute><AuctionPreview /></ProtectedRoute>} />
@@ -534,7 +576,7 @@ const App: React.FC = () => {
       </GlobalLayout>
       <CookieConsent />
       <PWAInstallPrompt />
-    </UnifiedAuthProvider>
+     </UnifiedAuthProvider>
   );
 };
 

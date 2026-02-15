@@ -255,10 +255,8 @@ let ApprovalService = class ApprovalService {
         return `apr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     }
     storeApprovalRequest(request) {
-        console.log('Storing approval request:', request.id);
     }
     updateApprovalRequest(request) {
-        console.log('Updating approval request:', request.id);
     }
     async getApprovalRequest(approvalId) {
         return {

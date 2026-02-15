@@ -1,0 +1,135 @@
+# QuickMela Prometheus Configuration
+# Monitoring AI-powered auction platform
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  scrape_timeout: 10s
+
+rule_files:
+  - "alert_rules.yml"
+
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # Add alertmanager endpoints here when needed
+
+scrape_configs:
+  # ================================
+  # APPLICATION SERVICES
+  # ================================
+
+  - job_name: 'quickmela-backend'
+    static_configs:
+      - targets: ['quickmela-backend:3000']
+        labels:
+          service: 'backend'
+          environment: 'production'
+    metrics_path: '/metrics'
+    scrape_interval: 15s
+    scrape_timeout: 10s
+
+  - job_name: 'quickmela-worker'
+    static_configs:
+      - targets: ['quickmela-worker:3001']
+        labels:
+          service: 'worker'
+          environment: 'production'
+    metrics_path: '/metrics'
+    scrape_interval: 30s
+
+  # ================================
+  # DATABASE SERVICES
+  # ================================
+
+  - job_name: 'postgres'
+    static_configs:
+      - targets: ['postgres-exporter:9187']
+        labels:
+          service: 'database'
+          db_type: 'postgresql'
+    scrape_interval: 30s
+
+  - job_name: 'redis'
+    static_configs:
+      - targets: ['redis-exporter:9121']
+        labels:
+          service: 'cache'
+          cache_type: 'redis'
+    scrape_interval: 30s
+
+  # ================================
+  # INFRASTRUCTURE
+  # ================================
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['node-exporter:9100']
+        labels:
+          service: 'infrastructure'
+          type: 'system'
+    scrape_interval: 30s
+
+  - job_name: 'rabbitmq'
+    static_configs:
+      - targets: ['rabbitmq:15692']
+        labels:
+          service: 'message-queue'
+          mq_type: 'rabbitmq'
+    scrape_interval: 30s
+
+  # ================================
+  # AI SYSTEM MONITORING
+  # ================================
+
+  - job_name: 'ai-system-health'
+    static_configs:
+      - targets: ['quickmela-backend:3000']
+        labels:
+          service: 'ai-health'
+          component: 'face-recognition'
+    metrics_path: '/metrics/ai/face-recognition'
+    scrape_interval: 60s
+
+  - job_name: 'ai-fraud-detection'
+    static_configs:
+      - targets: ['quickmela-backend:3000']
+        labels:
+          service: 'ai-health'
+          component: 'fraud-detection'
+    metrics_path: '/metrics/ai/fraud-detection'
+    scrape_interval: 30s
+
+  - job_name: 'ai-recommendations'
+    static_configs:
+      - targets: ['quickmela-backend:3000']
+        labels:
+          service: 'ai-health'
+          component: 'recommendations'
+    metrics_path: '/metrics/ai/recommendations'
+    scrape_interval: 30s
+
+  # ================================
+  # BUSINESS METRICS
+  # ================================
+
+  - job_name: 'business-metrics'
+    static_configs:
+      - targets: ['quickmela-backend:3000']
+        labels:
+          service: 'business'
+          type: 'revenue'
+    metrics_path: '/metrics/business'
+    scrape_interval: 300s  # 5 minutes for business metrics
+
+  # ================================
+  # EXTERNAL SERVICES (if needed)
+  # ================================
+
+  # - job_name: 'external-apis'
+  #   static_configs:
+  #     - targets: ['api.exchangerate-api.com:443']
+  #   metrics_path: '/v1/metrics'
+  #   scheme: https
+  #   scrape_interval: 300s

@@ -210,7 +210,7 @@ const AddProductFixed = () => {
             ) : (
               <>
                 {currentStep === 3 ? 'Create Listing' : 'Next'}
-                <ChevronDown className="w-4 h-4 rotate-270" />
+                <ChevronDown className="w-4 h-4 rotate-90" />
               </>
             )}
           </button>
@@ -219,3 +219,5 @@ const AddProductFixed = () => {
     </div>
   );
 }
+
+export default AddProductFixed;

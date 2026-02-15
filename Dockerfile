@@ -1,0 +1,105 @@
+# QuickMela Backend - Production Dockerfile
+# Multi-stage build for optimized production image
+
+# ================================
+# BUILD STAGE
+# ================================
+FROM node:18-alpine AS builder
+
+# Set working directory
+WORKDIR /app
+
+# Install build dependencies
+RUN apk add --no-cache \
+    python3 \
+    make \
+    g++ \
+    sqlite-dev \
+    postgresql-dev
+
+# Copy package files
+COPY package*.json ./
+COPY prisma ./prisma/
+
+# Install all dependencies (including dev dependencies for build)
+RUN npm ci
+
+# Generate Prisma client
+RUN npx prisma generate
+
+# Copy source code
+COPY . .
+
+# Build application
+RUN npm run build
+
+# Remove development dependencies
+RUN npm prune --production
+
+# ================================
+# PRODUCTION STAGE
+# ================================
+FROM node:18-alpine AS production
+
+# Install production runtime dependencies
+RUN apk add --no-cache \
+    dumb-init \
+    curl \
+    postgresql-client
+
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs && \
+    adduser -S quickmela -u 1001
+
+# Set working directory
+WORKDIR /app
+
+# Copy package files
+COPY package*.json ./
+
+# Copy production dependencies from builder
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy built application
+COPY --from=builder /app/dist ./dist
+
+# Copy Prisma schema and migrations
+COPY --from=builder /app/prisma ./prisma
+
+# Copy other necessary files
+COPY --from=builder /app/src/safety-rules/safety-rules.service.ts ./dist/src/safety-rules/
+
+# Change ownership to non-root user
+RUN chown -R quickmela:nodejs /app
+USER quickmela
+
+# Expose port
+EXPOSE 4000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:4000/health || exit 1
+
+# Use dumb-init for proper signal handling
+ENTRYPOINT ["dumb-init", "--"]
+
+# Start application
+CMD ["node", "dist/main.js"]
+
+# ================================
+# METADATA
+# ================================
+LABEL maintainer="QuickMela Team <dev@quickmela.com>" \
+      version="1.0.0" \
+      description="QuickMela Backend - AI-Powered Auction Platform" \
+      org.opencontainers.image.source="https://github.com/quickmela/backend"
+
+# ================================
+# SECURITY NOTES
+# ================================
+# - Uses non-root user for security
+# - Minimal attack surface with Alpine Linux
+# - No development dependencies in production
+# - Proper signal handling with dumb-init
+# - Health checks for container orchestration
+# - Multi-stage build for smaller image size

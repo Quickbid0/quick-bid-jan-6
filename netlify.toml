@@ -1,6 +1,7 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  environment = { VITE_APP_NAME = "QuickMela Platform", VITE_APP_VERSION = "1.0.0", VITE_APP_ENVIRONMENT = "production", VITE_APP_URL = "https://quickmela.netlify.app", VITE_API_URL = "https://web-production-b7c8b.up.railway.app", VITE_SERVER_URL = "https://web-production-b7c8b.up.railway.app", VITE_SUPABASE_URL = "https://vxqvzylhbzgovuorzwqc.supabase.co", VITE_SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ4cXZ6eWxoYnpnb3Z1b3J6d3FjIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1NzkxMDgsImV4cCI6MjA4NjE1NTEwOH0.D7huLDHsyJuVSZQRqyTjfhLgrFD8ukdNDNuhIOTEJ_w", VITE_GA_TRACKING_ID = "G-ZE2TZF8X8X", VITE_SENTRY_DSN = "https://2099a2177bbc573a6566132df404a322@o4510889698131968.ingest.us.sentry.io/4510889907191808", VITE_ENABLE_SERVICE_WORKER = "true", VITE_ENABLE_PWA = "true" }
 
 [functions]
   directory = "netlify/functions"

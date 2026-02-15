@@ -1,0 +1,288 @@
+# QuickMela Alert Rules
+# Monitoring alerts for AI-powered auction platform
+
+groups:
+  # ================================
+  # INFRASTRUCTURE ALERTS
+  # ================================
+
+  - name: infrastructure_alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+        annotations:
+          summary: "Instance {{ $labels.instance }} down"
+          description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+      - alert: HighCpuUsage
+        expr: 100 - (avg by(instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 10m
+        labels:
+          severity: warning
+          service: infrastructure
+        annotations:
+          summary: "High CPU usage on {{ $labels.instance }}"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}"
+
+      - alert: HighMemoryUsage
+        expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+        annotations:
+          summary: "High memory usage on {{ $labels.instance }}"
+          description: "Memory usage is {{ $value }}% on {{ $labels.instance }}"
+
+      - alert: DiskSpaceLow
+        expr: (node_filesystem_avail_bytes / node_filesystem_size_bytes) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+        annotations:
+          summary: "Low disk space on {{ $labels.instance }}"
+          description: "Disk space is {{ $value }}% available on {{ $labels.instance }}"
+
+  # ================================
+  # APPLICATION ALERTS
+  # ================================
+
+  - name: application_alerts
+    rules:
+      - alert: ApplicationDown
+        expr: up{job="quickmela-backend"} == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "QuickMela backend is down"
+          description: "QuickMela backend has been down for more than 2 minutes"
+
+      - alert: WorkerDown
+        expr: up{job="quickmela-worker"} == 0
+        for: 5m
+        labels:
+          severity: warning
+          service: worker
+        annotations:
+          summary: "QuickMela worker is down"
+          description: "QuickMela worker has been down for more than 5 minutes"
+
+      - alert: HighResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m])) > 2
+        for: 5m
+        labels:
+          severity: warning
+          service: backend
+        annotations:
+          summary: "High response time detected"
+          description: "95th percentile response time is {{ $value }}s"
+
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."}[5m]) / rate(http_requests_total[5m]) * 100 > 5
+        for: 5m
+        labels:
+          severity: critical
+          service: backend
+        annotations:
+          summary: "High error rate detected"
+          description: "Error rate is {{ $value }}% in the last 5 minutes"
+
+  # ================================
+  # DATABASE ALERTS
+  # ================================
+
+  - name: database_alerts
+    rules:
+      - alert: DatabaseDown
+        expr: pg_up == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: database
+        annotations:
+          summary: "PostgreSQL database is down"
+          description: "PostgreSQL database has been down for more than 1 minute"
+
+      - alert: HighDatabaseConnections
+        expr: pg_stat_activity_count > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "High database connection count"
+          description: "Database has {{ $value }} active connections"
+
+      - alert: SlowQueries
+        expr: rate(pg_stat_activity_max_tx_duration{datname="quickmela_prod"}[5m]) > 30
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+        annotations:
+          summary: "Slow database queries detected"
+          description: "Long-running transactions detected in database"
+
+  # ================================
+  # CACHE ALERTS
+  # ================================
+
+  - name: cache_alerts
+    rules:
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: cache
+        annotations:
+          summary: "Redis cache is down"
+          description: "Redis has been down for more than 2 minutes"
+
+      - alert: HighRedisMemoryUsage
+        expr: redis_memory_used_bytes / redis_memory_max_bytes * 100 > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: cache
+        annotations:
+          summary: "High Redis memory usage"
+          description: "Redis memory usage is {{ $value }}%"
+
+  # ================================
+  # AI SYSTEM ALERTS
+  # ================================
+
+  - name: ai_system_alerts
+    rules:
+      - alert: AIFaceRecognitionDown
+        expr: ai_face_recognition_up == 0
+        for: 10m
+        labels:
+          severity: critical
+          service: ai
+          component: face-recognition
+        annotations:
+          summary: "AI Face Recognition system down"
+          description: "Face recognition service has been down for more than 10 minutes"
+
+      - alert: AIFraudDetectionHighErrorRate
+        expr: rate(ai_fraud_detection_errors_total[5m]) / rate(ai_fraud_detection_requests_total[5m]) * 100 > 10
+        for: 5m
+        labels:
+          severity: critical
+          service: ai
+          component: fraud-detection
+        annotations:
+          summary: "High AI fraud detection error rate"
+          description: "AI fraud detection error rate is {{ $value }}%"
+
+      - alert: AIRecommendationLowAccuracy
+        expr: ai_recommendation_accuracy < 70
+        for: 15m
+        labels:
+          severity: warning
+          service: ai
+          component: recommendations
+        annotations:
+          summary: "Low AI recommendation accuracy"
+          description: "AI recommendation accuracy dropped to {{ $value }}%"
+
+      - alert: AIHighLatency
+        expr: histogram_quantile(0.95, rate(ai_request_duration_seconds_bucket[5m])) > 5
+        for: 5m
+        labels:
+          severity: warning
+          service: ai
+        annotations:
+          summary: "High AI system latency"
+          description: "AI system 95th percentile latency is {{ $value }}s"
+
+      - alert: AISystemOverload
+        expr: rate(ai_requests_total[5m]) > 1000
+        for: 10m
+        labels:
+          severity: warning
+          service: ai
+        annotations:
+          summary: "AI system overload detected"
+          description: "AI system is handling {{ $value }} requests per second"
+
+  # ================================
+  # BUSINESS ALERTS
+  # ================================
+
+  - name: business_alerts
+    rules:
+      - alert: LowRevenue
+        expr: increase(business_revenue_total[1h]) < 1000
+        for: 1h
+        labels:
+          severity: info
+          service: business
+        annotations:
+          summary: "Low revenue detected"
+          description: "Revenue in the last hour was only ₹{{ $value }}"
+
+      - alert: HighFraudRate
+        expr: rate(business_fraud_transactions_total[1h]) / rate(business_total_transactions_total[1h]) * 100 > 5
+        for: 30m
+        labels:
+          severity: critical
+          service: business
+        annotations:
+          summary: "High fraud transaction rate"
+          description: "Fraud transaction rate is {{ $value }}% in the last hour"
+
+      - alert: UserRegistrationDrop
+        expr: rate(business_user_registrations_total[1h]) < 10
+        for: 2h
+        labels:
+          severity: warning
+          service: business
+        annotations:
+          summary: "Low user registration rate"
+          description: "Only {{ $value }} users registered in the last hour"
+
+  # ================================
+  # SECURITY ALERTS
+  # ================================
+
+  - name: security_alerts
+    rules:
+      - alert: MultipleFailedLogins
+        expr: increase(security_failed_login_total[5m]) > 10
+        for: 5m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Multiple failed login attempts"
+          description: "{{ $value }} failed login attempts in the last 5 minutes"
+
+      - alert: SuspiciousIPActivity
+        expr: rate(security_requests_per_ip_total[5m]) > 100
+        for: 10m
+        labels:
+          severity: warning
+          service: security
+        annotations:
+          summary: "Suspicious IP activity detected"
+          description: "High request rate from single IP detected"
+
+      - alert: APIKeyAbuse
+        expr: rate(security_invalid_api_key_total[5m]) > 20
+        for: 5m
+        labels:
+          severity: critical
+          service: security
+        annotations:
+          summary: "API key abuse detected"
+          description: "{{ $value }} invalid API key attempts in the last 5 minutes"
