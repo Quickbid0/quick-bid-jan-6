@@ -24,12 +24,18 @@ async function bootstrap() {
     'https://quickmela.com',       // add your main domain
     'http://localhost:3000',
     'http://localhost:5173',
+    'http://localhost:5193',
+    'http://localhost:5194',
+    'http://localhost:5196',
   ];
 
   app.enableCors({
     origin: (origin, callback) => {
       // Allow server-to-server / Postman
       if (!origin) return callback(null, true);
+
+      // Allow all localhost origins for development
+      if (origin.startsWith('http://localhost:')) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         return callback(null, true);
