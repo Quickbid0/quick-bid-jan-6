@@ -311,12 +311,7 @@ export default function EliteBuyerDashboard() {
         {activeView === 'overview' && (
           <div className="space-y-8">
             {/* Hero Welcome */}
-            <div
-}
-}
-}
-              className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-white"
-            >
+            <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-white">
               <div className="flex items-center justify-between">
                 <div>
                   <h1 className="text-3xl font-bold mb-2">Welcome back, Champion! 🏆</h1>
@@ -369,9 +364,6 @@ export default function EliteBuyerDashboard() {
               ].map((kpi, index) => (
                 <div
                   key={kpi.title}
-}
-}
-}
                   className="bg-white rounded-2xl p-6 shadow-xl border border-neutral-200 hover:shadow-2xl transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-4">
@@ -403,12 +395,7 @@ export default function EliteBuyerDashboard() {
             </div>
 
             {/* AI Suggestions Card - Elite Feature */}
-            <div
-}
-}
-}
-              className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
-            >
+            <div className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200">
               <div className="flex items-center gap-4 mb-6">
                 <div className="bg-primary-100 rounded-xl p-3">
                   <Sparkles className="w-6 h-6 text-primary-600" />
@@ -423,9 +410,6 @@ export default function EliteBuyerDashboard() {
                 {aiSuggestions.map((suggestion, index) => (
                   <div
                     key={suggestion.id}
-}
-}
-}
                     className={`rounded-xl p-6 border-2 transition-all duration-250 hover:shadow-lg ${
                       suggestion.type === 'bid'
                         ? 'border-primary-200 bg-primary-50 hover:border-primary-300'
@@ -478,12 +462,7 @@ export default function EliteBuyerDashboard() {
             </div>
 
             {/* Active Bids Preview */}
-            <div
-}
-}
-}
-              className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
-            >
+            <div className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-neutral-900">Active Bids</h2>
                 <button
@@ -500,9 +479,6 @@ export default function EliteBuyerDashboard() {
                   return (
                     <div
                       key={bid.id}
-}
-}
-}
                       className="border border-neutral-200 rounded-xl p-6 hover:shadow-lg transition-all duration-250"
                     >
                       <div className="flex items-start gap-4 mb-4">
@@ -549,12 +525,7 @@ export default function EliteBuyerDashboard() {
             </div>
 
             {/* Recent Wins */}
-            <div
-}
-}
-}
-              className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
-            >
+            <div className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-xl font-bold text-neutral-900">Recent Wins</h2>
                 <button
@@ -569,9 +540,6 @@ export default function EliteBuyerDashboard() {
                 {wonAuctions.map((auction, index) => (
                   <div
                     key={auction.id}
-}
-}
-}
                     className="flex items-center gap-6 p-6 border border-neutral-200 rounded-xl hover:shadow-lg transition-all duration-250"
                   >
                     <img
@@ -617,9 +585,6 @@ export default function EliteBuyerDashboard() {
                 return (
                   <div
                     key={bid.id}
-}
-}
-}
                     className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
                   >
                     <div className="flex items-start gap-6">
@@ -693,9 +658,6 @@ export default function EliteBuyerDashboard() {
               {wonAuctions.map((auction, index) => (
                 <div
                   key={auction.id}
-}
-}
-}
                   className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
                 >
                   <div className="flex items-start gap-6">
@@ -761,9 +723,6 @@ export default function EliteBuyerDashboard() {
               ].map((metric, index) => (
                 <div
                   key={metric.label}
-}
-}
-}
                   className="bg-white rounded-2xl p-6 shadow-xl border border-neutral-200 text-center"
                 >
                   <div className={`text-3xl font-bold text-${metric.color}-600 mb-2`}>{metric.value}</div>
@@ -783,9 +742,3 @@ export default function EliteBuyerDashboard() {
                 </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
