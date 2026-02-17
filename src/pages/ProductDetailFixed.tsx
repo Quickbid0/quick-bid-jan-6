@@ -614,9 +614,6 @@ export default function EliteProductListing() {
                       {bids.map((bid, index) => (
                         <div
                           key={bid.id}
-}
-}
-}
                           className={`flex items-center justify-between p-4 rounded-xl border ${
                             index === 0
                               ? 'bg-emerald-50 border-emerald-200'
