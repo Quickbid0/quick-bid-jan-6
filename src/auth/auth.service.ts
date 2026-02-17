@@ -1,7 +1,7 @@
 import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../../backend/src/prisma/prisma.service';
 import { User as Account, UserRole as Role } from '@prisma/client';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 
 export interface LoginDto {
   email: string;
