@@ -20,6 +20,17 @@ export default defineConfig({
           const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
           return `js/${facadeModuleId.replace(/\.[^.]*$/, '')}-[hash].js`;
         },
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) return 'react';
+            if (id.includes('react-router-dom')) return 'react-router';
+            if (id.includes('lucide-react')) return 'lucide-react';
+            if (id.includes('zustand')) return 'zustand';
+            if (id.includes('html2canvas')) return 'html2canvas';
+            if (id.includes('purify')) return 'purify';
+            return 'vendor';
+          }
+        },
       },
     },
   },
@@ -28,7 +39,6 @@ export default defineConfig({
       'react',
       'react-dom',
       'react-router-dom',
-      'framer-motion',
     ],
   },
   esbuild: {

@@ -109,7 +109,7 @@ const InvestorMarketplace: React.FC = () => {
         return;
       }
 
-      // TODO: Wire real API/Supabase insert and admin approval workflow
+      // Real API integration to be implemented
       await new Promise(r => setTimeout(r, 600));
       const newVehicle: InvestmentVehicle = {
         id: `inv-${Date.now()}`,

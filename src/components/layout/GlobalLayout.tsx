@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import Navbar from '../Navbar';
 import Footer from '../Footer';
 import Shell from './Shell';
-import { useUnifiedAuth } from '../../context/UnifiedAuthContext';
+import { useAuth } from '../../context/UnifiedAuthContext';
 
 interface GlobalLayoutProps {
   children: React.ReactNode;
@@ -11,7 +11,7 @@ interface GlobalLayoutProps {
 
 const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
   const location = useLocation();
-  const { user } = useUnifiedAuth();
+  const { user } = useAuth();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isBuyerRoute = location.pathname.startsWith('/buyer/');
 

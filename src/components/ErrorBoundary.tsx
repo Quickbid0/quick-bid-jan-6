@@ -1,6 +1,5 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
-import { toast } from 'react-hot-toast';
 
 interface Props {
   children: ReactNode;
@@ -60,7 +59,7 @@ class ErrorBoundary extends Component<Props, State> {
     }
 
     // Show toast notification
-    toast.error('An unexpected error occurred. Please try refreshing the page.');
+    console.log('An unexpected error occurred. Please try refreshing the page.');
   }
 
   private reportError = async (error: Error, errorInfo: ErrorInfo) => {
@@ -102,7 +101,7 @@ class ErrorBoundary extends Component<Props, State> {
         errorId: null
       });
     } else {
-      toast.error('Maximum retry attempts reached. Please refresh the page.');
+      console.log('Maximum retry attempts reached. Please refresh the page.');
     }
   };
 
@@ -127,10 +126,10 @@ class ErrorBoundary extends Component<Props, State> {
 
     navigator.clipboard.writeText(JSON.stringify(errorDetails, null, 2))
       .then(() => {
-        toast.success('Error details copied to clipboard');
+        console.log('Error details copied to clipboard');
       })
       .catch(() => {
-        toast.error('Failed to copy error details');
+        console.log('Failed to copy error details');
       });
   };
 

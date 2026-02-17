@@ -178,7 +178,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const error = 'Demo authentication disabled in production mode';
       console.error('🔐 UNIFIED AUTH:', error);
       setState(prev => ({ ...prev, loading: false, error }));
-      toast.error('Please use real authentication in production mode');
+      console.log('Please use real authentication in production mode');
       return false;
     }
     
@@ -187,7 +187,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const error = 'Demo authentication not available';
       console.error('🔐 UNIFIED AUTH:', error);
       setState(prev => ({ ...prev, loading: false, error }));
-      toast.error(error);
+      console.log(error);
       return false;
     }
     
@@ -195,7 +195,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const error = 'Real authentication not available';
       console.error('🔐 UNIFIED AUTH:', error);
       setState(prev => ({ ...prev, loading: false, error }));
-      toast.error(error);
+      console.log(error);
       return false;
     }
     
@@ -311,7 +311,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
           }
           
           setState(prev => ({ ...prev, loading: false, error: errorMessage }));
-          toast.error(errorMessage);
+          console.log(errorMessage);
           return false;
         }
       }
@@ -333,7 +333,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const error = 'Demo registration disabled in production mode';
       console.error('🔐 UNIFIED AUTH:', error);
       setState(prev => ({ ...prev, loading: false, error }));
-      toast.error('Please use real registration in production mode');
+      console.log('Please use real registration in production mode');
       return false;
     }
     
@@ -342,7 +342,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const error = 'Demo registration is not available in current mode';
       console.error('🔐 UNIFIED AUTH:', error);
       setState(prev => ({ ...prev, loading: false, error }));
-      toast.error(error);
+      console.log(error);
       return false;
     }
     
@@ -350,7 +350,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       const error = 'Real registration is not available in current mode';
       console.error('🔐 UNIFIED AUTH:', error);
       setState(prev => ({ ...prev, loading: false, error }));
-      toast.error(error);
+      console.log(error);
       return false;
     }
     
@@ -435,7 +435,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
           }
           
           setState(prev => ({ ...prev, loading: false, error: errorMessage }));
-          toast.error(errorMessage);
+          console.log(errorMessage);
           return false;
         }
       }
@@ -474,7 +474,7 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
       authMode: null
     });
     
-    toast.success('Logged out successfully');
+    console.log('Logged out successfully');
   };
 
   // Switch to real auth
@@ -563,10 +563,10 @@ export const UnifiedAuthProvider: React.FC<{ children: React.ReactNode }> = ({ c
 };
 
 // Custom hook
-export const useUnifiedAuth = () => {
+export const useAuth = () => {
   const context = useContext(UnifiedAuthContext);
   if (context === undefined) {
-    throw new Error('useUnifiedAuth must be used within a UnifiedAuthProvider');
+    throw new Error('useAuth must be used within a UnifiedAuthProvider');
   }
   return context;
 };

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 import { motion } from 'framer-motion';
 import {
   Calendar,
@@ -34,7 +34,7 @@ interface AuctionFormData {
 
 const AuctionCreatePage = () => {
   const navigate = useNavigate();
-  const { user } = useUnifiedAuth();
+  const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [products, setProducts] = useState<any[]>([]);
 

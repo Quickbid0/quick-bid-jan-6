@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { User, Mail, Lock, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useUnifiedAuth } from '../../context/UnifiedAuthContext';
+import { useAuth } from '../../context/UnifiedAuthContext';
 
 const RealRegister: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -18,7 +18,7 @@ const RealRegister: React.FC = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string; name?: string; role?: string }>({});
 
   const navigate = useNavigate();
-  const { register } = useUnifiedAuth();
+  const { register } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

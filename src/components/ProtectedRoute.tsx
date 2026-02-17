@@ -1,6 +1,6 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 import { storageService } from '../services/storageService';
 
 interface ProtectedRouteProps {
@@ -14,7 +14,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   adminRequired = false, 
   allowedRoles
 }) => {
-  const { user, loading } = useUnifiedAuth();
+  const { user, loading } = useAuth();
 
   // Handle loading state - WAIT for auth session to be restored
   if (loading) {

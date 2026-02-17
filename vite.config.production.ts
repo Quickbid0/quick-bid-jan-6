@@ -22,7 +22,7 @@ export default defineConfig({
         manualChunks: {
           vendor: ['react', 'react-dom'],
           router: ['react-router-dom'],
-          ui: ['framer-motion', 'react-hot-toast'],
+          ui: ['react-hot-toast'],
           auth: ['@supabase/supabase-js'],
         },
       },

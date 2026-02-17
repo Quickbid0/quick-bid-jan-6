@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { CreditCard, Smartphone, Building, Shield, CheckCircle, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import QRCode from 'react-qr-code';
 
 interface PaymentMethod {
   id: string;
@@ -97,9 +95,8 @@ const PaymentGateway = () => {
             <h2 className="text-xl font-semibold mb-4">Select Payment Method</h2>
             <div className="space-y-3">
               {paymentMethods.map((method) => (
-                <motion.div
+                <div
                   key={method.id}
-                  whileHover={{ scale: 1.02 }}
                   className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                     selectedMethod === method.id
                       ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
@@ -123,7 +120,7 @@ const PaymentGateway = () => {
                       <CheckCircle className="h-5 w-5 text-indigo-600" />
                     )}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -171,21 +168,15 @@ const PaymentGateway = () => {
           </div>
 
           {showQR && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center p-6 bg-white rounded-lg shadow-lg"
-            >
+            <div className="text-center p-6 bg-white rounded-lg shadow-lg">
               <h3 className="font-semibold mb-4">Scan QR Code to Pay</h3>
-              <QRCode
-                value={`upi://pay?pa=merchant@upi&pn=QuickBid&am=${amount}&cu=INR`}
-                size={200}
-                className="mx-auto"
-              />
+              <div className="w-48 h-48 bg-gray-200 mx-auto flex items-center justify-center">
+                QR Code Placeholder
+              </div>
               <p className="text-sm text-gray-600 mt-4">
                 Scan with any UPI app to complete payment
               </p>
-            </motion.div>
+            </div>
           )}
 
           <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">

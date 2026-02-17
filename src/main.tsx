@@ -9,6 +9,10 @@ import { SessionProvider } from './context/SessionContext';
 import { UnifiedAuthProvider } from './context/UnifiedAuthContext';
 import App from './App.tsx';
 import './index.css';
+import { initSecurity } from './utils/securityUtils';
+
+// Initialize security measures
+initSecurity();
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

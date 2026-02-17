@@ -6,7 +6,7 @@ import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 import { createOrLoadUserKey } from '../security/keyring';
 import { encryptProfileFields } from '../security/secureFields';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -27,7 +27,7 @@ const Register = () => {
   const [step, setStep] = useState(1);
   const [otp, setOtp] = useState('');
   const navigate = useNavigate();
-  const { register: registerUser, user } = useUnifiedAuth();
+  const { register: registerUser, user } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;

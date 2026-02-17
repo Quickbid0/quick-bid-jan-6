@@ -2,7 +2,6 @@
 // Comprehensive animation system with micro-interactions, transitions, and real-time feedback
 
 import React from 'react';
-import { motion, AnimatePresence, useAnimation, useMotionValue, useTransform, useSpring, Variants } from 'framer-motion';
 
 // Core Animation Variants
 export const animationVariants = {

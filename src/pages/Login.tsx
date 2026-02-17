@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, FC } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createOrLoadUserKey } from '../security/keyring';
 import { encryptProfileFields } from '../security/secureFields';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 import SecureAPIClient from '../utils/secureAPIClient';
 import { validateEmail, validatePassword } from '../utils/securityUtils';
 import { LogIn, Mail, Lock, Phone } from 'lucide-react';
@@ -41,7 +41,7 @@ const Login: FC = () => {
   const isLoggingIn = useRef(false);
 
   const navigate = useNavigate();
-  const { login, user, loading: authLoading } = useUnifiedAuth();
+  const { login, user, loading: authLoading } = useAuth();
 
   useEffect(() => {
     document.title = 'Login - QuickMela Auction Platform';

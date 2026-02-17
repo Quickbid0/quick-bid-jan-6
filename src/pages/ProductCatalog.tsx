@@ -23,7 +23,6 @@ import {
   Users,
   Calendar,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import AuctionCard from '../components/AuctionCard';

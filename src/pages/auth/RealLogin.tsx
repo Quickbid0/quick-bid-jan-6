@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { useUnifiedAuth } from '../../context/UnifiedAuthContext';
+import { useAuth } from '../../context/UnifiedAuthContext';
 
 const RealLogin: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -15,7 +15,7 @@ const RealLogin: React.FC = () => {
   const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
 
   const navigate = useNavigate();
-  const { login } = useUnifiedAuth();
+  const { login } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

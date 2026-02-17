@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { X, Gavel, Wallet } from 'lucide-react';
@@ -18,7 +18,7 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
   const [loading, setLoading] = useState(false);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [balanceLoading, setBalanceLoading] = useState(true);
-  const { user } = useUnifiedAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
 
   const currentPrice = product.current_price || product.starting_price || 0;

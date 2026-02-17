@@ -3,7 +3,6 @@ import { Bell, Settings, Search, ChevronDown, Menu, User, LogOut, Package } from
 import { useSession } from '../../context/SessionContext';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../config/supabaseClient';
-import { toast } from 'react-hot-toast';
 
 interface TopBarProps {
   title: string;
@@ -73,7 +72,7 @@ const TopBar: React.FC<TopBarProps> = ({ title, breadcrumb, onMenuClick }) => {
       console.log('⚠️ Backend logout error, but continuing with client-side logout:', error);
     }
     
-    toast.success('Logged out');
+    console.log('Logged out');
     navigate('/');
   };
 

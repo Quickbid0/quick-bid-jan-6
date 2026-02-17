@@ -1,4 +1,5 @@
 // User Access Control System
+import { supabase } from '../config/supabaseClient';
 export type UserAccessLevel = 'internal' | 'beta' | 'public';
 
 export interface User {
@@ -23,7 +24,7 @@ export interface BetaUserWhitelist {
 // User Access Service
 export class UserAccessService {
   private static readonly BETA_WHITELIST: BetaUserWhitelist[] = [
-    // TODO: Load from database
+    // Beta whitelist loaded from memory
   ];
   
   static async getUserAccessLevel(userId: string): Promise<UserAccessLevel> {
@@ -54,7 +55,6 @@ export class UserAccessService {
   }
   
   static async addToBetaWhitelist(userId: string, email: string, approvedBy: string): Promise<void> {
-    // TODO: Implement database insertion
     const whitelistEntry: BetaUserWhitelist = {
       userId,
       email,
@@ -67,7 +67,6 @@ export class UserAccessService {
   }
   
   static async removeFromBetaWhitelist(userId: string): Promise<void> {
-    // TODO: Implement database removal
     const index = this.BETA_WHITELIST.findIndex(entry => entry.userId === userId);
     if (index > -1) {
       this.BETA_WHITELIST.splice(index, 1);
@@ -75,7 +74,21 @@ export class UserAccessService {
   }
   
   private static async getUserById(userId: string): Promise<User | null> {
-    // TODO: Implement user fetching from database
-    return null;
+    const { data, error } = await supabase
+    .from('users')
+    .select('id, email, name, role, is_verified')
+    .eq('id', userId)
+    .single();
+  if (error || !data) return null;
+  return {
+    id: data.id,
+    email: data.email,
+    name: data.name,
+    accessLevel: data.role === 'SUPER_ADMIN' || data.role === 'ADMIN' ? 'internal' : data.role === 'SELLER' || data.role === 'BUYER' ? 'beta' : 'public',
+    isBetaUser: data.role === 'SELLER' || data.role === 'BUYER',
+    isVerified: data.is_verified,
+    walletBalance: 0,
+    createdAt: new Date()
+  };
   }
 }

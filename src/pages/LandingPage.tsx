@@ -12,7 +12,6 @@ import {
   Play,
   ChevronRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 // =============================================================================
 // ELITE HOMEPAGE - Series B Ready
@@ -94,7 +93,7 @@ const EliteLandingPage = () => {
             {/* Left: Hero Content */}
             <div className="space-y-8">
               {/* Trust Badge */}
-              <motion.div
+              <div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
@@ -102,10 +101,10 @@ const EliteLandingPage = () => {
               >
                 <Shield className="w-4 h-4 text-emerald-600" />
                 <span className="text-sm font-medium text-emerald-700">Trusted by 500K+ Users</span>
-              </motion.div>
+              </div>
 
               {/* Hero Headline */}
-              <motion.div
+              <div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.1 }}
@@ -119,10 +118,10 @@ const EliteLandingPage = () => {
                 <p className="text-xl text-neutral-600 max-w-lg leading-relaxed">
                   Experience secure, transparent auctions with AI-powered insights and real-time bidding. Join India's fastest-growing marketplace.
                 </p>
-              </motion.div>
+              </div>
 
               {/* Search-First UX */}
-              <motion.div
+              <div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
@@ -141,10 +140,10 @@ const EliteLandingPage = () => {
                     Search
                   </button>
                 </div>
-              </motion.div>
+              </div>
 
               {/* CTA Buttons */}
-              <motion.div
+              <div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.3 }}
@@ -160,10 +159,10 @@ const EliteLandingPage = () => {
                   <Play className="w-5 h-5" />
                   Watch Demo
                 </button>
-              </motion.div>
+              </div>
 
               {/* Social Proof */}
-              <motion.div
+              <div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
@@ -175,11 +174,11 @@ const EliteLandingPage = () => {
                   ))}
                   <span className="text-sm text-neutral-600 ml-2">4.9/5 (50K+ reviews)</span>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Right: Hero Visual */}
-            <motion.div
+            <div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -231,7 +230,7 @@ const EliteLandingPage = () => {
                   <span className="text-sm font-medium">+23% value</span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -241,7 +240,7 @@ const EliteLandingPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center gap-12">
             {trustSignals.map((signal, index) => (
-              <motion.div
+              <div
                 key={signal.text}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -250,7 +249,7 @@ const EliteLandingPage = () => {
               >
                 <signal.icon className={`w-5 h-5 ${signal.color}`} />
                 <span className="text-sm font-medium">{signal.text}</span>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -259,7 +258,7 @@ const EliteLandingPage = () => {
       {/* Category Grid */}
       <section className="py-24 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -271,16 +270,15 @@ const EliteLandingPage = () => {
             <p className="text-xl text-neutral-600 max-w-2xl mx-auto">
               Discover premium items across India's most trusted auction categories
             </p>
-          </motion.div>
+          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {categories.map((category, index) => (
-              <motion.div
+              <div
                 key={category.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
                 className={`relative bg-white rounded-2xl p-8 border-2 transition-all duration-250 cursor-pointer ${
                   activeCategory === category.id
                     ? 'border-primary-500 shadow-xl shadow-primary-500/10'
@@ -295,7 +293,7 @@ const EliteLandingPage = () => {
                   Browse Now
                   <ChevronRight className="w-4 h-4 ml-1" />
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -304,7 +302,7 @@ const EliteLandingPage = () => {
       {/* Social Proof Section */}
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -316,12 +314,12 @@ const EliteLandingPage = () => {
             <p className="text-xl text-neutral-600">
               Join thousands of satisfied users who've transformed their auction experience
             </p>
-          </motion.div>
+          </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
             {stats.map((stat, index) => (
-              <motion.div
+              <div
                 key={stat.label}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
@@ -331,7 +329,7 @@ const EliteLandingPage = () => {
                 <div className="text-4xl font-bold text-primary-600 mb-2">{stat.value}</div>
                 <div className="text-neutral-900 font-semibold mb-1">{stat.label}</div>
                 <div className="text-emerald-600 text-sm font-medium">{stat.change} this quarter</div>
-              </motion.div>
+              </div>
             ))}
           </div>
 
@@ -357,7 +355,7 @@ const EliteLandingPage = () => {
                 avatar: 'AP'
               }
             ].map((testimonial, index) => (
-              <motion.div
+              <div
                 key={testimonial.name}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -379,7 +377,7 @@ const EliteLandingPage = () => {
                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   ))}
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -388,7 +386,7 @@ const EliteLandingPage = () => {
       {/* Final CTA */}
       <section className="py-24 bg-primary-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
@@ -413,7 +411,7 @@ const EliteLandingPage = () => {
                 </button>
               </Link>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 

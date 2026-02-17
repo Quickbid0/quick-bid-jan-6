@@ -96,6 +96,7 @@ dist
 # Gatsby files
 .cache/
 public
+!public/_headers
 
 # Storybook build outputs
 .out
@@ -129,3 +130,4 @@ temp/
 
 # Temp build directory
 temp-build/
+node_modules

@@ -28,7 +28,7 @@ import {
   LayoutDashboard,
   Gavel
 } from 'lucide-react';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 
 interface BuyerLayoutProps {
   children?: React.ReactNode;
@@ -41,7 +41,7 @@ const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children }) => {
   const [isMobile, setIsMobile] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const { user, logout } = useUnifiedAuth();
+  const { user, logout } = useAuth();
 
   // Check if mobile device
   useEffect(() => {

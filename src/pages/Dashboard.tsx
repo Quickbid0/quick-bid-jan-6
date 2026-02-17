@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 import { 
   Search, 
   MapPin, 
@@ -99,7 +99,7 @@ const Dashboard: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchOverlay, setShowSearchOverlay] = useState(false);
   const navigate = useNavigate();
-  const { user, getUser } = useUnifiedAuth();
+  const { user, getUser } = useAuth();
 
   const { balance: walletBalance, loading: walletLoading } = useWalletBalance(userId);
   const { recommendations } = useAIRecommendations(userId);

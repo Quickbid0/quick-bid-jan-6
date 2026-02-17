@@ -2,7 +2,7 @@
   "name": "quickbid-frontend",
   "private": true,
   "version": "1.0.0",
-  "packageManager": "npm@10.8.2",
+  "packageManager": "yarn@1.22.22",
   "type": "module",
   "engines": {
     "node": ">=20.0.0"
@@ -21,7 +21,6 @@
   },
   "dependencies": {
     "@amplitude/analytics-browser": "^2.34.1",
-    "@headlessui/react": "^2.2.2",
     "@heroicons/react": "^2.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@prisma/client": "^5.22.0",
@@ -37,7 +36,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
-    "framer-motion": "^11.18.2",
     "helmet": "^8.1.0",
     "html2canvas": "^1.4.1",
     "i18next": "^25.8.4",
@@ -50,16 +48,11 @@
     "prisma": "^5.22.0",
     "razorpay": "^2.9.6",
     "react": "^18.3.1",
-    "react-chartjs-2": "^5.3.1",
     "react-dom": "^18.3.1",
     "react-hook-form": "^7.50.0",
-    "react-hot-toast": "^2.5.2",
+    "react-hot-toast": "^2.6.0",
     "react-i18next": "^16.5.4",
-    "react-qr-code": "^2.0.18",
     "react-router-dom": "^6.30.2",
-    "react-select": "^5.10.2",
-    "react-tooltip": "^5.30.0",
-    "recharts": "^3.1.2",
     "socket.io-client": "^4.8.3",
     "tailwind-merge": "^3.4.0",
     "zod": "^3.25.76",
@@ -88,5 +81,9 @@
   "resolutions": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
+  },
+  "overrides": {
+    "react": "$react",
+    "react-dom": "$react-dom"
   }
 }

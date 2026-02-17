@@ -31,16 +31,24 @@ import CookieConsent from './components/CookieConsent';
 import RoleGuard from './components/RoleGuard';
 import SalesProtectedRoute from './components/SalesProtectedRoute';
 import PWAInstallPrompt from './components/PWAInstallPrompt';
+
 import UnifiedAuthProvider from './context/UnifiedAuthContext.tsx';
 
 import { Toaster } from 'react-hot-toast';
-
-// Public Pages
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/RegisterFixed'));
 const ProductDetail = lazy(() => import('./pages/ProductDetailFixed'));
 const Products = lazy(() => import('./pages/ProductsFixed'));
+
+const Dashboard = lazy(() => import('./pages/Dashboard'));
+const AIDashboard = lazy(() => import('./pages/AIDashboard'));
+const BuyerDashboard = lazy(() => import('./pages/BuyerDashboard'));
+const WatchlistPage = lazy(() => import('./pages/WatchlistPage'));
+const MyOrders = lazy(() => import('./pages/MyOrders'));
+const SavedSearchesPage = lazy(() => import('./pages/SavedSearchesPage'));
+const MyWins = lazy(() => import('./pages/MyWins'));
+const AdminDashboard = lazy(() => import('./pages/AdminDashboard'));
 const About = lazy(() => import('./pages/About'));
 const ContactUs = lazy(() => import('./pages/ContactUs'));
 const FAQ = lazy(() => import('./pages/FAQ'));
@@ -51,6 +59,21 @@ const Unauthorized = lazy(() => import('./pages/Unauthorized'));
 // Additional Pages
 const Terms = lazy(() => import('./pages/Terms'));
 const Privacy = lazy(() => import('./pages/Privacy'));
+
+const MyWonAuctions = lazy(() => import('./pages/MyWonAuctions'));
+const MyIssueDetail = lazy(() => import('./pages/MyIssueDetail'));
+const SellerDashboard = lazy(() => import('./pages/SellerDashboard'));
+const SellerMembership = lazy(() => import('./pages/SellerMembership'));
+const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
+const CompanyRegistration = lazy(() => import('./pages/CompanyRegistration'));
+const CompanyVerificationPending = lazy(() => import('./pages/CompanyVerificationPending'));
+const ComplianceTracking = lazy(() => import('./pages/ComplianceTracking'));
+
+const BulkUpload = lazy(() => import('./pages/BulkUploadFixed'));
+const LiveStreamControl = lazy(() => import('./pages/LiveStreamControl'));
+const AdminModerationDashboard = lazy(() => import('./components/admin/AdminModerationDashboard'));
+const WalletPage = lazy(() => import('./pages/WalletPage'));
+const BiddingHistory = lazy(() => import('./pages/BiddingHistory'));
 const Shipping = lazy(() => import('./pages/Shipping'));
 const Refunds = lazy(() => import('./pages/Refunds'));
 const Help = lazy(() => import('./pages/Help'));
@@ -68,16 +91,10 @@ const CampaignLaunchPage = lazy(() => import('./pages/CampaignLaunchPage'));
 const SupportSales = lazy(() => import('./pages/SupportSales'));
 
 // Protected User Pages
-const Dashboard = lazy(() => import('./pages/DashboardFixed'));
-const WalletPage = lazy(() => import('./pages/WalletPage'));
-const WatchlistPage = lazy(() => import('./pages/WatchlistPage'));
-const MyOrders = lazy(() => import('./pages/MyOrders'));
-const MyWins = lazy(() => import('./pages/MyWins'));
-const MyWonAuctions = lazy(() => import('./pages/MyWonAuctions'));
 const SavedSearches = lazy(() => import('./pages/SavedSearches'));
 const DeliveryPreferences = lazy(() => import('./pages/DeliveryPreferences'));
 const WinInvoice = lazy(() => import('./pages/WinInvoice'));
-const MyIssueDetail = lazy(() => import('./pages/MyIssueDetail'));
+const MyIssueDetailFixed = lazy(() => import('./pages/MyIssueDetail'));
 const MyInspections = lazy(() => import('./pages/MyInspections'));
 // const AddProduct = lazy(() => import('./pages/AddProductFixed'));
 const AddProduct = lazy(() => import('./pages/AddProductFixed'));
@@ -85,8 +102,7 @@ const AuctionPreview = lazy(() => import('./pages/AuctionPreview'));
 const ProfilePage = lazy(() => import('./pages/ProfileFixed'));
 const VerifySeller = lazy(() => import('./pages/VerifySeller'));
 const SellerAnalytics = lazy(() => import('./pages/SellerAnalytics'));
-const SellerDashboard = lazy(() => import('./pages/SellerDashboardFixed'));
-const SellerMembership = lazy(() => import('./pages/SellerMembership'));
+const SellerDashboardFixed = lazy(() => import('./pages/SellerDashboardFixed'));
 const AuctionAnalyticsDashboard = lazy(() => import('./pages/AuctionAnalyticsDashboard'));
 const ReferralSystem = lazy(() => import('./pages/ReferralSystem'));
 const MarketingAutomation = lazy(() => import('./pages/MarketingAutomation'));
@@ -113,12 +129,6 @@ const InsuranceClaims = lazy(() => import('./pages/InsuranceClaims'));
 const TestPage = lazy(() => import('./pages/TestPage'));
 
 // Company Pages
-const CompanyDashboard = lazy(() => import('./pages/CompanyDashboard'));
-const BulkUpload = lazy(() => import('./pages/BulkUploadFixed'));
-const CompanyRegistration = lazy(() => import('./pages/CompanyRegistration'));
-const CompanyVerificationPending = lazy(() => import('./pages/CompanyVerificationPending'));
-const LiveStreamControl = lazy(() => import('./pages/LiveStreamControl'));
-const AdminModerationDashboard = lazy(() => import('./components/admin/AdminModerationDashboard'));
 // Creative & AI Pages
 const CreativeVerification = lazy(() => import('./pages/CreativeVerification'));
 const SellerProfile = lazy(() => import('./pages/SellerProfile'));
@@ -134,13 +144,13 @@ const ProductCatalog = lazy(() => import('./pages/ProductCatalog'));
 const UserProfile = lazy(() => import('./pages/UserProfile'));
 const AdvancedSearch = lazy(() => import('./pages/AdvancedSearch'));
 const TransactionHistory = lazy(() => import('./pages/TransactionHistory'));
-const BiddingHistory = lazy(() => import('./pages/BiddingHistory'));
+
 const SellerCenter = lazy(() => import('./pages/SellerCenter'));
 const TrustSafety = lazy(() => import('./pages/TrustSafety'));
 const BusinessSolutions = lazy(() => import('./pages/BusinessSolutions'));
 const SupportTickets = lazy(() => import('./pages/SupportTickets'));
 const SupportTicketDetail = lazy(() => import('./pages/SupportTicketDetail'));
-const AIDashboard = lazy(() => import('./pages/AIDashboard'));
+
 const AuctionCreatePage = lazy(() => import('./pages/AuctionCreatePage'));
 
 // Public Events Page
@@ -183,7 +193,6 @@ const CampaignLanding = lazy(() => import('./pages/CampaignLanding'));
 // Legal Pages
 const GrievanceOfficer = lazy(() => import('./pages/GrievanceOfficer'));
 const SocialLinks = lazy(() => import('./pages/SocialLinks'));
-const ComplianceTracking = lazy(() => import('./pages/ComplianceTracking'));
 
 // Additional Components
 const NotificationSettings = lazy(() => import('./pages/NotificationSettings'));
@@ -341,243 +350,266 @@ const App: React.FC = () => {
                   <Route path="/finance/insurance/dashboard" element={<ProtectedRoute><InsuranceDashboard /></ProtectedRoute>} />
                   <Route path="/finance/insurance/claim" element={<ProtectedRoute><InsuranceClaims /></ProtectedRoute>} />
                   <Route path="/finance/insurance/claim/:policyId" element={<ProtectedRoute><InsuranceClaimPage /></ProtectedRoute>} />
- 
 
-              {/* Protected User Routes */}
-              <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-              <Route path="/ai-dashboard" element={
-                <ProtectedRoute>
-                  <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
-                    <AIDashboard />
-                  </Suspense>
-                </ProtectedRoute>
-              } />
-              <Route path="/buyer/dashboard" element={
-                <ProtectedRoute>
-                  <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
-                    <BuyerLayout>
-                      <Dashboard />
-                    </BuyerLayout>
-                  </Suspense>
-                </ProtectedRoute>
-              } />
-              <Route path="/buyer/auctions" element={
-                <ProtectedRoute>
-                  <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
-                    <BuyerLayout>
-                      <Products />
-                    </BuyerLayout>
-                  </Suspense>
-                </ProtectedRoute>
-              } />
-              <Route path="/buyer/watchlist" element={
-                <ProtectedRoute>
-                  <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
-                    <BuyerLayout>
-                      <WatchlistPage />
-                    </BuyerLayout>
-                  </Suspense>
-                </ProtectedRoute>
-              } />
-              <Route path="/buyer/saved-searches" element={
-                <ProtectedRoute>
-                  <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
-                    <BuyerLayout>
-                      <SavedSearches />
-                    </BuyerLayout>
-                  </Suspense>
-                </ProtectedRoute>
-              } />
-              <Route path="/buyer/orders" element={
-                <ProtectedRoute>
-                  <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
-                    <BuyerLayout>
-                      <MyOrders />
-                    </BuyerLayout>
-                  </Suspense>
-                </ProtectedRoute>
-              } />
-              <Route path="/my/won-auctions" element={<ProtectedRoute><MyWonAuctions /></ProtectedRoute>} />
-              <Route path="/my/issues/:issueId" element={<ProtectedRoute><MyIssueDetail /></ProtectedRoute>} />
-              <Route path="/seller/dashboard" element={<ProtectedRoute><SellerDashboard /></ProtectedRoute>} />
-              <Route path="/seller/membership" element={<ProtectedRoute><SellerMembership /></ProtectedRoute>} />
-              <Route path="/company/dashboard" element={<ProtectedRoute><CompanyDashboard /></ProtectedRoute>} />
-              <Route path="/company/register" element={<CompanyRegistration />} />
-              <Route path="/company/verification-pending" element={<ProtectedRoute><CompanyVerificationPending /></ProtectedRoute>} />
-              <Route path="/compliance" element={<ProtectedRoute><ComplianceTracking /></ProtectedRoute>} />
-              <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
-              <Route path="/my-bids" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
-              <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory /></ProtectedRoute>} />
-              <Route path="/watchlist" element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
-              <Route path="/my/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
-              <Route path="/my/inspections" element={<ProtectedRoute><MyInspections /></ProtectedRoute>} />
-              <Route
-                path="/inspector"
-                element={
-                  <ProtectedRoute>
-                    <RoleGuard allow={['inspector', 'admin']}>
-                      <InspectorInspectionsList />
-                    </RoleGuard>
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/inspector/inspections/:inspectionId"
-                element={
-                  <ProtectedRoute>
-                    <RoleGuard allow={['inspector', 'admin']}>
-                      <InspectorInspectionReview />
-                    </RoleGuard>
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="/my/wins" element={<ProtectedRoute><MyWins /></ProtectedRoute>} />
-              <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
-              <Route path="/settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
-              <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
-              {/* <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} /> */}
-              <Route path="/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
-              <Route path="/verify-seller" element={<ProtectedRoute><VerifySeller /></ProtectedRoute>} />
-              <Route path="/seller/analytics" element={<ProtectedRoute><SellerAnalytics /></ProtectedRoute>} />
-              <Route path="/creative-verification" element={<ProtectedRoute><CreativeVerification /></ProtectedRoute>} />
-              <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
-              <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
-              <Route path="/support" element={<ProtectedRoute><SupportTickets /></ProtectedRoute>} />
-              <Route path="/support/:id" element={<ProtectedRoute><SupportTicketDetail /></ProtectedRoute>} />
-              <Route path="/support/sales" element={<SupportSales />} />
-              <Route path="/order-tracking/:orderId?" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
-              <Route path="/winner/:auctionId" element={<ProtectedRoute><WinnerConfirmation /></ProtectedRoute>} />
-              <Route path="/pay/:auctionId" element={<ProtectedRoute><PayForWin /></ProtectedRoute>} />
-              <Route path="/market-analytics" element={<ProtectedRoute><MarketAnalytics /></ProtectedRoute>} />
-              <Route path="/payment-gateway" element={<ProtectedRoute><PaymentGateway /></ProtectedRoute>} />
-              <Route path="/security-center" element={<ProtectedRoute><SecurityCenter /></ProtectedRoute>} />
-              <Route path="/reports" element={<ProtectedRoute><ReportsAnalytics /></ProtectedRoute>} />
-              <Route path="/analytics" element={<ProtectedRoute><AuctionAnalyticsDashboard /></ProtectedRoute>} />
-              <Route path="/referrals" element={<ProtectedRoute><ReferralSystem /></ProtectedRoute>} />
-              <Route path="/marketing" element={<ProtectedRoute><MarketingAutomation /></ProtectedRoute>} />
-              <Route path="/dealer-dashboard" element={<ProtectedRoute><DealerDashboard /></ProtectedRoute>} />
-              <Route path="/loan-eligibility" element={<ProtectedRoute><LoanEligibilityPage /></ProtectedRoute>} />
-              <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboardEnterprise /></ProtectedRoute>} />
-              <Route path="/create-auction-enterprise" element={<ProtectedRoute><AuctionCreatePageEnterprise /></ProtectedRoute>} />
-              <Route path="/auctions" element={<ProtectedRoute><AuctionListingPage /></ProtectedRoute>} />
-              <Route path="/live-bidding" element={<ProtectedRoute><LiveBiddingPage /></ProtectedRoute>} />
-              <Route path="/" element={<HomePage />} />
-              <Route path="/onboarding" element={<UserOnboardingPage />} />
-              <Route path="/winner-confirmation" element={<ProtectedRoute><WinnerConfirmationPage /></ProtectedRoute>} />
+                  <Route path="/catalog" element={<div className="min-h-screen p-8"><h1>Product Catalog</h1><p>Coming soon...</p></div>} />
+                  <Route path="/advanced-search" element={<div className="min-h-screen p-8"><h1>Advanced Search</h1><p>Coming soon...</p></div>} />
+                  <Route path="/auctions" element={<div className="min-h-screen p-8"><h1>Auctions</h1><p>Coming soon...</p></div>} />
+                  <Route path="/sell" element={<div className="min-h-screen p-8"><h1>Sell with Us</h1><p>Coming soon...</p></div>} />
 
-              {/* Auction Pages */}
-              <Route path="/auction-preview" element={<ProtectedRoute><AuctionPreview /></ProtectedRoute>} />
-              <Route path="/create-auction" element={<ProtectedRoute><AuctionCreatePage /></ProtectedRoute>} />
-              <Route path="/live-auction/:id?" element={<ProtectedRoute><LiveAuctionPage /></ProtectedRoute>} />
-              <Route path="/timed-auction/:id?" element={<ProtectedRoute><TimedAuctionPage /></ProtectedRoute>} />
-              <Route path="/tender-auction/:id?" element={<ProtectedRoute><TenderAuctionPage /></ProtectedRoute>} />
-              <Route path="/live-bidding/:id?" element={<ProtectedRoute><LiveBidding /></ProtectedRoute>} />
-              <Route path="/auction-calendar" element={<ProtectedRoute><AuctionCalendar /></ProtectedRoute>} />
-              <Route path="/events" element={<RouteErrorBoundary routeName="Events"><EventsPage /></RouteErrorBoundary>} />
-              <Route path="/catalog" element={<RouteErrorBoundary routeName="Catalog"><ProductCatalog /></RouteErrorBoundary>} />
-              <Route path="/user/:id" element={<RouteErrorBoundary routeName="User Profile"><UserProfile /></RouteErrorBoundary>} />
-              <Route path="/advanced-search" element={<RouteErrorBoundary routeName="Advanced Search"><AdvancedSearch /></RouteErrorBoundary>} />
-              <Route path="/bidding-history" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
-              <Route path="/seller-center" element={<ProtectedRoute><SellerCenter /></ProtectedRoute>} />
-              <Route path="/invest" element={<RouteErrorBoundary routeName="Invest Landing"><InvestLanding /></RouteErrorBoundary>} />
-              <Route path="/invest/apply" element={<RouteErrorBoundary routeName="Invest Apply"><InvestApply /></RouteErrorBoundary>} />
-              <Route path="/invest/confirm" element={<RouteErrorBoundary routeName="Invest Confirm"><InvestConfirm /></RouteErrorBoundary>} />
-              <Route path="/invest/dashboard" element={<ProtectedRoute><InvestorDashboard /></ProtectedRoute>} />
-              <Route path="/monitoring" element={<ProtectedRoute><MonitoringDashboard /></ProtectedRoute>} />
+                  <Route path="/how-it-works" element={<div className="min-h-screen p-8"><h1>How It Works</h1><p>Coming soon...</p></div>} />
+                  <Route path="/pricing" element={<div className="min-h-screen p-8"><h1>Pricing</h1><p>Coming soon...</p></div>} />
+                  <Route path="/careers" element={<div className="min-h-screen p-8"><h1>Careers</h1><p>Coming soon...</p></div>} />
+                  <Route path="/press" element={<div className="min-h-screen p-8"><h1>Press</h1><p>Coming soon...</p></div>} />
+                  <Route path="/security" element={<div className="min-h-screen p-8"><h1>Security</h1><p>Coming soon...</p></div>} />
 
-              {/* Admin Routes - STRICT ADMIN ONLY ACCESS */}
-              <Route path="/admin/product-verification/bulk" element={
-                <ProtectedRoute adminRequired={true}>
-                  <SuperAdmin />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/employees" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminEmployees />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/deposit-policies" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminDepositPolicies />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/winners" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminWinners />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/seller-earnings" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminSellerEarnings />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/win-payments" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminWinPayments />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/seller-payouts" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminSellerPayouts />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/payouts" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminPayouts />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/delivery-slip" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminDeliverySlip />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/departments" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminDepartments />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/branches" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminBranches />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/staff" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminStaff />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/live-stream-control" element={
-                <ProtectedRoute adminRequired={true}>
-                  <LiveStreamControl />
-                </ProtectedRoute>
-              } />
-              <Route path="/admin/moderation" element={
-                <ProtectedRoute adminRequired={true}>
-                  <AdminModerationDashboard />
-                </ProtectedRoute>
-              } />
+                  <Route path="/business-solutions" element={<div className="min-h-screen p-8"><h1>Business Solutions</h1><p>Coming soon...</p></div>} />
+                  <Route path="/trust-safety" element={<div className="min-h-screen p-8"><h1>Trust & Safety</h1><p>Coming soon...</p></div>} />
+                  <Route path="/mobile-app" element={<div className="min-h-screen p-8"><h1>Mobile App</h1><p>Coming soon...</p></div>} />
+                  <Route path="/api-docs" element={<div className="min-h-screen p-8"><h1>API Documentation</h1><p>Coming soon...</p></div>} />
+                  <Route path="/partnerships" element={<div className="min-h-screen p-8"><h1>Partnerships</h1><p>Coming soon...</p></div>} />
+                  <Route path="/investors" element={<div className="min-h-screen p-8"><h1>Investor Pitch</h1><p>Coming soon...</p></div>} />
+                  <Route path="/security-center" element={<div className="min-h-screen p-8"><h1>Security Center</h1><p>Coming soon...</p></div>} />
+                  <Route path="/grievance-officer" element={<div className="min-h-screen p-8"><h1>Grievance Officer</h1><p>Coming soon...</p></div>} />
+                  <Route path="/market-analytics" element={<div className="min-h-screen p-8"><h1>Market Analytics</h1><p>Coming soon...</p></div>} />
+                  <Route path="/reports" element={<div className="min-h-screen p-8"><h1>Reports</h1><p>Coming soon...</p></div>} />
 
-              {/* Public Pages */}
-              <Route path="/mobile-app" element={<MobileApp />} />
-              <Route path="/api-docs" element={<APIDocumentation />} />
-              <Route path="/careers" element={<Careers />} />
-              <Route path="/partnerships" element={<Partnerships />} />
-              <Route path="/investors" element={<InvestorRelations />} />
-              <Route path="/investor-marketplace" element={<InvestorMarketplace />} />
-              <Route path="/trust-safety" element={<TrustSafety />} />
-              <Route path="/business-solutions" element={<BusinessSolutions />} />
-              <Route path="/investor-pitch" element={<InvestorPitch />} />
+                  <Route path="*" element={<div className="min-h-screen flex items-center justify-center"><h1>404 - Page Not Found</h1></div>} />
 
-              {/* 404 Page */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </Suspense>
-        </ErrorBoundary>
-      </GlobalLayout>
-      <CookieConsent />
-      <PWAInstallPrompt />
-     </UnifiedAuthProvider>
-  );
+                  {/* Protected User Routes */}
+                  <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+                  <Route path="/ai-dashboard" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+                        <AIDashboard />
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/buyer/dashboard" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+                        <BuyerLayout>
+                          <Dashboard />
+                        </BuyerLayout>
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/buyer/auctions" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+                        <BuyerLayout>
+                          <Products />
+                        </BuyerLayout>
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/buyer/watchlist" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+                        <BuyerLayout>
+                          <WatchlistPage />
+                        </BuyerLayout>
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/buyer/orders" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+                        <BuyerLayout>
+                          <MyOrders />
+                        </BuyerLayout>
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/buyer/saved-searches" element={
+                    <ProtectedRoute>
+                      <Suspense fallback={<div className="min-h-[50vh] flex items-center justify-center"><div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div></div>}>
+                        <BuyerLayout>
+                          <SavedSearches />
+                        </BuyerLayout>
+                      </Suspense>
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/my/won-auctions" element={<ProtectedRoute><MyWonAuctions /></ProtectedRoute>} />
+                  <Route path="/my/issues/:issueId" element={<ProtectedRoute><MyIssueDetail /></ProtectedRoute>} />
+                  <Route path="/seller/dashboard" element={<ProtectedRoute><SellerDashboard /></ProtectedRoute>} />
+                  <Route path="/seller/membership" element={<ProtectedRoute><SellerMembership /></ProtectedRoute>} />
+                  <Route path="/company/dashboard" element={<ProtectedRoute><CompanyDashboard /></ProtectedRoute>} />
+                  <Route path="/company/register" element={<CompanyRegistration />} />
+                  <Route path="/company/verification-pending" element={<ProtectedRoute><CompanyVerificationPending /></ProtectedRoute>} />
+                  <Route path="/compliance" element={<ProtectedRoute><ComplianceTracking /></ProtectedRoute>} />
+                  <Route path="/wallet" element={<ProtectedRoute><WalletPage /></ProtectedRoute>} />
+                  <Route path="/my-bids" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
+                  <Route path="/transaction-history" element={<ProtectedRoute><TransactionHistory /></ProtectedRoute>} />
+                  <Route path="/watchlist" element={<ProtectedRoute><WatchlistPage /></ProtectedRoute>} />
+                  <Route path="/my/orders" element={<ProtectedRoute><MyOrders /></ProtectedRoute>} />
+                  <Route path="/my/inspections" element={<ProtectedRoute><MyInspections /></ProtectedRoute>} />
+                  <Route
+                    path="/inspector"
+                    element={
+                      <ProtectedRoute>
+                        <RoleGuard allow={['inspector', 'admin']}>
+                          <InspectorInspectionsList />
+                        </RoleGuard>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/inspector/inspections/:inspectionId"
+                    element={
+                      <ProtectedRoute>
+                        <RoleGuard allow={['inspector', 'admin']}>
+                          <InspectorInspectionReview />
+                        </RoleGuard>
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route path="/my/wins" element={<ProtectedRoute><MyWins /></ProtectedRoute>} />
+                  <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
+                  <Route path="/settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
+                  <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
+                  {/* <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} /> */}
+                  <Route path="/bulk-upload" element={<ProtectedRoute><BulkUpload /></ProtectedRoute>} />
+                  <Route path="/verify-seller" element={<ProtectedRoute><VerifySeller /></ProtectedRoute>} />
+                  <Route path="/seller/analytics" element={<ProtectedRoute><SellerAnalytics /></ProtectedRoute>} />
+                  <Route path="/creative-verification" element={<ProtectedRoute><CreativeVerification /></ProtectedRoute>} />
+                  <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+                  <Route path="/settings/notifications" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
+                  <Route path="/support" element={<ProtectedRoute><SupportTickets /></ProtectedRoute>} />
+                  <Route path="/support/:id" element={<ProtectedRoute><SupportTicketDetail /></ProtectedRoute>} />
+                  <Route path="/support/sales" element={<SupportSales />} />
+                  <Route path="/order-tracking/:orderId?" element={<ProtectedRoute><OrderTracking /></ProtectedRoute>} />
+                  <Route path="/winner/:auctionId" element={<ProtectedRoute><WinnerConfirmation /></ProtectedRoute>} />
+                  <Route path="/pay/:auctionId" element={<ProtectedRoute><PayForWin /></ProtectedRoute>} />
+                  <Route path="/market-analytics" element={<ProtectedRoute><MarketAnalytics /></ProtectedRoute>} />
+                  <Route path="/payment-gateway" element={<ProtectedRoute><PaymentGateway /></ProtectedRoute>} />
+                  <Route path="/security-center" element={<ProtectedRoute><SecurityCenter /></ProtectedRoute>} />
+                  <Route path="/reports" element={<ProtectedRoute><ReportsAnalytics /></ProtectedRoute>} />
+                  <Route path="/analytics" element={<ProtectedRoute><AuctionAnalyticsDashboard /></ProtectedRoute>} />
+                  <Route path="/referrals" element={<ProtectedRoute><ReferralSystem /></ProtectedRoute>} />
+                  <Route path="/marketing" element={<ProtectedRoute><MarketingAutomation /></ProtectedRoute>} />
+                  <Route path="/dealer-dashboard" element={<ProtectedRoute><DealerDashboard /></ProtectedRoute>} />
+                  <Route path="/loan-eligibility" element={<ProtectedRoute><LoanEligibilityPage /></ProtectedRoute>} />
+                  <Route path="/admin-dashboard" element={<ProtectedRoute><AdminDashboardEnterprise /></ProtectedRoute>} />
+                  <Route path="/create-auction-enterprise" element={<ProtectedRoute><AuctionCreatePageEnterprise /></ProtectedRoute>} />
+                  <Route path="/auctions" element={<ProtectedRoute><AuctionListingPage /></ProtectedRoute>} />
+                  <Route path="/live-bidding" element={<ProtectedRoute><LiveBiddingPage /></ProtectedRoute>} />
+                  <Route path="/" element={<HomePage />} />
+                  <Route path="/onboarding" element={<UserOnboardingPage />} />
+                  <Route path="/winner-confirmation" element={<ProtectedRoute><WinnerConfirmationPage /></ProtectedRoute>} />
+
+                  {/* Auction Pages */}
+                  <Route path="/auction-preview" element={<ProtectedRoute><AuctionPreview /></ProtectedRoute>} />
+                  <Route path="/create-auction" element={<ProtectedRoute><AuctionCreatePage /></ProtectedRoute>} />
+                  <Route path="/live-auction/:id?" element={<ProtectedRoute><LiveAuctionPage /></ProtectedRoute>} />
+                  <Route path="/timed-auction/:id?" element={<ProtectedRoute><TimedAuctionPage /></ProtectedRoute>} />
+                  <Route path="/tender-auction/:id?" element={<ProtectedRoute><TenderAuctionPage /></ProtectedRoute>} />
+                  <Route path="/live-bidding/:id?" element={<ProtectedRoute><LiveBidding /></ProtectedRoute>} />
+                  <Route path="/auction-calendar" element={<ProtectedRoute><AuctionCalendar /></ProtectedRoute>} />
+                  <Route path="/events" element={<RouteErrorBoundary routeName="Events"><EventsPage /></RouteErrorBoundary>} />
+                  <Route path="/catalog" element={<RouteErrorBoundary routeName="Catalog"><ProductCatalog /></RouteErrorBoundary>} />
+                  <Route path="/user/:id" element={<RouteErrorBoundary routeName="User Profile"><UserProfile /></RouteErrorBoundary>} />
+                  <Route path="/advanced-search" element={<RouteErrorBoundary routeName="Advanced Search"><AdvancedSearch /></RouteErrorBoundary>} />
+                  <Route path="/bidding-history" element={<ProtectedRoute><BiddingHistory /></ProtectedRoute>} />
+                  <Route path="/seller-center" element={<ProtectedRoute><SellerCenter /></ProtectedRoute>} />
+                  <Route path="/invest" element={<RouteErrorBoundary routeName="Invest Landing"><InvestLanding /></RouteErrorBoundary>} />
+                  <Route path="/invest/apply" element={<RouteErrorBoundary routeName="Invest Apply"><InvestApply /></RouteErrorBoundary>} />
+                  <Route path="/invest/confirm" element={<RouteErrorBoundary routeName="Invest Confirm"><InvestConfirm /></RouteErrorBoundary>} />
+                  <Route path="/invest/dashboard" element={<ProtectedRoute><InvestorDashboard /></ProtectedRoute>} />
+                  <Route path="/monitoring" element={<ProtectedRoute><MonitoringDashboard /></ProtectedRoute>} />
+
+                  {/* Admin Routes - STRICT ADMIN ONLY ACCESS */}
+                  <Route path="/admin/product-verification/bulk" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <SuperAdmin />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/employees" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminEmployees />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/deposit-policies" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminDepositPolicies />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/winners" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminWinners />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/seller-earnings" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminSellerEarnings />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/win-payments" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminWinPayments />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/seller-payouts" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminSellerPayouts />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/payouts" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminPayouts />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/delivery-slip" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminDeliverySlip />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/departments" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminDepartments />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/branches" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminBranches />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/staff" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminStaff />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/live-stream-control" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <LiveStreamControl />
+                    </ProtectedRoute>
+                  } />
+                  <Route path="/admin/moderation" element={
+                    <ProtectedRoute adminRequired={true}>
+                      <AdminModerationDashboard />
+                    </ProtectedRoute>
+                  } />
+
+                  {/* Public Pages */}
+                  <Route path="/mobile-app" element={<MobileApp />} />
+                  <Route path="/api-docs" element={<APIDocumentation />} />
+                  <Route path="/careers" element={<Careers />} />
+                  <Route path="/partnerships" element={<Partnerships />} />
+                  <Route path="/investors" element={<InvestorRelations />} />
+                  <Route path="/investor-marketplace" element={<InvestorMarketplace />} />
+                  <Route path="/trust-safety" element={<TrustSafety />} />
+                  <Route path="/business-solutions" element={<BusinessSolutions />} />
+                  <Route path="/investor-pitch" element={<InvestorPitch />} />
+
+                  {/* 404 Page */}
+                  <Route path="*" element={<NotFound />} />
+              </Routes>
+            </Suspense>
+          </ErrorBoundary>
+        </GlobalLayout>
+  </UnifiedAuthProvider>
+
+);
+
 };
 
 export default App;

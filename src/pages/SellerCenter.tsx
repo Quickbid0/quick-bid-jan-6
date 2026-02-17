@@ -21,9 +21,7 @@ import {
   Camera,
   FileText,
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -255,37 +253,15 @@ const SellerCenter = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Revenue Trend</h2>
-          <div className="h-64">
-            <Line
-              data={salesData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                  y: { beginAtZero: true, grid: { display: false } },
-                  x: { grid: { display: false } }
-                }
-              }}
-            />
+          <div className="h-64 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded">
+            Revenue Trend Chart
           </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Sales by Category</h2>
-          <div className="h-64">
-            <Bar
-              data={categoryData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                  y: { beginAtZero: true, grid: { display: false } },
-                  x: { grid: { display: false } }
-                }
-              }}
-            />
+          <div className="h-64 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded">
+            Sales by Category Chart
           </div>
         </div>
       </div>
@@ -360,10 +336,8 @@ const SellerCenter = () => {
         </div>
         <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {recentProducts.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
               className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
             >
               <div className="flex items-center justify-between">
@@ -409,7 +383,7 @@ const SellerCenter = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

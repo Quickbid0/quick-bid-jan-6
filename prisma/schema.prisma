@@ -17,6 +17,8 @@ model User {
   email               String              @unique
   passwordHash        String?             @map("password_hash")
   phoneNumber         String?             @unique @map("phone_number")
+  referralCode        String?             @map("referral_code")
+  referredBy          String?             @map("referred_by")
   name                String
   role                UserRole            @default(BUYER)
   status              UserStatus          @default(PENDING_VERIFICATION)
@@ -42,6 +44,26 @@ model User {
   auditLogs           AuditLog[]
   branchStaff         BranchStaff?
   deliveryAssignments DeliveryAssignment[]
+
+  // Opposite relations for named relations
+  verifiedKYCs        KYC[]               @relation("KYCVerifier")
+  approvedProducts    Product[]           @relation("ProductApprover")
+  wonAuctions         Auction[]           @relation("AuctionWinner")
+  managedBranches     Branch[]            @relation("BranchManager")
+  deliveriesAsSeller  Delivery[]          @relation("DeliverySeller")
+  deliveriesAsBuyer   Delivery[]          @relation("DeliveryBuyer")
+  deliveriesAsAgent   Delivery[]          @relation("DeliveryAgent")
+  assignedDeliveries  DeliveryAssignment[] @relation("AssignmentAdmin")
+  reviews             Review[]
+  favorites           ProductFavorite[]
+
+  // Referral relations
+  referralsMade       Referral[] @relation("ReferralReferrer")
+  referralsReceived   Referral[] @relation("ReferralReferred")
+
+  // Platform fee relations
+  platformFeesPaid    PlatformFee[] @relation("PlatformFeeWinner")
+  platformFeesEarned  PlatformFee[] @relation("PlatformFeeSeller")
 
   @@index([email], map: "idx_users_email")
   @@index([phoneNumber], map: "idx_users_phone")
@@ -72,6 +94,35 @@ model Profile {
 
   @@index([userId], map: "idx_profiles_user_id")
   @@map("profiles")
+}
+
+model Refund {
+  id        String   @id
+  paymentId String
+  amount    Float
+  reason    String
+  status    String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Referral {
+  id           String   @id @default(cuid())
+  referrerId   String   @map("referrer_id")
+  referredId   String   @map("referred_id")
+  status       String
+  rewardAmount Float    @map("reward_amount")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  referrer User @relation("ReferralReferrer", fields: [referrerId], references: [id])
+  referred User @relation("ReferralReferred", fields: [referredId], references: [id])
+
+  @@index([referrerId], map: "idx_referrals_referrer_id")
+  @@index([referredId], map: "idx_referrals_referred_id")
+  @@index([status], map: "idx_referrals_status")
+  @@map("referrals")
 }
 
 // ============================================================================
@@ -129,7 +180,7 @@ model Wallet {
   @@map("wallets")
 }
 
-model Transaction {
+model WalletTransaction {
   id                String           @id @default(cuid())
   userId            String           @map("user_id")
   walletId          String           @map("wallet_id")
@@ -162,6 +213,25 @@ model Transaction {
 }
 
 // ============================================================================
+// PLATFORM FEE SYSTEM
+// ============================================================================
+
+model PlatformFee {
+  id          String   @id @default(cuid())
+  auctionId   String   @map("auction_id")
+  amount      Float
+  winnerId    String   @map("winner_id")
+  sellerId    String   @map("seller_id")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  auction     Auction  @relation(fields: [auctionId], references: [id])
+  winner      User     @relation("PlatformFeeWinner", fields: [winnerId], references: [id])
+  seller      User     @relation("PlatformFeeSeller", fields: [sellerId], references: [id])
+
+  @@map("platform_fees")
+}
+
+// ============================================================================
 // PRODUCT & AUCTION SYSTEM
 // ============================================================================
 
@@ -188,7 +258,7 @@ model Product {
   branchId              String?       @map("branch_id")
   location              String?
   views                 Int           @default(0)
-  favorites             Int           @default(0)
+  favoritesCount       Int           @default(0) @map("favorites_count")
   rating                Float         @default(0)
   totalReviews          Int           @default(0) @map("total_reviews")
   approvedAt            DateTime?     @map("approved_at")
@@ -242,6 +312,8 @@ model Auction {
   seller            User             @relation(fields: [sellerId], references: [id])
   winner            User?            @relation("AuctionWinner", fields: [winnerId], references: [id])
   bids              Bid[]
+  delivery          Delivery?
+  platformFees      PlatformFee[]
 
   @@index([productId], map: "idx_auctions_product_id")
   @@index([sellerId], map: "idx_auctions_seller_id")
@@ -383,8 +455,8 @@ model Delivery {
   updatedAt             DateTime          @updatedAt @map("updated_at")
 
   auction               Auction           @relation(fields: [auctionId], references: [id])
-  seller                User              @relation(fields: [sellerId], references: [id])
-  buyer                 User              @relation(fields: [buyerId], references: [id])
+  seller                User              @relation("DeliverySeller", fields: [sellerId], references: [id])
+  buyer                 User              @relation("DeliveryBuyer", fields: [buyerId], references: [id])
   deliveryAgent         User?             @relation("DeliveryAgent", fields: [deliveryAgentId], references: [id])
   branch                Branch?           @relation(fields: [branchId], references: [id])
   assignments           DeliveryAssignment[]

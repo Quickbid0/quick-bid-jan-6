@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User, Phone, MapPin, Loader2, Eye, EyeOff, Building, CheckCircle } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { useUnifiedAuth } from '../context/UnifiedAuthContext';
+import { useAuth } from '../context/UnifiedAuthContext';
 
 const RegisterFixed = () => {
   const [formData, setFormData] = useState({
@@ -22,7 +22,7 @@ const RegisterFixed = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
-  const { register, loading: authLoading } = useUnifiedAuth();
+  const { register, loading: authLoading } = useAuth();
 
   const handleChange = (e) => {
     const { name, value } = e.target;

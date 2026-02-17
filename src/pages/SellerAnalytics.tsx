@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { Link } from 'react-router-dom';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { 
   Chart as ChartJS,
   CategoryScale,
@@ -283,50 +282,15 @@ const SellerAnalytics = () => {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Sales Trend</h2>
-          <div className="h-64">
-            <Line
-              data={salesData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    display: false
-                  }
-                },
-                scales: {
-                  y: {
-                    beginAtZero: true,
-                    grid: {
-                      display: false
-                    }
-                  },
-                  x: {
-                    grid: {
-                      display: false
-                    }
-                  }
-                }
-              }}
-            />
+          <div className="h-64 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded">
+            Sales Trend Chart
           </div>
         </div>
 
         <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm">
           <h2 className="text-xl font-semibold mb-4">Category Distribution</h2>
-          <div className="h-64">
-            <Doughnut
-              data={categoryData}
-              options={{
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                  legend: {
-                    position: 'bottom'
-                  }
-                }
-              }}
-            />
+          <div className="h-64 flex items-center justify-center bg-gray-100 dark:bg-gray-700 rounded">
+            Category Distribution Chart
           </div>
         </div>
       </div>

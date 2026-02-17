@@ -2,7 +2,6 @@
 // Components that reduce cognitive overload by using icons, badges, and tooltips
 
 import React from 'react';
-import { Tooltip } from 'react-tooltip';
 import {
   CheckCircle,
   XCircle,
@@ -134,11 +133,7 @@ export const TrustScore: React.FC<TrustScoreProps> = ({
 
   return (
     <>
-      <div
-        className={`inline-flex items-center gap-1 ${className}`}
-        data-tooltip-id={scoreId}
-        data-tooltip-content={`Trust Score: ${score}/100 - ${level} reliability`}
-      >
+      <div className={`inline-flex items-center gap-1 ${className}`}>
         <Icon className={`${sizeClasses[size]} text-${color}-600`} />
         {!showDetails && (
           <span className={`text-xs font-medium text-${color}-700`}>
@@ -151,12 +146,6 @@ export const TrustScore: React.FC<TrustScoreProps> = ({
           </span>
         )}
       </div>
-
-      <Tooltip
-        id={scoreId}
-        place="top"
-        className="!bg-neutral-900 !text-white !text-xs !rounded-lg !px-3 !py-2"
-      />
     </>
   );
 };
@@ -219,13 +208,6 @@ export const AuctionStatus: React.FC<AuctionStatusProps> = ({
           </Badge>
         )}
       </div>
-
-      <Tooltip
-        id={statusId}
-        place="top"
-        content={tooltipText}
-        className="!bg-neutral-900 !text-white !text-xs !rounded-lg !px-3 !py-2"
-      />
     </>
   );
 };
@@ -262,22 +244,12 @@ export const PaymentStatus: React.FC<PaymentStatusProps> = ({
 
   return (
     <>
-      <div
-        className={`inline-flex items-center gap-2 ${className}`}
-        data-tooltip-id={paymentId}
-        data-tooltip-content={tooltipText}
-      >
+      <div className={`inline-flex items-center gap-2 ${className}`}>
         <Icon className={`w-4 h-4 text-${config.variant}-600`} />
         <span className={`text-sm font-medium text-${config.variant}-700`}>
           {config.label}
         </span>
       </div>
-
-      <Tooltip
-        id={paymentId}
-        place="top"
-        className="!bg-neutral-900 !text-white !text-xs !rounded-lg !px-3 !py-2"
-      />
     </>
   );
 };
@@ -314,22 +286,12 @@ export const DeliveryStatus: React.FC<DeliveryStatusProps> = ({
 
   return (
     <>
-      <div
-        className={`inline-flex items-center gap-2 ${className}`}
-        data-tooltip-id={deliveryId}
-        data-tooltip-content={tooltipText}
-      >
+      <div className={`inline-flex items-center gap-2 ${className}`}>
         <Icon className={`w-4 h-4 text-${config.variant}-600`} />
         <span className={`text-sm font-medium text-${config.variant}-700`}>
           {config.label}
         </span>
       </div>
-
-      <Tooltip
-        id={deliveryId}
-        place="top"
-        className="!bg-neutral-900 !text-white !text-xs !rounded-lg !px-3 !py-2"
-      />
     </>
   );
 };
@@ -363,11 +325,7 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
 
   return (
     <>
-      <div
-        className={`flex items-center gap-3 ${className}`}
-        data-tooltip-id={progressId}
-        data-tooltip-content={`${current} of ${total} completed (${percentage}%)`}
-      >
+      <div className={`flex items-center gap-3 ${className}`}>
         {label && (
           <span className="text-sm font-medium text-neutral-700 min-w-fit">
             {label}
@@ -387,12 +345,6 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
           </span>
         )}
       </div>
-
-      <Tooltip
-        id={progressId}
-        place="top"
-        className="!bg-neutral-900 !text-white !text-xs !rounded-lg !px-3 !py-2"
-      />
     </>
   );
 };

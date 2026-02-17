@@ -9,11 +9,11 @@ export const initCSP = () => {
     cspMeta.httpEquiv = 'Content-Security-Policy';
     cspMeta.content = `
       default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval' https://checkout.razorpay.com https://*.razorpay.com;
+      script-src 'self' 'unsafe-inline' 'unsafe-eval' data: https://checkout.razorpay.com https://*.razorpay.com;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
       font-src 'self' https://fonts.gstatic.com;
       img-src 'self' data: blob: https://*.supabase.co https://picsum.photos https://placehold.co;
-      connect-src 'self' https://*.supabase.co wss://*.supabase.co http://localhost:4011 https://api.razorpay.com;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://o4510889698131968.ingest.us.sentry.io https://web-production-b7c8b.up.railway.app http://localhost:4011 https://api.razorpay.com;
       frame-src 'self' https://checkout.razorpay.com https://*.razorpay.com;
       object-src 'none';
       base-uri 'self';

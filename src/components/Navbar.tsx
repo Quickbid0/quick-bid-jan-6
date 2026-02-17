@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Menu, X, Sun, Moon, Gavel, LogOut, LayoutDashboard, Wallet as WalletIcon,
@@ -8,11 +8,10 @@ import {
 } from 'lucide-react';
 import Avatar from 'react-avatar';
 import { supabase, isSupabaseConfigured } from '../config/supabaseClient';
-import { toast } from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
 import NotificationBell from './NotificationBell';
 import { useSession } from '../context/SessionContext';
 import LanguageSwitcher from './LanguageSwitcher';
+import { toast } from 'react-hot-toast';
 
 interface MenuItem {
   label: string;
@@ -376,33 +375,23 @@ const Navbar = () => {
           </div>
 
           {/* Mobile dropdown */}
-          {isMobile && (
-            <AnimatePresence>
-              {isDropdownOpen && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: 'auto' }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="pl-4 mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg"
+          {isMobile && isDropdownOpen && (
+            <div className="pl-4 mt-2 bg-gray-50 dark:bg-gray-800 rounded-lg">
+              {item.submenu.map((subItem) => (
+                <Link
+                  key={subItem.label}
+                  to={subItem.to || '#'}
+                  className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+                  onClick={() => {
+                    setIsOpen(false);
+                    setDropdownStates({});
+                  }}
                 >
-                  {item.submenu.map((subItem) => (
-                    <Link
-                      key={subItem.label}
-                      to={subItem.to || '#'}
-                      className="flex items-center gap-2 px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
-                      onClick={() => {
-                        setIsOpen(false);
-                        setDropdownStates({});
-                      }}
-                    >
-                      {subItem.icon}
-                      {subItem.label}
-                    </Link>
-                  ))}
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  {subItem.icon}
+                  {subItem.label}
+                </Link>
+              ))}
+            </div>
           )}
         </div>
       );
@@ -561,88 +550,76 @@ const Navbar = () => {
       </div>
 
       {/* Mobile Menu Drawer - Cars24/Spinny style */}
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: '0%' }}
-            exit={{ opacity: 0, x: '100%' }}
-            transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-            className="fixed inset-0 z-[60] lg:hidden"
+      {isOpen && (
+        <div className="fixed inset-0 z-[60] lg:hidden">
+          <div className="absolute inset-0 bg-black/50" onClick={() => setIsOpen(false)} />
+          <div
+            className="absolute right-0 top-0 h-full w-80 max-w-[90vw] bg-white dark:bg-gray-900 shadow-xl overflow-y-auto"
+            ref={drawerRef}
           >
-            <div className="absolute inset-0 bg-black/50" onClick={() => setIsOpen(false)} />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: '0%' }}
-              exit={{ x: '100%' }}
-              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-              className="absolute right-0 top-0 h-full w-80 max-w-[90vw] bg-white dark:bg-gray-900 shadow-xl overflow-y-auto"
-              ref={drawerRef}
-            >
-              <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
-                <div className="flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
-                    <Gavel className="w-4 h-4 text-white" />
-                  </div>
-                  <span className="font-bold text-gray-900 dark:text-white">QuickMela</span>
+            <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
+                  <Gavel className="w-4 h-4 text-white" />
                 </div>
-                <button
+                <span className="font-bold text-gray-900 dark:text-white">QuickMela</span>
+              </div>
+              <button
+                onClick={() => setIsOpen(false)}
+                className="p-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            {/* Mobile Menu Items */}
+            <div className="p-4 space-y-4">
+              {userRole === 'buyer' && buyerMenuItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to || '#'}
+                  className="flex items-center space-x-3 p-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                   onClick={() => setIsOpen(false)}
-                  className="p-1 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 rounded-lg"
                 >
-                  <X className="w-5 h-5" />
-                </button>
-              </div>
+                  {item.icon}
+                  <span className="font-medium">{item.label}</span>
+                </Link>
+              ))}
               
-              {/* Mobile Menu Items */}
-              <div className="p-4 space-y-4">
-                {userRole === 'buyer' && buyerMenuItems.map((item) => (
+              {userRole === 'seller' && sellerMenuItems.map((item) => (
+                <Link
+                  key={item.label}
+                  to={item.to || '#'}
+                  className="flex items-center space-x-3 p-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.icon}
+                  <span className="font-medium">{item.label}</span>
+                </Link>
+              ))}
+              
+              {!user && (
+                <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
                   <Link
-                    key={item.label}
-                    to={item.to || '#'}
-                    className="flex items-center space-x-3 p-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                    to="/login"
+                    className="flex items-center justify-center p-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors mb-3"
                     onClick={() => setIsOpen(false)}
                   >
-                    {item.icon}
-                    <span className="font-medium">{item.label}</span>
+                    Login
                   </Link>
-                ))}
-                
-                {userRole === 'seller' && sellerMenuItems.map((item) => (
                   <Link
-                    key={item.label}
-                    to={item.to || '#'}
-                    className="flex items-center space-x-3 p-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                    to="/register"
+                    className="flex items-center justify-center p-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
                     onClick={() => setIsOpen(false)}
                   >
-                    {item.icon}
-                    <span className="font-medium">{item.label}</span>
+                    Register
                   </Link>
-                ))}
-                
-                {!user && (
-                  <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-                    <Link
-                      to="/login"
-                      className="flex items-center justify-center p-3 text-gray-700 dark:text-gray-200 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors mb-3"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Login
-                    </Link>
-                    <Link
-                      to="/register"
-                      className="flex items-center justify-center p-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors"
-                      onClick={() => setIsOpen(false)}
-                    >
-                      Register
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };
