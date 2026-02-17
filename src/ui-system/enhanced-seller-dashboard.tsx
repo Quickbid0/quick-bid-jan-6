@@ -97,7 +97,6 @@ const RevenueHeatmap: React.FC = () => {
                   key={weekIndex}
                   className={`h-8 rounded cursor-pointer ${getIntensityColor(revenue)} hover:opacity-80 transition-opacity`}
                   style={{ width: `${100 / 4}%` }}
-}
                   onHoverStart={() => setHoveredCell({ month: monthIndex, week: weekIndex, revenue })}
                   onHoverEnd={() => setHoveredCell(null)}
                 />
@@ -107,23 +106,18 @@ const RevenueHeatmap: React.FC = () => {
         ))}
       </div>
 
-      <Fragment>
-        {hoveredCell && (
-          <div
-}
-}
-}
-            className="absolute bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg pointer-events-none z-10"
-            style={{
-              left: 120 + (hoveredCell.week * 60),
-              top: 120 + (hoveredCell.month * 24)
-            }}
-          >
-            <div className="font-medium">₹{(hoveredCell.revenue / 100000).toFixed(1)}L</div>
-            <div className="text-gray-300">{months[hoveredCell.month]} Week {hoveredCell.week + 1}</div>
-          </div>
-        )}
-      </Fragment>
+      {hoveredCell && (
+        <div
+          className="absolute bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg pointer-events-none z-10"
+          style={{
+            left: 120 + (hoveredCell.week * 60),
+            top: 120 + (hoveredCell.month * 24)
+          }}
+        >
+          <div className="font-medium">₹{(hoveredCell.revenue / 100000).toFixed(1)}L</div>
+          <div className="text-gray-300">{months[hoveredCell.month]} Week {hoveredCell.week + 1}</div>
+        </div>
+      )}
 
       <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
         <span>₹1L</span>
@@ -166,9 +160,6 @@ const SalesInsight: React.FC<SalesInsightProps> = ({
 
   return (
     <div
-}
-}
-}
       className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4"
     >
       <div className="flex items-start gap-3">
@@ -270,8 +261,6 @@ const LiveAuctionMonitor: React.FC = () => {
         {auctions.map((auction) => (
           <div
             key={auction.id}
-}
-}
             className={`p-4 rounded-lg border-2 transition-all ${
               auction.topBidder
                 ? 'border-emerald-200 bg-emerald-50'
@@ -428,9 +417,6 @@ export const EnhancedSellerDashboard: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="flex items-center justify-between mb-8"
       >
         <div>
@@ -463,9 +449,6 @@ export const EnhancedSellerDashboard: React.FC = () => {
 
       {/* Live Auction Monitor */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <LiveAuctionMonitor />
@@ -473,18 +456,12 @@ export const EnhancedSellerDashboard: React.FC = () => {
 
       {/* KPI Cards */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <Grid cols={4} gap="md">
           {kpiData.map((kpi, index) => (
             <div
               key={kpi.title}
-}
-}
-}
             >
               <Card className={`p-6 bg-gradient-to-br ${kpi.gradient} text-white relative overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200`}>
                 <div className="relative z-10">
@@ -494,8 +471,6 @@ export const EnhancedSellerDashboard: React.FC = () => {
                     </div>
                     {kpi.isRealtime && (
                       <div
-}
-}
                         className="w-2 h-2 bg-green-400 rounded-full"
                       />
                     )}
@@ -605,9 +580,6 @@ export const EnhancedSellerDashboard: React.FC = () => {
               ].map((item, index) => (
                 <div
                   key={index}
-}
-}
-}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                 >
                   <div>
@@ -640,10 +612,6 @@ export const EnhancedSellerDashboard: React.FC = () => {
               ].map((action, index) => (
                 <button
                   key={action.label}
-}
-}
-}
-}
                   whileTap={{ scale: 0.95 }}
                   onClick={action.action}
                   className={`p-4 ${action.color} text-white rounded-lg hover:opacity-90 transition-opacity`}
@@ -683,9 +651,6 @@ export const EnhancedSellerDashboard: React.FC = () => {
               ].map((auction, index) => (
                 <div
                   key={index}
-}
-}
-}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div>

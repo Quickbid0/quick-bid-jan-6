@@ -102,16 +102,11 @@ const WinnerConfirmationPage: React.FC = () => {
       case 1:
         return (
           <div
-}
-}
             className="space-y-8"
           >
             {/* Winner Announcement */}
             <div className="text-center">
               <div
-}
-}
-}
                 className="inline-flex items-center justify-center w-20 h-20 bg-yellow-100 rounded-full mb-6"
               >
                 <Trophy className="h-10 w-10 text-yellow-600" />
@@ -237,8 +232,6 @@ const WinnerConfirmationPage: React.FC = () => {
       case 2:
         return (
           <div
-}
-}
             className="space-y-6"
           >
             <div className="text-center mb-8">
@@ -333,16 +326,11 @@ const WinnerConfirmationPage: React.FC = () => {
       case 3:
         return (
           <div
-}
-}
             className="space-y-8"
           >
             {/* Success Message */}
             <div className="text-center">
               <div
-}
-}
-}
                 className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6"
               >
                 <CheckCircle className="h-10 w-10 text-green-600" />

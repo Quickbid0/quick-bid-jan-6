@@ -195,8 +195,6 @@ const APIDocumentation = () => {
         {/* Header */}
         <div className="text-center mb-12">
           <div
-}
-}
             className="flex items-center justify-center mb-6"
           >
             <Code className="h-12 w-12 text-indigo-600 mr-4" />
@@ -210,9 +208,6 @@ const APIDocumentation = () => {
 
         {/* Quick Start */}
         <div
-}
-}
-}
           className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl p-8 mb-12"
         >
           <div className="flex items-center mb-6">
@@ -240,9 +235,6 @@ const APIDocumentation = () => {
 
         {/* Auction Types */}
         <div
-}
-}
-}
           className="mb-12"
         >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center">
@@ -253,9 +245,6 @@ const APIDocumentation = () => {
             {auctionTypes.map((auctionType, index) => (
               <div
                 key={auctionType.type}
-}
-}
-}
                 className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-lg border border-gray-200 dark:border-gray-700"
               >
                 <div className="flex items-center mb-4">
@@ -283,9 +272,6 @@ const APIDocumentation = () => {
 
         {/* API Endpoints */}
         <div
-}
-}
-}
         >
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-8 flex items-center">
             <Globe className="h-8 w-8 text-indigo-600 mr-3" />
@@ -295,9 +281,6 @@ const APIDocumentation = () => {
           {apiEndpoints.map((category, categoryIndex) => (
             <div
               key={category.category}
-}
-}
-}
               className="mb-12"
             >
               <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6 flex items-center">
@@ -371,9 +354,6 @@ const APIDocumentation = () => {
 
         {/* SDKs & Tools */}
         <div
-}
-}
-}
           className="bg-gradient-to-r from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-2xl p-8 mb-12"
         >
           <div className="flex items-center mb-6">
@@ -419,9 +399,6 @@ const APIDocumentation = () => {
 
         {/* Support */}
         <div
-}
-}
-}
           className="text-center bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-lg"
         >
           <Users className="h-12 w-12 text-indigo-600 mx-auto mb-4" />

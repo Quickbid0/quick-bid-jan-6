@@ -268,9 +268,6 @@ const BusinessSolutions = () => {
         {solutions.map((solution, index) => (
           <div
             key={index}
-}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
           >
             <div className="mb-6">{solution.icon}</div>
@@ -332,9 +329,6 @@ const BusinessSolutions = () => {
           {industries.map((industry, index) => (
             <div
               key={index}
-}
-}
-}
               className="text-center p-6 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => handleIndustryClick(industry.name)}
             >
@@ -357,9 +351,6 @@ const BusinessSolutions = () => {
           {benefits.map((benefit, index) => (
             <div
               key={index}
-}
-}
-}
               className="text-center p-6"
             >
               <div className="mb-4">{benefit.icon}</div>
@@ -378,9 +369,6 @@ const BusinessSolutions = () => {
           {caseStudies.map((study, index) => (
             <div
               key={index}
-}
-}
-}
               className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm"
             >
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">

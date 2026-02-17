@@ -369,8 +369,6 @@ const SeizedVehicles = () => {
         {filteredVehicles.map((vehicle) => (
           <div
             key={vehicle.id}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="relative">

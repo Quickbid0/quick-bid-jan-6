@@ -231,8 +231,6 @@ const PerformanceMonitor: React.FC = () => {
           return (
             <div
               key={key}
-}
-}
               className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
             >
               <div className="flex items-center justify-between mb-2">
@@ -311,8 +309,6 @@ const PerformanceMonitor: React.FC = () => {
             {alerts.slice(0, 5).map((alert) => (
               <div
                 key={alert.id}
-}
-}
                 className={`p-3 rounded-lg border ${
                   alert.type === 'error'
                     ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'

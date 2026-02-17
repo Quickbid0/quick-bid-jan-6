@@ -271,8 +271,6 @@ const CreativeVerification = () => {
         {works.map((work) => (
           <div
             key={work.id}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden"
           >
             <div className="relative">

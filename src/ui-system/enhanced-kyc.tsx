@@ -82,18 +82,13 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full"
-}
-%` }}
-}
+              style={{ width: `${progressPercentage}%` }}
             />
           </div>
 
           {/* Achievement milestone */}
           {progressPercentage >= 100 && (
             <div
-}
-}
-}
               className="absolute -top-2 right-0 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center"
             >
               <Crown className="w-3 h-3 text-white" />
@@ -112,9 +107,6 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
           return (
             <div
               key={step.id}
-}
-}
-}
               className={`text-center ${isCurrent ? 'scale-105' : ''}`}
             >
               <div
@@ -133,7 +125,6 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
                     '0 0 0 0 rgba(59, 130, 246, 0)'
                   ]
                 } : {}}
-}
               >
                 {isCompleted ? (
                   <CheckCircle className="w-6 h-6" />
@@ -263,13 +254,10 @@ const Achievement: React.FC<AchievementProps> = ({
       className={`p-4 rounded-lg border-2 ${rarityColors[rarity]} transition-all duration-300 ${
         unlocked ? 'shadow-lg scale-105' : 'opacity-60'
       }`}
-}
     >
       <div className="flex items-center gap-3">
         <div
           className={`p-3 rounded-lg ${unlocked ? 'bg-white shadow-md' : 'bg-gray-100'}`}
- : {}}
-}
         >
           <Icon className={`w-6 h-6 ${unlocked ? 'text-gray-900' : 'text-gray-400'}`} />
         </div>
@@ -408,17 +396,10 @@ export const EnhancedKYCVerification: React.FC = () => {
       case 1:
         return (
           <div
-}
-}
-}
-}
             className="space-y-6"
           >
             <div className="text-center mb-8">
               <div
-}
-}
-}
                 className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
               >
                 <User className="w-8 h-8 text-blue-600" />
@@ -500,17 +481,10 @@ export const EnhancedKYCVerification: React.FC = () => {
       case 2:
         return (
           <div
-}
-}
-}
-}
             className="space-y-6"
           >
             <div className="text-center mb-8">
               <div
-}
-}
-}
                 className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4"
               >
                 <CreditCard className="w-8 h-8 text-emerald-600" />
@@ -587,9 +561,6 @@ export const EnhancedKYCVerification: React.FC = () => {
       default:
         return (
           <div
-}
-}
-}
             className="text-center py-12"
           >
             <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />

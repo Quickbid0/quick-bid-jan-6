@@ -61,9 +61,6 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
 
   return (
     <div
-}
-}
-}
       className={`bg-gradient-to-r from-gray-900 to-gray-800 text-white p-4 rounded-2xl ${className}`}
     >
       <div className="flex items-center justify-between mb-3">
@@ -73,8 +70,7 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
               scale: intensity > 70 ? [1, 1.2, 1] : 1,
               rotate: intensity > 90 ? [0, 10, -10, 0] : 0
             }}
-}
-          >
+>
             <Icon className="w-5 h-5" style={{ color }} />
           </div>
           <span className="text-sm font-bold">BID INTENSITY</span>
@@ -95,9 +91,6 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
           <div
             className="h-full rounded-full relative"
             style={{ background: `linear-gradient(90deg, ${color} 0%, ${color}DD 100%)` }}
-}
-%` }}
-}
           >
             {/* Animated particles for high intensity */}
             {intensity > 70 && (
@@ -110,7 +103,6 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
                     `linear-gradient(90deg, transparent 0%, ${color} 50%, transparent 100%)`
                   ]
                 }}
-}
               />
             )}
           </div>
@@ -127,8 +119,6 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
                 className={`text-xs font-bold transition-colors ${
                   isActive ? 'text-white' : 'text-gray-500'
                 }`}
- : {}}
-}
               >
                 {label[0]}
               </div>
@@ -176,14 +166,11 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         scale: [1, 1.05, 1],
         borderColor: [countdownColor, '#ef4444', countdownColor]
       } : {}}
-}
     >
       {/* Background glow for critical moments */}
       {isCritical && (
         <div
           className="absolute inset-0 bg-red-500/20 rounded-2xl blur-xl"
-}
-}
         />
       )}
 
@@ -195,16 +182,12 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
         <div className="absolute inset-0 opacity-10">
           <div
             className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
- : {}}
-}
           />
         </div>
 
         <div className="relative z-10">
           <div
             className="mb-4"
- : {}}
-}
           >
             <Timer className={`w-12 h-12 mx-auto mb-2 ${
               isLeading ? 'text-white' : countdownColor === colors.gamingStates.urgent ? 'text-red-400' : 'text-blue-400'
@@ -218,7 +201,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
               scale: [1, 1.2, 1],
               color: ['#ffffff', '#fbbf24', '#ffffff']
             } : {}}
-}
           >
             <div
               className="text-5xl font-black mb-2"
@@ -252,9 +234,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
                 strokeWidth="8"
                 fill="none"
                 strokeLinecap="round"
-}
-}
-}
                 style={{
                   strokeDasharray: '283',
                   strokeDashoffset: `calc(283 - (283 * ${progress}) / 100)`
@@ -266,8 +245,6 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             <div className="absolute inset-0 flex items-center justify-center">
               <div
                 className="text-lg font-bold"
- : {}}
-}
               >
                 {Math.round(progress)}%
               </div>
@@ -278,22 +255,16 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
           <Fragment>
             {isCritical && (
               <div
-}
-}
-}
                 className="text-red-300 font-bold text-sm"
               >
-                ⚡ FINAL SECONDS ⚡
+                FINAL SECONDS
               </div>
             )}
             {isWarning && !isCritical && (
               <div
-}
-}
-}
                 className="text-orange-300 font-bold text-sm"
               >
-                🚀 GET READY TO BID 🚀
+                GET READY TO BID
               </div>
             )}
           </Fragment>
@@ -322,8 +293,6 @@ const BidTicker: React.FC<BidTickerProps> = ({ bids, className }) => {
         <Activity className="w-4 h-4 text-blue-300" />
         <span className="text-sm font-bold">LIVE BID TICKER</span>
         <div
-}
-}
           className="w-2 h-2 bg-green-400 rounded-full"
         />
       </div>
@@ -333,10 +302,6 @@ const BidTicker: React.FC<BidTickerProps> = ({ bids, className }) => {
           {bids.slice(0, 5).map((bid, index) => (
             <div
               key={bid.id}
-}
-}
-}
-}
               className={`flex items-center justify-between py-2 px-3 rounded-lg ${
                 bid.isYou
                   ? 'bg-emerald-500/20 border border-emerald-400'
@@ -399,16 +364,11 @@ const WinningProbability: React.FC<WinningProbabilityProps> = ({
 
   return (
     <div
-}
-}
-}
       className={`bg-gradient-to-br from-indigo-900 to-purple-900 text-white p-4 rounded-2xl ${className}`}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div
- : {}}
-}
           >
             <Icon className={`w-5 h-5 ${getProbabilityColor(probability)}`} />
           </div>
@@ -416,8 +376,6 @@ const WinningProbability: React.FC<WinningProbabilityProps> = ({
         </div>
         <div
           className={`text-2xl font-black ${getProbabilityColor(probability)}`}
- : {}}
-}
         >
           {probability}%
         </div>
@@ -443,9 +401,7 @@ const WinningProbability: React.FC<WinningProbabilityProps> = ({
         <div className="w-full bg-gray-700 rounded-full h-2">
           <div
             className={`h-2 rounded-full ${getProbabilityColor(probability).replace('text-', 'bg-').replace('border-', 'bg-')}`}
-}
-%` }}
-}
+            style={{ width: `${probability}%` }}
           />
         </div>
         <div className="flex justify-between text-xs mt-1 text-gray-400">
@@ -597,9 +553,6 @@ export const EnhancedLiveAuction: React.FC = () => {
       <Container className="relative z-10 py-8">
         {/* Header with Auction Info */}
         <div
-}
-}
-}
           className="mb-8"
         >
           <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
@@ -642,9 +595,6 @@ export const EnhancedLiveAuction: React.FC = () => {
           {/* Left Column - Item Image & Details */}
           <div className="col-span-12 lg:col-span-5">
             <div
-}
-}
-}
             >
               <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
                 <div className="space-y-6">
@@ -657,8 +607,6 @@ export const EnhancedLiveAuction: React.FC = () => {
                     />
                     {auctionData.isLeading && (
                       <div
-}
-}
                         className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1"
                       >
                         <Crown className="w-4 h-4" />
@@ -793,9 +741,6 @@ export const EnhancedLiveAuction: React.FC = () => {
 
         {/* Bottom Section - Additional Info */}
         <div
-}
-}
-}
         >
           <Grid cols={3} gap="md">
             <Card className="p-4">

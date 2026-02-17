@@ -5,17 +5,10 @@ import { Shield, ArrowLeft, Home, User } from 'lucide-react';
 const Unauthorized = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4">
-      <div
-}
-}
-}
-        className="max-w-md w-full text-center"
+      <div className="max-w-md w-full text-center"
       >
         {/* Error Icon */}
         <div
-}
-}
-}
           className="mx-auto mb-6 w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center"
         >
           <Shield className="w-10 h-10 text-red-600 dark:text-red-400" />
@@ -33,7 +26,6 @@ const Unauthorized = () => {
         {/* Action Buttons */}
         <div className="space-y-3">
           <div
-}
             whileTap={{ scale: 0.98 }}
           >
             <Link
@@ -47,7 +39,6 @@ const Unauthorized = () => {
 
           <div className="flex gap-3">
             <div
-}
               whileTap={{ scale: 0.98 }}
               className="flex-1"
             >
@@ -61,7 +52,6 @@ const Unauthorized = () => {
             </div>
 
             <div
-}
               whileTap={{ scale: 0.98 }}
               className="flex-1"
             >

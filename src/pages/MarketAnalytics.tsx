@@ -157,8 +157,6 @@ const MarketAnalytics = () => {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
         <div
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -171,9 +169,6 @@ const MarketAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -186,9 +181,6 @@ const MarketAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -201,9 +193,6 @@ const MarketAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -216,9 +205,6 @@ const MarketAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -231,9 +217,6 @@ const MarketAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -314,9 +297,6 @@ const MarketAnalytics = () => {
           {insights.map((insight, index) => (
             <div
               key={index}
-}
-}
-}
               className="p-4 border rounded-lg"
             >
               <div className="flex items-center justify-between mb-2">

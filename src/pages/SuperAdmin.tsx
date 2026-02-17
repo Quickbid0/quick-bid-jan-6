@@ -306,8 +306,6 @@ const SuperAdmin = () => {
       {activeTab === 'stats' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           <div
-}
-}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -320,9 +318,6 @@ const SuperAdmin = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -335,9 +330,6 @@ const SuperAdmin = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -350,9 +342,6 @@ const SuperAdmin = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -365,9 +354,6 @@ const SuperAdmin = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -545,8 +531,6 @@ const SuperAdmin = () => {
                 {users.map((user) => (
                   <tr
                     key={user.id}
-}
-}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">

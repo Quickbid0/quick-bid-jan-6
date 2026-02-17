@@ -981,8 +981,6 @@ const TimedAuctionPage = () => {
               {sortedAuctions.map((auction) => (
                 <div
                   key={auction.id}
-}
-}
                   className="transition-all duration-300"
                 >
                   <AuctionCard

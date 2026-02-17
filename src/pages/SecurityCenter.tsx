@@ -72,9 +72,6 @@ const SecurityCenter = () => {
         {securityFeatures.map((feature, index) => (
           <div
             key={index}
-}
-}
-}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-start justify-between">

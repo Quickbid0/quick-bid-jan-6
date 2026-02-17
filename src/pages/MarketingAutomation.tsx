@@ -138,11 +138,7 @@ const MarketingAutomation: React.FC = () => {
           <div className="space-y-8">
             {/* Performance Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <div
-}
-}
-}
-              >
+              <div>
                 <Card className="p-6">
                   <div className="flex items-center">
                     <div className="p-3 bg-blue-100 rounded-full">
@@ -156,11 +152,7 @@ const MarketingAutomation: React.FC = () => {
                 </Card>
               </div>
 
-              <div
-}
-}
-}
-              >
+              <div>
                 <Card className="p-6">
                   <div className="flex items-center">
                     <div className="p-3 bg-green-100 rounded-full">
@@ -175,9 +167,6 @@ const MarketingAutomation: React.FC = () => {
               </div>
 
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -193,9 +182,6 @@ const MarketingAutomation: React.FC = () => {
               </div>
 
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -213,9 +199,6 @@ const MarketingAutomation: React.FC = () => {
 
             {/* Campaign Performance */}
             <div
-}
-}
-}
             >
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">Campaign Performance</h3>
@@ -323,8 +306,6 @@ const MarketingAutomation: React.FC = () => {
 
         {activeTab === 'create' && (
           <div
-}
-}
             className="max-w-2xl"
           >
             <Card className="p-6">

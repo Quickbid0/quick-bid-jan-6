@@ -326,9 +326,6 @@ const LiveBiddingPage: React.FC = () => {
                   <Fragment>
                     {bidStatus === 'error' && (
                       <div
-}
-}
-}
                         className="mt-3 flex items-center gap-2 text-red-600"
                       >
                         <AlertCircle className="h-4 w-4" />
@@ -337,9 +334,6 @@ const LiveBiddingPage: React.FC = () => {
                     )}
                     {bidStatus === 'success' && (
                       <div
-}
-}
-}
                         className="mt-3 flex items-center gap-2 text-green-600"
                       >
                         <CheckCircle className="h-4 w-4" />
@@ -483,9 +477,6 @@ const LiveBiddingPage: React.FC = () => {
               <Fragment>
                 {showBidHistory && (
                   <div
-}
-}
-}
                     className="space-y-3"
                   >
                     {bids.map((bid, index) => (

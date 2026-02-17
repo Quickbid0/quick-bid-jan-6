@@ -220,9 +220,6 @@ export default function EliteWalletPage() {
           <div className="space-y-8">
             {/* Elite Balance Card - Hero Feature */}
             <div
-}
-}
-}
               className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-3xl p-8 text-white"
             >
               {/* Background Pattern */}
@@ -262,9 +259,6 @@ export default function EliteWalletPage() {
                 {/* Balance Breakdown - Elite Feature */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                   <div
-}
-}
-}
                     className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -288,9 +282,6 @@ export default function EliteWalletPage() {
                   </div>
 
                   <div
-}
-}
-}
                     className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -314,9 +305,6 @@ export default function EliteWalletPage() {
                   </div>
 
                   <div
-}
-}
-}
                     className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -342,9 +330,6 @@ export default function EliteWalletPage() {
 
                 {/* Quick Actions - Elite CTA */}
                 <div
-}
-}
-}
                   className="flex flex-col sm:flex-row gap-4"
                 >
                   <button className="flex-1 bg-white text-primary-600 py-4 rounded-2xl font-bold hover:bg-neutral-50 transition-all duration-250 hover:shadow-xl flex items-center justify-center gap-2">
@@ -365,9 +350,6 @@ export default function EliteWalletPage() {
 
             {/* Quick Add Money - Elite Design */}
             <div
-}
-}
-}
               className="bg-white rounded-2xl shadow-xl p-8 border border-neutral-200"
             >
               <div className="text-center mb-8">
@@ -379,9 +361,6 @@ export default function EliteWalletPage() {
                 {quickAddAmounts.map((amount, index) => (
                   <button
                     key={amount}
-}
-}
-}
                     onClick={() => addFunds(amount)}
                     disabled={loading}
                     className="bg-neutral-50 hover:bg-primary-50 border border-neutral-200 hover:border-primary-300 rounded-xl p-4 transition-all duration-250 hover:shadow-lg group"
@@ -405,9 +384,6 @@ export default function EliteWalletPage() {
                   ].map((method, index) => (
                     <div
                       key={method.name}
-}
-}
-}
                       className="bg-gradient-to-br from-neutral-50 to-neutral-100 rounded-xl p-6 border border-neutral-200 hover:shadow-lg transition-all duration-250 cursor-pointer group"
                     >
                       <div className="flex items-center gap-4">
@@ -427,9 +403,6 @@ export default function EliteWalletPage() {
 
             {/* Recent Transactions Preview */}
             <div
-}
-}
-}
               className="bg-white rounded-2xl shadow-xl p-8 border border-neutral-200"
             >
               <div className="flex items-center justify-between mb-6">
@@ -448,9 +421,6 @@ export default function EliteWalletPage() {
                   return (
                     <div
                       key={transaction.id}
-}
-}
-}
                       className="flex items-center justify-between p-4 border border-neutral-200 rounded-xl hover:shadow-md transition-all duration-250"
                     >
                       <div className="flex items-center gap-4">
@@ -532,9 +502,6 @@ export default function EliteWalletPage() {
                   return (
                     <div
                       key={transaction.id}
-}
-}
-}
                       className="p-6 hover:bg-neutral-50 transition-colors duration-200"
                     >
                       <div className="flex items-start gap-4">
@@ -612,9 +579,6 @@ export default function EliteWalletPage() {
               ].map((metric, index) => (
                 <div
                   key={metric.label}
-}
-}
-}
                   className="bg-white rounded-2xl p-6 shadow-xl border border-neutral-200"
                 >
                   <div className={`text-3xl font-bold text-${metric.color}-600 mb-2`}>{metric.value}</div>

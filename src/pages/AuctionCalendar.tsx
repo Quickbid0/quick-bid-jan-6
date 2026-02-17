@@ -304,8 +304,6 @@ const AuctionCalendar = () => {
                 {getAuctionsForDate(selectedDate).map(auction => (
                   <div
                     key={auction.id}
-}
-}
                     className="border rounded-lg p-3 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between mb-2">

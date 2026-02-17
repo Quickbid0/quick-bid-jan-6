@@ -262,8 +262,6 @@ const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({
 }) => {
   return (
     <div
-}
-}
       className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
     >
       <div className="p-6">
@@ -495,15 +493,9 @@ export const FinalValidationDashboard: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="text-center mb-12"
       >
         <div
-}
-}
-}
           className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full text-lg font-bold mb-6"
         >
           <Trophy className="w-6 h-6" />
@@ -520,9 +512,6 @@ export const FinalValidationDashboard: React.FC = () => {
 
       {/* Overall Score */}
       <div
-}
-}
-}
         className="text-center mb-12"
       >
         <Card className="p-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white max-w-md mx-auto">
@@ -543,9 +532,6 @@ export const FinalValidationDashboard: React.FC = () => {
 
       {/* Category Filters */}
       <div
-}
-}
-}
         className="flex flex-wrap justify-center gap-2 mb-8"
       >
         {categories.map((category) => {
@@ -569,9 +555,6 @@ export const FinalValidationDashboard: React.FC = () => {
 
       {/* Validation Results */}
       <div
-}
-}
-}
         className="mb-12"
       >
         <Grid cols={2} gap="lg">
@@ -593,9 +576,6 @@ export const FinalValidationDashboard: React.FC = () => {
                 return (
                   <div
                     key={test.id}
-}
-}
-}
                     className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -676,9 +656,6 @@ export const FinalValidationDashboard: React.FC = () => {
                 ].map((achievement, index) => (
                   <div
                     key={achievement.label}
-}
-}
-}
                     className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
                   >
                     <achievement.icon className="w-5 h-5 text-blue-600" />
@@ -696,9 +673,6 @@ export const FinalValidationDashboard: React.FC = () => {
 
       {/* Component Showcase */}
       <div
-}
-}
-}
         className="mb-12"
       >
         <div className="text-center mb-8">
@@ -715,9 +689,6 @@ export const FinalValidationDashboard: React.FC = () => {
 
       {/* Final Summary */}
       <div
-}
-}
-}
         className="text-center"
       >
         <Card className="p-8 bg-gradient-to-r from-emerald-600 to-blue-600 text-white">

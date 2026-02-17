@@ -201,8 +201,6 @@ const InsuranceDashboard: React.FC = () => {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div
-}
-}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -217,9 +215,6 @@ const InsuranceDashboard: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -234,9 +229,6 @@ const InsuranceDashboard: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -251,9 +243,6 @@ const InsuranceDashboard: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -321,8 +310,6 @@ const InsuranceDashboard: React.FC = () => {
                 {filteredPolicies.map((policy) => (
                   <div
                     key={policy.id}
-}
-}
                     className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between">
@@ -394,8 +381,6 @@ const InsuranceDashboard: React.FC = () => {
                   policy.claims.map((claim) => (
                     <div
                       key={claim.id}
-}
-}
                       className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start justify-between">
@@ -473,8 +458,6 @@ const InsuranceDashboard: React.FC = () => {
                   policy.documents.map((doc) => (
                     <div
                       key={doc.id}
-}
-}
                       className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center justify-between">

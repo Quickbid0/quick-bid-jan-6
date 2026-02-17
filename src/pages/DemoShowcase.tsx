@@ -244,15 +244,9 @@ export const QuickMelaDemoShowcase: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="text-center mb-12"
       >
         <div
-}
-}
-}
           className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full text-lg font-bold mb-6"
         >
           <Trophy className="w-6 h-6" />
@@ -269,9 +263,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
 
         {/* Search */}
         <div
-}
-}
-}
           className="max-w-md mx-auto mb-8"
         >
           <div className="relative">
@@ -291,9 +282,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
 
       {/* Category Filters */}
       <div
-}
-}
-}
         className="flex flex-wrap justify-center gap-2 mb-8"
       >
         {categories.map((category) => (
@@ -318,9 +306,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
 
       {/* Component Grid */}
       <div
-}
-}
-}
       >
         <Grid cols={3} gap="lg">
           {filteredSections.map((section, index) => {
@@ -328,9 +313,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
             return (
               <div
                 key={section.id}
-}
-}
-}
                 className={`${section.featured ? 'md:col-span-2 lg:col-span-1' : ''}`}
               >
                 <Card
@@ -342,8 +324,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
                   <div className="flex items-start gap-4 mb-4">
                     <div
                       className={`p-3 rounded-lg ${section.featured ? 'bg-purple-100' : 'bg-gray-100'}`}
-}
-}
                     >
                       <Icon className={`w-6 h-6 ${section.featured ? 'text-purple-600' : 'text-gray-600'}`} />
                     </div>
@@ -376,8 +356,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
 
                     <div
                       className="flex items-center gap-1 text-blue-600 group-hover:text-blue-700"
-}
-}
                     >
                       <span className="text-sm font-medium">Try Demo</span>
                       <ChevronRight className="w-4 h-4" />
@@ -386,9 +364,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
 
                   {section.featured && (
                     <div
-}
-}
-}
                       className="mt-4 pt-4 border-t border-purple-200"
                     >
                       <div className="flex items-center gap-2 text-purple-700">
@@ -406,9 +381,6 @@ export const QuickMelaDemoShowcase: React.FC = () => {
 
       {/* Stats Footer */}
       <div
-}
-}
-}
         className="mt-16 text-center"
       >
         <Card className="p-8 bg-gradient-to-r from-emerald-600 to-blue-600 text-white">

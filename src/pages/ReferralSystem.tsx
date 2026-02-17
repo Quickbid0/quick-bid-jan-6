@@ -116,9 +116,6 @@ const ReferralSystem: React.FC = () => {
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -134,9 +131,6 @@ const ReferralSystem: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -152,9 +146,6 @@ const ReferralSystem: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -170,9 +161,6 @@ const ReferralSystem: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -192,9 +180,6 @@ const ReferralSystem: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Referral Code */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Referral Code</h3>
@@ -233,9 +218,6 @@ const ReferralSystem: React.FC = () => {
 
           {/* Share Options */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Share & Invite</h3>
@@ -281,9 +263,6 @@ const ReferralSystem: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Reward Tiers */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Reward Milestones</h3>
@@ -323,9 +302,6 @@ const ReferralSystem: React.FC = () => {
 
           {/* Referral History */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Referrals</h3>

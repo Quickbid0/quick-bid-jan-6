@@ -121,10 +121,7 @@ const DemoLogin = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <div
-}
-}
-            className="mb-8"
+          <div className="mb-8"
           >
             <div className="flex items-center justify-center mb-6">
               <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 rounded-2xl">
@@ -159,9 +156,6 @@ const DemoLogin = () => {
           {demoUsers.map((user, index) => (
             <div
               key={user.id}
-}
-}
-}
               className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2"
             >
               <div className={`${user.color} text-white p-8 text-center relative overflow-hidden`}>
@@ -236,10 +230,7 @@ const DemoLogin = () => {
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <span>Experience as {user.name}</span>
-                      <div
-}
-}
-                      >
+                      <div>
                         →
                       </div>
                     </div>

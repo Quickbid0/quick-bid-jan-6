@@ -379,9 +379,6 @@ const HealthCheck: React.FC = () => {
         {systemHealth.checks.map((check, index) => (
           <div
             key={check.name}
-}
-}
-}
             className={`border rounded-lg p-4 ${getStatusColor(check.status)}`}
           >
             <div className="flex items-center justify-between">

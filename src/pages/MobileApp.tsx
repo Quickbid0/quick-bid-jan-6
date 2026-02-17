@@ -42,7 +42,6 @@ const MobileApp = () => {
       {/* App Store Buttons */}
       <div className="flex justify-center gap-6 mb-16">
         <button
-}
           whileTap={{ scale: 0.95 }}
           className="bg-black text-white px-8 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-800"
         >
@@ -54,7 +53,6 @@ const MobileApp = () => {
         </button>
 
         <button
-}
           whileTap={{ scale: 0.95 }}
           className="bg-black text-white px-8 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-800"
         >
@@ -71,9 +69,6 @@ const MobileApp = () => {
         {features.map((feature, index) => (
           <div
             key={index}
-}
-}
-}
             className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
           >
             <div className="mb-4">{feature.icon}</div>
@@ -90,9 +85,6 @@ const MobileApp = () => {
           {screenshots.map((screenshot, index) => (
             <img
               key={index}
-}
-}
-}
               src={screenshot}
               alt={`Screenshot ${index + 1}`}
               className="w-64 h-auto rounded-2xl shadow-xl"

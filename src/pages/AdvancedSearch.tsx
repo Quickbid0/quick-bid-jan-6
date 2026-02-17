@@ -568,8 +568,6 @@ const AdvancedSearch = () => {
             {results.map((result) => (
               <div
                 key={result.id}
-}
-}
                 className="border rounded-lg overflow-hidden hover:shadow-md transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="relative">

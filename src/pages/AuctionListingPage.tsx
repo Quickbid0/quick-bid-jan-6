@@ -252,7 +252,6 @@ const AuctionListingPage: React.FC = () => {
 
     return (
       <div
-}
         className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 overflow-hidden"
       >
         {/* Image */}
@@ -481,9 +480,6 @@ const AuctionListingPage: React.FC = () => {
       {/* Filters Panel */}
       {showFilters && (
         <div
-}
-}
-}
           className="bg-white border-b"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">

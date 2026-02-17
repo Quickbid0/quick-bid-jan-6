@@ -348,9 +348,6 @@ const OrderTracking = () => {
           {trackingEvents.map((event, index) => (
             <div
               key={event.id}
-}
-}
-}
               className="flex items-start gap-4"
             >
               <div className="flex-shrink-0">

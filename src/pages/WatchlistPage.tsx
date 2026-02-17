@@ -157,9 +157,6 @@ const WatchlistPage = () => {
           {items.map((item) => (
             <div
               key={item.id}
-}
-}
-}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
             >
               <img

@@ -112,10 +112,7 @@ const CompanyVerificationPending = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <div
-}
-}
-          className="text-center mb-12"
+        <div className="text-center mb-12"
         >
           <Building className="h-20 w-20 text-indigo-600 mx-auto mb-6" />
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -128,9 +125,6 @@ const CompanyVerificationPending = () => {
 
         {/* Status Card */}
         <div
-}
-}
-}
           className={`border-2 rounded-2xl p-8 mb-8 ${statusInfo.color}`}
         >
           <div className="text-center">
@@ -147,9 +141,6 @@ const CompanyVerificationPending = () => {
         {/* Company Details Summary */}
         {companyDetails && (
           <div
-}
-}
-}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8"
           >
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
@@ -202,9 +193,6 @@ const CompanyVerificationPending = () => {
 
         {/* Verification Process Timeline */}
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8"
         >
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
@@ -268,9 +256,6 @@ const CompanyVerificationPending = () => {
 
         {/* Next Steps */}
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
         >
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">

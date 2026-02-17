@@ -183,9 +183,6 @@ const DealerDashboard: React.FC = () => {
               {/* KPI Row */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                 <div
-}
-}
-}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -205,9 +202,6 @@ const DealerDashboard: React.FC = () => {
                 </div>
 
                 <div
-}
-}
-}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -224,9 +218,6 @@ const DealerDashboard: React.FC = () => {
                 </div>
 
                 <div
-}
-}
-}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -243,9 +234,6 @@ const DealerDashboard: React.FC = () => {
                 </div>
 
                 <div
-}
-}
-}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -264,9 +252,6 @@ const DealerDashboard: React.FC = () => {
 
               {/* Performance Graph */}
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Auction Performance</h3>

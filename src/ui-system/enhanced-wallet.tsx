@@ -110,15 +110,10 @@ const AnimatedBalance: React.FC<AnimatedBalanceProps> = ({
     <div
       className={`${sizeClasses[size]} font-black ${className}`}
       style={getTextStyle('fintech', 'balance')}
- : {}}
-}
     >
       <span className="text-gray-600">{currency}</span>
       <span
         key={displayAmount}
-}
-}
-}
       >
         {formatAmount(displayAmount)}
       </span>
@@ -162,28 +157,23 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
         {/* Available funds */}
         <div
           className="absolute left-0 top-0 h-full bg-emerald-500"
-}
-%` }}
-}
+          style={{ width: `${availablePercentage}%` }}
         />
 
         {/* Locked funds */}
         <div
           className="absolute h-full bg-orange-500"
-%` }}
-%`, left: `${availablePercentage}%` }}
-}
+          style={{ width: `${lockedPercentage}%`, left: `${availablePercentage}%` }}
         />
 
         {/* Escrow funds */}
         <div
           className="absolute h-full bg-blue-500"
-%` }}
+          style={{ width: `${escrowPercentage}%` }}
           animate={{
             width: `${escrowPercentage}%`,
             left: `${availablePercentage + lockedPercentage}%`
           }}
-}
         />
       </div>
 
@@ -219,15 +209,10 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
       {/* Gaming-style locked funds animation */}
       {locked > 0 && (
         <div
-}
-}
-}
           className="mt-4 p-3 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg"
         >
           <div className="flex items-center gap-3">
             <div
-}
-}
             >
               <Lock className="w-5 h-5 text-orange-600" />
             </div>
@@ -244,15 +229,10 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
       {/* Trust messaging for escrow */}
       {escrow > 0 && (
         <div
-}
-}
-}
           className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg"
         >
           <div className="flex items-center gap-3">
             <div
-}
-}
             >
               <Shield className="w-5 h-5 text-blue-600" />
             </div>
@@ -313,9 +293,6 @@ const TrustMessaging: React.FC<TrustMessagingProps> = ({ className }) => {
         {trustMessages.map((message, index) => (
           <div
             key={message.title}
-}
-}
-}
             className={`p-4 bg-gradient-to-br from-${message.color}-50 to-${message.color}-100 border border-${message.color}-200 rounded-lg`}
           >
             <div className="flex items-start gap-3">
@@ -398,9 +375,6 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, c
           return (
             <div
               key={transaction.id}
-}
-}
-}
               className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3">
@@ -502,9 +476,6 @@ export const EnhancedWallet: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <div className="flex items-center justify-between">
@@ -542,9 +513,6 @@ export const EnhancedWallet: React.FC = () => {
 
       {/* Main Balance Display */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <Card className="p-8 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-600 text-white relative overflow-hidden">
@@ -582,7 +550,6 @@ export const EnhancedWallet: React.FC = () => {
             {/* Quick Action Buttons */}
             <div className="grid grid-cols-2 gap-4">
               <div
-}
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
@@ -596,7 +563,6 @@ export const EnhancedWallet: React.FC = () => {
               </div>
 
               <div
-}
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
@@ -636,9 +602,6 @@ export const EnhancedWallet: React.FC = () => {
 
       {/* Quick Deposit Options */}
       <div
-}
-}
-}
         className="mt-8"
       >
         <Card className="p-6">
@@ -654,7 +617,6 @@ export const EnhancedWallet: React.FC = () => {
             {[1000, 5000, 10000, 25000].map((amount) => (
               <button
                 key={amount}
-}
                 whileTap={{ scale: 0.95 }}
                 className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:shadow-md transition-all"
                 onClick={() => handleAction('deposit')}

@@ -881,9 +881,6 @@ const CompanyRegistration = () => {
 
         <div
           key={step}
-}
-}
-}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
         >
           {renderStep()}

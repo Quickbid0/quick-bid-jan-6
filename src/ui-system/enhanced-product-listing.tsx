@@ -70,9 +70,6 @@ const AISuggestion: React.FC<AISuggestionProps> = ({
 
   return (
     <div
-}
-}
-}
       className={`p-4 rounded-lg border ${impactColors[impact]} relative overflow-hidden`}
     >
       {/* AI Badge */}
@@ -360,7 +357,6 @@ export const EnhancedProductListing: React.FC = () => {
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-400'
               }`}
-}
             >
               {step}
             </div>
@@ -377,10 +373,6 @@ export const EnhancedProductListing: React.FC = () => {
         {currentStep === 1 && (
           <div
             key="step1"
-}
-}
-}
-}
             className="space-y-6"
           >
             <Card className="p-6">
@@ -458,10 +450,6 @@ export const EnhancedProductListing: React.FC = () => {
         {currentStep === 2 && (
           <div
             key="step2"
-}
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-6">Photos & Details</h3>
@@ -558,10 +546,6 @@ export const EnhancedProductListing: React.FC = () => {
         {currentStep === 3 && (
           <div
             key="step3"
-}
-}
-}
-}
           >
             <PricingOptimizer
               currentPrice={listingData.startingPrice}
@@ -580,10 +564,6 @@ export const EnhancedProductListing: React.FC = () => {
         {currentStep === 4 && (
           <div
             key="step4"
-}
-}
-}
-}
             className="space-y-6"
           >
             <Card className="p-6">
@@ -741,9 +721,6 @@ export const EnhancedProductListing: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <div className="flex items-center justify-between">
@@ -771,9 +748,6 @@ export const EnhancedProductListing: React.FC = () => {
 
       {/* Tab Navigation */}
       <div
-}
-}
-}
         className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-lg w-fit"
       >
         {tabs.map((tab) => {
@@ -800,10 +774,6 @@ export const EnhancedProductListing: React.FC = () => {
         {activeTab === 'create' && (
           <div
             key="create"
-}
-}
-}
-}
           >
             {renderCreateTab()}
           </div>
@@ -812,10 +782,6 @@ export const EnhancedProductListing: React.FC = () => {
         {activeTab === 'manage' && (
           <div
             key="manage"
-}
-}
-}
-}
           >
             {renderManageTab()}
           </div>
@@ -824,10 +790,6 @@ export const EnhancedProductListing: React.FC = () => {
         {activeTab === 'analytics' && (
           <div
             key="analytics"
-}
-}
-}
-}
           >
             {renderAnalyticsTab()}
           </div>
@@ -836,10 +798,6 @@ export const EnhancedProductListing: React.FC = () => {
         {activeTab === 'insights' && (
           <div
             key="insights"
-}
-}
-}
-}
           >
             {renderInsightsTab()}
           </div>

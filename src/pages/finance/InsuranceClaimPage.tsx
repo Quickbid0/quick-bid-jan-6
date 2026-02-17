@@ -221,8 +221,6 @@ const InsuranceClaimPage: React.FC = () => {
 
         {/* Policy Information */}
         <div
-}
-}
           className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -252,9 +250,6 @@ const InsuranceClaimPage: React.FC = () => {
 
         {/* Claim Form */}
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
         >
           <form onSubmit={handleSubmit} className="space-y-6">

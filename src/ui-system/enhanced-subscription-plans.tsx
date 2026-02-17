@@ -70,17 +70,11 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
 
   return (
     <div
-}
-}
-}
       className={`relative ${plan.popular ? 'scale-105' : ''}`}
     >
       {/* Popular Badge */}
       {plan.popular && (
         <div
-}
-}
-}
           className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10"
         >
           <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
@@ -92,9 +86,6 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
       {/* Recommended Badge */}
       {plan.recommended && (
         <div
-}
-}
-}
           className="absolute -top-3 -right-3 z-10"
         >
           <div className="bg-emerald-500 text-white p-2 rounded-full shadow-lg">
@@ -115,8 +106,6 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
         <div className="text-center mb-6">
           <div
             className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center`}
-}
-}
           >
             <plan.icon className="w-8 h-8 text-white" />
           </div>
@@ -153,9 +142,6 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
           {plan.features.map((feature, index) => (
             <div
               key={index}
-}
-}
-}
               className="flex items-start gap-3"
             >
               <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
@@ -166,9 +152,6 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
           {plan.limitations && plan.limitations.map((limitation, index) => (
             <div
               key={`limit-${index}`}
-}
-}
-}
               className="flex items-start gap-3"
             >
               <X className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
@@ -236,16 +219,11 @@ interface UrgencyBannerProps {
 
 const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ message, timeLeft, discount, className }) => (
   <div
-}
-}
-}
     className={`bg-gradient-to-r from-red-500 to-orange-500 text-white p-4 rounded-2xl ${className}`}
   >
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
         <div
-}
-}
         >
           <Zap className="w-6 h-6" />
         </div>
@@ -303,10 +281,6 @@ const SocialProof: React.FC<SocialProofProps> = ({ testimonials, className }) =>
       <Fragment mode="wait">
         <div
           key={currentTestimonial}
-}
-}
-}
-}
           className="text-center"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -481,15 +455,9 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
       <Container className="py-12">
         {/* Header */}
         <div
-}
-}
-}
           className="text-center mb-12"
         >
           <div
-}
-}
-}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6"
           >
             <Sparkles className="w-4 h-4" />
@@ -514,9 +482,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
         {/* Billing Toggle */}
         <div
-}
-}
-}
           className="flex items-center justify-center gap-4 mb-12"
         >
           <span className={`text-lg ${billingInterval === 'month' ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
@@ -528,7 +493,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
           >
             <div
               className="w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-all"
-}
             />
           </button>
           <div className="flex items-center gap-2">
@@ -543,9 +507,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
         {/* Pricing Cards */}
         <div
-}
-}
-}
           className="mb-16"
         >
           <Grid cols={3} gap="lg">
@@ -565,10 +526,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
         <Fragment>
           {selectedPlan && (
             <div
-}
-}
-}
-}
               className="text-center mb-16"
             >
               <Card className="p-8 bg-gradient-to-r from-emerald-500 to-blue-600 text-white max-w-2xl mx-auto">
@@ -594,9 +551,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
         {/* Social Proof */}
         <div
-}
-}
-}
           className="mb-16"
         >
           <SocialProof testimonials={testimonials} />
@@ -604,9 +558,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
         {/* Feature Comparison */}
         <div
-}
-}
-}
           className="mb-16"
         >
           <Card className="p-8">
@@ -654,9 +605,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
         {/* FAQ Section */}
         <div
-}
-}
-}
           className="mb-16"
         >
           <Card className="p-8">
@@ -669,9 +617,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
               {faqs.map((faq, index) => (
                 <div
                   key={index}
-}
-}
-}
                   className="border border-gray-200 rounded-lg"
                 >
                   <button className="w-full text-left p-6 focus:outline-none">
@@ -691,9 +636,6 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
         {/* Final CTA */}
         <div
-}
-}
-}
           className="text-center"
         >
           <Card className="p-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">

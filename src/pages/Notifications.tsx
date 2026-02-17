@@ -369,8 +369,6 @@ const Notifications = () => {
             return (
               <div
                 key={notification.id}
-}
-}
                 className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 ${
                   !notification.read ? 'border-l-4 border-indigo-500' : ''
                 }`}

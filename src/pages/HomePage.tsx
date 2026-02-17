@@ -172,9 +172,6 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div
-}
-}
-}
               className="space-y-8"
             >
               <div>
@@ -237,9 +234,6 @@ const HomePage: React.FC = () => {
             </div>
 
             <div
-}
-}
-}
               className="relative"
             >
               <div className="relative">
@@ -270,9 +264,7 @@ const HomePage: React.FC = () => {
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
-}
                 whileInView={{ opacity: 1, y: 0 }}
-}
                 className="text-center"
               >
                 <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg bg-white shadow-sm mb-4 ${stat.color}`}>
@@ -300,9 +292,7 @@ const HomePage: React.FC = () => {
             {featuredAuctions.map((auction, index) => (
               <div
                 key={auction.id}
-}
                 whileInView={{ opacity: 1, y: 0 }}
-}
               >
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
@@ -395,9 +385,7 @@ const HomePage: React.FC = () => {
             {trustIndicators.map((indicator, index) => (
               <div
                 key={indicator.title}
-}
                 whileInView={{ opacity: 1, y: 0 }}
-}
                 className="bg-white p-6 rounded-lg shadow-sm"
               >
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
@@ -454,9 +442,7 @@ const HomePage: React.FC = () => {
             ].map((step, index) => (
               <div
                 key={step.step}
-}
                 whileInView={{ opacity: 1, y: 0 }}
-}
                 className="text-center"
               >
                 <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
@@ -487,10 +473,6 @@ const HomePage: React.FC = () => {
           <div className="max-w-4xl mx-auto">
             <div
               key={currentTestimonial}
-}
-}
-}
-}
               className="bg-white p-8 rounded-lg shadow-sm"
             >
               <div className="flex items-center gap-1 mb-4">

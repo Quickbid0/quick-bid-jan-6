@@ -156,7 +156,6 @@ const AuctionCreatePageEnterprise: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Timed Auction */}
               <div
-}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-colors ${
                   formData.auctionType === 'timed'
                     ? 'border-blue-500 bg-blue-50'
@@ -178,7 +177,6 @@ const AuctionCreatePageEnterprise: React.FC = () => {
 
               {/* Flash Auction */}
               <div
-}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-colors ${
                   formData.auctionType === 'flash'
                     ? 'border-orange-500 bg-orange-50'
@@ -200,7 +198,6 @@ const AuctionCreatePageEnterprise: React.FC = () => {
 
               {/* Live Auction */}
               <div
-}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-colors ${
                   formData.auctionType === 'live'
                     ? 'border-green-500 bg-green-50'
@@ -828,10 +825,6 @@ const AuctionCreatePageEnterprise: React.FC = () => {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div
           key={currentStep}
-}
-}
-}
-}
         >
           {renderStepContent()}
         </div>

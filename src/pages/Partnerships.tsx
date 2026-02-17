@@ -50,9 +50,6 @@ const Partnerships = () => {
         {partnerTypes.map((type, index) => (
           <div
             key={index}
-}
-}
-}
             className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg text-center"
           >
             <div className="mb-6">{type.icon}</div>
@@ -77,9 +74,6 @@ const Partnerships = () => {
           {currentPartners.map((partner, index) => (
             <div
               key={index}
-}
-}
-}
               className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center hover:shadow-md transition-shadow"
             >
               <div className="text-4xl mb-3">{partner.logo}</div>

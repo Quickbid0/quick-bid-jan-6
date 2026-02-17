@@ -108,9 +108,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -126,9 +123,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -144,9 +138,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -162,9 +153,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
           </div>
 
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -184,9 +172,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Bid Trends */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center justify-between mb-6">
@@ -212,9 +197,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
 
           {/* Revenue Trends */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <div className="flex items-center justify-between mb-6">
@@ -243,9 +225,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Top Categories */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Top Categories</h3>
@@ -268,9 +247,6 @@ const AuctionAnalyticsDashboard: React.FC = () => {
 
           {/* Recent Activity */}
           <div
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>

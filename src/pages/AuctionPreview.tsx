@@ -251,8 +251,6 @@ const AuctionPreview = () => {
           {filteredAuctions.map((auction) => (
             <div
               key={`${auction.type}-${auction.id}`}
-}
-}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="relative">

@@ -998,9 +998,6 @@ export default function EliteLiveAuctionPage() {
         
         {isUrgent && (
            <div 
-}
-}
-}
              className="flex items-center gap-2 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-sm font-bold"
            >
              <Clock className="h-4 w-4" />
@@ -1082,8 +1079,6 @@ export default function EliteLiveAuctionPage() {
               
               {/* Stream Overlay */}
               <div 
-}
-}
                 className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm flex items-center shadow-lg z-10"
               >
                 <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
@@ -1252,8 +1247,6 @@ export default function EliteLiveAuctionPage() {
 
               {/* Time Remaining - Critical for Decision Speed */}
               <div 
- : {}}
-}
                 className={`mb-6 p-4 rounded-lg border ${
                   isUrgent 
                     ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' 
@@ -1850,8 +1843,6 @@ export default function EliteLiveAuctionPage() {
                 return (
                   <div
                     key={auction.id}
-}
-}
                     className="transition-all duration-300"
                   >
                     <AuctionCard

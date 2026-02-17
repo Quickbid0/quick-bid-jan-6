@@ -94,8 +94,6 @@ const SystemMonitor: React.FC = () => {
       <Grid cols={3} gap="md">
         <div
           className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-lg"
-}
-}
         >
           <Users className="w-8 h-8 mx-auto mb-2 text-blue-300" />
           <div className="text-2xl font-bold">{systemStats.activeUsers.toLocaleString()}</div>
@@ -105,8 +103,6 @@ const SystemMonitor: React.FC = () => {
 
         <div
           className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-lg"
-}
-}
         >
           <DollarSign className="w-8 h-8 mx-auto mb-2 text-emerald-300" />
           <div className="text-2xl font-bold">₹{(systemStats.totalRevenue / 100000).toFixed(1)}L</div>
@@ -116,8 +112,6 @@ const SystemMonitor: React.FC = () => {
 
         <div
           className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-lg"
-}
-}
         >
           <Target className="w-8 h-8 mx-auto mb-2 text-purple-300" />
           <div className="text-2xl font-bold">{systemStats.activeAuctions}</div>
@@ -227,8 +221,6 @@ const FraudDetectionDashboard: React.FC = () => {
           return (
             <div
               key={alert.id}
-}
-}
               className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-start justify-between">
@@ -393,12 +385,9 @@ const ActivityFeed: React.FC = () => {
           return (
             <div
               key={activity.id}
-}
-}
-}
-              className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
+              className={`flex items-start gap-3 p-3 bg-gray-50 rounded-lg ${getActivityColor(activity.type, activity.status)}`}
             >
-              <div className={`p-2 rounded-lg ${getActivityColor(activity.type, activity.status)}`}>
+              <div className="p-2 rounded-lg">
                 <Icon className="w-4 h-4" />
               </div>
 
@@ -489,9 +478,6 @@ export const EnhancedAdminPanel: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="flex items-center justify-between mb-8"
       >
         <div>
@@ -525,9 +511,6 @@ export const EnhancedAdminPanel: React.FC = () => {
 
       {/* Tab Navigation */}
       <div
-}
-}
-}
         className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-lg w-fit"
       >
         {tabs.map((tab) => {
@@ -551,18 +534,12 @@ export const EnhancedAdminPanel: React.FC = () => {
 
       {/* KPI Cards */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <Grid cols={4} gap="md">
           {kpiData.map((kpi, index) => (
             <div
               key={kpi.title}
-}
-}
-}
             >
               <Card className={`p-6 bg-gradient-to-br ${kpi.gradient} text-white relative overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200`}>
                 <div className="relative z-10">
@@ -572,8 +549,6 @@ export const EnhancedAdminPanel: React.FC = () => {
                     </div>
                     {kpi.isRealtime && (
                       <div
-}
-}
                         className="w-2 h-2 bg-green-400 rounded-full"
                       />
                     )}
@@ -618,10 +593,6 @@ export const EnhancedAdminPanel: React.FC = () => {
         {activeTab === 'overview' && (
           <div
             key="overview"
-}
-}
-}
-}
           >
             <Grid cols={2} gap="lg">
               <div className="space-y-6">
@@ -638,10 +609,6 @@ export const EnhancedAdminPanel: React.FC = () => {
         {activeTab === 'users' && (
           <div
             key="users"
-}
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">User Management</h3>
@@ -653,10 +620,6 @@ export const EnhancedAdminPanel: React.FC = () => {
         {activeTab === 'auctions' && (
           <div
             key="auctions"
-}
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Auction Management</h3>
@@ -668,10 +631,6 @@ export const EnhancedAdminPanel: React.FC = () => {
         {activeTab === 'security' && (
           <div
             key="security"
-}
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Center</h3>
@@ -683,10 +642,6 @@ export const EnhancedAdminPanel: React.FC = () => {
         {activeTab === 'analytics' && (
           <div
             key="analytics"
-}
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Analytics</h3>
@@ -698,10 +653,6 @@ export const EnhancedAdminPanel: React.FC = () => {
         {activeTab === 'settings' && (
           <div
             key="settings"
-}
-}
-}
-}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">System Settings</h3>

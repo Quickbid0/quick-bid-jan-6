@@ -120,8 +120,6 @@ const VerifySeller = () => {
       case 'submitted':
         return (
           <div
-}
-}
             className="text-center p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg"
           >
             <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
@@ -151,8 +149,6 @@ const VerifySeller = () => {
       case 'approved':
         return (
           <div
-}
-}
             className="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg"
           >
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />

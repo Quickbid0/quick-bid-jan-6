@@ -155,7 +155,7 @@ const InvestorMarketplace: React.FC = () => {
       {/* Listings */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicles.map((v) => (
-          <div key={v.id}}} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+          <div key={v.id} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">{v.name}</h3>
               {v.verified ? (

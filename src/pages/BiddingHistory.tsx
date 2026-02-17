@@ -327,8 +327,6 @@ const BiddingHistory = () => {
             containerHeight={600} // Container height
             renderItem={(bid) => (
               <div
-}
-}
                 className="p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0"
               >
                 <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-center">

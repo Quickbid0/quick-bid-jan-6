@@ -86,9 +86,6 @@ const SmartToggle: React.FC<SmartToggleProps> = ({
 
   return (
     <div
-}
-}
-}
       className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
     >
       <div className="flex items-start gap-4">
@@ -173,8 +170,6 @@ const NotificationPreference: React.FC<NotificationPreferenceProps> = ({
           <p className="text-gray-600 text-sm">Manage your notification preferences</p>
         </div>
         <div
-}
-}
         >
           <ChevronDown className="w-5 h-5 text-gray-400" />
         </div>
@@ -183,10 +178,6 @@ const NotificationPreference: React.FC<NotificationPreferenceProps> = ({
       <Fragment>
         {expanded && (
           <div
-}
-}
-}
-}
             className="mt-6 space-y-4"
           >
             {preferences.map((pref) => (
@@ -488,9 +479,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div
-}
-}
-}
           className="flex items-center justify-between mb-8"
         >
           <div>
@@ -504,8 +492,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
 
           {hasUnsavedChanges && (
             <div
-}
-}
               className="flex items-center gap-2 text-orange-600"
             >
               <AlertTriangle className="w-4 h-4" />
@@ -516,9 +502,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
 
         {/* Tab Navigation */}
         <div
-}
-}
-}
           className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-lg w-fit"
         >
           {tabs.map((tab) => {
@@ -546,10 +529,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
           {activeTab === 'profile' && (
             <div
               key="profile"
-}
-}
-}
-}
             >
               <Grid cols={2} gap="lg">
                 <div className="space-y-6">
@@ -687,10 +666,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
           {activeTab === 'notifications' && (
             <div
               key="notifications"
-}
-}
-}
-}
               className="space-y-6"
             >
               <NotificationPreference
@@ -738,10 +713,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
           {activeTab === 'privacy' && (
             <div
               key="privacy"
-}
-}
-}
-}
             >
               <PrivacySettings
                 settings={settings.privacy}
@@ -754,10 +725,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
           {activeTab === 'appearance' && (
             <div
               key="appearance"
-}
-}
-}
-}
               className="space-y-6"
             >
               <Card className="p-6">
@@ -827,10 +794,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
           {activeTab === 'billing' && (
             <div
               key="billing"
-}
-}
-}
-}
             >
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -889,8 +852,6 @@ export const EnhancedSettingsNotifications: React.FC = () => {
         {/* Save Button */}
         {hasUnsavedChanges && (
           <div
-}
-}
             className="fixed bottom-8 right-8"
           >
             <Button

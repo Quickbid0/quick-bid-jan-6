@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Fragment } from 'react';
 import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../config/supabaseClient';
 import { format } from 'date-fns';
+import { supabase } from '../config/supabaseClient';
 import { getCurrentUserDataKey } from '../security/keyAccess';
 import { decryptField, isEncrypted } from '../security/secureFields';
 
@@ -217,9 +217,6 @@ const NotificationBell = () => {
             id="notification-panel"
             role="menu"
             tabIndex={-1}
-}
-}
-}
             className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50"
           >
             <div className="p-4 border-b dark:border-gray-700">
@@ -229,44 +226,19 @@ const NotificationBell = () => {
             </div>
 
             <div className="max-h-96 overflow-y-auto" role="group">
-              {notifications.length === 0 ? (
-                <div className="p-4 text-center text-gray-500 dark:text-gray-400">
-                  No notifications yet
+              {notifications.map((notification, index) => (
+                <div key={notification.id} className="p-4 border-b dark:border-gray-700">
+                  <h4 className="text-lg font-medium text-gray-900 dark:text-white">
+                    {notification.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                    {notification.message}
+                  </p>
+                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                    {format(new Date(notification.created_at), "MMM d, h:mm a")}
+                  </p>
                 </div>
-              ) : (
-                notifications.map((notification) => (
-                  <div
-                    key={notification.id}
-}
-}
-                    className={`p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${
-                      !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
-                    }`}
-                    onClick={() => markAsRead(notification.id)}
-                    role="menuitem"
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="text-2xl" aria-hidden="true">
-                        {getNotificationIcon(notification.type)}
-                      </span>
-                      <div className="flex-1">
-                        <h4 className="text-sm font-medium text-gray-900 dark:text-white">
-                          {notification.title}
-                        </h4>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {notification.message}
-                        </p>
-                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                          {format(new Date(notification.created_at), 'MMM d, h:mm a')}
-                        </p>
-                      </div>
-                      {!notification.read && (
-                        <div className="w-2 h-2 bg-blue-500 rounded-full" aria-hidden="true"></div>
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
+              ))}
             </div>
 
             <div className="p-4 border-t dark:border-gray-700 flex items-center justify-between gap-2">

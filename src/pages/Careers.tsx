@@ -85,9 +85,6 @@ const Careers = () => {
           {benefits.map((benefit, index) => (
             <div
               key={index}
-}
-}
-}
               className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl"
             >
               <div className="mb-4">{benefit.icon}</div>
@@ -105,9 +102,6 @@ const Careers = () => {
           {openPositions.map((position, index) => (
             <div
               key={index}
-}
-}
-}
               className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between items-start">

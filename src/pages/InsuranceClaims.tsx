@@ -150,8 +150,6 @@ export default function InsuranceClaims() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -164,9 +162,6 @@ export default function InsuranceClaims() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -181,9 +176,6 @@ export default function InsuranceClaims() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -198,9 +190,6 @@ export default function InsuranceClaims() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -275,9 +264,6 @@ export default function InsuranceClaims() {
                 {filteredClaims.map((claim, index) => (
                   <tr
                     key={claim.id}
-}
-}
-}
                     className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">

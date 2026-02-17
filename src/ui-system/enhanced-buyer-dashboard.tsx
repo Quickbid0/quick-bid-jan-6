@@ -92,9 +92,6 @@ const KPICard: React.FC<KPICardProps> = ({
 
   return (
     <div
-}
-}
-}
     >
       <Card className={`p-6 bg-gradient-to-br ${gradient} text-white relative overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200`}>
         {/* Animated background pattern */}
@@ -109,8 +106,6 @@ const KPICard: React.FC<KPICardProps> = ({
             </div>
             {isRealtime && (
               <div
-}
-}
                 className="w-2 h-2 bg-green-400 rounded-full"
               />
             )}
@@ -120,12 +115,7 @@ const KPICard: React.FC<KPICardProps> = ({
             <h3 className="text-sm font-medium text-white/90 mb-1">{title}</h3>
             <div className="text-2xl font-bold">
               {typeof value === 'number' ? (
-                <span
-                  key={animatedValue}
-}
-}
-}
-                >
+                <span key={animatedValue}>
                   {isAnimating ? Math.round(animatedValue).toLocaleString() : value.toLocaleString()}
                 </span>
               ) : (
@@ -172,9 +162,6 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({
   color
 }) => (
   <div
-}
-}
-}
     className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer group"
   >
     <div className="flex items-start gap-3">
@@ -218,9 +205,6 @@ const LiveAuctionSpotlight: React.FC = () => {
 
   return (
     <div
-}
-}
-}
       className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden"
     >
       {/* Animated background */}
@@ -230,8 +214,6 @@ const LiveAuctionSpotlight: React.FC = () => {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
             <div
-}
-}
               className="w-3 h-3 bg-white rounded-full"
             />
             <span className="text-lg font-bold">LIVE AUCTION</span>
@@ -318,10 +300,8 @@ const ActivityHeatmap: React.FC = () => {
               <div
                 key={hourIndex}
                 className={`w-3 h-3 rounded-sm cursor-pointer ${getIntensityColor(value)}`}
-}
                 onHoverStart={() => setHoveredCell({ day: dayIndex, hour: hourIndex, value })}
                 onHoverEnd={() => setHoveredCell(null)}
-}
               />
             ))}
           </div>
@@ -331,9 +311,6 @@ const ActivityHeatmap: React.FC = () => {
       <Fragment>
         {hoveredCell && (
           <div
-}
-}
-}
             className="absolute bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-10"
             style={{
               left: hoveredCell.hour * 16 + 20,
@@ -437,9 +414,6 @@ export const EnhancedBuyerDashboard: React.FC = () => {
     <Container className="py-8">
       {/* Header */}
       <div
-}
-}
-}
         className="flex items-center justify-between mb-8"
       >
         <div>
@@ -472,9 +446,6 @@ export const EnhancedBuyerDashboard: React.FC = () => {
 
       {/* Live Auction Spotlight */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <LiveAuctionSpotlight />
@@ -482,9 +453,6 @@ export const EnhancedBuyerDashboard: React.FC = () => {
 
       {/* KPI Cards */}
       <div
-}
-}
-}
         className="mb-8"
       >
         <Grid cols={4} gap="md">
@@ -533,11 +501,7 @@ export const EnhancedBuyerDashboard: React.FC = () => {
               ].map((action, index) => (
                 <button
                   key={action.label}
-}
-}
-}
-}
-                  whileTap={{ scale: 0.95 }}
+                  onClick={() => console.log(action.label)}
                   className={`p-4 ${action.color} text-white rounded-lg hover:opacity-90 transition-opacity`}
                 >
                   <action.icon className="w-6 h-6 mb-2 mx-auto" />
@@ -585,9 +549,6 @@ export const EnhancedBuyerDashboard: React.FC = () => {
               ].map((activity, index) => (
                 <div
                   key={index}
-}
-}
-}
                   className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
                 >
                   <div className={`p-2 bg-gray-100 rounded-lg ${activity.color}`}>
@@ -620,9 +581,6 @@ export const EnhancedBuyerDashboard: React.FC = () => {
               ].map((auction, index) => (
                 <div
                   key={index}
-}
-}
-}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   <div>

@@ -195,9 +195,6 @@ const TrustSafety = () => {
             {trustMetrics.map((metric, index) => (
               <div
                 key={index}
-}
-}
-}
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
               >
                 <div className="mb-4">{metric.icon}</div>
@@ -214,9 +211,6 @@ const TrustSafety = () => {
             {safetyFeatures.map((feature, index) => (
               <div
                 key={index}
-}
-}
-}
                 className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm"
               >
                 <div className="mb-6">{feature.icon}</div>
@@ -251,9 +245,6 @@ const TrustSafety = () => {
               {verificationProcess.map((step, index) => (
                 <div
                   key={index}
-}
-}
-}
                   className="text-center"
                 >
                   <div className="bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-xl mb-4 inline-block">
@@ -276,9 +267,6 @@ const TrustSafety = () => {
           {securityMeasures.map((category, index) => (
             <div
               key={index}
-}
-}
-}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8"
             >
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{category.category}</h3>
@@ -305,9 +293,6 @@ const TrustSafety = () => {
             {safetyTips.map((section, index) => (
               <div
                 key={index}
-}
-}
-}
               >
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   {section.title}

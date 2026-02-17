@@ -74,8 +74,6 @@ const ReportsAnalytics = () => {
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <div
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -88,9 +86,6 @@ const ReportsAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -103,9 +98,6 @@ const ReportsAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -118,9 +110,6 @@ const ReportsAnalytics = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">

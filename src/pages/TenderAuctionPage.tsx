@@ -962,8 +962,6 @@ const TenderAuctionPage = () => {
               {sortedTenders.map((tender) => (
               <div
                 key={tender.id}
-}
-}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="relative">

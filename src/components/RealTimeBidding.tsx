@@ -450,9 +450,6 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
             {liveBids.map((bid) => (
               <div
                 key={bid.id}
-}
-}
-}
                 className={`flex items-center justify-between p-3 rounded-lg ${
                   bid.isWinning ? 'bg-green-50 border border-green-200' : 'bg-gray-50 dark:bg-gray-700'
                 }`}

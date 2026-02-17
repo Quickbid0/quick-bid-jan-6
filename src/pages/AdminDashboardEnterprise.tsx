@@ -199,9 +199,6 @@ const AdminDashboardEnterprise: React.FC = () => {
             {/* Platform Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -221,9 +218,6 @@ const AdminDashboardEnterprise: React.FC = () => {
               </div>
 
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -240,9 +234,6 @@ const AdminDashboardEnterprise: React.FC = () => {
               </div>
 
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -259,9 +250,6 @@ const AdminDashboardEnterprise: React.FC = () => {
               </div>
 
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -280,9 +268,6 @@ const AdminDashboardEnterprise: React.FC = () => {
 
             {/* Revenue Breakdown */}
             <div
-}
-}
-}
             >
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Breakdown</h3>
@@ -315,9 +300,6 @@ const AdminDashboardEnterprise: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Risk Alerts */}
               <div
-}
-}
-}
               >
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -352,11 +334,7 @@ const AdminDashboardEnterprise: React.FC = () => {
               </div>
 
               {/* System Health */}
-              <div
-}
-}
-}
-              >
+              <div>
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
                     <Server className="h-5 w-5 mr-2 text-blue-500" />
@@ -392,11 +370,7 @@ const AdminDashboardEnterprise: React.FC = () => {
             </div>
 
             {/* Recent Activity */}
-            <div
-}
-}
-}
-            >
+            <div>
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
                 <div className="space-y-3">

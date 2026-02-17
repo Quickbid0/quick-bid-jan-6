@@ -165,8 +165,6 @@ export default function SavedSearches() {
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <div
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -179,9 +177,6 @@ export default function SavedSearches() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -196,9 +191,6 @@ export default function SavedSearches() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -213,9 +205,6 @@ export default function SavedSearches() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -235,9 +224,6 @@ export default function SavedSearches() {
           {savedSearches.map((search, index) => (
             <div
               key={search.id}
-}
-}
-}
               className="bg-white rounded-lg shadow p-6"
             >
               <div className="flex items-start justify-between">

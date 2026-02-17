@@ -120,8 +120,6 @@ const InvestorRelations = () => {
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-16">
         <div
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <DollarSign className="h-8 w-8 text-green-500 mx-auto mb-2" />
@@ -130,9 +128,6 @@ const InvestorRelations = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <TrendingUp className="h-8 w-8 text-primary-600 mx-auto mb-2" />
@@ -141,9 +136,6 @@ const InvestorRelations = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <Users className="h-8 w-8 text-purple-500 mx-auto mb-2" />
@@ -152,9 +144,6 @@ const InvestorRelations = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <BarChart3 className="h-8 w-8 text-orange-500 mx-auto mb-2" />
@@ -163,9 +152,6 @@ const InvestorRelations = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <Globe className="h-8 w-8 text-red-500 mx-auto mb-2" />
@@ -174,9 +160,6 @@ const InvestorRelations = () => {
         </div>
 
         <div
-}
-}
-}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <Target className="h-8 w-8 text-primary-600 mx-auto mb-2" />
@@ -223,9 +206,6 @@ const InvestorRelations = () => {
           {milestones.map((milestone, index) => (
             <div
               key={index}
-}
-}
-}
               className="flex items-start gap-6 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <div className="bg-primary-600 text-white px-4 py-2 rounded-lg font-bold">

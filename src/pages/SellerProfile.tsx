@@ -522,8 +522,6 @@ const SellerProfile = () => {
                   .map((product: any) => (
                     <div
                       key={product.id}
-}
-}
                       className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                     >
                       <img
@@ -576,8 +574,6 @@ const SellerProfile = () => {
                   .map((product: any) => (
                     <div
                       key={product.id}
-}
-}
                       className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                     >
                       <img

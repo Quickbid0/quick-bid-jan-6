@@ -337,8 +337,6 @@ const ComplianceTracking = () => {
           {filteredItems.map((item) => (
             <div
               key={item.id}
-}
-}
               className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <div className="flex items-start justify-between">

@@ -32,9 +32,6 @@ import { useSafeClick, useFormSubmission } from '../ui-system/bug-prevention';
 // Trust indicators component
 const TrustIndicators: React.FC = () => (
   <div
-}
-}
-}
     className="flex items-center justify-center gap-8 mt-8"
   >
     {[
@@ -45,9 +42,6 @@ const TrustIndicators: React.FC = () => (
     ].map((item, index) => (
       <div
         key={item.label}
-}
-}
-}
         className="flex flex-col items-center gap-2 text-center"
       >
         <div className={`p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 ${item.color}`}>
@@ -62,18 +56,12 @@ const TrustIndicators: React.FC = () => (
 // Social proof component
 const SocialProof: React.FC = () => (
   <div
-}
-}
-}
     className="text-center mt-12"
   >
     <div className="flex items-center justify-center gap-2 mb-4">
       {[...Array(5)].map((_, i) => (
         <div
           key={i}
-}
-}
-}
         >
           <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
         </div>
@@ -131,9 +119,6 @@ const SuccessStories: React.FC = () => {
 
   return (
     <div
-}
-}
-}
       className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-80"
     >
       <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
@@ -142,13 +127,9 @@ const SuccessStories: React.FC = () => {
           <p className="text-sm text-gray-600">Real wins from our community</p>
         </div>
 
-        <Fragment mode="wait">
+        <Fragment>
           <div
             key={currentStory}
-}
-}
-}
-}
             className="text-center"
           >
             <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${stories[currentStory].gradient} flex items-center justify-center text-white font-bold text-lg`}>
@@ -235,16 +216,10 @@ export const EnhancedLogin: React.FC = () => {
         <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Branding & Trust */}
           <div
-}
-}
-}
             className="text-center lg:text-left"
           >
             {/* Hero Title with Gaming Typography */}
             <div
-}
-}
-}
               className="mb-6"
             >
               <h1
@@ -260,9 +235,6 @@ export const EnhancedLogin: React.FC = () => {
 
             {/* Feature Highlights */}
             <div
-}
-}
-}
               className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8"
             >
               {[
@@ -273,9 +245,6 @@ export const EnhancedLogin: React.FC = () => {
               ].map((feature, index) => (
                 <div
                   key={feature.label}
-}
-}
-}
                   className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
                 >
                   <feature.icon className={`w-5 h-5 ${feature.color}`} />
@@ -293,17 +262,11 @@ export const EnhancedLogin: React.FC = () => {
 
           {/* Right Side - Login Form */}
           <div
-}
-}
-}
             className="relative"
           >
             <Card className="p-8 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
               {/* Header */}
               <div
-}
-}
-}
                 className="text-center mb-8"
               >
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
@@ -317,9 +280,6 @@ export const EnhancedLogin: React.FC = () => {
               }} className="space-y-6">
                 {/* Email Field */}
                 <div
-}
-}
-}
                 >
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -339,9 +299,6 @@ export const EnhancedLogin: React.FC = () => {
 
                 {/* Password Field */}
                 <div
-}
-}
-}
                 >
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
@@ -368,9 +325,6 @@ export const EnhancedLogin: React.FC = () => {
 
                 {/* Remember Me & Forgot Password */}
                 <div
-}
-}
-}
                   className="flex items-center justify-between"
                 >
                   <label className="flex items-center">
@@ -392,9 +346,6 @@ export const EnhancedLogin: React.FC = () => {
 
                 {/* Login Button */}
                 <div
-}
-}
-}
                 >
                   <Button
                     type="submit"
@@ -410,9 +361,6 @@ export const EnhancedLogin: React.FC = () => {
 
                 {/* Social Login Options */}
                 <div
-}
-}
-}
                   className="relative"
                 >
                   <div className="absolute inset-0 flex items-center">
@@ -424,9 +372,6 @@ export const EnhancedLogin: React.FC = () => {
                 </div>
 
                 <div
-}
-}
-}
                   className="grid grid-cols-2 gap-4"
                 >
                   <button
@@ -454,9 +399,6 @@ export const EnhancedLogin: React.FC = () => {
 
                 {/* Sign Up Link */}
                 <div
-}
-}
-}
                   className="text-center"
                 >
                   <p className="text-gray-600">
@@ -550,9 +492,6 @@ export const EnhancedSignup: React.FC = () => {
           <Card className="p-8 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
             {/* Header */}
             <div
-}
-}
-}
               className="text-center mb-8"
             >
               <h1 className="text-4xl font-bold text-gray-900 mb-2">Join the Winners</h1>
@@ -568,7 +507,6 @@ export const EnhancedSignup: React.FC = () => {
                           ? 'bg-emerald-600 text-white'
                           : 'bg-gray-200 text-gray-400'
                       }`}
-}
                       whileTap={{ scale: 0.95 }}
                     >
                       {step}
@@ -589,14 +527,10 @@ export const EnhancedSignup: React.FC = () => {
             </div>
 
             {/* Multi-Step Form */}
-            <Fragment mode="wait">
+              <Fragment>
               {currentStep === 1 && (
                 <motion.form
                   key="step1"
-}
-}
-}
-}
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (formData.firstName && formData.lastName && formData.email) {
@@ -678,117 +612,7 @@ export const EnhancedSignup: React.FC = () => {
               {currentStep === 2 && (
                 <motion.form
                   key="step2"
-}
-}
-}
-}
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (formData.password && formData.confirmPassword && formData.password === formData.confirmPassword) {
-                      nextStep();
-                    }
-                  }}
-                  className="space-y-6"
-                >
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Account Security</h3>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <input
-                        type={showPassword ? 'text' : 'password'}
-                        value={formData.password}
-                        onChange={(e) => handleInputChange('password', e.target.value)}
-                        className="w-full pl-4 pr-12 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                        placeholder="Create a strong password"
-                        required
-                      />
-                      <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Confirm Password
-                    </label>
-                    <input
-                      type="password"
-                      value={formData.confirmPassword}
-                      onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 transition-all"
-                      placeholder="Confirm your password"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      I am a
-                    </label>
-                    <div className="grid grid-cols-2 gap-4">
-                      {[
-                        { value: 'buyer', label: 'Buyer', description: 'I want to bid on auctions' },
-                        { value: 'seller', label: 'Seller', description: 'I want to sell items' }
-                      ].map((option) => (
-                        <button
-                          key={option.value}
-                          type="button"
-                          onClick={() => handleInputChange('userType', option.value)}
-                          className={`p-4 border-2 rounded-lg text-left transition-all ${
-                            formData.userType === option.value
-                              ? 'border-emerald-500 bg-emerald-50 text-emerald-700'
-                              : 'border-gray-200 hover:border-gray-300'
-                          }`}
-                        >
-                          <div className="font-medium">{option.label}</div>
-                          <div className="text-sm text-gray-500 mt-1">{option.description}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-4">
-                    <Button
-                      type="button"
-                      onClick={prevStep}
-                      variant="outline"
-                      className="flex-1"
-                    >
-                      Back
-                    </Button>
-                    <Button
-                      type="submit"
-                      className="flex-1 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
-                      disabled={!formData.password || !formData.confirmPassword || formData.password !== formData.confirmPassword}
-                    >
-                      Continue
-                      <ArrowRight className="ml-2 w-5 h-5" />
-                    </Button>
-                  </div>
-                </motion.form>
-              )}
-
-              {currentStep === 3 && (
-                <motion.form
-                  key="step3"
-}
-}
-}
-}
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (formData.agreeToTerms) {
-                      handleSubmit(formData);
-                    }
-                  }}
+                  onSubmit={handleSubmit}
                   className="space-y-6"
                 >
                   <h3 className="text-xl font-semibold text-gray-900 mb-4">Terms & Verification</h3>
@@ -854,9 +678,6 @@ export const EnhancedSignup: React.FC = () => {
 
             {/* Login Link */}
             <div
-}
-}
-}
               className="text-center mt-8 pt-6 border-t border-gray-200"
             >
               <p className="text-gray-600">
