@@ -6,7 +6,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { AppController } from './app.controller';
-import { PrismaService } from './prisma/prisma.service';
+import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
   imports: [
@@ -14,6 +14,8 @@ import { PrismaService } from './prisma/prisma.service';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
+
+    PrismaModule,
 
     AuthModule,
     // ProductsModule,

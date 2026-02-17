@@ -5,7 +5,6 @@ import * as dotenv from 'dotenv';
 // Load environment variables
 dotenv.config();
 
-@Injectable()
 export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(PrismaService.name);
 
@@ -76,7 +75,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         await this.auction.deleteMany();
         this.logger.log('Database cleaned successfully');
       } catch (error) {
-        this.logger.error('Failed to clean database:', error.message);
+        this.logger.error('Failed to clean database:', (error as Error).message);
         // Do NOT throw
       }
     }

@@ -1,8 +1,6 @@
 import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { PrismaService } from '../prisma/prisma.service';
-import { EmailService } from '../email/email.service';
-import { Account, Role, UserStatus } from '@prisma/client';
+import { PrismaService } from '../../backend/src/prisma/prisma.service';
+import { User as Account, UserRole as Role } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 export interface LoginDto {
@@ -46,7 +44,7 @@ export class AuthService {
       where: { 
         email: email.toLowerCase(),
         isActive: true,
-        status: UserStatus.ACTIVE
+        status: 'ACTIVE'
       },
       include: {
         profile: true
@@ -137,8 +135,8 @@ export class AuthService {
         passwordHash,
         name,
         role,
-        status: UserStatus.PENDING_VERIFICATION,
-        emailVerified: 'UNVERIFIED',
+        status: 'PENDING_VERIFICATION',
+        emailVerified: false,
         verificationToken: this.generateVerificationToken(),
       }
     });
@@ -265,7 +263,7 @@ export class AuthService {
       where: { 
         id: userId,
         isActive: true,
-        status: UserStatus.ACTIVE
+        status: 'ACTIVE'
       },
       include: {
         profile: true
@@ -298,7 +296,7 @@ export class AuthService {
     const user = await this.prismaService.account.findFirst({
       where: { 
         verificationToken: token,
-        status: UserStatus.PENDING_VERIFICATION 
+        status: 'PENDING_VERIFICATION' 
       }
     });
 
@@ -309,8 +307,8 @@ export class AuthService {
     await this.prismaService.account.update({
       where: { id: user.id },
       data: {
-        status: UserStatus.ACTIVE,
-        emailVerified: 'VERIFIED',
+        status: 'ACTIVE',
+        emailVerified: true,
         verificationToken: null
       }
     });

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaService } from './prisma/prisma.service';
 
 @Controller()
 export class AppController {

@@ -13,6 +13,7 @@ const event_emitter_1 = require("@nestjs/event-emitter");
 const auth_module_1 = require("./auth/auth.module");
 const health_module_1 = require("./health/health.module");
 const app_controller_1 = require("./app.controller");
+const prisma_module_1 = require("./prisma/prisma.module");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -23,6 +24,7 @@ exports.AppModule = AppModule = __decorate([
                 isGlobal: true,
             }),
             event_emitter_1.EventEmitterModule.forRoot(),
+            prisma_module_1.PrismaModule,
             auth_module_1.AuthModule,
             health_module_1.HealthModule,
         ],
