@@ -29,7 +29,6 @@ import {
   ArrowUp,
   ArrowDown
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 ChartJS.register(
   CategoryScale,
@@ -157,9 +156,9 @@ const MarketAnalytics = () => {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -169,12 +168,12 @@ const MarketAnalytics = () => {
             </div>
             <DollarSign className="h-8 w-8 text-green-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -184,12 +183,12 @@ const MarketAnalytics = () => {
             </div>
             <Activity className="h-8 w-8 text-blue-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -199,12 +198,12 @@ const MarketAnalytics = () => {
             </div>
             <Target className="h-8 w-8 text-purple-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -214,12 +213,12 @@ const MarketAnalytics = () => {
             </div>
             <TrendingUp className="h-8 w-8 text-green-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -229,12 +228,12 @@ const MarketAnalytics = () => {
             </div>
             <Users className="h-8 w-8 text-orange-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -244,7 +243,7 @@ const MarketAnalytics = () => {
             </div>
             <Package className="h-8 w-8 text-indigo-500" />
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Charts */}
@@ -313,11 +312,11 @@ const MarketAnalytics = () => {
         <h2 className="text-xl font-semibold mb-6">Market Insights</h2>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {insights.map((insight, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="p-4 border rounded-lg"
             >
               <div className="flex items-center justify-between mb-2">
@@ -327,7 +326,7 @@ const MarketAnalytics = () => {
                 </span>
               </div>
               <p className="text-sm text-gray-600 dark:text-gray-300">{insight.description}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

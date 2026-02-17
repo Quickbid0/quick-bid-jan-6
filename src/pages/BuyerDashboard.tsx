@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   Wallet,
   Gavel,
@@ -312,10 +311,10 @@ export default function EliteBuyerDashboard() {
         {activeView === 'overview' && (
           <div className="space-y-8">
             {/* Hero Welcome */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <div
+}
+}
+}
               className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl p-8 text-white"
             >
               <div className="flex items-center justify-between">
@@ -330,7 +329,7 @@ export default function EliteBuyerDashboard() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* LARGE KPI CARDS - Elite Feature */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -368,11 +367,11 @@ export default function EliteBuyerDashboard() {
                   color: 'purple'
                 }
               ].map((kpi, index) => (
-                <motion.div
+                <div
                   key={kpi.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: index * 0.1 }}
+}
+}
+}
                   className="bg-white rounded-2xl p-6 shadow-xl border border-neutral-200 hover:shadow-2xl transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-4">
@@ -399,15 +398,15 @@ export default function EliteBuyerDashboard() {
                       <div className="text-sm text-neutral-500 mt-1">{kpi.change}</div>
                     )}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
 
             {/* AI Suggestions Card - Elite Feature */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
+            <div
+}
+}
+}
               className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
             >
               <div className="flex items-center gap-4 mb-6">
@@ -422,11 +421,11 @@ export default function EliteBuyerDashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {aiSuggestions.map((suggestion, index) => (
-                  <motion.div
+                  <div
                     key={suggestion.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
+}
+}
+}
                     className={`rounded-xl p-6 border-2 transition-all duration-250 hover:shadow-lg ${
                       suggestion.type === 'bid'
                         ? 'border-primary-200 bg-primary-50 hover:border-primary-300'
@@ -473,16 +472,16 @@ export default function EliteBuyerDashboard() {
                         {suggestion.action}
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
             {/* Active Bids Preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
+            <div
+}
+}
+}
               className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
             >
               <div className="flex items-center justify-between mb-6">
@@ -499,11 +498,11 @@ export default function EliteBuyerDashboard() {
                 {activeBids.slice(0, 3).map((bid, index) => {
                   const StatusIcon = getBidStatusIcon(bid.status);
                   return (
-                    <motion.div
+                    <div
                       key={bid.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
+}
+}
+}
                       className="border border-neutral-200 rounded-xl p-6 hover:shadow-lg transition-all duration-250"
                     >
                       <div className="flex items-start gap-4 mb-4">
@@ -543,17 +542,17 @@ export default function EliteBuyerDashboard() {
                       <button className="w-full bg-primary-600 text-white py-3 rounded-xl font-semibold hover:bg-primary-700 transition-all duration-250">
                         {bid.status === 'outbid' ? 'Bid Again' : 'View Auction'}
                       </button>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
 
             {/* Recent Wins */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+            <div
+}
+}
+}
               className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
             >
               <div className="flex items-center justify-between mb-6">
@@ -568,11 +567,11 @@ export default function EliteBuyerDashboard() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {wonAuctions.map((auction, index) => (
-                  <motion.div
+                  <div
                     key={auction.id}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: index * 0.1 }}
+}
+}
+}
                     className="flex items-center gap-6 p-6 border border-neutral-200 rounded-xl hover:shadow-lg transition-all duration-250"
                   >
                     <img
@@ -598,10 +597,10 @@ export default function EliteBuyerDashboard() {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -616,11 +615,11 @@ export default function EliteBuyerDashboard() {
               {activeBids.map((bid, index) => {
                 const StatusIcon = getBidStatusIcon(bid.status);
                 return (
-                  <motion.div
+                  <div
                     key={bid.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
+}
+}
+}
                     className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
                   >
                     <div className="flex items-start gap-6">
@@ -676,7 +675,7 @@ export default function EliteBuyerDashboard() {
                         </div>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -692,11 +691,11 @@ export default function EliteBuyerDashboard() {
 
             <div className="grid grid-cols-1 gap-6">
               {wonAuctions.map((auction, index) => (
-                <motion.div
+                <div
                   key={auction.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.05 }}
+}
+}
+}
                   className="bg-white rounded-2xl p-8 shadow-xl border border-neutral-200"
                 >
                   <div className="flex items-start gap-6">
@@ -743,7 +742,7 @@ export default function EliteBuyerDashboard() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -760,17 +759,17 @@ export default function EliteBuyerDashboard() {
                 { label: 'Total Bids', value: stats.totalBidsPlaced.toString(), change: '+23', color: 'blue' },
                 { label: 'Success Value', value: formatPrice(stats.totalSpent), change: '+₹1.2L', color: 'purple' }
               ].map((metric, index) => (
-                <motion.div
+                <div
                   key={metric.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+}
+}
+}
                   className="bg-white rounded-2xl p-6 shadow-xl border border-neutral-200 text-center"
                 >
                   <div className={`text-3xl font-bold text-${metric.color}-600 mb-2`}>{metric.value}</div>
                   <div className="text-neutral-900 font-semibold mb-1">{metric.label}</div>
                   <div className="text-emerald-600 text-sm font-medium">{metric.change} this month</div>
-                </motion.div>
+                </div>
               ))}
             </div>
 

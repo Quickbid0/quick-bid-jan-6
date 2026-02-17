@@ -3,7 +3,6 @@ import { supabase } from '../config/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { Building, Upload, CheckCircle, AlertCircle, Loader2, FileText, CreditCard } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { Clock } from 'lucide-react';
 
 const VerifySeller = () => {
@@ -120,9 +119,9 @@ const VerifySeller = () => {
     switch (verificationStatus) {
       case 'submitted':
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="text-center p-6 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg"
           >
             <AlertCircle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
@@ -146,14 +145,14 @@ const VerifySeller = () => {
                 Seller Dashboard
               </button>
             </div>
-          </motion.div>
+          </div>
         );
 
       case 'approved':
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="text-center p-6 bg-green-50 dark:bg-green-900/20 rounded-lg"
           >
             <CheckCircle className="h-12 w-12 text-green-500 mx-auto mb-4" />
@@ -177,7 +176,7 @@ const VerifySeller = () => {
                 View Analytics
               </button>
             </div>
-          </motion.div>
+          </div>
         );
 
       default:

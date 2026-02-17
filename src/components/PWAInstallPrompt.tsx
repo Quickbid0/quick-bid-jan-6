@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { X, Download, Smartphone, Monitor } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -114,12 +113,12 @@ const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className = '' }) =
   }
 
   return (
-    <AnimatePresence>
+    <Fragment>
       {showPrompt && (
-        <motion.div
-          initial={{ opacity: 0, y: 100 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 100 }}
+        <div
+}
+}
+}
           className={`fixed bottom-4 left-4 right-4 z-50 ${className}`}
         >
           <div className="bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 p-4 max-w-sm mx-auto">
@@ -178,9 +177,9 @@ const PWAInstallPrompt: React.FC<PWAInstallPromptProps> = ({ className = '' }) =
               </p>
             )}
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </Fragment>
   );
 };
 

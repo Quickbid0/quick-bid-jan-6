@@ -2,7 +2,6 @@
 // Interactive demonstration of all the new gaming, fintech, and SaaS components
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
   Star,
@@ -244,21 +243,21 @@ export const QuickMelaDemoShowcase: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="text-center mb-12"
       >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+        <div
+}
+}
+}
           className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full text-lg font-bold mb-6"
         >
           <Trophy className="w-6 h-6" />
           QuickMela Redesign Showcase
-        </motion.div>
+        </div>
 
         <h1 className="text-5xl font-black text-gray-900 mb-4">
           🎨 Complete UI/UX Transformation
@@ -269,10 +268,10 @@ export const QuickMelaDemoShowcase: React.FC = () => {
         </p>
 
         {/* Search */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
+        <div
+}
+}
+}
           className="max-w-md mx-auto mb-8"
         >
           <div className="relative">
@@ -287,14 +286,14 @@ export const QuickMelaDemoShowcase: React.FC = () => {
               <Target className="w-5 h-5" />
             </div>
           </div>
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {/* Category Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex flex-wrap justify-center gap-2 mb-8"
       >
         {categories.map((category) => (
@@ -315,23 +314,23 @@ export const QuickMelaDemoShowcase: React.FC = () => {
             </span>
           </button>
         ))}
-      </motion.div>
+      </div>
 
       {/* Component Grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+      <div
+}
+}
+}
       >
         <Grid cols={3} gap="lg">
           {filteredSections.map((section, index) => {
             const Icon = section.icon;
             return (
-              <motion.div
+              <div
                 key={section.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1, duration: 0.5 }}
+}
+}
+}
                 className={`${section.featured ? 'md:col-span-2 lg:col-span-1' : ''}`}
               >
                 <Card
@@ -341,13 +340,13 @@ export const QuickMelaDemoShowcase: React.FC = () => {
                   onClick={() => handleDemoSelect(section.id)}
                 >
                   <div className="flex items-start gap-4 mb-4">
-                    <motion.div
+                    <div
                       className={`p-3 rounded-lg ${section.featured ? 'bg-purple-100' : 'bg-gray-100'}`}
-                      whileHover={{ scale: 1.1, rotate: 5 }}
-                      transition={{ duration: 0.2 }}
+}
+}
                     >
                       <Icon className={`w-6 h-6 ${section.featured ? 'text-purple-600' : 'text-gray-600'}`} />
-                    </motion.div>
+                    </div>
 
                     <div className="flex-1">
                       <h3 className={`font-bold mb-2 group-hover:text-blue-600 transition-colors ${
@@ -375,41 +374,41 @@ export const QuickMelaDemoShowcase: React.FC = () => {
                       )}
                     </div>
 
-                    <motion.div
+                    <div
                       className="flex items-center gap-1 text-blue-600 group-hover:text-blue-700"
-                      whileHover={{ x: 5 }}
-                      transition={{ duration: 0.2 }}
+}
+}
                     >
                       <span className="text-sm font-medium">Try Demo</span>
                       <ChevronRight className="w-4 h-4" />
-                    </motion.div>
+                    </div>
                   </div>
 
                   {section.featured && (
-                    <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 1, duration: 0.5 }}
+                    <div
+}
+}
+}
                       className="mt-4 pt-4 border-t border-purple-200"
                     >
                       <div className="flex items-center gap-2 text-purple-700">
                         <Star className="w-4 h-4 fill-current" />
                         <span className="text-sm font-medium">Featured Component</span>
                       </div>
-                    </motion.div>
+                    </div>
                   )}
                 </Card>
-              </motion.div>
+              </div>
             );
           })}
         </Grid>
-      </motion.div>
+      </div>
 
       {/* Stats Footer */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mt-16 text-center"
       >
         <Card className="p-8 bg-gradient-to-r from-emerald-600 to-blue-600 text-white">
@@ -448,7 +447,7 @@ export const QuickMelaDemoShowcase: React.FC = () => {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
     </Container>
   );
 };

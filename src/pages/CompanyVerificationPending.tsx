@@ -13,7 +13,6 @@ import {
   Calendar,
   ArrowRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const CompanyVerificationPending = () => {
   const [verificationStatus, setVerificationStatus] = useState('submitted');
@@ -113,9 +112,9 @@ const CompanyVerificationPending = () => {
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-12 px-4">
       <div className="max-w-4xl mx-auto">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className="text-center mb-12"
         >
           <Building className="h-20 w-20 text-indigo-600 mx-auto mb-6" />
@@ -125,13 +124,13 @@ const CompanyVerificationPending = () => {
           <p className="text-xl text-gray-600 dark:text-gray-400">
             Track your company registration progress
           </p>
-        </motion.div>
+        </div>
 
         {/* Status Card */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+}
+}
+}
           className={`border-2 rounded-2xl p-8 mb-8 ${statusInfo.color}`}
         >
           <div className="text-center">
@@ -143,14 +142,14 @@ const CompanyVerificationPending = () => {
               <span className="font-medium">Expected: {statusInfo.timeline}</span>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Company Details Summary */}
         {companyDetails && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8"
           >
             <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
@@ -198,14 +197,14 @@ const CompanyVerificationPending = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
 
         {/* Verification Process Timeline */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8 mb-8"
         >
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
@@ -265,13 +264,13 @@ const CompanyVerificationPending = () => {
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Next Steps */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
         >
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">
@@ -309,7 +308,7 @@ const CompanyVerificationPending = () => {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Contact Support */}
         <div className="mt-8 text-center">

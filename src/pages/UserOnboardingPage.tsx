@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   User,
@@ -233,9 +232,9 @@ const UserOnboardingPage: React.FC = () => {
     switch (currentStep) {
       case 1:
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="space-y-8"
           >
             <div className="text-center">
@@ -245,8 +244,8 @@ const UserOnboardingPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-2xl mx-auto">
               {/* Buyer Account */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                   formData.userType === 'buyer'
                     ? 'border-blue-500 bg-blue-50'
@@ -267,11 +266,11 @@ const UserOnboardingPage: React.FC = () => {
                     <li>• Secure escrow payments</li>
                   </ul>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Dealer Account */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-all ${
                   formData.userType === 'dealer'
                     ? 'border-orange-500 bg-orange-50'
@@ -292,7 +291,7 @@ const UserOnboardingPage: React.FC = () => {
                     <li>• Priority auction placement</li>
                   </ul>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {errors.userType && (
@@ -324,14 +323,14 @@ const UserOnboardingPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         );
 
       case 2:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+          <div
+}
+}
             className="space-y-6"
           >
             <div>
@@ -475,14 +474,14 @@ const UserOnboardingPage: React.FC = () => {
                 </div>
               </Card>
             )}
-          </motion.div>
+          </div>
         );
 
       case 3:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+          <div
+}
+}
             className="space-y-6"
           >
             <div>
@@ -723,14 +722,14 @@ const UserOnboardingPage: React.FC = () => {
                 </div>
               </Card>
             )}
-          </motion.div>
+          </div>
         );
 
       case 4:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+          <div
+}
+}
             className="space-y-6"
           >
             <div>
@@ -908,14 +907,14 @@ const UserOnboardingPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         );
 
       case 5:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+          <div
+}
+}
             className="space-y-6"
           >
             <div>
@@ -1040,7 +1039,7 @@ const UserOnboardingPage: React.FC = () => {
                 </p>
               </div>
             </Card>
-          </motion.div>
+          </div>
         );
 
       default:

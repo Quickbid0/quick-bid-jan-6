@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Clock,
   Users,
@@ -324,30 +323,30 @@ const LiveBiddingPage: React.FC = () => {
                   </div>
 
                   {/* Bid Status */}
-                  <AnimatePresence>
+                  <Fragment>
                     {bidStatus === 'error' && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
+                      <div
+}
+}
+}
                         className="mt-3 flex items-center gap-2 text-red-600"
                       >
                         <AlertCircle className="h-4 w-4" />
                         <span className="text-sm">Bid must be higher than current bid</span>
-                      </motion.div>
+                      </div>
                     )}
                     {bidStatus === 'success' && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
+                      <div
+}
+}
+}
                         className="mt-3 flex items-center gap-2 text-green-600"
                       >
                         <CheckCircle className="h-4 w-4" />
                         <span className="text-sm">Your bid has been placed successfully!</span>
-                      </motion.div>
+                      </div>
                     )}
-                  </AnimatePresence>
+                  </Fragment>
                 </div>
               )}
 
@@ -481,12 +480,12 @@ const LiveBiddingPage: React.FC = () => {
                 </Button>
               </div>
 
-              <AnimatePresence>
+              <Fragment>
                 {showBidHistory && (
-                  <motion.div
-                    initial={{ height: 0 }}
-                    animate={{ height: 'auto' }}
-                    exit={{ height: 0 }}
+                  <div
+}
+}
+}
                     className="space-y-3"
                   >
                     {bids.map((bid, index) => (
@@ -511,9 +510,9 @@ const LiveBiddingPage: React.FC = () => {
                         </div>
                       </div>
                     ))}
-                  </motion.div>
+                  </div>
                 )}
-              </AnimatePresence>
+              </Fragment>
             </Card>
 
             {/* Live Chat */}

@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { CheckCircle, AlertTriangle, XCircle, RefreshCw, Activity, Database, Wifi, Shield, Clock, Server, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface HealthCheckItem {
@@ -378,11 +377,11 @@ const HealthCheck: React.FC = () => {
       {/* Health Checks */}
       <div className="space-y-3">
         {systemHealth.checks.map((check, index) => (
-          <motion.div
+          <div
             key={check.name}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+}
+}
+}
             className={`border rounded-lg p-4 ${getStatusColor(check.status)}`}
           >
             <div className="flex items-center justify-between">
@@ -410,7 +409,7 @@ const HealthCheck: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

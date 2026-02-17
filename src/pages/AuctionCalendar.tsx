@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Calendar, Clock, Bell, Eye, Filter, Plus, Video, Timer, FileText, Users, TrendingUp } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -303,10 +302,10 @@ const AuctionCalendar = () => {
             ) : (
               <div className="space-y-3">
                 {getAuctionsForDate(selectedDate).map(auction => (
-                  <motion.div
+                  <div
                     key={auction.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
+}
+}
                     className="border rounded-lg p-3 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between mb-2">
@@ -335,7 +334,7 @@ const AuctionCalendar = () => {
                         <Bell className="h-4 w-4" />
                       </button>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             )}

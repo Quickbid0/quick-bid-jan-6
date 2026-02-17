@@ -23,7 +23,6 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface StreamControl {

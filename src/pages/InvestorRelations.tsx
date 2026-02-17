@@ -13,7 +13,6 @@ import {
   Legend,
   Filler
 } from 'chart.js';
-import { motion } from 'framer-motion';
 import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 
@@ -120,70 +119,70 @@ const InvestorRelations = () => {
 
       {/* Key Metrics */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-16">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <DollarSign className="h-8 w-8 text-green-500 mx-auto mb-2" />
           <p className="text-sm text-gray-500">Annual Revenue</p>
           <p className="text-2xl font-bold text-green-600">₹{(financialData.revenue / 10000000).toFixed(0)} Cr</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <TrendingUp className="h-8 w-8 text-primary-600 mx-auto mb-2" />
           <p className="text-sm text-gray-500">YoY Growth</p>
           <p className="text-2xl font-bold text-primary-600">{financialData.growth}%</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <Users className="h-8 w-8 text-purple-500 mx-auto mb-2" />
           <p className="text-sm text-gray-500">Active Users</p>
           <p className="text-2xl font-bold text-purple-600">{(financialData.users / 1000).toFixed(0)}K</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <BarChart3 className="h-8 w-8 text-orange-500 mx-auto mb-2" />
           <p className="text-sm text-gray-500">Transactions</p>
           <p className="text-2xl font-bold text-orange-600">{(financialData.transactions / 1000).toFixed(0)}K</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <Globe className="h-8 w-8 text-red-500 mx-auto mb-2" />
           <p className="text-sm text-gray-500">Market Share</p>
           <p className="text-2xl font-bold text-red-600">{financialData.marketShare}%</p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
         >
           <Target className="h-8 w-8 text-primary-600 mx-auto mb-2" />
           <p className="text-sm text-gray-500">Valuation</p>
           <p className="text-2xl font-bold text-primary-600">₹{(financialData.valuation / 10000000).toFixed(0)} Cr</p>
-        </motion.div>
+        </div>
       </div>
 
       {/* Financial Charts */}
@@ -222,11 +221,11 @@ const InvestorRelations = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Company Milestones</h2>
         <div className="space-y-6">
           {milestones.map((milestone, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="flex items-start gap-6 p-4 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <div className="bg-primary-600 text-white px-4 py-2 rounded-lg font-bold">
@@ -236,7 +235,7 @@ const InvestorRelations = () => {
                 <h3 className="font-semibold text-lg">{milestone.event}</h3>
                 <p className="text-gray-600 dark:text-gray-300">{milestone.description}</p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

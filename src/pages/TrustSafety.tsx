@@ -20,7 +20,6 @@ import {
   Building,
   Scale
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const TrustSafety = () => {
   const [activeTab, setActiveTab] = useState('overview');
@@ -194,11 +193,11 @@ const TrustSafety = () => {
           {/* Trust Metrics */}
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             {trustMetrics.map((metric, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+}
+}
+}
                 className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center"
               >
                 <div className="mb-4">{metric.icon}</div>
@@ -206,18 +205,18 @@ const TrustSafety = () => {
                   {metric.value}
                 </div>
                 <div className="text-sm text-gray-500">{metric.label}</div>
-              </motion.div>
+              </div>
             ))}
           </div>
 
           {/* Safety Features */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {safetyFeatures.map((feature, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.2 }}
+}
+}
+}
                 className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-sm"
               >
                 <div className="mb-6">{feature.icon}</div>
@@ -238,7 +237,7 @@ const TrustSafety = () => {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -250,11 +249,11 @@ const TrustSafety = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Verification Process</h2>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {verificationProcess.map((step, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+}
+}
+}
                   className="text-center"
                 >
                   <div className="bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-xl mb-4 inline-block">
@@ -265,7 +264,7 @@ const TrustSafety = () => {
                   </div>
                   <h3 className="font-semibold text-gray-900 dark:text-white mb-2">{step.title}</h3>
                   <p className="text-sm text-gray-600 dark:text-gray-300">{step.description}</p>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
@@ -275,11 +274,11 @@ const TrustSafety = () => {
       {activeTab === 'security' && (
         <div className="space-y-8">
           {securityMeasures.map((category, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-8"
             >
               <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-6">{category.category}</h3>
@@ -291,7 +290,7 @@ const TrustSafety = () => {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
@@ -304,11 +303,11 @@ const TrustSafety = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {safetyTips.map((section, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+}
+}
+}
               >
                 <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
                   {section.title}
@@ -321,7 +320,7 @@ const TrustSafety = () => {
                     </li>
                   ))}
                 </ul>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

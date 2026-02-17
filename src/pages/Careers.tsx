@@ -1,5 +1,4 @@
 import { Briefcase, Heart, Zap, Globe, Award } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const Careers = () => {
   const openPositions = [
@@ -84,17 +83,17 @@ const Careers = () => {
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map((benefit, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl"
             >
               <div className="mb-4">{benefit.icon}</div>
               <h3 className="font-semibold mb-2">{benefit.title}</h3>
               <p className="text-sm text-gray-600 dark:text-gray-300">{benefit.description}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -104,11 +103,11 @@ const Careers = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Open Positions</h2>
         <div className="space-y-6">
           {openPositions.map((position, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow"
             >
               <div className="flex justify-between items-start">
@@ -135,7 +134,7 @@ const Careers = () => {
                   Apply Now
                 </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

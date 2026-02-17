@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   TrendingUp,
   Users,
@@ -108,10 +107,10 @@ const AuctionAnalyticsDashboard: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Overview Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -124,12 +123,12 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -142,12 +141,12 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -160,12 +159,12 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -178,16 +177,16 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         </div>
 
         {/* Charts Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Bid Trends */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center justify-between mb-6">
@@ -209,13 +208,13 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </div>
 
           {/* Revenue Trends */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center justify-between mb-6">
@@ -237,16 +236,16 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </div>
         </div>
 
         {/* Category Performance & Recent Activity */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Top Categories */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Top Categories</h3>
@@ -265,13 +264,13 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </div>
 
           {/* Recent Activity */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Recent Activity</h3>
@@ -294,7 +293,7 @@ const AuctionAnalyticsDashboard: React.FC = () => {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

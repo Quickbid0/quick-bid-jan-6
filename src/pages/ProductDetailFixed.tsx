@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { supabase } from '../config/supabaseClient';
 import {
@@ -613,11 +612,11 @@ export default function EliteProductListing() {
 
                     <div className="space-y-4">
                       {bids.map((bid, index) => (
-                        <motion.div
+                        <div
                           key={bid.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: index * 0.1 }}
+}
+}
+}
                           className={`flex items-center justify-between p-4 rounded-xl border ${
                             index === 0
                               ? 'bg-emerald-50 border-emerald-200'
@@ -647,7 +646,7 @@ export default function EliteProductListing() {
                               </div>
                             )}
                           </div>
-                        </motion.div>
+                        </div>
                       ))}
                     </div>
                   </div>

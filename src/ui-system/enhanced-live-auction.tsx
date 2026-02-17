@@ -2,7 +2,6 @@
 // Revolutionary auction interface with bid intensity, countdown psychology, and real-time excitement
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Zap,
   Volume2,
@@ -61,23 +60,23 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
   const { level, color, icon: Icon } = getIntensityLevel(intensity);
 
   return (
-    <motion.div
-      initial={{ scale: 0.8, opacity: 0 }}
-      animate={{ scale: 1, opacity: 1 }}
-      transition={{ duration: 0.5 }}
+    <div
+}
+}
+}
       className={`bg-gradient-to-r from-gray-900 to-gray-800 text-white p-4 rounded-2xl ${className}`}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <motion.div
+          <div
             animate={{
               scale: intensity > 70 ? [1, 1.2, 1] : 1,
               rotate: intensity > 90 ? [0, 10, -10, 0] : 0
             }}
-            transition={{ duration: 0.5, repeat: intensity > 70 ? Infinity : 0 }}
+}
           >
             <Icon className="w-5 h-5" style={{ color }} />
-          </motion.div>
+          </div>
           <span className="text-sm font-bold">BID INTENSITY</span>
         </div>
         <div className="flex items-center gap-1 text-xs">
@@ -93,16 +92,16 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
         </div>
 
         <div className="w-full bg-gray-700 rounded-full h-3 overflow-hidden">
-          <motion.div
+          <div
             className="h-full rounded-full relative"
             style={{ background: `linear-gradient(90deg, ${color} 0%, ${color}DD 100%)` }}
-            initial={{ width: 0 }}
-            animate={{ width: `${intensity}%` }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+}
+%` }}
+}
           >
             {/* Animated particles for high intensity */}
             {intensity > 70 && (
-              <motion.div
+              <div
                 className="absolute inset-0"
                 animate={{
                   background: [
@@ -111,10 +110,10 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
                     `linear-gradient(90deg, transparent 0%, ${color} 50%, transparent 100%)`
                   ]
                 }}
-                transition={{ duration: 1, repeat: Infinity }}
+}
               />
             )}
-          </motion.div>
+          </div>
         </div>
 
         {/* Intensity indicators */}
@@ -123,21 +122,21 @@ const BidIntensityMeter: React.FC<BidIntensityMeterProps> = ({ intensity, bidder
             const threshold = index * 25;
             const isActive = intensity >= threshold;
             return (
-              <motion.div
+              <div
                 key={label}
                 className={`text-xs font-bold transition-colors ${
                   isActive ? 'text-white' : 'text-gray-500'
                 }`}
-                animate={isActive ? { scale: [1, 1.2, 1] } : {}}
-                transition={{ duration: 0.3 }}
+ : {}}
+}
               >
                 {label[0]}
-              </motion.div>
+              </div>
             );
           })}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -171,20 +170,20 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
   const isExciting = secondsLeft <= 60;
 
   return (
-    <motion.div
+    <div
       className={`relative ${className}`}
       animate={isCritical ? {
         scale: [1, 1.05, 1],
         borderColor: [countdownColor, '#ef4444', countdownColor]
       } : {}}
-      transition={{ duration: 0.5, repeat: isCritical ? Infinity : 0 }}
+}
     >
       {/* Background glow for critical moments */}
       {isCritical && (
-        <motion.div
+        <div
           className="absolute inset-0 bg-red-500/20 rounded-2xl blur-xl"
-          animate={{ opacity: [0.3, 0.8, 0.3] }}
-          transition={{ duration: 0.8, repeat: Infinity }}
+}
+}
         />
       )}
 
@@ -194,32 +193,32 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
         {/* Animated background pattern */}
         <div className="absolute inset-0 opacity-10">
-          <motion.div
+          <div
             className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent"
-            animate={isCritical ? { scale: [1, 1.2, 1] } : {}}
-            transition={{ duration: 0.5, repeat: isCritical ? Infinity : 0 }}
+ : {}}
+}
           />
         </div>
 
         <div className="relative z-10">
-          <motion.div
+          <div
             className="mb-4"
-            animate={isExciting ? { scale: [1, 1.1, 1] } : {}}
-            transition={{ duration: 1, repeat: isExciting ? Infinity : 0 }}
+ : {}}
+}
           >
             <Timer className={`w-12 h-12 mx-auto mb-2 ${
               isLeading ? 'text-white' : countdownColor === colors.gamingStates.urgent ? 'text-red-400' : 'text-blue-400'
             }`} />
             {isLeading && <Crown className="w-6 h-6 mx-auto text-yellow-300" />}
-          </motion.div>
+          </div>
 
-          <motion.div
+          <div
             className="mb-4"
             animate={isCritical ? {
               scale: [1, 1.2, 1],
               color: ['#ffffff', '#fbbf24', '#ffffff']
             } : {}}
-            transition={{ duration: 0.3, repeat: isCritical ? Infinity : 0 }}
+}
           >
             <div
               className="text-5xl font-black mb-2"
@@ -230,7 +229,7 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
             <p className={`text-sm font-medium ${isLeading ? 'text-emerald-100' : 'text-gray-300'}`}>
               {isLeading ? 'YOU\'RE LEADING! 🔥' : 'Time Remaining'}
             </p>
-          </motion.div>
+          </div>
 
           {/* Progress ring */}
           <div className="relative w-24 h-24 mx-auto mb-4">
@@ -253,9 +252,9 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
                 strokeWidth="8"
                 fill="none"
                 strokeLinecap="round"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: progress / 100 }}
-                transition={{ duration: 0.5, ease: "easeInOut" }}
+}
+}
+}
                 style={{
                   strokeDasharray: '283',
                   strokeDashoffset: `calc(283 - (283 * ${progress}) / 100)`
@@ -265,42 +264,42 @@ const CountdownTimer: React.FC<CountdownTimerProps> = ({
 
             {/* Center content */}
             <div className="absolute inset-0 flex items-center justify-center">
-              <motion.div
+              <div
                 className="text-lg font-bold"
-                animate={isWarning ? { scale: [1, 1.1, 1] } : {}}
-                transition={{ duration: 0.5, repeat: isWarning ? Infinity : 0 }}
+ : {}}
+}
               >
                 {Math.round(progress)}%
-              </motion.div>
+              </div>
             </div>
           </div>
 
           {/* Urgency messages */}
-          <AnimatePresence>
+          <Fragment>
             {isCritical && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.8 }}
+              <div
+}
+}
+}
                 className="text-red-300 font-bold text-sm"
               >
                 ⚡ FINAL SECONDS ⚡
-              </motion.div>
+              </div>
             )}
             {isWarning && !isCritical && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
+              <div
+}
+}
+}
                 className="text-orange-300 font-bold text-sm"
               >
                 🚀 GET READY TO BID 🚀
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </Fragment>
         </div>
       </Card>
-    </motion.div>
+    </div>
   );
 };
 
@@ -322,22 +321,22 @@ const BidTicker: React.FC<BidTickerProps> = ({ bids, className }) => {
       <div className="flex items-center gap-2 mb-3">
         <Activity className="w-4 h-4 text-blue-300" />
         <span className="text-sm font-bold">LIVE BID TICKER</span>
-        <motion.div
-          animate={{ scale: [1, 1.2, 1] }}
-          transition={{ duration: 2, repeat: Infinity }}
+        <div
+}
+}
           className="w-2 h-2 bg-green-400 rounded-full"
         />
       </div>
 
       <div className="space-y-2 max-h-40 overflow-y-auto">
-        <AnimatePresence>
+        <Fragment>
           {bids.slice(0, 5).map((bid, index) => (
-            <motion.div
+            <div
               key={bid.id}
-              initial={{ opacity: 0, x: -20, height: 0 }}
-              animate={{ opacity: 1, x: 0, height: 'auto' }}
-              exit={{ opacity: 0, x: 20, height: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+}
+}
+}
+}
               className={`flex items-center justify-between py-2 px-3 rounded-lg ${
                 bid.isYou
                   ? 'bg-emerald-500/20 border border-emerald-400'
@@ -358,9 +357,9 @@ const BidTicker: React.FC<BidTickerProps> = ({ bids, className }) => {
                   {bid.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                 </span>
               </div>
-            </motion.div>
+            </div>
           ))}
-        </AnimatePresence>
+        </Fragment>
       </div>
     </Card>
   );
@@ -399,29 +398,29 @@ const WinningProbability: React.FC<WinningProbabilityProps> = ({
   const Icon = getProbabilityIcon(probability);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.9 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.5 }}
+    <div
+}
+}
+}
       className={`bg-gradient-to-br from-indigo-900 to-purple-900 text-white p-4 rounded-2xl ${className}`}
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <motion.div
-            animate={probability >= 60 ? { rotate: [0, 10, -10, 0] } : {}}
-            transition={{ duration: 1, repeat: probability >= 60 ? Infinity : 0 }}
+          <div
+ : {}}
+}
           >
             <Icon className={`w-5 h-5 ${getProbabilityColor(probability)}`} />
-          </motion.div>
+          </div>
           <span className="text-sm font-bold">WIN PROBABILITY</span>
         </div>
-        <motion.div
+        <div
           className={`text-2xl font-black ${getProbabilityColor(probability)}`}
-          animate={probability >= 80 ? { scale: [1, 1.1, 1] } : {}}
-          transition={{ duration: 0.5, repeat: probability >= 80 ? Infinity : 0 }}
+ : {}}
+}
         >
           {probability}%
-        </motion.div>
+        </div>
       </div>
 
       <div className="space-y-2 text-xs">
@@ -442,11 +441,11 @@ const WinningProbability: React.FC<WinningProbabilityProps> = ({
       {/* Probability visualization */}
       <div className="mt-3">
         <div className="w-full bg-gray-700 rounded-full h-2">
-          <motion.div
+          <div
             className={`h-2 rounded-full ${getProbabilityColor(probability).replace('text-', 'bg-').replace('border-', 'bg-')}`}
-            initial={{ width: 0 }}
-            animate={{ width: `${probability}%` }}
-            transition={{ duration: 1, ease: "easeOut" }}
+}
+%` }}
+}
           />
         </div>
         <div className="flex justify-between text-xs mt-1 text-gray-400">
@@ -454,7 +453,7 @@ const WinningProbability: React.FC<WinningProbabilityProps> = ({
           <span>High</span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -569,7 +568,7 @@ export const EnhancedLiveAuction: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent animate-pulse" />
 
         {/* Dynamic background elements */}
-        <motion.div
+        <div
           animate={{
             scale: [1, 1.2, 1],
             opacity: [0.1, 0.3, 0.1]
@@ -581,7 +580,7 @@ export const EnhancedLiveAuction: React.FC = () => {
           }}
           className="absolute top-20 left-20 w-64 h-64 bg-orange-500/10 rounded-full blur-3xl"
         />
-        <motion.div
+        <div
           animate={{
             scale: [1.2, 1, 1.2],
             opacity: [0.1, 0.2, 0.1]
@@ -597,10 +596,10 @@ export const EnhancedLiveAuction: React.FC = () => {
 
       <Container className="relative z-10 py-8">
         {/* Header with Auction Info */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+        <div
+}
+}
+}
           className="mb-8"
         >
           <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
@@ -636,16 +635,16 @@ export const EnhancedLiveAuction: React.FC = () => {
               </div>
             </div>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Main Auction Grid */}
         <Grid cols={12} gap="lg" className="mb-8">
           {/* Left Column - Item Image & Details */}
           <div className="col-span-12 lg:col-span-5">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+            <div
+}
+}
+}
             >
               <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
                 <div className="space-y-6">
@@ -657,14 +656,14 @@ export const EnhancedLiveAuction: React.FC = () => {
                       className="w-full h-64 object-cover rounded-lg"
                     />
                     {auctionData.isLeading && (
-                      <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
+                      <div
+}
+}
                         className="absolute top-4 right-4 bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold flex items-center gap-1"
                       >
                         <Crown className="w-4 h-4" />
                         YOU'RE LEADING!
-                      </motion.div>
+                      </div>
                     )}
                   </div>
 
@@ -708,7 +707,7 @@ export const EnhancedLiveAuction: React.FC = () => {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
           </div>
 
           {/* Right Column - Bidding Interface */}
@@ -793,10 +792,10 @@ export const EnhancedLiveAuction: React.FC = () => {
         </Grid>
 
         {/* Bottom Section - Additional Info */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
+        <div
+}
+}
+}
         >
           <Grid cols={3} gap="md">
             <Card className="p-4">
@@ -829,7 +828,7 @@ export const EnhancedLiveAuction: React.FC = () => {
               </div>
             </Card>
           </Grid>
-        </motion.div>
+        </div>
       </Container>
     </div>
   );

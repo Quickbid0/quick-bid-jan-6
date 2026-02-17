@@ -1,6 +1,5 @@
 import React from 'react';
 import { Handshake, Building, Globe, Users, Target, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const Partnerships = () => {
   const partnerTypes = [
@@ -49,11 +48,11 @@ const Partnerships = () => {
       {/* Partnership Types */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         {partnerTypes.map((type, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.2 }}
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg text-center"
           >
             <div className="mb-6">{type.icon}</div>
@@ -67,7 +66,7 @@ const Partnerships = () => {
                 </li>
               ))}
             </ul>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -76,17 +75,17 @@ const Partnerships = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Our Partners</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
           {currentPartners.map((partner, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm text-center hover:shadow-md transition-shadow"
             >
               <div className="text-4xl mb-3">{partner.logo}</div>
               <h4 className="font-semibold text-sm">{partner.name}</h4>
               <p className="text-xs text-gray-500">{partner.category}</p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

@@ -2,7 +2,6 @@
 // Intelligent settings experience with premium interactions, smart defaults, and personalized controls
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Settings,
   Bell,
@@ -86,10 +85,10 @@ const SmartToggle: React.FC<SmartToggleProps> = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+    <div
+}
+}
+}
       className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
     >
       <div className="flex items-start gap-4">
@@ -137,7 +136,7 @@ const SmartToggle: React.FC<SmartToggleProps> = ({
           }`}
         />
       </button>
-    </motion.div>
+    </div>
   );
 };
 
@@ -173,21 +172,21 @@ const NotificationPreference: React.FC<NotificationPreferenceProps> = ({
           <h3 className="text-lg font-semibold text-gray-900">{category}</h3>
           <p className="text-gray-600 text-sm">Manage your notification preferences</p>
         </div>
-        <motion.div
-          animate={{ rotate: expanded ? 180 : 0 }}
-          transition={{ duration: 0.2 }}
+        <div
+}
+}
         >
           <ChevronDown className="w-5 h-5 text-gray-400" />
-        </motion.div>
+        </div>
       </button>
 
-      <AnimatePresence>
+      <Fragment>
         {expanded && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3 }}
+          <div
+}
+}
+}
+}
             className="mt-6 space-y-4"
           >
             {preferences.map((pref) => (
@@ -247,9 +246,9 @@ const NotificationPreference: React.FC<NotificationPreferenceProps> = ({
                 </div>
               </div>
             ))}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     </Card>
   );
 };
@@ -488,10 +487,10 @@ export const EnhancedSettingsNotifications: React.FC = () => {
     <Container className="py-8">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+        <div
+}
+}
+}
           className="flex items-center justify-between mb-8"
         >
           <div>
@@ -504,22 +503,22 @@ export const EnhancedSettingsNotifications: React.FC = () => {
           </div>
 
           {hasUnsavedChanges && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
+            <div
+}
+}
               className="flex items-center gap-2 text-orange-600"
             >
               <AlertTriangle className="w-4 h-4" />
               <span className="text-sm font-medium">Unsaved changes</span>
-            </motion.div>
+            </div>
           )}
-        </motion.div>
+        </div>
 
         {/* Tab Navigation */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2, duration: 0.6 }}
+        <div
+}
+}
+}
           className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-lg w-fit"
         >
           {tabs.map((tab) => {
@@ -539,18 +538,18 @@ export const EnhancedSettingsNotifications: React.FC = () => {
               </button>
             );
           })}
-        </motion.div>
+        </div>
 
         {/* Tab Content */}
-        <AnimatePresence mode="wait">
+        <Fragment mode="wait">
           {/* Profile Settings */}
           {activeTab === 'profile' && (
-            <motion.div
+            <div
               key="profile"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
+}
+}
+}
+}
             >
               <Grid cols={2} gap="lg">
                 <div className="space-y-6">
@@ -681,17 +680,17 @@ export const EnhancedSettingsNotifications: React.FC = () => {
                   </Card>
                 </div>
               </Grid>
-            </motion.div>
+            </div>
           )}
 
           {/* Notification Settings */}
           {activeTab === 'notifications' && (
-            <motion.div
+            <div
               key="notifications"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
+}
+}
+}
+}
               className="space-y-6"
             >
               <NotificationPreference
@@ -732,33 +731,33 @@ export const EnhancedSettingsNotifications: React.FC = () => {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
           )}
 
           {/* Privacy & Security */}
           {activeTab === 'privacy' && (
-            <motion.div
+            <div
               key="privacy"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
+}
+}
+}
+}
             >
               <PrivacySettings
                 settings={settings.privacy}
                 onUpdate={(key, value) => updateSetting('privacy', key, value)}
               />
-            </motion.div>
+            </div>
           )}
 
           {/* Appearance Settings */}
           {activeTab === 'appearance' && (
-            <motion.div
+            <div
               key="appearance"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
+}
+}
+}
+}
               className="space-y-6"
             >
               <Card className="p-6">
@@ -821,17 +820,17 @@ export const EnhancedSettingsNotifications: React.FC = () => {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
           )}
 
           {/* Billing Settings */}
           {activeTab === 'billing' && (
-            <motion.div
+            <div
               key="billing"
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.3 }}
+}
+}
+}
+}
             >
               <Card className="p-6">
                 <div className="flex items-center justify-between mb-6">
@@ -883,15 +882,15 @@ export const EnhancedSettingsNotifications: React.FC = () => {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </Fragment>
 
         {/* Save Button */}
         {hasUnsavedChanges && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="fixed bottom-8 right-8"
           >
             <Button
@@ -902,7 +901,7 @@ export const EnhancedSettingsNotifications: React.FC = () => {
               <Save className="w-4 h-4 mr-2" />
               Save Changes
             </Button>
-          </motion.div>
+          </div>
         )}
       </div>
     </Container>

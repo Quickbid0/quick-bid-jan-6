@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence, useAnimation, useInView } from 'framer-motion';
 import {
   Zap,
   Shield,
@@ -83,10 +82,10 @@ const AnimatedCounter: React.FC<{ value: number; suffix?: string; duration?: num
 
 // Trust Indicators Component
 const TrustIndicators: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.6, duration: 0.6 }}
+  <div
+}
+}
+}
     className="flex flex-wrap items-center justify-center gap-6 mt-8"
   >
     {[
@@ -95,38 +94,38 @@ const TrustIndicators: React.FC = () => (
       { icon: Award, label: 'Fintech Award Winner', color: 'text-purple-600' },
       { icon: CheckCircle, label: 'Verified Platform', color: 'text-orange-600' }
     ].map((item, index) => (
-      <motion.div
+      <div
         key={item.label}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8 + index * 0.1, duration: 0.4 }}
+}
+}
+}
         className="flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2"
       >
         <item.icon className={`w-4 h-4 ${item.color}`} />
         <span className="text-white/90 text-sm font-medium">{item.label}</span>
-      </motion.div>
+      </div>
     ))}
-  </motion.div>
+  </div>
 );
 
 // Social Proof Component
 const SocialProof: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 1.0, duration: 0.6 }}
+  <div
+}
+}
+}
     className="text-center"
   >
     <div className="flex items-center justify-center gap-2 mb-4">
       {[...Array(5)].map((_, i) => (
-        <motion.div
+        <div
           key={i}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.2 + i * 0.1, duration: 0.3 }}
+}
+}
+}
         >
           <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-        </motion.div>
+        </div>
       ))}
       <span className="text-white/90 font-medium text-lg">4.9/5 from 50K+ reviews</span>
     </div>
@@ -141,7 +140,7 @@ const SocialProof: React.FC = () => (
         <span>98% seller satisfaction</span>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
 // Feature Showcase Component
@@ -178,19 +177,19 @@ const FeatureShowcase: React.FC = () => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.4, duration: 0.6 }}
+    <div
+}
+}
+}
       className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
     >
       {features.map((feature, index) => (
-        <motion.div
+        <div
           key={feature.title}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 + index * 0.1, duration: 0.5 }}
-          whileHover={{ scale: 1.05, y: -5 }}
+}
+}
+}
+}
           className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300"
         >
           <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${feature.color} flex items-center justify-center mb-4`}>
@@ -201,9 +200,9 @@ const FeatureShowcase: React.FC = () => {
           <div className={`inline-block px-3 py-1 rounded-full text-xs font-semibold bg-gradient-to-r ${feature.color} text-white`}>
             {feature.stats}
           </div>
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
@@ -250,10 +249,10 @@ const LiveAuctionPreview: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay: 0.8, duration: 0.6 }}
+    <div
+}
+}
+}
       className="bg-gradient-to-br from-gray-900 to-gray-800 text-white rounded-2xl p-8 mb-16"
     >
       <div className="flex items-center justify-between mb-6">
@@ -269,11 +268,11 @@ const LiveAuctionPreview: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {auctions.map((auction, index) => (
-          <motion.div
+          <div
             key={auction.item}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 1.0 + index * 0.2, duration: 0.5 }}
+}
+}
+}
             className={`rounded-xl overflow-hidden cursor-pointer transition-all ${
               index === currentAuction ? 'ring-2 ring-orange-500 scale-105' : ''
             }`}
@@ -303,7 +302,7 @@ const LiveAuctionPreview: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -314,7 +313,7 @@ const LiveAuctionPreview: React.FC = () => {
           <ArrowRight className="w-5 h-5" />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -357,10 +356,10 @@ const SuccessStories: React.FC = () => {
   }, [stories.length]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.2, duration: 0.6 }}
+    <div
+}
+}
+}
       className="bg-white rounded-2xl p-8 shadow-lg"
     >
       <div className="text-center mb-8">
@@ -368,13 +367,13 @@ const SuccessStories: React.FC = () => {
         <p className="text-gray-600">Real wins from our community</p>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
+      <Fragment mode="wait">
+        <div
           key={currentStory}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5 }}
+}
+}
+}
+}
           className="text-center max-w-2xl mx-auto"
         >
           <div className={`w-20 h-20 mx-auto mb-6 rounded-full bg-gradient-to-br ${stories[currentStory].gradient} flex items-center justify-center text-white text-2xl font-bold`}>
@@ -396,8 +395,8 @@ const SuccessStories: React.FC = () => {
               <span className="font-semibold">{stories[currentStory].achievement}</span>
             </div>
           </div>
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      </Fragment>
 
       <div className="flex justify-center gap-2 mt-6">
         {stories.map((_, index) => (
@@ -410,7 +409,7 @@ const SuccessStories: React.FC = () => {
           />
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -424,18 +423,18 @@ const StatsCounter: React.FC = () => {
   ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 1.0, duration: 0.6 }}
+    <div
+}
+}
+}
       className="grid grid-cols-2 lg:grid-cols-4 gap-6"
     >
       {stats.map((stat, index) => (
-        <motion.div
+        <div
           key={stat.label}
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.2 + index * 0.1, duration: 0.5 }}
+}
+}
+}
           className="text-center"
         >
           <div className="bg-gradient-to-br from-blue-500 to-purple-600 w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4">
@@ -449,9 +448,9 @@ const StatsCounter: React.FC = () => {
             )}
           </div>
           <div className="text-gray-600 font-medium">{stat.label}</div>
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
@@ -473,9 +472,9 @@ export const EnhancedLandingPage: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Navigation */}
       <motion.nav
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+}
+}
+}
         className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50"
       >
         <Container className="py-4">
@@ -514,12 +513,12 @@ export const EnhancedLandingPage: React.FC = () => {
           </div>
 
           {/* Mobile Navigation */}
-          <AnimatePresence>
+          <Fragment>
             {mobileMenuOpen && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
+              <div
+}
+}
+}
                 className="md:hidden mt-4 pb-4 border-t border-gray-200"
               >
                 <div className="flex flex-col gap-4 pt-4">
@@ -536,9 +535,9 @@ export const EnhancedLandingPage: React.FC = () => {
                     </Button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </Fragment>
         </Container>
       </motion.nav>
 
@@ -549,7 +548,7 @@ export const EnhancedLandingPage: React.FC = () => {
           <div className="absolute inset-0 animate-pulse" />
 
           {/* Floating geometric shapes */}
-          <motion.div
+          <div
             animate={{
               rotate: 360,
               scale: [1, 1.1, 1],
@@ -560,7 +559,7 @@ export const EnhancedLandingPage: React.FC = () => {
             }}
             className="absolute top-20 left-20 w-32 h-32 bg-orange-500/10 rounded-full blur-xl"
           />
-          <motion.div
+          <div
             animate={{
               rotate: -360,
               scale: [1.1, 1, 1.1],
@@ -576,27 +575,27 @@ export const EnhancedLandingPage: React.FC = () => {
         <Container className="relative py-20 lg:py-32">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* Left Side - Hero Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+            <div
+}
+}
+}
             >
               {/* Badge */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
+              <div
+}
+}
+}
                 className="inline-flex items-center gap-2 bg-orange-500/20 backdrop-blur-sm border border-orange-500/30 rounded-full px-4 py-2 mb-6"
               >
                 <Crown className="w-4 h-4 text-orange-400" />
                 <span className="text-orange-300 font-medium text-sm">#1 Auction Platform in India</span>
-              </motion.div>
+              </div>
 
               {/* Hero Title with Gaming Typography */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4, duration: 0.6 }}
+              <div
+}
+}
+}
                 className="mb-6"
               >
                 <h1
@@ -612,13 +611,13 @@ export const EnhancedLandingPage: React.FC = () => {
                   Join India's fastest-growing auction platform with AI-powered bidding,
                   real-time excitement, and bank-grade security.
                 </p>
-              </motion.div>
+              </div>
 
               {/* CTA Buttons */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6, duration: 0.6 }}
+              <div
+}
+}
+}
                 className="flex flex-col sm:flex-row gap-4 mb-8"
               >
                 <Button
@@ -640,31 +639,31 @@ export const EnhancedLandingPage: React.FC = () => {
                   <Play className="w-6 h-6 mr-2" />
                   View Demo
                 </Button>
-              </motion.div>
+              </div>
 
               {/* Trust Indicators */}
               <TrustIndicators />
 
               {/* Social Proof */}
               <SocialProof />
-            </motion.div>
+            </div>
 
             {/* Right Side - Interactive Demo */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
+            <div
+}
+}
+}
               className="relative"
             >
               <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8 border border-white/20">
                 <div className="text-center mb-6">
-                  <motion.div
-                    animate={{ rotate: 360 }}
-                    transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+                  <div
+}
+}
                     className="w-16 h-16 bg-gradient-to-br from-orange-500 to-red-500 rounded-2xl flex items-center justify-center mx-auto mb-4"
                   >
                     <Zap className="w-8 h-8 text-white" />
-                  </motion.div>
+                  </div>
                   <h3 className="text-xl font-bold text-white mb-2">Live Auction Preview</h3>
                   <p className="text-white/80">Experience real-time bidding excitement</p>
                 </div>
@@ -690,13 +689,13 @@ export const EnhancedLandingPage: React.FC = () => {
                     </div>
                     <div>
                       <div className="text-white/70 text-sm">Time Left</div>
-                      <motion.div
-                        animate={{ scale: [1, 1.1, 1] }}
-                        transition={{ duration: 1, repeat: Infinity }}
+                      <div
+}
+}
                         className="text-xl font-bold text-orange-400"
                       >
                         4:23
-                      </motion.div>
+                      </div>
                     </div>
                   </div>
 
@@ -706,7 +705,7 @@ export const EnhancedLandingPage: React.FC = () => {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </Container>
       </section>
@@ -721,10 +720,10 @@ export const EnhancedLandingPage: React.FC = () => {
       {/* Features Section */}
       <section id="features" className="py-20 bg-gray-50">
         <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+          <div
+}
+}
+}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
@@ -734,7 +733,7 @@ export const EnhancedLandingPage: React.FC = () => {
               Experience the most advanced auction platform with cutting-edge technology
               and unbeatable user experience.
             </p>
-          </motion.div>
+          </div>
 
           <FeatureShowcase />
         </Container>
@@ -757,10 +756,10 @@ export const EnhancedLandingPage: React.FC = () => {
       {/* Final CTA Section */}
       <section className="py-20 bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-800 text-white">
         <Container className="text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+          <div
+}
+}
+}
           >
             <h2 className="text-4xl font-bold mb-4">
               Ready to Transform Your Auction Experience?
@@ -810,7 +809,7 @@ export const EnhancedLandingPage: React.FC = () => {
                 Get exclusive access to new auctions and platform updates
               </p>
             </div>
-          </motion.div>
+          </div>
         </Container>
       </section>
 

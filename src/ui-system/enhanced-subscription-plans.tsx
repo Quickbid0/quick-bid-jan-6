@@ -2,7 +2,6 @@
 // Premium SaaS subscription experience with pricing psychology, conversion optimization, and intelligent features
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Crown,
   Zap,
@@ -70,38 +69,38 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
   const isCurrentPlan = currentPlan === plan.id;
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
+}
+}
+}
       className={`relative ${plan.popular ? 'scale-105' : ''}`}
     >
       {/* Popular Badge */}
       {plan.popular && (
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.3, duration: 0.3 }}
+        <div
+}
+}
+}
           className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10"
         >
           <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg">
             🔥 MOST POPULAR
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Recommended Badge */}
       {plan.recommended && (
-        <motion.div
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4, duration: 0.3 }}
+        <div
+}
+}
+}
           className="absolute -top-3 -right-3 z-10"
         >
           <div className="bg-emerald-500 text-white p-2 rounded-full shadow-lg">
             <Award className="w-4 h-4" />
           </div>
-        </motion.div>
+        </div>
       )}
 
       <Card
@@ -114,13 +113,13 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
       >
         {/* Header */}
         <div className="text-center mb-6">
-          <motion.div
+          <div
             className={`w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${plan.gradient} flex items-center justify-center`}
-            whileHover={{ rotate: 5, scale: 1.05 }}
-            transition={{ duration: 0.2 }}
+}
+}
           >
             <plan.icon className="w-8 h-8 text-white" />
-          </motion.div>
+          </div>
 
           <h3 className="text-2xl font-bold text-gray-900 mb-1">{plan.name}</h3>
           <p className="text-gray-600 text-sm">{plan.tagline}</p>
@@ -152,29 +151,29 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
         {/* Features */}
         <div className="space-y-3 mb-6">
           {plan.features.map((feature, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 * index, duration: 0.3 }}
+}
+}
+}
               className="flex items-start gap-3"
             >
               <Check className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
               <span className="text-gray-700 text-sm">{feature}</span>
-            </motion.div>
+            </div>
           ))}
 
           {plan.limitations && plan.limitations.map((limitation, index) => (
-            <motion.div
+            <div
               key={`limit-${index}`}
-              initial={{ opacity: 0, x: -10 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.1 * (plan.features.length + index), duration: 0.3 }}
+}
+}
+}
               className="flex items-start gap-3"
             >
               <X className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
               <span className="text-gray-400 text-sm">{limitation}</span>
-            </motion.div>
+            </div>
           ))}
         </div>
 
@@ -223,7 +222,7 @@ const PricingCard: React.FC<PricingCardProps> = ({ plan, isSelected, onSelect, c
           </div>
         </div>
       </Card>
-    </motion.div>
+    </div>
   );
 };
 
@@ -236,20 +235,20 @@ interface UrgencyBannerProps {
 }
 
 const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ message, timeLeft, discount, className }) => (
-  <motion.div
-    initial={{ opacity: 0, scale: 0.95 }}
-    animate={{ opacity: 1, scale: 1 }}
-    transition={{ duration: 0.5 }}
+  <div
+}
+}
+}
     className={`bg-gradient-to-r from-red-500 to-orange-500 text-white p-4 rounded-2xl ${className}`}
   >
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-3">
-        <motion.div
-          animate={{ rotate: [0, 10, -10, 0] }}
-          transition={{ duration: 2, repeat: Infinity }}
+        <div
+}
+}
         >
           <Zap className="w-6 h-6" />
-        </motion.div>
+        </div>
         <div>
           <div className="font-bold text-lg">{message}</div>
           {timeLeft && <div className="text-sm opacity-90">{timeLeft} remaining</div>}
@@ -263,7 +262,7 @@ const UrgencyBanner: React.FC<UrgencyBannerProps> = ({ message, timeLeft, discou
         </div>
       )}
     </div>
-  </motion.div>
+  </div>
 );
 
 // Social Proof Component
@@ -301,13 +300,13 @@ const SocialProof: React.FC<SocialProofProps> = ({ testimonials, className }) =>
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
+      <Fragment mode="wait">
+        <div
           key={currentTestimonial}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.5 }}
+}
+}
+}
+}
           className="text-center"
         >
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -331,8 +330,8 @@ const SocialProof: React.FC<SocialProofProps> = ({ testimonials, className }) =>
               <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
             ))}
           </div>
-        </motion.div>
-      </AnimatePresence>
+        </div>
+      </Fragment>
 
       <div className="flex justify-center gap-2 mt-6">
         {testimonials.map((_, index) => (
@@ -481,21 +480,21 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <Container className="py-12">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+        <div
+}
+}
+}
           className="text-center mb-12"
         >
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
+          <div
+}
+}
+}
             className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-semibold mb-6"
           >
             <Sparkles className="w-4 h-4" />
             Choose Your Success Plan
-          </motion.div>
+          </div>
 
           <h1 className="text-5xl font-black text-gray-900 mb-4">
             Scale Your Auction Business
@@ -503,7 +502,7 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
           <p className="text-xl text-gray-600 max-w-2xl mx-auto">
             Join 50,000+ businesses using QuickMela to run successful auctions with AI-powered insights
           </p>
-        </motion.div>
+        </div>
 
         {/* Urgency Banner */}
         <UrgencyBanner
@@ -514,10 +513,10 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
         />
 
         {/* Billing Toggle */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4, duration: 0.6 }}
+        <div
+}
+}
+}
           className="flex items-center justify-center gap-4 mb-12"
         >
           <span className={`text-lg ${billingInterval === 'month' ? 'text-gray-900 font-semibold' : 'text-gray-500'}`}>
@@ -527,9 +526,9 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
             onClick={() => setBillingInterval(billingInterval === 'month' ? 'year' : 'month')}
             className="relative w-16 h-8 bg-gray-300 rounded-full transition-colors"
           >
-            <motion.div
+            <div
               className="w-6 h-6 bg-white rounded-full shadow-md absolute top-1 transition-all"
-              animate={{ left: billingInterval === 'month' ? 4 : 28 }}
+}
             />
           </button>
           <div className="flex items-center gap-2">
@@ -540,13 +539,13 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
               Save 23%
             </span>
           </div>
-        </motion.div>
+        </div>
 
         {/* Pricing Cards */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.6 }}
+        <div
+}
+}
+}
           className="mb-16"
         >
           <Grid cols={3} gap="lg">
@@ -560,16 +559,16 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
               />
             ))}
           </Grid>
-        </motion.div>
+        </div>
 
         {/* Selected Plan CTA */}
-        <AnimatePresence>
+        <Fragment>
           {selectedPlan && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.4 }}
+            <div
+}
+}
+}
+}
               className="text-center mb-16"
             >
               <Card className="p-8 bg-gradient-to-r from-emerald-500 to-blue-600 text-white max-w-2xl mx-auto">
@@ -589,25 +588,25 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
                   </Button>
                 </div>
               </Card>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </Fragment>
 
         {/* Social Proof */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.8, duration: 0.6 }}
+        <div
+}
+}
+}
           className="mb-16"
         >
           <SocialProof testimonials={testimonials} />
-        </motion.div>
+        </div>
 
         {/* Feature Comparison */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0, duration: 0.6 }}
+        <div
+}
+}
+}
           className="mb-16"
         >
           <Card className="p-8">
@@ -651,13 +650,13 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
               </table>
             </div>
           </Card>
-        </motion.div>
+        </div>
 
         {/* FAQ Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.2, duration: 0.6 }}
+        <div
+}
+}
+}
           className="mb-16"
         >
           <Card className="p-8">
@@ -668,11 +667,11 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
 
             <div className="space-y-6 max-w-3xl mx-auto">
               {faqs.map((faq, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 * index, duration: 0.4 }}
+}
+}
+}
                   className="border border-gray-200 rounded-lg"
                 >
                   <button className="w-full text-left p-6 focus:outline-none">
@@ -684,17 +683,17 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
                   <div className="px-6 pb-6">
                     <p className="text-gray-600">{faq.answer}</p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </Card>
-        </motion.div>
+        </div>
 
         {/* Final CTA */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.4, duration: 0.6 }}
+        <div
+}
+}
+}
           className="text-center"
         >
           <Card className="p-8 bg-gradient-to-r from-indigo-600 to-purple-600 text-white">
@@ -713,7 +712,7 @@ export const EnhancedSubscriptionPlans: React.FC = () => {
             </div>
             <p className="text-indigo-200 text-sm mt-4">No credit card required • 14-day free trial • Cancel anytime</p>
           </Card>
-        </motion.div>
+        </div>
       </Container>
     </div>
   );

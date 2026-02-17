@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { Gavel, Clock, Zap, AlertTriangle, Activity } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useSession } from '../context/SessionContext';
 import { useAuctionSocket } from '../hooks/useAuctionSocket';
@@ -447,13 +446,13 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
           Live Activity
         </h4>
         <div className="space-y-2 max-h-48 overflow-y-auto">
-          <AnimatePresence>
+          <Fragment>
             {liveBids.map((bid) => (
-              <motion.div
+              <div
                 key={bid.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
+}
+}
+}
                 className={`flex items-center justify-between p-3 rounded-lg ${
                   bid.isWinning ? 'bg-green-50 border border-green-200' : 'bg-gray-50 dark:bg-gray-700'
                 }`}
@@ -477,9 +476,9 @@ const RealTimeBidding: React.FC<RealTimeBiddingProps> = ({
                     <p className="text-xs text-green-600">Winning</p>
                   )}
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </AnimatePresence>
+          </Fragment>
         </div>
       </div>
     </div>

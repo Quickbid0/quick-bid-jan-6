@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   Wallet,
   Plus,
@@ -220,10 +219,10 @@ export default function EliteWalletPage() {
         {activeTab === 'overview' && (
           <div className="space-y-8">
             {/* Elite Balance Card - Hero Feature */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <div
+}
+}
+}
               className="relative overflow-hidden bg-gradient-to-br from-primary-600 via-primary-700 to-primary-800 rounded-3xl p-8 text-white"
             >
               {/* Background Pattern */}
@@ -262,10 +261,10 @@ export default function EliteWalletPage() {
 
                 {/* Balance Breakdown - Elite Feature */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <motion.div
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.2 }}
+                  <div
+}
+}
+}
                     className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -286,12 +285,12 @@ export default function EliteWalletPage() {
                         style={{ width: `${(availableBalance / balance) * 100}%` }}
                       ></div>
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.3 }}
+                  <div
+}
+}
+}
                     className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -312,12 +311,12 @@ export default function EliteWalletPage() {
                         style={{ width: `${(lockedBalance / balance) * 100}%` }}
                       ></div>
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.6, delay: 0.4 }}
+                  <div
+}
+}
+}
                     className="bg-white/10 backdrop-blur-sm rounded-2xl p-6 border border-white/20"
                   >
                     <div className="flex items-center gap-3 mb-3">
@@ -338,14 +337,14 @@ export default function EliteWalletPage() {
                         style={{ width: `${((balance - availableBalance - lockedBalance) / balance) * 100}%` }}
                       ></div>
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Quick Actions - Elite CTA */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.5 }}
+                <div
+}
+}
+}
                   className="flex flex-col sm:flex-row gap-4"
                 >
                   <button className="flex-1 bg-white text-primary-600 py-4 rounded-2xl font-bold hover:bg-neutral-50 transition-all duration-250 hover:shadow-xl flex items-center justify-center gap-2">
@@ -360,15 +359,15 @@ export default function EliteWalletPage() {
                     <Download className="w-5 h-5" />
                     Withdraw
                   </button>
-                </motion.div>
+                </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Quick Add Money - Elite Design */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+            <div
+}
+}
+}
               className="bg-white rounded-2xl shadow-xl p-8 border border-neutral-200"
             >
               <div className="text-center mb-8">
@@ -378,11 +377,11 @@ export default function EliteWalletPage() {
 
               <div className="grid grid-cols-3 md:grid-cols-6 gap-4 mb-8">
                 {quickAddAmounts.map((amount, index) => (
-                  <motion.button
+                  <button
                     key={amount}
-                    initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ duration: 0.4, delay: index * 0.05 }}
+}
+}
+}
                     onClick={() => addFunds(amount)}
                     disabled={loading}
                     className="bg-neutral-50 hover:bg-primary-50 border border-neutral-200 hover:border-primary-300 rounded-xl p-4 transition-all duration-250 hover:shadow-lg group"
@@ -391,7 +390,7 @@ export default function EliteWalletPage() {
                       ₹{amount.toLocaleString()}
                     </div>
                     <div className="text-xs text-neutral-500">Quick add</div>
-                  </motion.button>
+                  </button>
                 ))}
               </div>
 
@@ -404,11 +403,11 @@ export default function EliteWalletPage() {
                     { icon: Smartphone, name: 'UPI & Wallets', desc: 'Paytm, Google Pay, PhonePe' },
                     { icon: Banknote, name: 'Net Banking', desc: 'All major banks supported' }
                   ].map((method, index) => (
-                    <motion.div
+                    <div
                       key={method.name}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.1 }}
+}
+}
+}
                       className="bg-gradient-to-br from-neutral-50 to-neutral-100 rounded-xl p-6 border border-neutral-200 hover:shadow-lg transition-all duration-250 cursor-pointer group"
                     >
                       <div className="flex items-center gap-4">
@@ -420,17 +419,17 @@ export default function EliteWalletPage() {
                           <div className="text-sm text-neutral-600">{method.desc}</div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             {/* Recent Transactions Preview */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.7 }}
+            <div
+}
+}
+}
               className="bg-white rounded-2xl shadow-xl p-8 border border-neutral-200"
             >
               <div className="flex items-center justify-between mb-6">
@@ -447,11 +446,11 @@ export default function EliteWalletPage() {
                 {transactions.slice(0, 5).map((transaction, index) => {
                   const IconComponent = getTransactionIcon(transaction.type);
                   return (
-                    <motion.div
+                    <div
                       key={transaction.id}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.05 }}
+}
+}
+}
                       className="flex items-center justify-between p-4 border border-neutral-200 rounded-xl hover:shadow-md transition-all duration-250"
                     >
                       <div className="flex items-center gap-4">
@@ -483,11 +482,11 @@ export default function EliteWalletPage() {
                           {transaction.status}
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -531,11 +530,11 @@ export default function EliteWalletPage() {
                 {transactions.map((transaction, index) => {
                   const IconComponent = getTransactionIcon(transaction.type);
                   return (
-                    <motion.div
+                    <div
                       key={transaction.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.4, delay: index * 0.02 }}
+}
+}
+}
                       className="p-6 hover:bg-neutral-50 transition-colors duration-200"
                     >
                       <div className="flex items-start gap-4">
@@ -589,7 +588,7 @@ export default function EliteWalletPage() {
                           )}
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
                   );
                 })}
               </div>
@@ -611,17 +610,17 @@ export default function EliteWalletPage() {
                 { label: 'Success Rate', value: '98.5%', change: '+2.1%', color: 'blue' },
                 { label: 'Monthly Growth', value: '+12.8%', change: '+3.2%', color: 'purple' }
               ].map((metric, index) => (
-                <motion.div
+                <div
                   key={metric.label}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
+}
+}
+}
                   className="bg-white rounded-2xl p-6 shadow-xl border border-neutral-200"
                 >
                   <div className={`text-3xl font-bold text-${metric.color}-600 mb-2`}>{metric.value}</div>
                   <div className="text-neutral-900 font-semibold mb-1">{metric.label}</div>
                   <div className="text-emerald-600 text-sm font-medium">{metric.change} this month</div>
-                </motion.div>
+                </div>
               ))}
             </div>
 

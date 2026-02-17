@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   BarChart3,
   TrendingUp,
@@ -199,10 +198,10 @@ const AdminDashboardEnterprise: React.FC = () => {
           <div className="space-y-6">
             {/* Platform Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -219,12 +218,12 @@ const AdminDashboardEnterprise: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -238,12 +237,12 @@ const AdminDashboardEnterprise: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -257,12 +256,12 @@ const AdminDashboardEnterprise: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -276,14 +275,14 @@ const AdminDashboardEnterprise: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             </div>
 
             {/* Revenue Breakdown */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+            <div
+}
+}
+}
             >
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Breakdown</h3>
@@ -310,15 +309,15 @@ const AdminDashboardEnterprise: React.FC = () => {
                   </div>
                 </div>
               </Card>
-            </motion.div>
+            </div>
 
             {/* Risk Alerts & System Health */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Risk Alerts */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.6 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -350,13 +349,13 @@ const AdminDashboardEnterprise: React.FC = () => {
                     View All Alerts
                   </Button>
                 </Card>
-              </motion.div>
+              </div>
 
               {/* System Health */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -389,14 +388,14 @@ const AdminDashboardEnterprise: React.FC = () => {
                     <p className="text-sm text-green-800 font-medium">All systems operational</p>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             </div>
 
             {/* Recent Activity */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 }}
+            <div
+}
+}
+}
             >
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
@@ -414,7 +413,7 @@ const AdminDashboardEnterprise: React.FC = () => {
                   ))}
                 </div>
               </Card>
-            </motion.div>
+            </div>
           </div>
         )}
 

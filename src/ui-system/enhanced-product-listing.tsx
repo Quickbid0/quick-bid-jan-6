@@ -2,7 +2,6 @@
 // AI-driven product listing with premium layout, conversion optimization, and smart suggestions
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Plus,
   Search,
@@ -70,10 +69,10 @@ const AISuggestion: React.FC<AISuggestionProps> = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
+}
+}
+}
       className={`p-4 rounded-lg border ${impactColors[impact]} relative overflow-hidden`}
     >
       {/* AI Badge */}
@@ -102,7 +101,7 @@ const AISuggestion: React.FC<AISuggestionProps> = ({
           </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -355,16 +354,16 @@ export const EnhancedProductListing: React.FC = () => {
       <div className="flex items-center justify-center space-x-4 mb-8">
         {[1, 2, 3, 4].map((step) => (
           <div key={step} className="flex items-center">
-            <motion.div
+            <div
               className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold ${
                 step <= currentStep
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-200 text-gray-400'
               }`}
-              whileHover={{ scale: 1.05 }}
+}
             >
               {step}
-            </motion.div>
+            </div>
             {step < 4 && (
               <div className={`w-12 h-1 mx-2 rounded ${
                 step < currentStep ? 'bg-blue-600' : 'bg-gray-200'
@@ -374,14 +373,14 @@ export const EnhancedProductListing: React.FC = () => {
         ))}
       </div>
 
-      <AnimatePresence mode="wait">
+      <Fragment mode="wait">
         {currentStep === 1 && (
-          <motion.div
+          <div
             key="step1"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+}
+}
+}
+}
             className="space-y-6"
           >
             <Card className="p-6">
@@ -453,16 +452,16 @@ export const EnhancedProductListing: React.FC = () => {
                 <AISuggestion key={index} {...suggestion} />
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {currentStep === 2 && (
-          <motion.div
+          <div
             key="step2"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+}
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-xl font-bold text-gray-900 mb-6">Photos & Details</h3>
@@ -553,16 +552,16 @@ export const EnhancedProductListing: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         )}
 
         {currentStep === 3 && (
-          <motion.div
+          <div
             key="step3"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+}
+}
+}
+}
           >
             <PricingOptimizer
               currentPrice={listingData.startingPrice}
@@ -575,16 +574,16 @@ export const EnhancedProductListing: React.FC = () => {
               }}
               onPriceChange={(price) => setListingData(prev => ({ ...prev, startingPrice: price }))}
             />
-          </motion.div>
+          </div>
         )}
 
         {currentStep === 4 && (
-          <motion.div
+          <div
             key="step4"
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+}
+}
+}
+}
             className="space-y-6"
           >
             <Card className="p-6">
@@ -610,9 +609,9 @@ export const EnhancedProductListing: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
 
       {/* Navigation */}
       <div className="flex justify-between mt-8">
@@ -741,10 +740,10 @@ export const EnhancedProductListing: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <div className="flex items-center justify-between">
@@ -768,13 +767,13 @@ export const EnhancedProductListing: React.FC = () => {
             </Button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Tab Navigation */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-lg w-fit"
       >
         {tabs.map((tab) => {
@@ -794,58 +793,58 @@ export const EnhancedProductListing: React.FC = () => {
             </button>
           );
         })}
-      </motion.div>
+      </div>
 
       {/* Tab Content */}
-      <AnimatePresence mode="wait">
+      <Fragment mode="wait">
         {activeTab === 'create' && (
-          <motion.div
+          <div
             key="create"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             {renderCreateTab()}
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'manage' && (
-          <motion.div
+          <div
             key="manage"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             {renderManageTab()}
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'analytics' && (
-          <motion.div
+          <div
             key="analytics"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             {renderAnalyticsTab()}
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'insights' && (
-          <motion.div
+          <div
             key="insights"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             {renderInsightsTab()}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     </Container>
   );
 };

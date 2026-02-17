@@ -296,12 +296,12 @@ export const AnimatedCard: React.FC<AnimatedCardProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       className={className}
       {...variants[variant]}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -336,56 +336,56 @@ export const AnimatedButton: React.FC<AnimatedButtonProps> = ({
   };
 
   return (
-    <motion.button
+    <button
       className={className}
-      whileHover={!loading && !success ? variants[variant].hover : {}}
+}
       whileTap={!loading && !success ? variants[variant].tap : {}}
-      animate={success ? { scale: [1, 1.1, 1], backgroundColor: '#10b981' } : {}}
-      transition={{ duration: 0.2 }}
+ : {}}
+}
       {...props}
     >
-      <AnimatePresence mode="wait">
+      <Fragment mode="wait">
         {loading && (
-          <motion.div
+          <div
             key="loading"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+}
+}
+}
             className="flex items-center gap-2"
           >
-            <motion.div
+            <div
               className="w-4 h-4 border-2 border-white border-t-transparent rounded-full"
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+}
+}
             />
             Loading...
-          </motion.div>
+          </div>
         )}
 
         {success && (
-          <motion.div
+          <div
             key="success"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+}
+}
+}
             className="flex items-center gap-2"
           >
             ✓ Success!
-          </motion.div>
+          </div>
         )}
 
         {!loading && !success && (
-          <motion.div
+          <div
             key="content"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+}
+}
+}
           >
             {children}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
-    </motion.button>
+      </Fragment>
+    </button>
   );
 };
 
@@ -423,13 +423,13 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
   };
 
   return (
-    <AnimatePresence>
+    <Fragment>
       {isVisible && (
-        <motion.div
-          initial={{ opacity: 0, y: -50, scale: 0.8 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -20, scale: 0.8 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
+        <div
+}
+}
+}
+}
           className={`fixed top-4 right-4 z-50 p-4 rounded-lg border text-white shadow-lg max-w-sm ${colors[type]}`}
         >
           <div className="flex items-start gap-3">
@@ -444,9 +444,9 @@ export const RealTimeFeedback: React.FC<RealTimeFeedbackProps> = ({
               ×
             </button>
           </div>
-        </motion.div>
+        </div>
       )}
-    </AnimatePresence>
+    </Fragment>
   );
 };
 
@@ -465,14 +465,14 @@ interface BidTickerProps {
 export const AnimatedBidTicker: React.FC<BidTickerProps> = ({ bids, className }) => {
   return (
     <div className={`space-y-2 ${className}`}>
-      <AnimatePresence>
+      <Fragment>
         {bids.slice(0, 5).map((bid, index) => (
-          <motion.div
+          <div
             key={bid.id}
-            initial={{ opacity: 0, x: -20, height: 0 }}
-            animate={{ opacity: 1, x: 0, height: 'auto' }}
-            exit={{ opacity: 0, x: 20, height: 0 }}
-            transition={{ duration: 0.3, delay: index * 0.1 }}
+}
+}
+}
+}
             className={`flex items-center justify-between py-2 px-3 rounded-lg ${
               bid.isYou
                 ? 'bg-emerald-500/20 border border-emerald-400'
@@ -481,33 +481,33 @@ export const AnimatedBidTicker: React.FC<BidTickerProps> = ({ bids, className })
           >
             <div className="flex items-center gap-2">
               {bid.isYou && (
-                <motion.div
-                  animate={{ scale: [1, 1.2, 1] }}
-                  transition={{ duration: 0.5, repeat: Infinity }}
+                <div
+}
+}
                 >
                   👑
-                </motion.div>
+                </div>
               )}
               <span className={`text-sm font-medium ${bid.isYou ? 'text-emerald-300' : 'text-white'}`}>
                 {bid.isYou ? 'YOU' : bid.bidder}
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <motion.span
+              <span
                 className="text-sm font-bold text-green-400"
-                initial={{ scale: 1.2, color: '#fbbf24' }}
-                animate={{ scale: 1, color: '#10b981' }}
-                transition={{ duration: 0.3 }}
+}
+}
+}
               >
                 ₹{(bid.amount / 100000).toFixed(1)}L
-              </motion.span>
+              </span>
               <span className="text-xs text-gray-400">
                 {bid.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
-          </motion.div>
+          </div>
         ))}
-      </AnimatePresence>
+      </Fragment>
     </div>
   );
 };
@@ -526,9 +526,9 @@ export const PageTransition: React.FC<PageTransitionProps> = ({ children, varian
   };
 
   return (
-    <motion.div {...variants[variant]}>
+    <div {...variants[variant]}>
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -560,18 +560,18 @@ export const StaggerContainer: React.FC<StaggerContainerProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       className={className}
-      variants={containerVariants}
+
       initial="hidden"
       animate="visible"
     >
       {React.Children.map(children, (child) => (
-        <motion.div variants={itemVariants}>
+        <div>
           {child}
-        </motion.div>
+        </div>
       ))}
-    </motion.div>
+    </div>
   );
 };
 
@@ -599,61 +599,61 @@ export const AchievementUnlock: React.FC<AchievementUnlockProps> = ({
   };
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
+    <Fragment>
+      <div
+}
+}
+}
         className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
         onClick={onClose}
       >
-        <motion.div
-          initial={{ scale: 0.5, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.5, opacity: 0 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        <div
+}
+}
+}
+}
           className={`bg-gradient-to-br ${rarityColors[rarity]} p-8 rounded-2xl text-white text-center max-w-md mx-4`}
           onClick={(e) => e.stopPropagation()}
         >
-          <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 0.6, repeat: Infinity }}
+          <div
+}
+}
             className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"
           >
             <Icon className="w-8 h-8" />
-          </motion.div>
+          </div>
 
           <motion.h2
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, duration: 0.3 }}
+}
+}
+}
             className="text-2xl font-bold mb-2"
           >
             Achievement Unlocked!
           </motion.h2>
 
           <motion.h3
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.4, duration: 0.3 }}
+}
+}
+}
             className="text-xl font-semibold mb-2"
           >
             {title}
           </motion.h3>
 
           <motion.p
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.6, duration: 0.3 }}
+}
+}
+}
             className="text-white/80 mb-6"
           >
             {description}
           </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.3 }}
+          <div
+}
+}
+}
           >
             <button
               onClick={onClose}
@@ -661,10 +661,10 @@ export const AchievementUnlock: React.FC<AchievementUnlockProps> = ({
             >
               Awesome!
             </button>
-          </motion.div>
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+          </div>
+        </div>
+      </div>
+    </Fragment>
   );
 };
 

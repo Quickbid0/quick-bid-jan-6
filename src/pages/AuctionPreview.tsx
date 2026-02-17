@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { Calendar, Clock, Bell, ArrowRight, Video, Timer, FileText, Eye, Users, DollarSign, Award } from 'lucide-react';
 import AuctionTypeBadge from '../components/auctions/AuctionTypeBadge';
 import SellerTrustSummary from '../components/auctions/SellerTrustSummary';
@@ -250,10 +249,10 @@ const AuctionPreview = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {filteredAuctions.map((auction) => (
-            <motion.div
+            <div
               key={`${auction.type}-${auction.id}`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+}
+}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
             >
               <div className="relative">
@@ -361,7 +360,7 @@ const AuctionPreview = () => {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

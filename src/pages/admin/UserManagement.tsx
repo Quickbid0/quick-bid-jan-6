@@ -20,7 +20,6 @@ import {
   Calendar,
   MapPin
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useSession } from '../../context/SessionContext';
 
 interface UserProfile {
@@ -520,10 +519,10 @@ const UserManagement = () => {
             </thead>
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {filteredUsers.map((user) => (
-                <motion.tr
+                <tr
                   key={user.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+}
+}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700"
                 >
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -628,7 +627,7 @@ const UserManagement = () => {
                       </button>
                     </div>
                   </td>
-                </motion.tr>
+                </tr>
               ))}
               {filteredUsers.length === 0 && (
                 <tr>

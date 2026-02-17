@@ -19,7 +19,6 @@ import {
   Plus,
   Package
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 interface UserData {
@@ -306,9 +305,9 @@ const SuperAdmin = () => {
       {/* System Statistics */}
       {activeTab === 'stats' && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -318,12 +317,12 @@ const SuperAdmin = () => {
               </div>
               <Users className="h-8 w-8 text-blue-500" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -333,12 +332,12 @@ const SuperAdmin = () => {
               </div>
               <Activity className="h-8 w-8 text-green-500" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -348,12 +347,12 @@ const SuperAdmin = () => {
               </div>
               <Shield className="h-8 w-8 text-purple-500" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -363,12 +362,12 @@ const SuperAdmin = () => {
               </div>
               <Database className="h-8 w-8 text-orange-500" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-center justify-between">
@@ -378,7 +377,7 @@ const SuperAdmin = () => {
               </div>
               <BarChart3 className="h-8 w-8 text-indigo-500" />
             </div>
-          </motion.div>
+          </div>
         </div>
       )}
 
@@ -544,10 +543,10 @@ const SuperAdmin = () => {
               </thead>
               <tbody className="divide-y divide-gray-200 dark:divide-gray-600">
                 {users.map((user) => (
-                  <motion.tr
+                  <tr
                     key={user.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+}
+}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -632,7 +631,7 @@ const SuperAdmin = () => {
                         </button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
               </tbody>
             </table>

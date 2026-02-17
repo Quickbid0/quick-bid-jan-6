@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Clock, Users, Gavel, TrendingUp, AlertCircle, Bell } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface LiveAuctionTimerProps {
@@ -254,22 +253,22 @@ const LiveAuctionTimer: React.FC<LiveAuctionTimerProps> = ({
       )}
 
       {/* Recent Bids */}
-      <AnimatePresence>
+      <Fragment>
         {recentBids.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
+          <div
+}
+}
+}
             className="space-y-2"
           >
             <h4 className="font-medium text-gray-900">Recent Bids</h4>
             <div className="space-y-2">
               {recentBids.map((bid, index) => (
-                <motion.div
+                <div
                   key={bid.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+}
+}
+}
                   className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
                 >
                   <div className="flex items-center gap-2">
@@ -289,12 +288,12 @@ const LiveAuctionTimer: React.FC<LiveAuctionTimerProps> = ({
                       {new Date(bid.timestamp).toLocaleTimeString()}
                     </p>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
 
       {/* Bidding Controls */}
       {!isEnded && (

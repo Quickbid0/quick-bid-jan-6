@@ -3,7 +3,6 @@ import { supabase } from '../config/supabaseClient';
 import { Heart, Trash2, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { Package } from 'lucide-react';
 
 interface WatchlistItem {
@@ -156,11 +155,11 @@ const WatchlistPage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {items.map((item) => (
-            <motion.div
+            <div
               key={item.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+}
+}
+}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
             >
               <img
@@ -194,7 +193,7 @@ const WatchlistPage = () => {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

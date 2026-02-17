@@ -2,7 +2,6 @@
 // src/pages/admin/Phase2Dashboard.tsx
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Shield, 
   DollarSign, 
@@ -165,9 +164,9 @@ const Phase2Dashboard: React.FC = () => {
                 
                 {/* Trust Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <div
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -176,12 +175,12 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-gray-900">{trustMetrics.totalSellers}</div>
                     <div className="text-sm text-gray-500">Registered sellers</div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -190,12 +189,12 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-green-600">{trustMetrics.verifiedSellers}</div>
                     <div className="text-sm text-gray-500">Verified accounts</div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -204,12 +203,12 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-purple-600">{trustMetrics.verificationRate.toFixed(1)}%</div>
                     <div className="text-sm text-gray-500">Sellers verified</div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -218,7 +217,7 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-yellow-600">{trustMetrics.averageTrustScore.toFixed(1)}</div>
                     <div className="text-sm text-gray-500">Out of 100</div>
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Badge Distribution */}
@@ -271,9 +270,9 @@ const Phase2Dashboard: React.FC = () => {
                 
                 {/* Revenue Overview */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <div
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -282,12 +281,12 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-green-600">${monetizationMetrics.totalRevenue.toFixed(2)}</div>
                     <div className="text-sm text-gray-500">All revenue streams</div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -296,12 +295,12 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-blue-600">{monetizationMetrics.activeSubscriptions}</div>
                     <div className="text-sm text-gray-500">Paying subscribers</div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -310,12 +309,12 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-purple-600">${monetizationMetrics.averageOrderValue.toFixed(2)}</div>
                     <div className="text-sm text-gray-500">Per transaction</div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -324,7 +323,7 @@ const Phase2Dashboard: React.FC = () => {
                     </div>
                     <div className="text-2xl font-bold text-orange-600">{monetizationMetrics.willingnessToPay}%</div>
                     <div className="text-sm text-gray-500">User willingness</div>
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Revenue Breakdown */}

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, TrendingUp, Sparkles, Clock, Star, ArrowRight, RefreshCw } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { useSession } from '../../context/SessionContext';
 import { Link } from 'react-router-dom';
@@ -245,13 +244,13 @@ const AIRecommendations: React.FC = () => {
       </div>
 
       {/* Content */}
-      <AnimatePresence mode="wait">
+      <Fragment mode="wait">
         {activeTab === 'personalized' && (
-          <motion.div
+          <div
             key="personalized"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+}
+}
+}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
           >
             {loading ? (
@@ -264,11 +263,11 @@ const AIRecommendations: React.FC = () => {
               ))
             ) : (
               recommendations.map((item, index) => (
-                <motion.div
+                <div
                   key={item.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: index * 0.1 }}
+}
+}
+}
                   className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow"
                 >
                   <div className="relative">
@@ -341,18 +340,18 @@ const AIRecommendations: React.FC = () => {
                       View Details
                     </Link>
                   </div>
-                </motion.div>
+                </div>
               ))
             )}
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'trending' && (
-          <motion.div
+          <div
             key="trending"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-xl p-6"
           >
             <h2 className="text-xl font-semibold mb-6 flex items-center gap-2">
@@ -374,23 +373,23 @@ const AIRecommendations: React.FC = () => {
                 </div>
               ))}
             </div>
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'insights' && (
-          <motion.div
+          <div
             key="insights"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
+}
+}
+}
             className="grid grid-cols-1 md:grid-cols-2 gap-6"
           >
             {insights.map((insight, index) => (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
+}
+}
+}
                 className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700"
               >
                 <div className="flex items-start gap-3 mb-4">
@@ -416,11 +415,11 @@ const AIRecommendations: React.FC = () => {
                     </span>
                   ))}
                 </div>
-              </motion.div>
+              </div>
             ))}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     </div>
   );
 };

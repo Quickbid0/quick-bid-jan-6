@@ -2,7 +2,6 @@
 // Gamified KYC experience with progress tracking, trust indicators, and smooth verification flow
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   User,
   CreditCard,
@@ -81,24 +80,24 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
 
         <div className="relative">
           <div className="w-full bg-gray-200 rounded-full h-3">
-            <motion.div
+            <div
               className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full"
-              initial={{ width: 0 }}
-              animate={{ width: `${progressPercentage}%` }}
-              transition={{ duration: 1, ease: "easeOut" }}
+}
+%` }}
+}
             />
           </div>
 
           {/* Achievement milestone */}
           {progressPercentage >= 100 && (
-            <motion.div
-              initial={{ scale: 0, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 1, duration: 0.5 }}
+            <div
+}
+}
+}
               className="absolute -top-2 right-0 w-6 h-6 bg-yellow-500 rounded-full flex items-center justify-center"
             >
               <Crown className="w-3 h-3 text-white" />
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
@@ -111,14 +110,14 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
           const Icon = step.icon;
 
           return (
-            <motion.div
+            <div
               key={step.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.5 }}
+}
+}
+}
               className={`text-center ${isCurrent ? 'scale-105' : ''}`}
             >
-              <motion.div
+              <div
                 className={`w-12 h-12 mx-auto mb-2 rounded-full flex items-center justify-center transition-all duration-300 ${
                   isCompleted
                     ? 'bg-emerald-500 text-white'
@@ -134,14 +133,14 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
                     '0 0 0 0 rgba(59, 130, 246, 0)'
                   ]
                 } : {}}
-                transition={{ duration: 2, repeat: isCurrent ? Infinity : 0 }}
+}
               >
                 {isCompleted ? (
                   <CheckCircle className="w-6 h-6" />
                 ) : (
                   <Icon className="w-5 h-5" />
                 )}
-              </motion.div>
+              </div>
 
               <div className={`text-xs font-medium mb-1 ${
                 isCompleted ? 'text-emerald-600' :
@@ -150,7 +149,7 @@ const KYCProgress: React.FC<KYCProgressProps> = ({
                 {step.title}
               </div>
               <div className="text-xs text-gray-500">{step.description}</div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -260,20 +259,20 @@ const Achievement: React.FC<AchievementProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       className={`p-4 rounded-lg border-2 ${rarityColors[rarity]} transition-all duration-300 ${
         unlocked ? 'shadow-lg scale-105' : 'opacity-60'
       }`}
-      whileHover={{ scale: unlocked ? 1.05 : 1 }}
+}
     >
       <div className="flex items-center gap-3">
-        <motion.div
+        <div
           className={`p-3 rounded-lg ${unlocked ? 'bg-white shadow-md' : 'bg-gray-100'}`}
-          animate={unlocked ? { rotate: [0, 10, -10, 0] } : {}}
-          transition={{ duration: 0.5, repeat: unlocked ? Infinity : 0, repeatDelay: 3 }}
+ : {}}
+}
         >
           <Icon className={`w-6 h-6 ${unlocked ? 'text-gray-900' : 'text-gray-400'}`} />
-        </motion.div>
+        </div>
 
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
@@ -301,7 +300,7 @@ const Achievement: React.FC<AchievementProps> = ({
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -408,22 +407,22 @@ export const EnhancedKYCVerification: React.FC = () => {
     switch (currentStep) {
       case 1:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+          <div
+}
+}
+}
+}
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
+              <div
+}
+}
+}
                 className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4"
               >
                 <User className="w-8 h-8 text-blue-600" />
-              </motion.div>
+              </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Let's Get Started!</h3>
               <p className="text-gray-600">Tell us a bit about yourself to begin verification</p>
             </div>
@@ -495,27 +494,27 @@ export const EnhancedKYCVerification: React.FC = () => {
                 maxLength={10}
               />
             </div>
-          </motion.div>
+          </div>
         );
 
       case 2:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -50 }}
-            transition={{ duration: 0.3 }}
+          <div
+}
+}
+}
+}
             className="space-y-6"
           >
             <div className="text-center mb-8">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
+              <div
+}
+}
+}
                 className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4"
               >
                 <CreditCard className="w-8 h-8 text-emerald-600" />
-              </motion.div>
+              </div>
               <h3 className="text-xl font-bold text-gray-900 mb-2">Identity Verification</h3>
               <p className="text-gray-600">Upload your government-issued ID for verification</p>
             </div>
@@ -581,22 +580,22 @@ export const EnhancedKYCVerification: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         );
 
       // Continue with remaining steps...
       default:
         return (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
+          <div
+}
+}
+}
             className="text-center py-12"
           >
             <CheckCircle className="w-16 h-16 text-emerald-500 mx-auto mb-4" />
             <h3 className="text-2xl font-bold text-gray-900 mb-2">Verification Complete!</h3>
             <p className="text-gray-600">Your KYC verification has been submitted successfully.</p>
-          </motion.div>
+          </div>
         );
     }
   };
@@ -616,9 +615,9 @@ export const EnhancedKYCVerification: React.FC = () => {
           {/* Main Form */}
           <div className="col-span-2">
             <Card className="p-8">
-              <AnimatePresence mode="wait">
+              <Fragment mode="wait">
                 {renderStepContent()}
-              </AnimatePresence>
+              </Fragment>
 
               {/* Navigation */}
               <div className="flex justify-between mt-8 pt-6 border-t border-gray-200">

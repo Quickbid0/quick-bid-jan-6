@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Mail, Lock, User, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useAuth } from '../../context/UnifiedAuthContext';
 
 const RealLogin: React.FC = () => {
@@ -41,10 +40,10 @@ const RealLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
+      <div
+}
+}
+}
         className="bg-white rounded-lg shadow-xl p-8 w-full max-w-md"
       >
         <div className="text-center mb-8">
@@ -140,7 +139,7 @@ const RealLogin: React.FC = () => {
             ← Back to Demo Mode
           </Link>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

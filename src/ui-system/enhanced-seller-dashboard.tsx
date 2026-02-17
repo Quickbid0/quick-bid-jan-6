@@ -2,7 +2,6 @@
 // Premium seller experience with revenue analytics, AI insights, and performance optimization
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
   TrendingDown,
@@ -94,11 +93,11 @@ const RevenueHeatmap: React.FC = () => {
             </div>
             <div className="flex gap-1 flex-1">
               {monthData.map((revenue, weekIndex) => (
-                <motion.div
+                <div
                   key={weekIndex}
                   className={`h-8 rounded cursor-pointer ${getIntensityColor(revenue)} hover:opacity-80 transition-opacity`}
                   style={{ width: `${100 / 4}%` }}
-                  whileHover={{ scale: 1.05 }}
+}
                   onHoverStart={() => setHoveredCell({ month: monthIndex, week: weekIndex, revenue })}
                   onHoverEnd={() => setHoveredCell(null)}
                 />
@@ -108,12 +107,12 @@ const RevenueHeatmap: React.FC = () => {
         ))}
       </div>
 
-      <AnimatePresence>
+      <Fragment>
         {hoveredCell && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+          <div
+}
+}
+}
             className="absolute bg-gray-900 text-white text-xs px-3 py-2 rounded shadow-lg pointer-events-none z-10"
             style={{
               left: 120 + (hoveredCell.week * 60),
@@ -122,9 +121,9 @@ const RevenueHeatmap: React.FC = () => {
           >
             <div className="font-medium">₹{(hoveredCell.revenue / 100000).toFixed(1)}L</div>
             <div className="text-gray-300">{months[hoveredCell.month]} Week {hoveredCell.week + 1}</div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
 
       <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
         <span>₹1L</span>
@@ -166,10 +165,10 @@ const SalesInsight: React.FC<SalesInsightProps> = ({
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: -20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.5 }}
+    <div
+}
+}
+}
       className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 rounded-lg p-4"
     >
       <div className="flex items-start gap-3">
@@ -190,7 +189,7 @@ const SalesInsight: React.FC<SalesInsightProps> = ({
           </Button>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -269,10 +268,10 @@ const LiveAuctionMonitor: React.FC = () => {
 
       <div className="space-y-4">
         {auctions.map((auction) => (
-          <motion.div
+          <div
             key={auction.id}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+}
+}
             className={`p-4 rounded-lg border-2 transition-all ${
               auction.topBidder
                 ? 'border-emerald-200 bg-emerald-50'
@@ -344,7 +343,7 @@ const LiveAuctionMonitor: React.FC = () => {
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </Card>
@@ -428,10 +427,10 @@ export const EnhancedSellerDashboard: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex items-center justify-between mb-8"
       >
         <div>
@@ -460,32 +459,32 @@ export const EnhancedSellerDashboard: React.FC = () => {
             List Item
           </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Live Auction Monitor */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <LiveAuctionMonitor />
-      </motion.div>
+      </div>
 
       {/* KPI Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <Grid cols={4} gap="md">
           {kpiData.map((kpi, index) => (
-            <motion.div
+            <div
               key={kpi.title}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 0.5, ease: "easeOut" }}
+}
+}
+}
             >
               <Card className={`p-6 bg-gradient-to-br ${kpi.gradient} text-white relative overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200`}>
                 <div className="relative z-10">
@@ -494,9 +493,9 @@ export const EnhancedSellerDashboard: React.FC = () => {
                       <kpi.icon className="w-6 h-6" />
                     </div>
                     {kpi.isRealtime && (
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                      <div
+}
+}
                         className="w-2 h-2 bg-green-400 rounded-full"
                       />
                     )}
@@ -527,10 +526,10 @@ export const EnhancedSellerDashboard: React.FC = () => {
 
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg" />
               </Card>
-            </motion.div>
+            </div>
           ))}
         </Grid>
-      </motion.div>
+      </div>
 
       {/* Main Content Grid */}
       <Grid cols={3} gap="lg">
@@ -604,11 +603,11 @@ export const EnhancedSellerDashboard: React.FC = () => {
                 { name: 'Honda City 2019', soldFor: 650000, profit: 95000, status: 'sold' },
                 { name: 'Audi A4 2018', soldFor: 1250000, profit: 180000, status: 'active' }
               ].map((item, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1, duration: 0.4 }}
+}
+}
+}
                   className="flex items-center justify-between p-4 bg-gray-50 rounded-lg"
                 >
                   <div>
@@ -621,7 +620,7 @@ export const EnhancedSellerDashboard: React.FC = () => {
                     </p>
                     <StatusBadge status={item.status} size="sm" />
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </Card>
@@ -639,19 +638,19 @@ export const EnhancedSellerDashboard: React.FC = () => {
                 { icon: Users, label: 'Messages', color: 'bg-purple-500', action: () => console.log('Messages') },
                 { icon: Settings, label: 'Settings', color: 'bg-gray-500', action: () => console.log('Settings') }
               ].map((action, index) => (
-                <motion.button
+                <button
                   key={action.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1, duration: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
+}
+}
+}
+}
                   whileTap={{ scale: 0.95 }}
                   onClick={action.action}
                   className={`p-4 ${action.color} text-white rounded-lg hover:opacity-90 transition-opacity`}
                 >
                   <action.icon className="w-6 h-6 mb-2 mx-auto" />
                   <div className="text-sm font-medium">{action.label}</div>
-                </motion.button>
+                </button>
               ))}
             </div>
           </Card>
@@ -682,11 +681,11 @@ export const EnhancedSellerDashboard: React.FC = () => {
                 { item: 'Toyota Fortuner 2019', time: 'Friday 10:00 AM', bidders: 32 },
                 { item: 'Hyundai Creta 2020', time: 'Next Week', bidders: 28 }
               ].map((auction, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.0 + index * 0.1, duration: 0.4 }}
+}
+}
+}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                 >
                   <div>
@@ -697,7 +696,7 @@ export const EnhancedSellerDashboard: React.FC = () => {
                     <p className="text-xs text-gray-600">{auction.bidders} interested</p>
                     <StatusBadge status="pending" size="sm" />
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </Card>

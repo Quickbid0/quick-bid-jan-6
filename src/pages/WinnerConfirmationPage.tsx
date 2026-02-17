@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Trophy,
@@ -102,21 +101,21 @@ const WinnerConfirmationPage: React.FC = () => {
     switch (currentStep) {
       case 1:
         return (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="space-y-8"
           >
             {/* Winner Announcement */}
             <div className="text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              <div
+}
+}
+}
                 className="inline-flex items-center justify-center w-20 h-20 bg-yellow-100 rounded-full mb-6"
               >
                 <Trophy className="h-10 w-10 text-yellow-600" />
-              </motion.div>
+              </div>
 
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 Congratulations! 🎉
@@ -232,14 +231,14 @@ const WinnerConfirmationPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         );
 
       case 2:
         return (
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+          <div
+}
+}
             className="space-y-6"
           >
             <div className="text-center mb-8">
@@ -328,26 +327,26 @@ const WinnerConfirmationPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         );
 
       case 3:
         return (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
+          <div
+}
+}
             className="space-y-8"
           >
             {/* Success Message */}
             <div className="text-center">
-              <motion.div
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+              <div
+}
+}
+}
                 className="inline-flex items-center justify-center w-20 h-20 bg-green-100 rounded-full mb-6"
               >
                 <CheckCircle className="h-10 w-10 text-green-600" />
-              </motion.div>
+              </div>
 
               <h1 className="text-4xl font-bold text-gray-900 mb-4">
                 Payment Successful! ✅
@@ -473,7 +472,7 @@ const WinnerConfirmationPage: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         );
 
       default:

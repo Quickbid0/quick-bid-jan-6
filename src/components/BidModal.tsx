@@ -4,7 +4,6 @@ import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { X, Gavel, Wallet } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 
 interface BidModalProps {
   product: any;
@@ -279,11 +278,11 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
 
   return (
     <div className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/50 backdrop-blur-sm p-0 md:p-4">
-      <motion.div 
-        initial={{ y: "100%" }}
-        animate={{ y: 0 }}
-        exit={{ y: "100%" }}
-        transition={{ type: "spring", damping: 25, stiffness: 500 }}
+      <div 
+}
+}
+}
+}
         className="w-full max-w-md bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-xl overflow-hidden max-h-[90vh] overflow-y-auto"
       >
         {/* Mobile Handle */}
@@ -393,7 +392,7 @@ const BidModal: React.FC<BidModalProps> = ({ product, auctionId, onClose, onBidP
             {loading ? 'Placing Bid...' : 'Confirm Bid'}
           </button>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 };

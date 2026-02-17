@@ -94,9 +94,9 @@ const EliteLandingPage = () => {
             <div className="space-y-8">
               {/* Trust Badge */}
               <div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
+}
+}
+}
                 className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2"
               >
                 <Shield className="w-4 h-4 text-emerald-600" />
@@ -105,9 +105,9 @@ const EliteLandingPage = () => {
 
               {/* Hero Headline */}
               <div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
+}
+}
+}
                 className="space-y-4"
               >
                 <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
@@ -122,9 +122,9 @@ const EliteLandingPage = () => {
 
               {/* Search-First UX */}
               <div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.2 }}
+}
+}
+}
                 className="max-w-md"
               >
                 <div className="relative">
@@ -144,9 +144,9 @@ const EliteLandingPage = () => {
 
               {/* CTA Buttons */}
               <div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.3 }}
+}
+}
+}
                 className="flex flex-col sm:flex-row gap-4"
               >
                 <Link to="/register">
@@ -163,9 +163,9 @@ const EliteLandingPage = () => {
 
               {/* Social Proof */}
               <div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.4 }}
+}
+}
+}
                 className="flex items-center gap-8 pt-8"
               >
                 <div className="flex items-center gap-1">
@@ -179,9 +179,9 @@ const EliteLandingPage = () => {
 
             {/* Right: Hero Visual */}
             <div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+}
+}
+}
               className="relative"
             >
               {/* Main Auction Card */}
@@ -242,9 +242,9 @@ const EliteLandingPage = () => {
             {trustSignals.map((signal, index) => (
               <div
                 key={signal.text}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+}
+}
+}
                 className="flex items-center gap-2 text-white"
               >
                 <signal.icon className={`w-5 h-5 ${signal.color}`} />
@@ -259,9 +259,9 @@ const EliteLandingPage = () => {
       <section className="py-24 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+}
+}
+}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-neutral-900 mb-4">
@@ -276,9 +276,9 @@ const EliteLandingPage = () => {
             {categories.map((category, index) => (
               <div
                 key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+}
+}
+}
                 className={`relative bg-white rounded-2xl p-8 border-2 transition-all duration-250 cursor-pointer ${
                   activeCategory === category.id
                     ? 'border-primary-500 shadow-xl shadow-primary-500/10'
@@ -303,9 +303,9 @@ const EliteLandingPage = () => {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+}
+}
+}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-neutral-900 mb-4">
@@ -321,9 +321,9 @@ const EliteLandingPage = () => {
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+}
+}
+}
                 className="text-center"
               >
                 <div className="text-4xl font-bold text-primary-600 mb-2">{stat.value}</div>
@@ -357,9 +357,9 @@ const EliteLandingPage = () => {
             ].map((testimonial, index) => (
               <div
                 key={testimonial.name}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
+}
+}
+}
                 className="bg-neutral-50 rounded-2xl p-8 border border-neutral-200"
               >
                 <div className="flex items-center gap-4 mb-4">
@@ -387,9 +387,9 @@ const EliteLandingPage = () => {
       <section className="py-24 bg-primary-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
+}
+}
+}
           >
             <h2 className="text-4xl font-bold text-white mb-4">
               Ready to Start Your Auction Journey?

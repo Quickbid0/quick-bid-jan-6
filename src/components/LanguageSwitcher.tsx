@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Globe, Check, ChevronDown } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface Language {
   code: string;
@@ -85,12 +84,12 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
           <ChevronDown className={`w-4 h-4 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
 
-        <AnimatePresence>
+        <Fragment>
           {isOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
+            <div
+}
+}
+}
               className="absolute z-50 w-full mt-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg"
               role="listbox"
             >
@@ -115,9 +114,9 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                   )}
                 </button>
               ))}
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </Fragment>
       </div>
     );
   }
@@ -138,21 +137,21 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
         <ChevronDown className={`w-4 h-4 text-gray-600 dark:text-gray-400 transition-transform ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
-      <AnimatePresence>
+      <Fragment>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
+          <div
+}
+}
+}
             className="absolute right-0 z-50 mt-2 w-56 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg shadow-lg"
             role="listbox"
           >
             {languages.map((language, index) => (
-              <motion.button
+              <button
                 key={language.code}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.05 }}
+}
+}
+}
                 onClick={() => handleLanguageChange(language.code)}
                 disabled={isChanging}
                 className={`w-full flex items-center justify-between px-4 py-3 text-sm hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors first:rounded-t-lg last:rounded-b-lg ${
@@ -171,11 +170,11 @@ const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({
                 {language.code === i18n.language && (
                   <Check className="w-4 h-4 text-blue-600" />
                 )}
-              </motion.button>
+              </button>
             ))}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
 
       {/* Backdrop for mobile */}
       {isOpen && (

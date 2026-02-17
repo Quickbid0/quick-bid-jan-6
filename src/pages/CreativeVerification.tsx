@@ -19,7 +19,6 @@ import {
   FileText
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 
 interface CreativeWork {
   id: string;
@@ -270,10 +269,10 @@ const CreativeVerification = () => {
       {/* Creative Works List */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {works.map((work) => (
-          <motion.div
+          <div
             key={work.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden"
           >
             <div className="relative">
@@ -313,7 +312,7 @@ const CreativeVerification = () => {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

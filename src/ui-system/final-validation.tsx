@@ -2,7 +2,6 @@
 // Comprehensive testing dashboard for the QuickMela redesign with gaming, fintech, and SaaS excellence
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   CheckCircle,
   XCircle,
@@ -262,9 +261,9 @@ const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({
   liveDemo
 }) => {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
+}
+}
       className="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden"
     >
       <div className="p-6">
@@ -299,7 +298,7 @@ const ComponentShowcase: React.FC<ComponentShowcaseProps> = ({
           </div>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -495,21 +494,21 @@ export const FinalValidationDashboard: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="text-center mb-12"
       >
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+        <div
+}
+}
+}
           className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white px-6 py-3 rounded-full text-lg font-bold mb-6"
         >
           <Trophy className="w-6 h-6" />
           QuickMela UI/UX Validation
-        </motion.div>
+        </div>
 
         <h1 className="text-4xl font-black text-gray-900 mb-4">
           🎯 Complete Redesign Assessment
@@ -517,13 +516,13 @@ export const FinalValidationDashboard: React.FC = () => {
         <p className="text-xl text-gray-600 max-w-3xl mx-auto">
           Comprehensive validation of the gaming excitement, fintech trust, and SaaS intelligence redesign
         </p>
-      </motion.div>
+      </div>
 
       {/* Overall Score */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+      <div
+}
+}
+}
         className="text-center mb-12"
       >
         <Card className="p-8 bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-600 text-white max-w-md mx-auto">
@@ -540,13 +539,13 @@ export const FinalValidationDashboard: React.FC = () => {
             ))}
           </div>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Category Filters */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.6, duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex flex-wrap justify-center gap-2 mb-8"
       >
         {categories.map((category) => {
@@ -566,13 +565,13 @@ export const FinalValidationDashboard: React.FC = () => {
             </button>
           );
         })}
-      </motion.div>
+      </div>
 
       {/* Validation Results */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-12"
       >
         <Grid cols={2} gap="lg">
@@ -592,11 +591,11 @@ export const FinalValidationDashboard: React.FC = () => {
                 const hasResult = result !== undefined;
 
                 return (
-                  <motion.div
+                  <div
                     key={test.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ duration: 0.3 }}
+}
+}
+}
                     className="bg-white border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-center justify-between mb-2">
@@ -649,7 +648,7 @@ export const FinalValidationDashboard: React.FC = () => {
                         )}
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -675,11 +674,11 @@ export const FinalValidationDashboard: React.FC = () => {
                   { icon: Zap, label: 'Performance', desc: 'Smooth 60fps animations' },
                   { icon: Crown, label: 'Premium Polish', desc: 'Apple-level attention to detail' }
                 ].map((achievement, index) => (
-                  <motion.div
+                  <div
                     key={achievement.label}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1, duration: 0.3 }}
+}
+}
+}
                     className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg"
                   >
                     <achievement.icon className="w-5 h-5 text-blue-600" />
@@ -687,19 +686,19 @@ export const FinalValidationDashboard: React.FC = () => {
                       <div className="font-medium text-gray-900">{achievement.label}</div>
                       <div className="text-sm text-gray-600">{achievement.desc}</div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </Card>
           </div>
         </Grid>
-      </motion.div>
+      </div>
 
       {/* Component Showcase */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.0, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-12"
       >
         <div className="text-center mb-8">
@@ -712,13 +711,13 @@ export const FinalValidationDashboard: React.FC = () => {
             <ComponentShowcase key={index} {...showcase} />
           ))}
         </Grid>
-      </motion.div>
+      </div>
 
       {/* Final Summary */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
+      <div
+}
+}
+}
         className="text-center"
       >
         <Card className="p-8 bg-gradient-to-r from-emerald-600 to-blue-600 text-white">
@@ -745,7 +744,7 @@ export const FinalValidationDashboard: React.FC = () => {
             </p>
           </div>
         </Card>
-      </motion.div>
+      </div>
     </Container>
   );
 };

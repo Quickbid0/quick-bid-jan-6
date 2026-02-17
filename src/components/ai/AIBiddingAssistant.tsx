@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Brain, Zap, Target, TrendingUp, AlertTriangle, Clock, Users, Activity, Lightbulb, Play, Pause } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface BiddingStrategy {
@@ -257,9 +256,9 @@ const AIBiddingAssistant: React.FC<{ auctionId: string; currentPrice: number; on
 
       {/* Current Recommendation */}
       {recommendation && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className={`mb-6 p-4 rounded-lg border ${
             recommendation.action === 'bid' 
               ? 'bg-green-50 border-green-200 dark:bg-green-900/20 dark:border-green-800' 
@@ -319,7 +318,7 @@ const AIBiddingAssistant: React.FC<{ auctionId: string; currentPrice: number; on
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Auction Analysis */}
@@ -366,11 +365,11 @@ const AIBiddingAssistant: React.FC<{ auctionId: string; currentPrice: number; on
         </h4>
         <div className="space-y-3">
           {strategies.map((strategy, index) => (
-            <motion.div
+            <div
               key={strategy.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className={`border rounded-lg p-4 cursor-pointer transition-all ${
                 selectedStrategy === strategy.id
                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
@@ -440,16 +439,16 @@ const AIBiddingAssistant: React.FC<{ auctionId: string; currentPrice: number; on
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
 
       {/* Auto-Bid Settings */}
       {autoBidEnabled && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
         >
           <div className="flex items-center justify-between mb-3">
@@ -480,7 +479,7 @@ const AIBiddingAssistant: React.FC<{ auctionId: string; currentPrice: number; on
               </select>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   BarChart3,
   TrendingUp,
@@ -183,10 +182,10 @@ const DealerDashboard: React.FC = () => {
             <div className="space-y-6">
               {/* KPI Row */}
               <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
+                <div
+}
+}
+}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -203,12 +202,12 @@ const DealerDashboard: React.FC = () => {
                       </div>
                     </div>
                   </Card>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
+                <div
+}
+}
+}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -222,12 +221,12 @@ const DealerDashboard: React.FC = () => {
                       </div>
                     </div>
                   </Card>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
+                <div
+}
+}
+}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -241,12 +240,12 @@ const DealerDashboard: React.FC = () => {
                       </div>
                     </div>
                   </Card>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
+                <div
+}
+}
+}
                 >
                   <Card className="p-6">
                     <div className="flex items-center">
@@ -260,14 +259,14 @@ const DealerDashboard: React.FC = () => {
                       </div>
                     </div>
                   </Card>
-                </motion.div>
+                </div>
               </div>
 
               {/* Performance Graph */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.5 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <h3 className="text-lg font-semibold text-gray-900 mb-4">Auction Performance</h3>
@@ -284,7 +283,7 @@ const DealerDashboard: React.FC = () => {
                     ))}
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
               {/* Auction Table and Widgets */}
               <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

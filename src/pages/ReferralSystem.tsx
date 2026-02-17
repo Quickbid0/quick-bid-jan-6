@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   Share2,
   Users,
@@ -116,10 +115,10 @@ const ReferralSystem: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats Overview */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -132,12 +131,12 @@ const ReferralSystem: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -150,12 +149,12 @@ const ReferralSystem: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -168,12 +167,12 @@ const ReferralSystem: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <div className="flex items-center">
@@ -186,16 +185,16 @@ const ReferralSystem: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
         </div>
 
         {/* Referral Code & Share */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Referral Code */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Your Referral Code</h3>
@@ -230,13 +229,13 @@ const ReferralSystem: React.FC = () => {
                 </div>
               </div>
             </Card>
-          </motion.div>
+          </div>
 
           {/* Share Options */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.6 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Share & Invite</h3>
@@ -275,16 +274,16 @@ const ReferralSystem: React.FC = () => {
                 Share your referral link and earn ₹200 for each successful signup!
               </p>
             </Card>
-          </motion.div>
+          </div>
         </div>
 
         {/* Reward Tiers & History */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Reward Tiers */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.7 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Reward Milestones</h3>
@@ -320,13 +319,13 @@ const ReferralSystem: React.FC = () => {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </div>
 
           {/* Referral History */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8 }}
+          <div
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Referrals</h3>
@@ -360,7 +359,7 @@ const ReferralSystem: React.FC = () => {
                 ))}
               </div>
             </Card>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { Link, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { FileText, Lock, Eye, Shield, Calendar, DollarSign, Building, Truck, Award, Users, Download, Upload, AlertTriangle, CheckCircle, Clock, Scale, Gavel, Search } from 'lucide-react';
 import AuctionTypeBadge from '../components/auctions/AuctionTypeBadge';
 import SellerTrustSummary from '../components/auctions/SellerTrustSummary';
@@ -961,10 +960,10 @@ const TenderAuctionPage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {sortedTenders.map((tender) => (
-              <motion.div
+              <div
                 key={tender.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+}
+}
                 className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1"
               >
                 <div className="relative">
@@ -1030,7 +1029,7 @@ const TenderAuctionPage = () => {
                     View Tender Details
                   </Link>
                 </div>
-              </motion.div>
+              </div>
             ))}
             </div>
           )}

@@ -2,7 +2,6 @@
 // Premium dashboard experience with real-time data, AI insights, and emotional engagement
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   TrendingUp,
   TrendingDown,
@@ -92,10 +91,10 @@ const KPICard: React.FC<KPICardProps> = ({
   }, [value, delay]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      transition={{ delay: delay * 0.1, duration: 0.5, ease: "easeOut" }}
+    <div
+}
+}
+}
     >
       <Card className={`p-6 bg-gradient-to-br ${gradient} text-white relative overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200`}>
         {/* Animated background pattern */}
@@ -109,9 +108,9 @@ const KPICard: React.FC<KPICardProps> = ({
               <Icon className="w-6 h-6" />
             </div>
             {isRealtime && (
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity }}
+              <div
+}
+}
                 className="w-2 h-2 bg-green-400 rounded-full"
               />
             )}
@@ -121,14 +120,14 @@ const KPICard: React.FC<KPICardProps> = ({
             <h3 className="text-sm font-medium text-white/90 mb-1">{title}</h3>
             <div className="text-2xl font-bold">
               {typeof value === 'number' ? (
-                <motion.span
+                <span
                   key={animatedValue}
-                  initial={{ scale: 1.2, color: '#fbbf24' }}
-                  animate={{ scale: 1, color: 'white' }}
-                  transition={{ duration: 0.3 }}
+}
+}
+}
                 >
                   {isAnimating ? Math.round(animatedValue).toLocaleString() : value.toLocaleString()}
-                </motion.span>
+                </span>
               ) : (
                 <span>{value}</span>
               )}
@@ -150,7 +149,7 @@ const KPICard: React.FC<KPICardProps> = ({
         {/* Hover effect */}
         <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg" />
       </Card>
-    </motion.div>
+    </div>
   );
 };
 
@@ -172,10 +171,10 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({
   icon: Icon,
   color
 }) => (
-  <motion.div
-    initial={{ opacity: 0, x: -20 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.5 }}
+  <div
+}
+}
+}
     className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer group"
   >
     <div className="flex items-start gap-3">
@@ -197,7 +196,7 @@ const AIRecommendation: React.FC<AIRecommendationProps> = ({
         </Button>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
 // Live Auction Spotlight
@@ -218,10 +217,10 @@ const LiveAuctionSpotlight: React.FC = () => {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.6 }}
+    <div
+}
+}
+}
       className="bg-gradient-to-r from-orange-500 via-red-500 to-pink-500 rounded-2xl p-6 text-white relative overflow-hidden"
     >
       {/* Animated background */}
@@ -230,9 +229,9 @@ const LiveAuctionSpotlight: React.FC = () => {
       <div className="relative z-10">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-3">
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+            <div
+}
+}
               className="w-3 h-3 bg-white rounded-full"
             />
             <span className="text-lg font-bold">LIVE AUCTION</span>
@@ -281,7 +280,7 @@ const LiveAuctionSpotlight: React.FC = () => {
           </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -316,25 +315,25 @@ const ActivityHeatmap: React.FC = () => {
         {heatmapData.map((week, dayIndex) => (
           <div key={dayIndex} className="flex gap-1">
             {week.map((value, hourIndex) => (
-              <motion.div
+              <div
                 key={hourIndex}
                 className={`w-3 h-3 rounded-sm cursor-pointer ${getIntensityColor(value)}`}
-                whileHover={{ scale: 1.2 }}
+}
                 onHoverStart={() => setHoveredCell({ day: dayIndex, hour: hourIndex, value })}
                 onHoverEnd={() => setHoveredCell(null)}
-                transition={{ duration: 0.2 }}
+}
               />
             ))}
           </div>
         ))}
       </div>
 
-      <AnimatePresence>
+      <Fragment>
         {hoveredCell && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
+          <div
+}
+}
+}
             className="absolute bg-gray-900 text-white text-xs px-2 py-1 rounded shadow-lg pointer-events-none z-10"
             style={{
               left: hoveredCell.hour * 16 + 20,
@@ -342,9 +341,9 @@ const ActivityHeatmap: React.FC = () => {
             }}
           >
             {hoveredCell.value} bids
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
 
       <div className="flex items-center justify-between mt-4 text-xs text-gray-500">
         <span>Less</span>
@@ -437,10 +436,10 @@ export const EnhancedBuyerDashboard: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex items-center justify-between mb-8"
       >
         <div>
@@ -469,23 +468,23 @@ export const EnhancedBuyerDashboard: React.FC = () => {
             Browse Auctions
           </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Live Auction Spotlight */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <LiveAuctionSpotlight />
-      </motion.div>
+      </div>
 
       {/* KPI Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <Grid cols={4} gap="md">
@@ -497,7 +496,7 @@ export const EnhancedBuyerDashboard: React.FC = () => {
             />
           ))}
         </Grid>
-      </motion.div>
+      </div>
 
       {/* Main Content Grid */}
       <Grid cols={3} gap="lg">
@@ -532,18 +531,18 @@ export const EnhancedBuyerDashboard: React.FC = () => {
                 { icon: BarChart3, label: 'Analytics', color: 'bg-green-500' },
                 { icon: Settings, label: 'Settings', color: 'bg-gray-500' }
               ].map((action, index) => (
-                <motion.button
+                <button
                   key={action.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.8 + index * 0.1, duration: 0.3 }}
-                  whileHover={{ scale: 1.05 }}
+}
+}
+}
+}
                   whileTap={{ scale: 0.95 }}
                   className={`p-4 ${action.color} text-white rounded-lg hover:opacity-90 transition-opacity`}
                 >
                   <action.icon className="w-6 h-6 mb-2 mx-auto" />
                   <div className="text-sm font-medium">{action.label}</div>
-                </motion.button>
+                </button>
               ))}
             </div>
           </Card>
@@ -584,11 +583,11 @@ export const EnhancedBuyerDashboard: React.FC = () => {
                   color: 'text-orange-600'
                 }
               ].map((activity, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.6 + index * 0.1, duration: 0.4 }}
+}
+}
+}
                   className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
                 >
                   <div className={`p-2 bg-gray-100 rounded-lg ${activity.color}`}>
@@ -601,7 +600,7 @@ export const EnhancedBuyerDashboard: React.FC = () => {
                       <span className="text-xs font-semibold text-gray-700">{activity.amount}</span>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </Card>
@@ -619,11 +618,11 @@ export const EnhancedBuyerDashboard: React.FC = () => {
                 { name: 'Honda City 2019', currentBid: '₹6,20,000', status: 'won', bidders: 18 },
                 { name: 'Audi A4 2018', currentBid: '₹12,50,000', status: 'outbid', bidders: 31 }
               ].map((auction, index) => (
-                <motion.div
+                <div
                   key={index}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8 + index * 0.1, duration: 0.4 }}
+}
+}
+}
                   className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer"
                 >
                   <div>
@@ -634,7 +633,7 @@ export const EnhancedBuyerDashboard: React.FC = () => {
                     <p className="font-semibold text-gray-900 text-sm">{auction.currentBid}</p>
                     <StatusBadge status={auction.status as any} size="sm" />
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </Card>

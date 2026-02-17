@@ -2,7 +2,6 @@
 // Premium admin experience with real-time monitoring, fraud detection, and system analytics
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Activity,
   Users,
@@ -93,38 +92,38 @@ const SystemMonitor: React.FC = () => {
       </div>
 
       <Grid cols={3} gap="md">
-        <motion.div
+        <div
           className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-lg"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.2 }}
+}
+}
         >
           <Users className="w-8 h-8 mx-auto mb-2 text-blue-300" />
           <div className="text-2xl font-bold">{systemStats.activeUsers.toLocaleString()}</div>
           <div className="text-sm text-blue-100">Active Users</div>
           <TrendingUp className="w-4 h-4 mx-auto mt-1 text-green-400" />
-        </motion.div>
+        </div>
 
-        <motion.div
+        <div
           className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-lg"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.2 }}
+}
+}
         >
           <DollarSign className="w-8 h-8 mx-auto mb-2 text-emerald-300" />
           <div className="text-2xl font-bold">₹{(systemStats.totalRevenue / 100000).toFixed(1)}L</div>
           <div className="text-sm text-blue-100">Today's Revenue</div>
           <TrendingUp className="w-4 h-4 mx-auto mt-1 text-green-400" />
-        </motion.div>
+        </div>
 
-        <motion.div
+        <div
           className="text-center p-4 bg-white/10 backdrop-blur-sm rounded-lg"
-          whileHover={{ scale: 1.05 }}
-          transition={{ duration: 0.2 }}
+}
+}
         >
           <Target className="w-8 h-8 mx-auto mb-2 text-purple-300" />
           <div className="text-2xl font-bold">{systemStats.activeAuctions}</div>
           <div className="text-sm text-blue-100">Live Auctions</div>
           <Activity className="w-4 h-4 mx-auto mt-1 text-blue-400 animate-pulse" />
-        </motion.div>
+        </div>
       </Grid>
 
       <div className="mt-6 space-y-3">
@@ -226,10 +225,10 @@ const FraudDetectionDashboard: React.FC = () => {
         {fraudAlerts.map((alert) => {
           const Icon = getTypeIcon(alert.type);
           return (
-            <motion.div
+            <div
               key={alert.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+}
+}
               className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
             >
               <div className="flex items-start justify-between">
@@ -264,7 +263,7 @@ const FraudDetectionDashboard: React.FC = () => {
                   </Button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -392,11 +391,11 @@ const ActivityFeed: React.FC = () => {
         {activities.map((activity, index) => {
           const Icon = getActivityIcon(activity.type);
           return (
-            <motion.div
+            <div
               key={activity.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.3 }}
+}
+}
+}
               className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg"
             >
               <div className={`p-2 rounded-lg ${getActivityColor(activity.type, activity.status)}`}>
@@ -420,7 +419,7 @@ const ActivityFeed: React.FC = () => {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -489,10 +488,10 @@ export const EnhancedAdminPanel: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex items-center justify-between mb-8"
       >
         <div>
@@ -522,13 +521,13 @@ export const EnhancedAdminPanel: React.FC = () => {
             Alerts
           </Button>
         </div>
-      </motion.div>
+      </div>
 
       {/* Tab Navigation */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+      <div
+}
+}
+}
         className="flex gap-1 mb-8 p-1 bg-gray-100 rounded-lg w-fit"
       >
         {tabs.map((tab) => {
@@ -548,22 +547,22 @@ export const EnhancedAdminPanel: React.FC = () => {
             </button>
           );
         })}
-      </motion.div>
+      </div>
 
       {/* KPI Cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <Grid cols={4} gap="md">
           {kpiData.map((kpi, index) => (
-            <motion.div
+            <div
               key={kpi.title}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.2 + index * 0.1, duration: 0.5, ease: "easeOut" }}
+}
+}
+}
             >
               <Card className={`p-6 bg-gradient-to-br ${kpi.gradient} text-white relative overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-200`}>
                 <div className="relative z-10">
@@ -572,9 +571,9 @@ export const EnhancedAdminPanel: React.FC = () => {
                       <kpi.icon className="w-6 h-6" />
                     </div>
                     {kpi.isRealtime && (
-                      <motion.div
-                        animate={{ scale: [1, 1.2, 1] }}
-                        transition={{ duration: 2, repeat: Infinity }}
+                      <div
+}
+}
                         className="w-2 h-2 bg-green-400 rounded-full"
                       />
                     )}
@@ -609,20 +608,20 @@ export const EnhancedAdminPanel: React.FC = () => {
 
                 <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg" />
               </Card>
-            </motion.div>
+            </div>
           ))}
         </Grid>
-      </motion.div>
+      </div>
 
       {/* Main Content Based on Tab */}
-      <AnimatePresence mode="wait">
+      <Fragment mode="wait">
         {activeTab === 'overview' && (
-          <motion.div
+          <div
             key="overview"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             <Grid cols={2} gap="lg">
               <div className="space-y-6">
@@ -633,84 +632,84 @@ export const EnhancedAdminPanel: React.FC = () => {
                 <ActivityFeed />
               </div>
             </Grid>
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'users' && (
-          <motion.div
+          <div
             key="users"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">User Management</h3>
               <p className="text-gray-600">User management interface coming soon...</p>
             </Card>
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'auctions' && (
-          <motion.div
+          <div
             key="auctions"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Auction Management</h3>
               <p className="text-gray-600">Auction management interface coming soon...</p>
             </Card>
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'security' && (
-          <motion.div
+          <div
             key="security"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Security Center</h3>
               <p className="text-gray-600">Advanced security controls coming soon...</p>
             </Card>
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'analytics' && (
-          <motion.div
+          <div
             key="analytics"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">Business Analytics</h3>
               <p className="text-gray-600">Advanced analytics dashboard coming soon...</p>
             </Card>
-          </motion.div>
+          </div>
         )}
 
         {activeTab === 'settings' && (
-          <motion.div
+          <div
             key="settings"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.4 }}
+}
+}
+}
+}
           >
             <Card className="p-6">
               <h3 className="text-lg font-semibold text-gray-900 mb-4">System Settings</h3>
               <p className="text-gray-600">Platform configuration coming soon...</p>
             </Card>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     </Container>
   );
 };

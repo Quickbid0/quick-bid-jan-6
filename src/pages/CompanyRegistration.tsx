@@ -17,7 +17,6 @@ import {
   Hash
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 
 const CompanyRegistration = () => {
   const [step, setStep] = useState(1);
@@ -880,11 +879,11 @@ const CompanyRegistration = () => {
           </div>
         </div>
 
-        <motion.div
+        <div
           key={step}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
+}
+}
+}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
         >
           {renderStep()}
@@ -922,7 +921,7 @@ const CompanyRegistration = () => {
               </button>
             )}
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

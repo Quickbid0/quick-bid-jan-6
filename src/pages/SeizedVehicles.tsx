@@ -18,7 +18,6 @@ import {
   Shield,
   Package
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 
 interface SeizedVehicle {
@@ -368,10 +367,10 @@ const SeizedVehicles = () => {
       {/* Vehicles Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredVehicles.map((vehicle) => (
-          <motion.div
+          <div
             key={vehicle.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden hover:shadow-md transition-shadow"
           >
             <div className="relative">
@@ -476,7 +475,7 @@ const SeizedVehicles = () => {
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

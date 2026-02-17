@@ -20,7 +20,6 @@ import {
   BarChart3,
   X
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface WebcastStream {
   id: string;
@@ -284,10 +283,10 @@ const LiveWebcastSetup = () => {
 
         <div className="divide-y divide-gray-200 dark:divide-gray-700">
           {streams.map((stream) => (
-            <motion.div
+            <div
               key={stream.id}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
+}
+}
               className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700"
             >
               <div className="flex items-center justify-between">
@@ -373,7 +372,7 @@ const LiveWebcastSetup = () => {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

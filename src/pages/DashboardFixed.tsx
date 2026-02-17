@@ -18,7 +18,6 @@ import {
   BarChart3,
   Calendar
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 const DashboardFixed = () => {
@@ -238,10 +237,10 @@ const DashboardFixed = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {trendingProducts.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+}
+}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => navigate(`/product/${product.id}`)}
             >
@@ -274,7 +273,7 @@ const DashboardFixed = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -293,10 +292,10 @@ const DashboardFixed = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {endingSoon.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+}
+}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => navigate(`/product/${product.id}`)}
             >
@@ -331,7 +330,7 @@ const DashboardFixed = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>
@@ -350,10 +349,10 @@ const DashboardFixed = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {newListings.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+}
+}
               className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => navigate(`/product/${product.id}`)}
             >
@@ -391,7 +390,7 @@ const DashboardFixed = () => {
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </section>

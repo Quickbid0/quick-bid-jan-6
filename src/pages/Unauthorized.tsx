@@ -1,26 +1,25 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Shield, ArrowLeft, Home, User } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const Unauthorized = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-red-50 via-white to-orange-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="max-w-md w-full text-center"
       >
         {/* Error Icon */}
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.5 }}
+        <div
+}
+}
+}
           className="mx-auto mb-6 w-20 h-20 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center"
         >
           <Shield className="w-10 h-10 text-red-600 dark:text-red-400" />
-        </motion.div>
+        </div>
 
         {/* Error Message */}
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -33,8 +32,8 @@ const Unauthorized = () => {
 
         {/* Action Buttons */}
         <div className="space-y-3">
-          <motion.div
-            whileHover={{ scale: 1.02 }}
+          <div
+}
             whileTap={{ scale: 0.98 }}
           >
             <Link
@@ -44,11 +43,11 @@ const Unauthorized = () => {
               <User className="w-5 h-5" />
               Login with Different Account
             </Link>
-          </motion.div>
+          </div>
 
           <div className="flex gap-3">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
+            <div
+}
               whileTap={{ scale: 0.98 }}
               className="flex-1"
             >
@@ -59,10 +58,10 @@ const Unauthorized = () => {
                 <Home className="w-4 h-4" />
                 Home
               </Link>
-            </motion.div>
+            </div>
 
-            <motion.div
-              whileHover={{ scale: 1.02 }}
+            <div
+}
               whileTap={{ scale: 0.98 }}
               className="flex-1"
             >
@@ -73,7 +72,7 @@ const Unauthorized = () => {
                 <ArrowLeft className="w-4 h-4" />
                 Back
               </button>
-            </motion.div>
+            </div>
           </div>
         </div>
 
@@ -83,7 +82,7 @@ const Unauthorized = () => {
             <strong>Need help?</strong> If you believe this is an error, please contact our support team or check your account permissions.
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

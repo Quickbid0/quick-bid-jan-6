@@ -2,7 +2,6 @@
 // Comprehensive mobile experience with gaming psychology, touch-first design, and performance
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 
 // Mobile Detection & Device Utilities
 export const useDeviceType = () => {
@@ -63,14 +62,14 @@ export const TouchButton: React.FC<TouchButtonProps> = ({
   };
 
   return (
-    <motion.button
+    <button
       className={`min-h-[44px] min-w-[44px] px-4 py-3 rounded-lg font-semibold transition-all duration-200 active:scale-95 ${variants[variant]} ${className}`}
       whileTap={{ scale: 0.95 }}
       onClick={handleClick}
       {...props}
     >
       {children}
-    </motion.button>
+    </button>
   );
 };
 
@@ -130,19 +129,19 @@ export const MobileModal: React.FC<MobileModalProps> = ({
   if (!isTouch) {
     // Desktop modal
     return (
-      <AnimatePresence>
+      <Fragment>
         {isOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
+}
+}
+}
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
             onClick={onClose}
           >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
+            <div
+}
+}
+}
               className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
@@ -155,36 +154,36 @@ export const MobileModal: React.FC<MobileModalProps> = ({
                 </div>
               )}
               <div className="p-4 overflow-y-auto">{children}</div>
-            </motion.div>
-          </motion.div>
+            </div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     );
   }
 
   // Mobile modal with swipe
   return (
-    <AnimatePresence>
+    <Fragment>
       {isOpen && (
         <>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
+}
+}
+}
             className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
             onClick={onClose}
           />
 
-          <motion.div
+          <div
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0.1}
             style={{ x, rotate }}
             onDragEnd={handleDragEnd}
-            initial={{ y: '100%' }}
-            animate={{ y: 0 }}
-            exit={{ y: '100%' }}
-            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+}
+}
+}
+}
             className={`fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-3xl ${
               fullScreen ? 'top-0 rounded-t-none' : 'max-h-[90vh]'
             }`}
@@ -206,10 +205,10 @@ export const MobileModal: React.FC<MobileModalProps> = ({
             <div className="overflow-y-auto px-6 py-4" style={{ maxHeight: fullScreen ? '100vh' : '70vh' }}>
               {children}
             </div>
-          </motion.div>
+          </div>
         </>
       )}
-    </AnimatePresence>
+    </Fragment>
   );
 };
 
@@ -235,9 +234,9 @@ export const MobileBidCard: React.FC<MobileBidCardProps> = ({
   const quickBidAmounts = [25000, 50000, 100000, 250000];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
+}
+}
       className="bg-white rounded-2xl shadow-lg p-6 mx-4 mb-4"
     >
       <div className="flex items-center justify-between mb-4">
@@ -254,13 +253,13 @@ export const MobileBidCard: React.FC<MobileBidCardProps> = ({
       <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
         <div className="flex items-center justify-between">
           <span className="text-red-700 font-medium">Time Left</span>
-          <motion.span
-            animate={timeLeft < 60 ? { scale: [1, 1.1, 1] } : {}}
-            transition={{ duration: 0.5, repeat: timeLeft < 60 ? Infinity : 0 }}
+          <span
+ : {}}
+}
             className="text-red-700 font-bold text-lg"
           >
             {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-          </motion.span>
+          </span>
         </div>
       </div>
 
@@ -308,7 +307,7 @@ export const MobileBidCard: React.FC<MobileBidCardProps> = ({
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -425,28 +424,28 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       drag="y"
       dragConstraints={{ top: 0, bottom: 100 }}
       onDragEnd={handleDragEnd}
       className={className}
     >
       {/* Pull indicator */}
-      <motion.div
+      <div
         className="flex justify-center py-4"
-        animate={pullDistance > 50 ? { rotate: 180 } : { rotate: 0 }}
+ : { rotate: 0 }}
       >
-        <motion.div
-          animate={isRefreshing ? { rotate: 360 } : {}}
-          transition={{ duration: 1, repeat: isRefreshing ? Infinity : 0, ease: "linear" }}
+        <div
+ : {}}
+}
           className="text-gray-400"
         >
           {isRefreshing ? '⟳' : '↓'}
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
 
       {children}
-    </motion.div>
+    </div>
   );
 };
 
@@ -469,9 +468,9 @@ export const MobileHUD: React.FC<MobileHUDProps> = ({
   onNotificationsClick
 }) => {
   return (
-    <motion.div
-      initial={{ y: -100 }}
-      animate={{ y: 0 }}
+    <div
+}
+}
       className="fixed top-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200 px-4 py-3"
     >
       <div className="flex items-center justify-between">
@@ -509,16 +508,16 @@ export const MobileHUD: React.FC<MobileHUDProps> = ({
             <div className="text-xs text-white/80">Alerts</div>
             <div className="font-bold">{notifications}</div>
             {notifications > 0 && (
-              <motion.div
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 0.5, repeat: Infinity }}
+              <div
+}
+}
                 className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full"
               />
             )}
           </div>
         </TouchButton>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -554,11 +553,11 @@ export const MobileAuctionFeed: React.FC<MobileAuctionFeedProps> = ({
   return (
     <div className="space-y-4 pb-20">
       {auctions.map((auction, index) => (
-        <motion.div
+        <div
           key={auction.id}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: index * 0.1, duration: 0.3 }}
+}
+}
+}
           className="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden"
         >
           <img
@@ -593,7 +592,7 @@ export const MobileAuctionFeed: React.FC<MobileAuctionFeedProps> = ({
               </TouchButton>
             </div>
           </div>
-        </motion.div>
+        </div>
       ))}
 
       {hasMore && (

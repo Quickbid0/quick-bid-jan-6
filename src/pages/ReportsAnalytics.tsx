@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { BarChart3, Download, Calendar, Filter, TrendingUp, Users, DollarSign } from 'lucide-react';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import { motion } from 'framer-motion';
 
 const ReportsAnalytics = () => {
   const [dateRange, setDateRange] = useState('30d');
@@ -74,9 +73,9 @@ const ReportsAnalytics = () => {
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -86,12 +85,12 @@ const ReportsAnalytics = () => {
             </div>
             <DollarSign className="h-8 w-8 text-green-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -101,12 +100,12 @@ const ReportsAnalytics = () => {
             </div>
             <Users className="h-8 w-8 text-blue-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -116,12 +115,12 @@ const ReportsAnalytics = () => {
             </div>
             <TrendingUp className="h-8 w-8 text-purple-500" />
           </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <div className="flex items-center justify-between">
@@ -131,7 +130,7 @@ const ReportsAnalytics = () => {
             </div>
             <BarChart3 className="h-8 w-8 text-orange-500" />
           </div>
-        </motion.div>
+        </div>
       </div>
 
       {/* Charts */}

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { Timer, Clock, Gavel, Eye, Shield, Calendar, DollarSign, TrendingUp, Users, Heart, Share2, Star, MapPin, Award, AlertTriangle, CheckCircle, Search } from 'lucide-react';
 import { auctionService } from '../services/auctionService';
 import AuctionTypeBadge from '../components/auctions/AuctionTypeBadge';
@@ -980,10 +979,10 @@ const TimedAuctionPage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {sortedAuctions.map((auction) => (
-                <motion.div
+                <div
                   key={auction.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+}
+}
                   className="transition-all duration-300"
                 >
                   <AuctionCard
@@ -1005,7 +1004,7 @@ const TimedAuctionPage = () => {
                     onPrimaryAction={() => goToAuctionDetail(auction.id)}
                     onClick={() => goToAuctionDetail(auction.id)}
                   />
-                </motion.div>
+                </div>
               ))}
             </div>
           )}

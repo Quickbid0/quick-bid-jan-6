@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   Mail,
   Bell,
@@ -139,10 +138,10 @@ const MarketingAutomation: React.FC = () => {
           <div className="space-y-8">
             {/* Performance Metrics */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.1 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -155,12 +154,12 @@ const MarketingAutomation: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -173,12 +172,12 @@ const MarketingAutomation: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -191,12 +190,12 @@ const MarketingAutomation: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+              <div
+}
+}
+}
               >
                 <Card className="p-6">
                   <div className="flex items-center">
@@ -209,14 +208,14 @@ const MarketingAutomation: React.FC = () => {
                     </div>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             </div>
 
             {/* Campaign Performance */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+            <div
+}
+}
+}
             >
               <Card className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-6">Campaign Performance</h3>
@@ -262,7 +261,7 @@ const MarketingAutomation: React.FC = () => {
                   ))}
                 </div>
               </Card>
-            </motion.div>
+            </div>
           </div>
         )}
 
@@ -323,9 +322,9 @@ const MarketingAutomation: React.FC = () => {
         )}
 
         {activeTab === 'create' && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="max-w-2xl"
           >
             <Card className="p-6">
@@ -401,7 +400,7 @@ const MarketingAutomation: React.FC = () => {
                 </div>
               </form>
             </Card>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>

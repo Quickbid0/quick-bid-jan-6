@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, FileText, CheckCircle, AlertTriangle, Clock, DollarSign, TrendingUp, Calendar, User, Package, RefreshCw, Eye, Download, Filter, XCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { supabase } from '../../config/supabaseClient';
 
@@ -201,9 +200,9 @@ const InsuranceDashboard: React.FC = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -215,12 +214,12 @@ const InsuranceDashboard: React.FC = () => {
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400">Total Policies</p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -232,12 +231,12 @@ const InsuranceDashboard: React.FC = () => {
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400">Active Policies</p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -249,12 +248,12 @@ const InsuranceDashboard: React.FC = () => {
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400">Total Claims</p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -266,7 +265,7 @@ const InsuranceDashboard: React.FC = () => {
               </span>
             </div>
             <p className="text-gray-600 dark:text-gray-400">Active Claims</p>
-          </motion.div>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -320,10 +319,10 @@ const InsuranceDashboard: React.FC = () => {
             {activeTab === 'policies' && (
               <div className="space-y-4">
                 {filteredPolicies.map((policy) => (
-                  <motion.div
+                  <div
                     key={policy.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+}
+}
                     className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
                   >
                     <div className="flex items-start justify-between">
@@ -384,7 +383,7 @@ const InsuranceDashboard: React.FC = () => {
                         </button>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             )}
@@ -393,10 +392,10 @@ const InsuranceDashboard: React.FC = () => {
               <div className="space-y-4">
                 {policies.flatMap(policy => 
                   policy.claims.map((claim) => (
-                    <motion.div
+                    <div
                       key={claim.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+}
+}
                       className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-start justify-between">
@@ -462,7 +461,7 @@ const InsuranceDashboard: React.FC = () => {
                           <Eye className="w-4 h-4" />
                         </button>
                       </div>
-                    </motion.div>
+                    </div>
                   ))
                 )}
               </div>
@@ -472,10 +471,10 @@ const InsuranceDashboard: React.FC = () => {
               <div className="space-y-4">
                 {policies.flatMap(policy => 
                   policy.documents.map((doc) => (
-                    <motion.div
+                    <div
                       key={doc.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+}
+}
                       className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 hover:shadow-md transition-shadow"
                     >
                       <div className="flex items-center justify-between">
@@ -505,7 +504,7 @@ const InsuranceDashboard: React.FC = () => {
                       <div className="text-sm text-gray-600 dark:text-gray-400">
                         Uploaded on {doc.uploadedAt}
                       </div>
-                    </motion.div>
+                    </div>
                   ))
                 )}
               </div>

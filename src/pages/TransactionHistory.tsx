@@ -17,7 +17,6 @@ import {
   AlertCircle,
   CheckCircle
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useSession } from '../context/SessionContext';
 
 interface Transaction {
@@ -269,10 +268,10 @@ const TransactionHistory = () => {
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {filteredTransactions.map((transaction) => (
-              <motion.div
+              <div
                 key={transaction.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+}
+}
                 className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
               >
                 <div className="flex items-center justify-between">
@@ -331,7 +330,7 @@ const TransactionHistory = () => {
                     </div>
                   </div>
                 )}
-              </motion.div>
+              </div>
             ))}
           </div>
         )}

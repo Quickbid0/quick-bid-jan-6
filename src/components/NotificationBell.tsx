@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Bell } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../config/supabaseClient';
-import { motion, AnimatePresence } from 'framer-motion';
 import { format } from 'date-fns';
 import { getCurrentUserDataKey } from '../security/keyAccess';
 import { decryptField, isEncrypted } from '../security/secureFields';
@@ -211,16 +210,16 @@ const NotificationBell = () => {
         )}
       </button>
 
-      <AnimatePresence>
+      <Fragment>
         {showNotifications && (
-          <motion.div
+          <div
             ref={panelRef}
             id="notification-panel"
             role="menu"
             tabIndex={-1}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
+}
+}
+}
             className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50"
           >
             <div className="p-4 border-b dark:border-gray-700">
@@ -236,10 +235,10 @@ const NotificationBell = () => {
                 </div>
               ) : (
                 notifications.map((notification) => (
-                  <motion.div
+                  <div
                     key={notification.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
+}
+}
                     className={`p-4 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition-colors ${
                       !notification.read ? 'bg-blue-50 dark:bg-blue-900/20' : ''
                     }`}
@@ -265,7 +264,7 @@ const NotificationBell = () => {
                         <div className="w-2 h-2 bg-blue-500 rounded-full" aria-hidden="true"></div>
                       )}
                     </div>
-                  </motion.div>
+                  </div>
                 ))
               )}
             </div>
@@ -285,9 +284,9 @@ const NotificationBell = () => {
                 Close
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     </div>
   );
 };

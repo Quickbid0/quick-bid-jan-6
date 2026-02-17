@@ -48,7 +48,6 @@ import {
   ChevronRight,
   MoreVertical
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface SystemMetrics {
@@ -462,10 +461,10 @@ const AdminAdvancedTools: React.FC = () => {
 
               <div className="space-y-4">
                 {securityAlerts.map((alert) => (
-                  <motion.div
+                  <div
                     key={alert.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
+}
+}
                     className="bg-white border border-gray-200 rounded-lg p-4"
                   >
                     <div className="flex items-start justify-between">
@@ -516,7 +515,7 @@ const AdminAdvancedTools: React.FC = () => {
                         ))}
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 ))}
               </div>
             </div>

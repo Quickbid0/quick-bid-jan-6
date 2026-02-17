@@ -16,7 +16,6 @@ import {
   DollarSign,
   Building
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface UserProfile {
@@ -447,11 +446,11 @@ const UserProfile = () => {
                 <p className="text-gray-500">No recent activity.</p>
             ) : (
                 profile.recent_activity.map((activity, index) => (
-                <motion.div
+                <div
                     key={index}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
+}
+}
+}
                     className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-700 rounded-lg"
                 >
                     <div className="flex items-center gap-4">
@@ -479,7 +478,7 @@ const UserProfile = () => {
                     </div>
                     </div>
                     <span className="text-sm text-gray-500">{activity.time}</span>
-                </motion.div>
+                </div>
                 ))
             )}
           </div>

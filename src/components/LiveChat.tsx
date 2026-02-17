@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { MessageSquare, Send, Users, Smile, Paperclip, Settings } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { useSession } from '../context/SessionContext';
 
 interface ChatMessage {
@@ -118,13 +117,13 @@ const LiveChat: React.FC<LiveChatProps> = ({ auctionId, className = '' }) => {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-3 max-h-96">
-        <AnimatePresence>
+        <Fragment>
           {messages.map((message) => (
-            <motion.div
+            <div
               key={message.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+}
+}
+}
               className={`p-3 rounded-lg border ${getMessageStyle(message.type)}`}
             >
               <div className="flex justify-between items-start mb-1">
@@ -134,9 +133,9 @@ const LiveChat: React.FC<LiveChatProps> = ({ auctionId, className = '' }) => {
                 </span>
               </div>
               <p className="text-sm">{message.message}</p>
-            </motion.div>
+            </div>
           ))}
-        </AnimatePresence>
+        </Fragment>
       </div>
 
       {/* Message Input */}

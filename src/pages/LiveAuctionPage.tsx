@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { Link, useParams, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   ArrowLeft,
   Heart,
@@ -998,15 +997,15 @@ export default function EliteLiveAuctionPage() {
         </button>
         
         {isUrgent && (
-           <motion.div 
-             initial={{ opacity: 0.5 }}
-             animate={{ opacity: 1 }}
-             transition={{ repeat: Infinity, duration: 1, repeatType: "reverse" }}
+           <div 
+}
+}
+}
              className="flex items-center gap-2 px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-full text-sm font-bold"
            >
              <Clock className="h-4 w-4" />
              CLOSING SOON
-           </motion.div>
+           </div>
         )}
       </div>
 
@@ -1082,14 +1081,14 @@ export default function EliteLiveAuctionPage() {
               />
               
               {/* Stream Overlay */}
-              <motion.div 
-                animate={{ scale: [1, 1.05, 1] }}
-                transition={{ repeat: Infinity, duration: 2 }}
+              <div 
+}
+}
                 className="absolute top-4 left-4 bg-red-600 text-white px-3 py-1 rounded-full text-sm flex items-center shadow-lg z-10"
               >
                 <div className="w-2 h-2 bg-white rounded-full mr-2 animate-pulse"></div>
                 LIVE
-              </motion.div>
+              </div>
               
               <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm flex items-center">
                 <Users className="h-4 w-4 mr-2" />
@@ -1252,9 +1251,9 @@ export default function EliteLiveAuctionPage() {
               </div>
 
               {/* Time Remaining - Critical for Decision Speed */}
-              <motion.div 
-                animate={isUrgent ? { scale: [1, 1.02, 1], borderColor: ["#fee2e2", "#ef4444", "#fee2e2"] } : {}}
-                transition={{ duration: 1, repeat: Infinity }}
+              <div 
+ : {}}
+}
                 className={`mb-6 p-4 rounded-lg border ${
                   isUrgent 
                     ? 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800' 
@@ -1283,7 +1282,7 @@ export default function EliteLiveAuctionPage() {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
 
 
 
@@ -1849,10 +1848,10 @@ export default function EliteLiveAuctionPage() {
                 const yardId = auction.location || 'Online';
                 const isLive = auction.status === 'active';
                 return (
-                  <motion.div
+                  <div
                     key={auction.id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+}
+}
                     className="transition-all duration-300"
                   >
                     <AuctionCard
@@ -1874,7 +1873,7 @@ export default function EliteLiveAuctionPage() {
                       onPrimaryAction={() => handleJoinLiveAuction(auction)}
                       onClick={() => handleJoinLiveAuction(auction)}
                     />
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>

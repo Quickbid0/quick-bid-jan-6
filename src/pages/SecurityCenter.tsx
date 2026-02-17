@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Shield, Lock, Eye, AlertTriangle, CheckCircle, Key, Smartphone } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 const SecurityCenter = () => {
@@ -71,11 +70,11 @@ const SecurityCenter = () => {
       {/* Security Features */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
         {securityFeatures.map((feature, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1 }}
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <div className="flex items-start justify-between">
@@ -96,7 +95,7 @@ const SecurityCenter = () => {
                 {feature.status}
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 

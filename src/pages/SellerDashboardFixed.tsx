@@ -22,7 +22,6 @@ import {
   ShoppingCart,
   Calendar
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface SellerStats {
   totalProducts: number;

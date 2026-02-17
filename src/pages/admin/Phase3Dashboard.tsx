@@ -2,7 +2,6 @@
 // src/pages/admin/Phase3Dashboard.tsx
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Target, 
   TrendingUp, 
@@ -443,9 +442,9 @@ const Phase3Dashboard: React.FC = () => {
                 
                 {/* Trust Metrics */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
+                  <div
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -474,12 +473,12 @@ const Phase3Dashboard: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -510,12 +509,12 @@ const Phase3Dashboard: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
 
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
+                  <div
+}
+}
+}
                     className="bg-white rounded-lg shadow p-6"
                   >
                     <div className="flex items-center mb-4">
@@ -546,7 +545,7 @@ const Phase3Dashboard: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </div>
                 </div>
 
                 {/* Phase 3 Status */}

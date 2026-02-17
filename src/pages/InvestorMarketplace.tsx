@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Building2, ShieldCheck, PlusCircle, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface InvestmentVehicle {
@@ -156,7 +155,7 @@ const InvestorMarketplace: React.FC = () => {
       {/* Listings */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {vehicles.map((v) => (
-          <motion.div key={v.id} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
+          <div key={v.id}}} className="bg-white dark:bg-gray-800 rounded-xl shadow p-5">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-semibold">{v.name}</h3>
               {v.verified ? (
@@ -178,7 +177,7 @@ const InvestorMarketplace: React.FC = () => {
               <div><span className="text-gray-500">Tenure:</span> <span className="font-medium">{v.tenureMonths} months</span></div>
             </div>
             <button className="w-full mt-4 bg-indigo-50 text-indigo-700 py-2 rounded-lg hover:bg-indigo-100 text-sm">View Details</button>
-          </motion.div>
+          </div>
         ))}
       </div>
 

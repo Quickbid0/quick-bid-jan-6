@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Shield, FileText, AlertTriangle, CheckCircle, Clock, Calendar, DollarSign, User, Camera, Upload, Send, ArrowLeft, Eye, Download, XCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { supabase } from '../../config/supabaseClient';
 
@@ -221,9 +220,9 @@ const InsuranceClaimPage: React.FC = () => {
         </div>
 
         {/* Policy Information */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+        <div
+}
+}
           className="bg-white dark:bg-gray-800 rounded-lg shadow p-6 mb-6"
         >
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
@@ -249,13 +248,13 @@ const InsuranceClaimPage: React.FC = () => {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Claim Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -485,7 +484,7 @@ const InsuranceClaimPage: React.FC = () => {
               </button>
             </div>
           </form>
-        </motion.div>
+        </div>
       </div>
     </div>
   );

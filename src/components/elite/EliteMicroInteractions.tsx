@@ -5,7 +5,6 @@
 // =============================================================================
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Wallet,
   Plus,
@@ -107,21 +106,21 @@ export const EliteSuccessToast: React.FC<SuccessToastProps> = ({
   const IconComponent = icons[type];
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8, y: 50 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.8, y: -50 }}
-        transition={{ duration: 0.4, type: "spring", bounce: 0.3 }}
+    <Fragment>
+      <div
+}
+}
+}
+}
         className={`fixed top-4 right-4 z-50 max-w-sm ${colors[type]} border-2 rounded-2xl p-6 shadow-2xl`}
       >
         <div className="flex items-start gap-4">
-          <motion.div
-            animate={{ rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 0.6, repeat: 2, delay: 0.2 }}
+          <div
+}
+}
           >
             <IconComponent className="w-8 h-8" />
-          </motion.div>
+          </div>
 
           <div className="flex-1">
             <h4 className="font-bold text-lg mb-1">
@@ -147,10 +146,10 @@ export const EliteSuccessToast: React.FC<SuccessToastProps> = ({
         {/* Success particles animation */}
         <div className="absolute inset-0 pointer-events-none">
           {[...Array(6)].map((_, i) => (
-            <motion.div
+            <div
               key={i}
-              initial={{ opacity: 0, scale: 0 }}
-              animate={{ opacity: [0, 1, 0], scale: [0, 1, 0] }}
+}
+}
               transition={{
                 duration: 1.5,
                 delay: i * 0.1,
@@ -165,8 +164,8 @@ export const EliteSuccessToast: React.FC<SuccessToastProps> = ({
             />
           ))}
         </div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </Fragment>
   );
 };
 
@@ -193,34 +192,34 @@ export const EliteBidConfirmationModal: React.FC<BidConfirmationModalProps> = ({
   onCancel,
   isProcessing = false
 }) => (
-  <AnimatePresence>
+  <Fragment>
     {isOpen && (
       <>
         {/* Backdrop */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
+}
+}
+}
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         />
 
         {/* Modal */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.9, y: -20 }}
-          transition={{ duration: 0.3, type: "spring", bounce: 0.2 }}
+        <div
+}
+}
+}
+}
           className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 overflow-hidden"
         >
           {/* Header with gradient */}
           <div className="bg-gradient-to-r from-primary-600 to-primary-700 p-6 text-white text-center">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+            <div
+}
+}
               className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-4"
             >
               <Zap className="w-8 h-8" />
-            </motion.div>
+            </div>
             <h2 className="text-2xl font-bold mb-2">Confirm Your Bid</h2>
             <p className="text-primary-100">You're about to place a competitive bid!</p>
           </div>
@@ -273,10 +272,10 @@ export const EliteBidConfirmationModal: React.FC<BidConfirmationModalProps> = ({
               >
                 Cancel
               </button>
-              <motion.button
+              <button
                 onClick={onConfirm}
                 disabled={isProcessing}
-                whileHover={{ scale: 1.02 }}
+}
                 whileTap={{ scale: 0.98 }}
                 className="flex-1 bg-primary-600 text-white py-3 rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 transition-all duration-250 flex items-center justify-center gap-2"
               >
@@ -291,13 +290,13 @@ export const EliteBidConfirmationModal: React.FC<BidConfirmationModalProps> = ({
                     Confirm Bid
                   </>
                 )}
-              </motion.button>
+              </button>
             </div>
           </div>
-        </motion.div>
+        </div>
       </>
     )}
-  </AnimatePresence>
+  </Fragment>
 );
 
 // =============================================================================
@@ -337,41 +336,41 @@ export const EliteLoadingButton: React.FC<EliteLoadingButtonProps> = ({
     >
       {/* Loading shimmer effect */}
       {loading && (
-        <motion.div
-          initial={{ x: '-100%' }}
-          animate={{ x: '100%' }}
-          transition={{ duration: 1.5, repeat: Infinity }}
+        <div
+}
+}
+}
           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent"
         />
       )}
 
-      <AnimatePresence mode="wait">
+      <Fragment mode="wait">
         {loading ? (
-          <motion.div
+          <div
             key="loading"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+}
+}
+}
             className="flex items-center gap-2"
           >
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            <div
+}
+}
               className="w-4 h-4 border-2 border-current border-t-transparent rounded-full"
             />
             <span>Processing...</span>
-          </motion.div>
+          </div>
         ) : (
-          <motion.div
+          <div
             key="content"
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+}
+}
+}
           >
             {children}
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
     </button>
   );
 };
@@ -392,10 +391,10 @@ export const EliteProgressIndicator: React.FC<EliteProgressProps> = ({
   <div className={`flex items-center justify-between ${className}`}>
     {steps.map((step, index) => (
       <div key={index} className="flex items-center flex-1">
-        <motion.div
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: index * 0.1 }}
+        <div
+}
+}
+}
           className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
             step.completed
               ? 'bg-emerald-500 text-white'
@@ -405,7 +404,7 @@ export const EliteProgressIndicator: React.FC<EliteProgressProps> = ({
           }`}
         >
           {step.completed ? <CheckCircle className="w-4 h-4" /> : index + 1}
-        </motion.div>
+        </div>
 
         <div className="ml-3 flex-1">
           <div className={`text-sm font-medium ${
@@ -415,14 +414,14 @@ export const EliteProgressIndicator: React.FC<EliteProgressProps> = ({
             {step.label}
           </div>
           {index < steps.length - 1 && (
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: step.completed ? '100%' : '0%' }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+            <div
+}
+}
+}
               className="h-0.5 bg-neutral-200 mt-2"
             >
               <div className="h-full bg-emerald-500 rounded-full"></div>
-            </motion.div>
+            </div>
           )}
         </div>
       </div>
@@ -457,11 +456,11 @@ export const EliteNotificationBanner: React.FC<EliteNotificationBannerProps> = (
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -20, scale: 0.95 }}
-      transition={{ duration: 0.3, type: "spring", bounce: 0.2 }}
+    <div
+}
+}
+}
+}
       className={`border-l-4 p-4 rounded-r-lg ${colors[type]} shadow-lg`}
     >
       <div className="flex items-center justify-between">
@@ -498,7 +497,7 @@ export const EliteNotificationBanner: React.FC<EliteNotificationBannerProps> = (
           )}
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 
@@ -517,7 +516,7 @@ export const ElitePulse: React.FC<ElitePulseProps> = ({
   pulse = false,
   className = ''
 }) => (
-  <motion.div
+  <div
     animate={pulse ? {
       scale: [1, 1.05, 1],
       boxShadow: [
@@ -534,7 +533,7 @@ export const ElitePulse: React.FC<ElitePulseProps> = ({
     className={className}
   >
     {children}
-  </motion.div>
+  </div>
 );
 
 // =============================================================================
@@ -556,19 +555,19 @@ export const EliteCelebration: React.FC<EliteCelebrationProps> = ({
   amount,
   onClose
 }) => (
-  <AnimatePresence>
+  <Fragment>
     {show && (
       <>
         {/* Full screen backdrop with confetti effect */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
+}
+}
+}
           className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
         >
           {/* Confetti animation */}
           {[...Array(50)].map((_, i) => (
-            <motion.div
+            <div
               key={i}
               initial={{
                 opacity: 0,
@@ -592,15 +591,15 @@ export const EliteCelebration: React.FC<EliteCelebrationProps> = ({
           ))}
 
           {/* Celebration modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5, rotate: -10 }}
-            animate={{ opacity: 1, scale: 1, rotate: 0 }}
-            exit={{ opacity: 0, scale: 0.5, rotate: 10 }}
-            transition={{ duration: 0.6, type: "spring", bounce: 0.4 }}
+          <div
+}
+}
+}
+}
             className="relative bg-white rounded-3xl shadow-2xl max-w-md w-full mx-4 p-8 text-center"
           >
             {/* Success icon with bounce */}
-            <motion.div
+            <div
               animate={{
                 scale: [1, 1.2, 1],
                 rotate: [0, 10, -10, 0]
@@ -613,51 +612,51 @@ export const EliteCelebration: React.FC<EliteCelebrationProps> = ({
               className="w-20 h-20 bg-gradient-to-r from-emerald-400 to-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6"
             >
               <Crown className="w-10 h-10 text-white" />
-            </motion.div>
+            </div>
 
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
+}
+}
+}
               className="text-3xl font-bold text-neutral-900 mb-2"
             >
               {title}
             </motion.h2>
 
             <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
+}
+}
+}
               className="text-neutral-600 mb-6"
             >
               {subtitle}
             </motion.p>
 
             {amount && (
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, type: "spring" }}
+              <div
+}
+}
+}
                 className="text-4xl font-black text-emerald-600 mb-6"
               >
                 {amount}
-              </motion.div>
+              </div>
             )}
 
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
+            <button
+}
+}
+}
               onClick={onClose}
               className="bg-primary-600 text-white px-8 py-3 rounded-2xl font-bold hover:bg-primary-700 transition-all duration-250"
             >
               Continue
-            </motion.button>
-          </motion.div>
-        </motion.div>
+            </button>
+          </div>
+        </div>
       </>
     )}
-  </AnimatePresence>
+  </Fragment>
 );
 
 export default {

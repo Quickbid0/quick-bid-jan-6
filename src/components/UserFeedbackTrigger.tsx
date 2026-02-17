@@ -2,7 +2,6 @@
 // src/components/UserFeedbackTrigger.tsx
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { X, AlertCircle, AlertTriangle, DollarSign } from 'lucide-react';
 import ProductOwnerService from '../services/productOwner.service';
 
@@ -90,17 +89,17 @@ const UserFeedbackTrigger: React.FC<UserFeedbackTriggerProps> = ({
   if (!isVisible) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
+    <Fragment>
+      <div
+}
+}
+}
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
       >
-        <motion.div
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.9, opacity: 0 }}
+        <div
+}
+}
+}
           className="bg-white rounded-lg shadow-xl max-w-md w-full p-6"
         >
           {/* Header */}
@@ -121,9 +120,9 @@ const UserFeedbackTrigger: React.FC<UserFeedbackTriggerProps> = ({
               {/* Feedback Options */}
               <div className="space-y-3 mb-4">
                 {feedbackOptions.map((option) => (
-                  <motion.button
+                  <button
                     key={option.id}
-                    whileHover={{ scale: 1.02 }}
+}
                     whileTap={{ scale: 0.98 }}
                     onClick={() => setSelectedOption(option.id)}
                     className={`w-full p-3 rounded-lg border-2 transition-all ${
@@ -143,7 +142,7 @@ const UserFeedbackTrigger: React.FC<UserFeedbackTriggerProps> = ({
                         </div>
                       </div>
                     </div>
-                  </motion.button>
+                  </button>
                 ))}
               </div>
 
@@ -183,9 +182,9 @@ const UserFeedbackTrigger: React.FC<UserFeedbackTriggerProps> = ({
               <p className="text-gray-500 text-sm mt-1">This helps us improve QuickBid</p>
             </div>
           )}
-        </motion.div>
-      </motion.div>
-    </AnimatePresence>
+        </div>
+      </div>
+    </Fragment>
   );
 };
 

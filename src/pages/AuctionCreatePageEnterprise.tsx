@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
 import {
   Car,
   Calendar,
@@ -156,8 +155,8 @@ const AuctionCreatePageEnterprise: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Timed Auction */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-colors ${
                   formData.auctionType === 'timed'
                     ? 'border-blue-500 bg-blue-50'
@@ -175,11 +174,11 @@ const AuctionCreatePageEnterprise: React.FC = () => {
                   <div>• Unlimited bidders</div>
                   <div>• Best for high-value vehicles</div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Flash Auction */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-colors ${
                   formData.auctionType === 'flash'
                     ? 'border-orange-500 bg-orange-50'
@@ -197,11 +196,11 @@ const AuctionCreatePageEnterprise: React.FC = () => {
                   <div>• Creates urgency</div>
                   <div>• Best for quick sales</div>
                 </div>
-              </motion.div>
+              </div>
 
               {/* Live Auction */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 className={`p-6 border-2 rounded-lg cursor-pointer transition-colors ${
                   formData.auctionType === 'live'
                     ? 'border-green-500 bg-green-50'
@@ -219,7 +218,7 @@ const AuctionCreatePageEnterprise: React.FC = () => {
                   <div>• Expert moderation</div>
                   <div>• Premium pricing</div>
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Auction Settings Preview */}
@@ -827,15 +826,15 @@ const AuctionCreatePageEnterprise: React.FC = () => {
 
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <motion.div
+        <div
           key={currentStep}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
+}
+}
+}
+}
         >
           {renderStepContent()}
-        </motion.div>
+        </div>
 
         {/* Navigation */}
         <div className="flex justify-between mt-8">

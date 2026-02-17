@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Brain, Sparkles, Clock, Filter, TrendingUp, X, Mic, MicOff, Loader2, Target } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface SearchSuggestion {
@@ -375,12 +374,12 @@ const AINaturalSearch: React.FC<{
           </div>
 
           {/* Suggestions Dropdown */}
-          <AnimatePresence>
+          <Fragment>
             {showSuggestions && suggestions.length > 0 && (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+              <div
+}
+}
+}
                 className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg shadow-lg z-50 max-h-64 overflow-y-auto"
               >
                 {suggestions.map((suggestion, index) => (
@@ -407,16 +406,16 @@ const AINaturalSearch: React.FC<{
                     </div>
                   </button>
                 ))}
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </Fragment>
         </div>
 
         {/* Search Intent Display */}
         {intent && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="mt-4 flex items-center gap-3"
           >
             <div className={`flex items-center gap-2 px-3 py-2 rounded-lg ${getIntentColor(intent.type)}`}>
@@ -444,7 +443,7 @@ const AINaturalSearch: React.FC<{
                 </div>
               </div>
             )}
-          </motion.div>
+          </div>
         )}
       </div>
 
@@ -462,11 +461,11 @@ const AINaturalSearch: React.FC<{
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {results.map((result, index) => (
-              <motion.div
+              <div
                 key={result.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+}
+}
+}
                 className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4 hover:shadow-md transition-shadow cursor-pointer"
               >
                 <div className="flex items-start gap-3">
@@ -513,7 +512,7 @@ const AINaturalSearch: React.FC<{
                     ))}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

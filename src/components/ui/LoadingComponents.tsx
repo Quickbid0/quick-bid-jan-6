@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Loader2, Zap, ShoppingBag, Users, Gavel } from 'lucide-react';
 
 interface LoadingSpinnerProps {
@@ -27,13 +26,13 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   };
 
   return (
-    <motion.div
-      animate={{ rotate: 360 }}
-      transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+    <div
+}
+}
       className={`${sizeClasses[size]} ${colorClasses[color]} ${className}`}
     >
       <Loader2 className="h-full w-full" />
-    </motion.div>
+    </div>
   );
 };
 
@@ -204,51 +203,51 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       className={variants[variant]}
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+}
+}
+}
     >
       {icon && (
-        <motion.div
+        <div
           className="mx-auto mb-4 text-gray-400"
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{ delay: 0.2, duration: 0.3 }}
+}
+}
+}
         >
           {icon}
-        </motion.div>
+        </div>
       )}
 
       <motion.h3
         className="text-lg font-medium text-gray-900 dark:text-white mb-2"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.3 }}
+}
+}
+}
       >
         {title}
       </motion.h3>
 
       <motion.p
         className="text-gray-500 dark:text-gray-400 mb-6 max-w-sm mx-auto"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.3 }}
+}
+}
+}
       >
         {description}
       </motion.p>
 
       {action && (
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.3 }}
+        <div
+}
+}
+}
         >
           {action}
-        </motion.div>
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -331,14 +330,14 @@ export const MicroInteraction: React.FC<MicroInteractionProps> = ({
   className = ''
 }) => {
   return (
-    <motion.div
+    <div
       className={className}
       whileTap={{ scale }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 400, damping: 17 }}
+}
+}
       onClick={onClick}
     >
       {children}
-    </motion.div>
+    </div>
   );
 };

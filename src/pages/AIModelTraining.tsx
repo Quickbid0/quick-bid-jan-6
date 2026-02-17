@@ -18,7 +18,6 @@ import {
   RefreshCw
 } from 'lucide-react';
 import { Line, Bar, Radar } from 'react-chartjs-2';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface AIModel {
@@ -294,10 +293,10 @@ const AIModelTraining = () => {
             
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {models.map((model) => (
-                <motion.div
+                <div
                   key={model.id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
+}
+}
                   className={`p-6 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer ${
                     selectedModel?.id === model.id ? 'bg-indigo-50 dark:bg-indigo-900/20' : ''
                   }`}
@@ -355,16 +354,16 @@ const AIModelTraining = () => {
                       View Logs
                     </button>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>
 
           {/* Training Progress */}
           {isTraining && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+            <div
+}
+}
               className="mt-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6"
             >
               <h3 className="text-lg font-semibold mb-4">Training in Progress</h3>
@@ -398,7 +397,7 @@ const AIModelTraining = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
         </div>
 

@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Fragment } from 'react';
 import { Link, useLocation, useNavigate, Outlet } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
   Package,
@@ -104,26 +103,21 @@ const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children }) => {
       onTouchEnd={handleTouchEnd}
     >
       {/* Mobile Menu Overlay */}
-      <AnimatePresence>
+      <Fragment>
         {isMobileMenuOpen && isMobile && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
             className="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
             onClick={() => setIsMobileMenuOpen(false)}
             aria-hidden="true"
           />
         )}
-      </AnimatePresence>
+      </Fragment>
 
       {/* Buyer Sidebar */}
-      <motion.div 
+      <div 
         className={`fixed inset-y-0 left-0 z-50 w-64 bg-white shadow-lg transform transition-transform duration-300 ease-in-out lg:block ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
         }`}
-        initial={false}
-        animate={{ x: isMobileMenuOpen || !isMobile ? 0 : -256 }}
       >
         <div className="flex flex-col h-full">
           {/* Header */}
@@ -342,7 +336,7 @@ const BuyerLayout: React.FC<BuyerLayoutProps> = ({ children }) => {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
       
       {/* Mobile overlay */}
       {isMobileMenuOpen && (

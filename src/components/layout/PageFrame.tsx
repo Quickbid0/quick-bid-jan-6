@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 
 interface PageFrameProps {
   children: React.ReactNode;
@@ -88,9 +87,9 @@ const PageFrame: React.FC<PageFrameProps> = ({
   }
 
   return (
-    <motion.div
+    <div
       className={`w-full ${getBackgroundClasses()} ${className}`.trim()}
-      variants={containerVariants}
+
       initial="hidden"
       animate="visible"
     >
@@ -98,32 +97,32 @@ const PageFrame: React.FC<PageFrameProps> = ({
         {title && (
           <motion.header
             className={`flex flex-col ${headingClassName}`.trim()}
-            variants={itemVariants}
+
           >
             <motion.h1
               className="text-3xl md:text-4xl font-semibold text-gray-900 dark:text-white leading-tight"
-              variants={itemVariants}
+
             >
               {title}
             </motion.h1>
             {description && (
               <motion.p
                 className="text-base text-gray-500 dark:text-gray-300 max-w-3xl"
-                variants={itemVariants}
+
               >
                 {description}
               </motion.p>
             )}
           </motion.header>
         )}
-        <motion.div
+        <div
           className={`${contentClassName} w-full`.trim()}
-          variants={itemVariants}
+
         >
           {children}
-        </motion.div>
+        </div>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

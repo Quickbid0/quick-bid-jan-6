@@ -30,7 +30,6 @@ import {
   Download,
   Lightbulb
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 ChartJS.register(
   CategoryScale,
@@ -346,9 +345,9 @@ const AnalyticsDashboard = () => {
   };
 
   const StatCard = ({ title, value, icon: Icon, trend, color = 'text-gray-900' }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
+}
+}
       className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
     >
       <div className="flex items-center justify-between">
@@ -372,7 +371,7 @@ const AnalyticsDashboard = () => {
           </span>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 
   if (loading) {

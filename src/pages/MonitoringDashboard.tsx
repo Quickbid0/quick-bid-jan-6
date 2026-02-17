@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Activity, 
   Server, 
@@ -269,9 +268,9 @@ const MonitoringDashboard: React.FC = () => {
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -286,12 +285,12 @@ const MonitoringDashboard: React.FC = () => {
             <p className="text-sm text-green-600 dark:text-green-400 mt-1">
               {formatNumber(metrics.activeUsers)} active
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -306,12 +305,12 @@ const MonitoringDashboard: React.FC = () => {
             <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">
               {metrics.activeAuctions} active auctions
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -326,12 +325,12 @@ const MonitoringDashboard: React.FC = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               {formatNumber(metrics.totalBids)} total bids
             </p>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between mb-4">
@@ -346,23 +345,23 @@ const MonitoringDashboard: React.FC = () => {
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Last 30 days
             </p>
-          </motion.div>
+          </div>
         </div>
 
         {/* System Performance */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="lg:col-span-2"
           >
             <PerformanceMonitor />
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
           >
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -444,23 +443,23 @@ const MonitoringDashboard: React.FC = () => {
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Health Check and Alerts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
           >
             <HealthCheck />
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
+          <div
+}
+}
+}
           >
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
@@ -514,7 +513,7 @@ const MonitoringDashboard: React.FC = () => {
                 </div>
               )}
             </div>
-          </motion.div>
+          </div>
         </div>
       </div>
     </div>

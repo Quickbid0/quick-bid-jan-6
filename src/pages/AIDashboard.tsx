@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Brain, 
   TrendingUp, 
@@ -150,9 +149,9 @@ export default function AIDashboard() {
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -162,12 +161,12 @@ export default function AIDashboard() {
               </div>
               <Brain className="w-8 h-8 text-indigo-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -177,12 +176,12 @@ export default function AIDashboard() {
               </div>
               <BarChart3 className="w-8 h-8 text-green-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -192,12 +191,12 @@ export default function AIDashboard() {
               </div>
               <Target className="w-8 h-8 text-yellow-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -207,7 +206,7 @@ export default function AIDashboard() {
               </div>
               <AlertCircle className="w-8 h-8 text-red-600" />
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* AI Insights */}
@@ -216,11 +215,11 @@ export default function AIDashboard() {
             <h2 className="text-xl font-semibold text-gray-900 mb-4">Latest AI Insights</h2>
             <div className="space-y-4">
               {insights.map((insight, index) => (
-                <motion.div
+                <div
                   key={insight.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: index * 0.1 }}
+}
+}
+}
                   className={`border rounded-lg p-4 ${getInsightColor(insight.type)}`}
                 >
                   <div className="flex items-start space-x-3">
@@ -245,7 +244,7 @@ export default function AIDashboard() {
                       </div>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           </div>

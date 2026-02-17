@@ -24,7 +24,6 @@ import {
   SlidersHorizontal,
   ArrowUpDown
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import AuctionCard from '../components/AuctionCard';
@@ -219,12 +218,12 @@ const Dashboard: React.FC = () => {
   return (
     <div className="w-full">
       {/* Search Overlay */}
-      <AnimatePresence>
+      <Fragment>
         {showSearchOverlay && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+          <div
+}
+}
+}
             className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowSearchOverlay(false)}
           >
@@ -244,9 +243,9 @@ const Dashboard: React.FC = () => {
                 />
               </div>
             </div>
-          </motion.div>
+          </div>
         )}
-      </AnimatePresence>
+      </Fragment>
 
       {/* Main Content */}
       <div className="space-y-8">

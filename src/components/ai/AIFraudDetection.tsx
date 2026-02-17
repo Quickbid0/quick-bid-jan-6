@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Shield, AlertTriangle, CheckCircle, XCircle, Eye, Activity, TrendingUp, Users, Clock, FileText, Brain } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface FraudSignal {
@@ -402,11 +401,11 @@ const AIFraudDetection: React.FC = () => {
       {activeTab === 'signals' && (
         <div className="space-y-4">
           {signals.map((signal, index) => (
-            <motion.div
+            <div
               key={signal.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className={`border rounded-lg p-4 cursor-pointer transition-all ${
                 selectedSignal?.id === signal.id
                   ? 'border-purple-500 bg-purple-50 dark:bg-purple-900/20'
@@ -492,7 +491,7 @@ const AIFraudDetection: React.FC = () => {
                   Block
                 </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}
@@ -500,11 +499,11 @@ const AIFraudDetection: React.FC = () => {
       {activeTab === 'patterns' && (
         <div className="space-y-4">
           {patterns.map((pattern, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="border border-gray-200 dark:border-gray-700 rounded-lg p-4"
             >
               <div className="flex items-center justify-between mb-3">
@@ -544,7 +543,7 @@ const AIFraudDetection: React.FC = () => {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

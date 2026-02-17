@@ -24,7 +24,6 @@ import {
   Award,
   Gift,
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface AdminLaunchDashboardProps {
   // Props would come from parent component with API integration
@@ -113,9 +112,9 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
   ];
 
   const StatCard = ({ title, value, change, icon: Icon, color }: any) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
+}
+}
       className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 border border-gray-200 dark:border-gray-700"
     >
       <div className="flex items-center justify-between">
@@ -132,7 +131,7 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
           <Icon className="h-6 w-6 text-white" />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 
   const FeatureFlagToggle = ({ flag }: any) => (
@@ -239,13 +238,13 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
         </div>
 
         {/* Tab Content */}
-        <AnimatePresence mode="wait">
+        <Fragment mode="wait">
           {activeTab === 'overview' && (
-            <motion.div
+            <div
               key="overview"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+}
+}
+}
               className="space-y-8"
             >
               {/* Key Metrics */}
@@ -337,15 +336,15 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
 
           {activeTab === 'campaigns' && (
-            <motion.div
+            <div
               key="campaigns"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+}
+}
+}
               className="space-y-6"
             >
               <div className="flex justify-between items-center">
@@ -410,15 +409,15 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </div>
           )}
 
           {activeTab === 'features' && (
-            <motion.div
+            <div
               key="features"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+}
+}
+}
               className="space-y-6"
             >
               <div className="flex justify-between items-center">
@@ -446,15 +445,15 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
 
           {activeTab === 'emergency' && (
-            <motion.div
+            <div
               key="emergency"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
+}
+}
+}
               className="space-y-6"
             >
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl p-6">
@@ -511,9 +510,9 @@ export const AdminLaunchDashboard: React.FC<AdminLaunchDashboardProps> = () => {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </Fragment>
       </div>
     </div>
   );

@@ -13,7 +13,6 @@ import {
   TrendingUp,
   Clock
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 
 interface LiveStreamPlayerProps {
   streamUrl: string;
@@ -137,12 +136,12 @@ const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
         </div>
 
         {/* Player Controls Overlay */}
-        <AnimatePresence>
+        <Fragment>
           {showControls && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+            <div
+}
+}
+}
               className="absolute inset-0 bg-black/20 flex items-center justify-center"
             >
               <div className="flex items-center gap-4">
@@ -188,9 +187,9 @@ const LiveStreamPlayer: React.FC<LiveStreamPlayerProps> = ({
                   </select>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
+        </Fragment>
       </div>
 
       {/* Stream Info Bar */}

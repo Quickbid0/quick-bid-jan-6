@@ -3,7 +3,6 @@
 
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Eye,
   EyeOff,
@@ -32,10 +31,10 @@ import { useSafeClick, useFormSubmission } from '../ui-system/bug-prevention';
 
 // Trust indicators component
 const TrustIndicators: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 0.6, duration: 0.6 }}
+  <div
+}
+}
+}
     className="flex items-center justify-center gap-8 mt-8"
   >
     {[
@@ -44,40 +43,40 @@ const TrustIndicators: React.FC = () => (
       { icon: Award, label: 'Fintech Award Winner', color: 'text-purple-600' },
       { icon: CheckCircle, label: 'Verified Platform', color: 'text-orange-600' }
     ].map((item, index) => (
-      <motion.div
+      <div
         key={item.label}
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.8 + index * 0.1, duration: 0.4 }}
+}
+}
+}
         className="flex flex-col items-center gap-2 text-center"
       >
         <div className={`p-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 ${item.color}`}>
           <item.icon className="w-5 h-5" />
         </div>
         <span className="text-xs font-medium text-white/90">{item.label}</span>
-      </motion.div>
+      </div>
     ))}
-  </motion.div>
+  </div>
 );
 
 // Social proof component
 const SocialProof: React.FC = () => (
-  <motion.div
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ delay: 1.0, duration: 0.6 }}
+  <div
+}
+}
+}
     className="text-center mt-12"
   >
     <div className="flex items-center justify-center gap-2 mb-4">
       {[...Array(5)].map((_, i) => (
-        <motion.div
+        <div
           key={i}
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.2 + i * 0.1, duration: 0.3 }}
+}
+}
+}
         >
           <Star className="w-5 h-5 fill-yellow-400 text-yellow-400" />
-        </motion.div>
+        </div>
       ))}
       <span className="ml-2 text-white/90 font-medium">4.9/5 from 50K+ reviews</span>
     </div>
@@ -92,7 +91,7 @@ const SocialProof: React.FC = () => (
         <span>98% seller satisfaction</span>
       </div>
     </div>
-  </motion.div>
+  </div>
 );
 
 // Success stories carousel
@@ -131,10 +130,10 @@ const SuccessStories: React.FC = () => {
   }, [stories.length]);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ delay: 0.4, duration: 0.6 }}
+    <div
+}
+}
+}
       className="hidden lg:block absolute right-8 top-1/2 -translate-y-1/2 w-80"
     >
       <Card className="p-6 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
@@ -143,13 +142,13 @@ const SuccessStories: React.FC = () => {
           <p className="text-sm text-gray-600">Real wins from our community</p>
         </div>
 
-        <AnimatePresence mode="wait">
-          <motion.div
+        <Fragment mode="wait">
+          <div
             key={currentStory}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.3 }}
+}
+}
+}
+}
             className="text-center"
           >
             <div className={`w-16 h-16 mx-auto mb-4 rounded-full bg-gradient-to-br ${stories[currentStory].gradient} flex items-center justify-center text-white font-bold text-lg`}>
@@ -158,8 +157,8 @@ const SuccessStories: React.FC = () => {
             <h4 className="font-semibold text-gray-900 mb-1">{stories[currentStory].name}</h4>
             <p className="text-sm text-gray-600 mb-2">{stories[currentStory].role}</p>
             <p className="text-sm text-emerald-600 font-medium">{stories[currentStory].achievement}</p>
-          </motion.div>
-        </AnimatePresence>
+          </div>
+        </Fragment>
 
         <div className="flex justify-center gap-2 mt-4">
           {stories.map((_, index) => (
@@ -173,7 +172,7 @@ const SuccessStories: React.FC = () => {
           ))}
         </div>
       </Card>
-    </motion.div>
+    </div>
   );
 };
 
@@ -208,7 +207,7 @@ export const EnhancedLogin: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-20" />
 
         {/* Floating geometric shapes */}
-        <motion.div
+        <div
           animate={{
             rotate: 360,
             scale: [1, 1.1, 1],
@@ -219,7 +218,7 @@ export const EnhancedLogin: React.FC = () => {
           }}
           className="absolute top-20 left-20 w-32 h-32 bg-orange-500/10 rounded-full blur-xl"
         />
-        <motion.div
+        <div
           animate={{
             rotate: -360,
             scale: [1.1, 1, 1.1],
@@ -235,17 +234,17 @@ export const EnhancedLogin: React.FC = () => {
       <Container className="relative z-10 min-h-screen flex items-center justify-center py-12">
         <div className="w-full max-w-6xl grid lg:grid-cols-2 gap-12 items-center">
           {/* Left Side - Branding & Trust */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+          <div
+}
+}
+}
             className="text-center lg:text-left"
           >
             {/* Hero Title with Gaming Typography */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2, duration: 0.6 }}
+            <div
+}
+}
+}
               className="mb-6"
             >
               <h1
@@ -257,13 +256,13 @@ export const EnhancedLogin: React.FC = () => {
               <p className="text-xl text-white/90 font-medium">
                 Join India's fastest-growing auction platform
               </p>
-            </motion.div>
+            </div>
 
             {/* Feature Highlights */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4, duration: 0.6 }}
+            <div
+}
+}
+}
               className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8"
             >
               {[
@@ -272,44 +271,44 @@ export const EnhancedLogin: React.FC = () => {
                 { icon: Crown, label: 'Premium Experience', color: 'text-purple-400' },
                 { icon: Sparkles, label: 'AI-Powered Insights', color: 'text-blue-400' }
               ].map((feature, index) => (
-                <motion.div
+                <div
                   key={feature.label}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ delay: 0.6 + index * 0.1, duration: 0.4 }}
+}
+}
+}
                   className="flex items-center gap-3 p-3 bg-white/10 backdrop-blur-sm rounded-lg border border-white/20"
                 >
                   <feature.icon className={`w-5 h-5 ${feature.color}`} />
                   <span className="text-white/90 font-medium text-sm">{feature.label}</span>
-                </motion.div>
+                </div>
               ))}
-            </motion.div>
+            </div>
 
             {/* Trust Indicators */}
             <TrustIndicators />
 
             {/* Social Proof */}
             <SocialProof />
-          </motion.div>
+          </div>
 
           {/* Right Side - Login Form */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: "easeOut" }}
+          <div
+}
+}
+}
             className="relative"
           >
             <Card className="p-8 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
               {/* Header */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.6 }}
+              <div
+}
+}
+}
                 className="text-center mb-8"
               >
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h2>
                 <p className="text-gray-600">Continue your winning streak</p>
-              </motion.div>
+              </div>
 
               {/* Login Form */}
               <form onSubmit={(e) => {
@@ -317,10 +316,10 @@ export const EnhancedLogin: React.FC = () => {
                 handleSubmit(formData);
               }} className="space-y-6">
                 {/* Email Field */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4, duration: 0.6 }}
+                <div
+}
+}
+}
                 >
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address
@@ -336,13 +335,13 @@ export const EnhancedLogin: React.FC = () => {
                     />
                     <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Password Field */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.5, duration: 0.6 }}
+                <div
+}
+}
+}
                 >
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Password
@@ -365,13 +364,13 @@ export const EnhancedLogin: React.FC = () => {
                       {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   </div>
-                </motion.div>
+                </div>
 
                 {/* Remember Me & Forgot Password */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.6, duration: 0.6 }}
+                <div
+}
+}
+}
                   className="flex items-center justify-between"
                 >
                   <label className="flex items-center">
@@ -389,13 +388,13 @@ export const EnhancedLogin: React.FC = () => {
                   >
                     Forgot password?
                   </Link>
-                </motion.div>
+                </div>
 
                 {/* Login Button */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.7, duration: 0.6 }}
+                <div
+}
+}
+}
                 >
                   <Button
                     type="submit"
@@ -407,13 +406,13 @@ export const EnhancedLogin: React.FC = () => {
                     {isSubmitting ? 'Signing In...' : 'Start Winning'}
                     <ArrowRight className="ml-2 w-5 h-5" />
                   </Button>
-                </motion.div>
+                </div>
 
                 {/* Social Login Options */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.8, duration: 0.6 }}
+                <div
+}
+}
+}
                   className="relative"
                 >
                   <div className="absolute inset-0 flex items-center">
@@ -422,12 +421,12 @@ export const EnhancedLogin: React.FC = () => {
                   <div className="relative flex justify-center text-sm">
                     <span className="px-2 bg-white text-gray-500">Or continue with</span>
                   </div>
-                </motion.div>
+                </div>
 
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.9, duration: 0.6 }}
+                <div
+}
+}
+}
                   className="grid grid-cols-2 gap-4"
                 >
                   <button
@@ -451,13 +450,13 @@ export const EnhancedLogin: React.FC = () => {
                     </svg>
                     Twitter
                   </button>
-                </motion.div>
+                </div>
 
                 {/* Sign Up Link */}
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 1.0, duration: 0.6 }}
+                <div
+}
+}
+}
                   className="text-center"
                 >
                   <p className="text-gray-600">
@@ -469,13 +468,13 @@ export const EnhancedLogin: React.FC = () => {
                       Start your journey
                     </Link>
                   </p>
-                </motion.div>
+                </div>
               </form>
             </Card>
 
             {/* Success Stories */}
             <SuccessStories />
-          </motion.div>
+          </div>
         </div>
       </Container>
     </div>
@@ -522,7 +521,7 @@ export const EnhancedSignup: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-20" />
 
         {/* Floating geometric shapes */}
-        <motion.div
+        <div
           animate={{
             rotate: 360,
             scale: [1, 1.2, 1],
@@ -533,7 +532,7 @@ export const EnhancedSignup: React.FC = () => {
           }}
           className="absolute top-20 right-20 w-40 h-40 bg-emerald-500/10 rounded-full blur-xl"
         />
-        <motion.div
+        <div
           animate={{
             rotate: -360,
             scale: [1.2, 1, 1.2],
@@ -550,10 +549,10 @@ export const EnhancedSignup: React.FC = () => {
         <div className="w-full max-w-4xl">
           <Card className="p-8 bg-white/95 backdrop-blur-sm border-0 shadow-2xl">
             {/* Header */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
+            <div
+}
+}
+}
               className="text-center mb-8"
             >
               <h1 className="text-4xl font-bold text-gray-900 mb-2">Join the Winners</h1>
@@ -563,17 +562,17 @@ export const EnhancedSignup: React.FC = () => {
               <div className="flex items-center justify-center gap-4 mt-6">
                 {[1, 2, 3].map((step) => (
                   <div key={step} className="flex items-center">
-                    <motion.div
+                    <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
                         step <= currentStep
                           ? 'bg-emerald-600 text-white'
                           : 'bg-gray-200 text-gray-400'
                       }`}
-                      whileHover={{ scale: 1.05 }}
+}
                       whileTap={{ scale: 0.95 }}
                     >
                       {step}
-                    </motion.div>
+                    </div>
                     {step < 3 && (
                       <div className={`w-12 h-1 mx-2 rounded ${
                         step < currentStep ? 'bg-emerald-600' : 'bg-gray-200'
@@ -587,17 +586,17 @@ export const EnhancedSignup: React.FC = () => {
                 <span>Details</span>
                 <span>Verify</span>
               </div>
-            </motion.div>
+            </div>
 
             {/* Multi-Step Form */}
-            <AnimatePresence mode="wait">
+            <Fragment mode="wait">
               {currentStep === 1 && (
                 <motion.form
                   key="step1"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3 }}
+}
+}
+}
+}
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (formData.firstName && formData.lastName && formData.email) {
@@ -679,10 +678,10 @@ export const EnhancedSignup: React.FC = () => {
               {currentStep === 2 && (
                 <motion.form
                   key="step2"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3 }}
+}
+}
+}
+}
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (formData.password && formData.confirmPassword && formData.password === formData.confirmPassword) {
@@ -780,10 +779,10 @@ export const EnhancedSignup: React.FC = () => {
               {currentStep === 3 && (
                 <motion.form
                   key="step3"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  transition={{ duration: 0.3 }}
+}
+}
+}
+}
                   onSubmit={(e) => {
                     e.preventDefault();
                     if (formData.agreeToTerms) {
@@ -851,13 +850,13 @@ export const EnhancedSignup: React.FC = () => {
                   </div>
                 </motion.form>
               )}
-            </AnimatePresence>
+            </Fragment>
 
             {/* Login Link */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 1.2, duration: 0.6 }}
+            <div
+}
+}
+}
               className="text-center mt-8 pt-6 border-t border-gray-200"
             >
               <p className="text-gray-600">
@@ -869,7 +868,7 @@ export const EnhancedSignup: React.FC = () => {
                   Sign in here
                 </Link>
               </p>
-            </motion.div>
+            </div>
           </Card>
         </div>
       </Container>

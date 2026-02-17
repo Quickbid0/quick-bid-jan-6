@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { 
   Shield, 
   FileText, 
@@ -150,9 +149,9 @@ export default function InsuranceClaims() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -162,12 +161,12 @@ export default function InsuranceClaims() {
               </div>
               <FileText className="w-8 h-8 text-indigo-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -179,12 +178,12 @@ export default function InsuranceClaims() {
               </div>
               <Clock className="w-8 h-8 text-yellow-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -196,12 +195,12 @@ export default function InsuranceClaims() {
               </div>
               <Search className="w-8 h-8 text-blue-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -213,7 +212,7 @@ export default function InsuranceClaims() {
               </div>
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Filters */}
@@ -274,11 +273,11 @@ export default function InsuranceClaims() {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredClaims.map((claim, index) => (
-                  <motion.tr
+                  <tr
                     key={claim.id}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: index * 0.1 }}
+}
+}
+}
                     className="hover:bg-gray-50"
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -320,7 +319,7 @@ export default function InsuranceClaims() {
                         </button>
                       </div>
                     </td>
-                  </motion.tr>
+                  </tr>
                 ))}
               </tbody>
             </table>

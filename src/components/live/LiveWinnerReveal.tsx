@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { supabase } from '../../config/supabaseClient';
 import Countdown from './Countdown';
 import { useAuctionRevealFlow } from './useAuctionRevealFlow';
@@ -97,25 +96,25 @@ export const LiveWinnerReveal: React.FC<LiveWinnerRevealProps> = ({
         {step === 0 && <Countdown seconds={5} />}
 
         {step === 1 && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
+          <div
+}
+}
+}
             className="text-2xl sm:text-3xl font-bold text-indigo-600 dark:text-indigo-400"
           >
             🎉 Winner!
-          </motion.div>
+          </div>
         )}
 
         {step >= 2 && winner && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="mt-4"
           >
             <div className="text-lg font-semibold text-gray-900 dark:text-white">{winner.name}</div>
             <div className="text-sm text-gray-600 dark:text-gray-400">Winning bid: ₹{winner.amount.toLocaleString()}</div>
-          </motion.div>
+          </div>
         )}
       </div>
     </div>

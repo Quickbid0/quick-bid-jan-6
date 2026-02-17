@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Activity, Zap, Clock, AlertTriangle, CheckCircle, TrendingUp, TrendingDown, BarChart3, Cpu, HardDrive, Wifi, Battery } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface PerformanceMetrics {
@@ -230,10 +229,10 @@ const PerformanceMonitor: React.FC = () => {
           const isNumeric = typeof value === 'number';
           
           return (
-            <motion.div
+            <div
               key={key}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+}
+}
               className="bg-gray-50 dark:bg-gray-700 rounded-lg p-4"
             >
               <div className="flex items-center justify-between mb-2">
@@ -257,7 +256,7 @@ const PerformanceMonitor: React.FC = () => {
                   Threshold: {formatValue(key, threshold)}
                 </div>
               )}
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -310,10 +309,10 @@ const PerformanceMonitor: React.FC = () => {
           </h4>
           <div className="space-y-2">
             {alerts.slice(0, 5).map((alert) => (
-              <motion.div
+              <div
                 key={alert.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
+}
+}
                 className={`p-3 rounded-lg border ${
                   alert.type === 'error'
                     ? 'bg-red-50 border-red-200 dark:bg-red-900/20 dark:border-red-800'
@@ -341,7 +340,7 @@ const PerformanceMonitor: React.FC = () => {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>

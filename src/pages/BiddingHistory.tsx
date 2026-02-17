@@ -16,7 +16,6 @@ import {
   Award,
   AlertTriangle
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { useSession } from '../context/SessionContext';
 import { VirtualizedList } from '../components/VirtualizedList';
@@ -327,9 +326,9 @@ const BiddingHistory = () => {
             itemHeight={180} // Approximate height per bid item
             containerHeight={600} // Container height
             renderItem={(bid) => (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+              <div
+}
+}
                 className="p-4 md:p-6 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors border-b border-gray-200 dark:border-gray-700 last:border-b-0"
               >
                 <div className="flex flex-col md:flex-row gap-4 md:gap-6 md:items-center">
@@ -461,7 +460,7 @@ const BiddingHistory = () => {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
             className="divide-y divide-gray-200 dark:divide-gray-700"
           />

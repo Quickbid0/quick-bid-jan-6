@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { User, Shield, Store, Crown, Building, Palette, Truck, Award, Zap, Globe } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { storageService } from '../services/storageService';
 
 const DemoLogin = () => {
@@ -122,9 +121,9 @@ const DemoLogin = () => {
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 py-12 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="mb-8"
           >
             <div className="flex items-center justify-center mb-6">
@@ -153,16 +152,16 @@ const DemoLogin = () => {
                 <span>AI-Powered</span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {demoUsers.map((user, index) => (
-            <motion.div
+            <div
               key={user.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden hover:shadow-3xl transition-all duration-500 transform hover:-translate-y-2"
             >
               <div className={`${user.color} text-white p-8 text-center relative overflow-hidden`}>
@@ -237,17 +236,17 @@ const DemoLogin = () => {
                   ) : (
                     <div className="flex items-center justify-center gap-2">
                       <span>Experience as {user.name}</span>
-                      <motion.div
-                        animate={{ x: [0, 5, 0] }}
-                        transition={{ repeat: Infinity, duration: 1.5 }}
+                      <div
+}
+}
                       >
                         →
-                      </motion.div>
+                      </div>
                     </div>
                   )}
                 </button>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 

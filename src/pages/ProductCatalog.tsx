@@ -343,12 +343,12 @@ const ProductCatalog = () => {
           </div>
 
           {/* Filters Panel */}
-          <AnimatePresence>
+          <Fragment>
             {showFilters && (
-              <motion.div
-                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                animate={{ opacity: 1, height: 'auto', marginTop: 16 }}
-                exit={{ opacity: 0, height: 0, marginTop: 0 }}
+              <div
+}
+}
+}
                 className="overflow-hidden"
               >
                 <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 p-5 shadow-lg">
@@ -627,9 +627,9 @@ const ProductCatalog = () => {
                     </button>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             )}
-          </AnimatePresence>
+          </Fragment>
         </div>
       </div>
 

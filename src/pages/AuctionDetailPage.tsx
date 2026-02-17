@@ -15,7 +15,6 @@ import {
   Eye,
   ChevronRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface Auction {
   id: string;

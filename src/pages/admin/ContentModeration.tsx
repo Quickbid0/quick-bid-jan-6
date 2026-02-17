@@ -13,7 +13,6 @@ import {
   Clock,
   User
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface ModerationItem {
   id: string;
@@ -197,10 +196,10 @@ const ContentModeration = () => {
         ) : (
           <div className="divide-y divide-gray-200 dark:divide-gray-700">
             {items.map((item) => (
-              <motion.div
+              <div
                 key={item.id}
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+}
+}
                 className="p-6 hover:bg-gray-50 dark:hover:bg-gray-700"
               >
                 <div className="flex items-start justify-between">
@@ -274,7 +273,7 @@ const ContentModeration = () => {
                     )}
                   </div>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
         )}

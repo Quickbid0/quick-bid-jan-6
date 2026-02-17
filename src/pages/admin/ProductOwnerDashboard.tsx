@@ -2,7 +2,6 @@
 // src/pages/admin/ProductOwnerDashboard.tsx
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { 
   Users, 
   ShoppingCart, 
@@ -87,9 +86,9 @@ const ProductOwnerDashboard: React.FC = () => {
         {/* Core User Journeys */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
           {/* Buyer Journey */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center mb-4">
@@ -132,13 +131,13 @@ const ProductOwnerDashboard: React.FC = () => {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Seller Journey */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center mb-4">
@@ -181,13 +180,13 @@ const ProductOwnerDashboard: React.FC = () => {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* Admin Journey */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center mb-4">
@@ -236,7 +235,7 @@ const ProductOwnerDashboard: React.FC = () => {
                 </span>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Tabs */}
@@ -407,11 +406,11 @@ const ProductOwnerDashboard: React.FC = () => {
                 ) : (
                   <div className="space-y-4">
                     {frictionPoints.map((point, index) => (
-                      <motion.div
+                      <div
                         key={index}
-                        initial={{ opacity: 0, x: -20 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{ delay: index * 0.1 }}
+}
+}
+}
                         className={`border rounded-lg p-4 ${
                           point.impact === 'high' ? 'border-red-200 bg-red-50' :
                           point.impact === 'medium' ? 'border-orange-200 bg-orange-50' :
@@ -437,7 +436,7 @@ const ProductOwnerDashboard: React.FC = () => {
                             </div>
                           </div>
                         </div>
-                      </motion.div>
+                      </div>
                     ))}
                   </div>
                 )}

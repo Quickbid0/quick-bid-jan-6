@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MessageCircle, Send, Bot, User, Minimize2, Maximize2, X, ThumbsUp, ThumbsDown, Copy } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface ChatMessage {
@@ -206,24 +205,24 @@ const AIChatbot: React.FC = () => {
 
   if (!isOpen) {
     return (
-      <motion.button
-        initial={{ scale: 0 }}
-        animate={{ scale: 1 }}
-        whileHover={{ scale: 1.05 }}
+      <button
+}
+}
+}
         whileTap={{ scale: 0.95 }}
         onClick={() => setIsOpen(true)}
         className="fixed bottom-6 right-6 p-4 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all z-50"
       >
         <MessageCircle className="w-6 h-6" />
         <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-      </motion.button>
+      </button>
     );
   }
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
+}
+}
       className={`fixed bottom-6 right-6 z-50 ${isMinimized ? 'w-auto' : 'w-96'}`}
     >
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-hidden">
@@ -260,13 +259,13 @@ const AIChatbot: React.FC = () => {
           <>
             {/* Messages */}
             <div className="h-96 overflow-y-auto p-4 space-y-4">
-              <AnimatePresence>
+              <Fragment>
                 {messages.map((message) => (
-                  <motion.div
+                  <div
                     key={message.id}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
+}
+}
+}
                     className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {message.type === 'bot' && (
@@ -338,9 +337,9 @@ const AIChatbot: React.FC = () => {
                         <User className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                       </div>
                     )}
-                  </motion.div>
+                  </div>
                 ))}
-              </AnimatePresence>
+              </Fragment>
               <div ref={messagesEndRef} />
             </div>
 
@@ -406,7 +405,7 @@ const AIChatbot: React.FC = () => {
           </>
         )}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

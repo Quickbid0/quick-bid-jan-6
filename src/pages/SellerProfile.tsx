@@ -21,7 +21,6 @@ import {
   Flag,
   Gavel
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import SellerTrustSummary from '../components/auctions/SellerTrustSummary';
@@ -521,10 +520,10 @@ const SellerProfile = () => {
                 {products
                   .filter((p: any) => p.status === 'active')
                   .map((product: any) => (
-                    <motion.div
+                    <div
                       key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+}
+}
                       className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                     >
                       <img
@@ -556,7 +555,7 @@ const SellerProfile = () => {
                           View Auction
                         </Link>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
               </div>
             </div>
@@ -575,10 +574,10 @@ const SellerProfile = () => {
                 {products
                   .filter((p: any) => p.status !== 'active')
                   .map((product: any) => (
-                    <motion.div
+                    <div
                       key={product.id}
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
+}
+}
                       className="border rounded-lg overflow-hidden hover:shadow-md transition-shadow"
                     >
                       <img
@@ -610,7 +609,7 @@ const SellerProfile = () => {
                           View Auction
                         </Link>
                       </div>
-                    </motion.div>
+                    </div>
                   ))}
               </div>
             </div>

@@ -2,7 +2,6 @@
 // These components dynamically show based on feature flags and campaign status
 
 import React, { useEffect, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Gift, Users, TrendingUp, Clock, X } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
@@ -46,11 +45,11 @@ export const LaunchBanner: React.FC<LaunchBannerProps> = ({
   if (!isVisible || isDismissed) return null;
 
   return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        exit={{ y: -100, opacity: 0 }}
+    <Fragment>
+      <div
+}
+}
+}
         className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 text-white shadow-2xl"
       >
         <div className="max-w-7xl mx-auto px-4 py-3">
@@ -87,8 +86,8 @@ export const LaunchBanner: React.FC<LaunchBannerProps> = ({
             </div>
           </div>
         </div>
-      </motion.div>
-    </AnimatePresence>
+      </div>
+    </Fragment>
   );
 };
 
@@ -101,15 +100,15 @@ export const FreeWeekBadge: React.FC<FreeWeekBadgeProps> = ({ type, isActive }) 
   if (!isActive) return null;
 
   return (
-    <motion.div
-      initial={{ scale: 0 }}
-      animate={{ scale: 1 }}
+    <div
+}
+}
       className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg"
     >
       <Gift className="h-4 w-4" />
       FREE {type.toUpperCase()} WEEK
       <Sparkles className="h-3 w-3 text-yellow-300" />
-    </motion.div>
+    </div>
   );
 };
 
@@ -126,9 +125,9 @@ export const AccountTierBadge: React.FC<AccountTierBadgeProps> = ({ tier, isVisi
   if (!isVisible) return null;
 
   return (
-    <motion.div
-      initial={{ x: -20, opacity: 0 }}
-      animate={{ x: 0, opacity: 1 }}
+    <div
+}
+}
       className="inline-flex items-center gap-2 bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-3 py-1.5 rounded-full text-sm font-bold shadow-lg"
     >
       <span className="text-lg">{tier.badge}</span>
@@ -138,7 +137,7 @@ export const AccountTierBadge: React.FC<AccountTierBadgeProps> = ({ tier, isVisi
           +₹{tier.walletBonus}
         </span>
       )}
-    </motion.div>
+    </div>
   );
 };
 
@@ -165,19 +164,19 @@ export const LaunchModeOverlay: React.FC<LaunchModeOverlayProps> = ({
   if (!isActive) return null;
 
   return (
-    <AnimatePresence>
+    <Fragment>
       {showModal && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+        <div
+}
+}
+}
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
           onClick={() => setShowModal(false)}
         >
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md mx-4 p-6"
             onClick={(e) => e.stopPropagation()}
           >
@@ -210,10 +209,10 @@ export const LaunchModeOverlay: React.FC<LaunchModeOverlayProps> = ({
                 Start Exploring 🚀
               </button>
             </div>
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       )}
-    </AnimatePresence>
+    </Fragment>
   );
 };
 
@@ -245,10 +244,10 @@ export const ReferralPrompt: React.FC<ReferralPromptProps> = ({
   if (!isVisible || isDismissed) return null;
 
   return (
-    <motion.div
-      initial={{ y: 100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      exit={{ y: 100, opacity: 0 }}
+    <div
+}
+}
+}
       className="fixed bottom-4 right-4 z-40 max-w-sm"
     >
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-4 border border-gray-200 dark:border-gray-700">
@@ -286,7 +285,7 @@ export const ReferralPrompt: React.FC<ReferralPromptProps> = ({
           Share & Earn
         </button>
       </div>
-    </motion.div>
+    </div>
   );
 };
 

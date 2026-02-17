@@ -4,7 +4,6 @@ import { useSession } from '../context/SessionContext';
 import { supabase } from '../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { Wallet, CreditCard, Plus, ArrowLeft, Loader2, CheckCircle } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const WalletAddPage = () => {
   const navigate = useNavigate();

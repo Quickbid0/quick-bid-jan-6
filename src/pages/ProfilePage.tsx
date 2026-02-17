@@ -6,7 +6,6 @@ import {
   Building, Edit, Settings, Lock, Bell, CreditCard,
   ShieldCheck, AlertCircle, Clock, DollarSign, CheckCircle
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { useSession } from '../context/SessionContext';
 import { toast } from 'react-hot-toast';
 import { supabase } from '../config/supabaseClient';

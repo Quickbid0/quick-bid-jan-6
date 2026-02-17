@@ -1,6 +1,5 @@
 import React from 'react';
 import { Smartphone, Download, Star, Shield, Zap, Users } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 const MobileApp = () => {
   const features = [
@@ -42,8 +41,8 @@ const MobileApp = () => {
 
       {/* App Store Buttons */}
       <div className="flex justify-center gap-6 mb-16">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
+        <button
+}
           whileTap={{ scale: 0.95 }}
           className="bg-black text-white px-8 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-800"
         >
@@ -52,10 +51,10 @@ const MobileApp = () => {
             <div className="text-xs">Download on the</div>
             <div className="text-lg font-semibold">App Store</div>
           </div>
-        </motion.button>
+        </button>
 
-        <motion.button
-          whileHover={{ scale: 1.05 }}
+        <button
+}
           whileTap={{ scale: 0.95 }}
           className="bg-black text-white px-8 py-4 rounded-xl flex items-center gap-3 hover:bg-gray-800"
         >
@@ -64,23 +63,23 @@ const MobileApp = () => {
             <div className="text-xs">Get it on</div>
             <div className="text-lg font-semibold">Google Play</div>
           </div>
-        </motion.button>
+        </button>
       </div>
 
       {/* Features */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
         {features.map((feature, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.2 }}
+}
+}
+}
             className="text-center p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg"
           >
             <div className="mb-4">{feature.icon}</div>
             <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
             <p className="text-gray-600 dark:text-gray-300">{feature.description}</p>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -89,11 +88,11 @@ const MobileApp = () => {
         <h2 className="text-3xl font-bold mb-8">App Screenshots</h2>
         <div className="flex justify-center gap-6 overflow-x-auto">
           {screenshots.map((screenshot, index) => (
-            <motion.img
+            <img
               key={index}
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               src={screenshot}
               alt={`Screenshot ${index + 1}`}
               className="w-64 h-auto rounded-2xl shadow-xl"

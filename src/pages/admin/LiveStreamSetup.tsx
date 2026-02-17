@@ -16,7 +16,6 @@ import {
   Camera,
   Mic
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface LiveStream {
   id: string;
@@ -405,10 +404,10 @@ const LiveStreamSetup = () => {
           ) : (
             <div className="space-y-4">
               {streams.map((stream) => (
-                <motion.div
+                <div
                   key={stream.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
+}
+}
                   className="border dark:border-gray-700 rounded-lg p-4"
                 >
                   <div className="flex items-center justify-between mb-2">
@@ -464,7 +463,7 @@ const LiveStreamSetup = () => {
                       </button>
                     )}
                   </div>
-                </motion.div>
+                </div>
               ))}
             </div>
           )}

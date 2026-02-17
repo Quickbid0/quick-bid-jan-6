@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import {
   Search,
   Filter,
@@ -252,8 +251,8 @@ const AuctionListingPage: React.FC = () => {
     const auctionType = getAuctionTypeBadge(auction.type);
 
     return (
-      <motion.div
-        whileHover={{ y: -4 }}
+      <div
+}
         className="bg-white rounded-lg shadow-sm border hover:shadow-md transition-all duration-200 overflow-hidden"
       >
         {/* Image */}
@@ -374,7 +373,7 @@ const AuctionListingPage: React.FC = () => {
             </Button>
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
@@ -481,10 +480,10 @@ const AuctionListingPage: React.FC = () => {
 
       {/* Filters Panel */}
       {showFilters && (
-        <motion.div
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: 'auto', opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
+        <div
+}
+}
+}
           className="bg-white border-b"
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
@@ -586,7 +585,7 @@ const AuctionListingPage: React.FC = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Auction Grid */}

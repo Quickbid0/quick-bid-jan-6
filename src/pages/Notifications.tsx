@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../config/supabaseClient';
 import { Link } from 'react-router-dom';
 import { Bell, CheckCircle, AlertTriangle, Info, Trash2, Calendar, Package, DollarSign } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { formatDistanceToNow } from 'date-fns';
 
 interface Notification {
@@ -368,10 +367,10 @@ const Notifications = () => {
           filteredNotifications.map((notification) => {
             const iconData = getNotificationIcon(notification.type);
             return (
-              <motion.div
+              <div
                 key={notification.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+}
+}
                 className={`bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6 ${
                   !notification.read ? 'border-l-4 border-indigo-500' : ''
                 }`}
@@ -442,7 +441,7 @@ const Notifications = () => {
                     </div>
                   </div>
                 </div>
-              </motion.div>
+              </div>
             );
           })
         )}

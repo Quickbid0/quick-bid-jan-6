@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { TrendingUp, TrendingDown, Minus, Brain, Activity, Target, DollarSign, Clock, BarChart3, Zap } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 interface PricePrediction {
@@ -283,11 +282,11 @@ const AIPricePrediction: React.FC<{ productId: string }> = ({ productId }) => {
         </h4>
         <div className="space-y-2">
           {prediction.factors.map((factor, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700 rounded-lg"
             >
               <div className="flex items-center gap-3">
@@ -309,7 +308,7 @@ const AIPricePrediction: React.FC<{ productId: string }> = ({ productId }) => {
                   {(factor.weight * 100).toFixed(0)}%
                 </p>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

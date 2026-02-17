@@ -19,7 +19,6 @@ import {
   Phone,
   ArrowRight
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 
@@ -267,11 +266,11 @@ const BusinessSolutions = () => {
       {/* Solutions Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-16">
         {solutions.map((solution, index) => (
-          <motion.div
+          <div
             key={index}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.2 }}
+}
+}
+}
             className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8"
           >
             <div className="mb-6">{solution.icon}</div>
@@ -322,7 +321,7 @@ const BusinessSolutions = () => {
               Learn More
               <ArrowRight className="h-4 w-4" />
             </button>
-          </motion.div>
+          </div>
         ))}
       </div>
 
@@ -331,11 +330,11 @@ const BusinessSolutions = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Industry Coverage</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {industries.map((industry, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="text-center p-6 border rounded-lg hover:shadow-md transition-shadow cursor-pointer"
               onClick={() => handleIndustryClick(industry.name)}
             >
@@ -346,7 +345,7 @@ const BusinessSolutions = () => {
                 <div className="text-sm font-medium">{industry.companies} Companies</div>
                 <div className="text-sm text-green-600">{industry.volume} Volume</div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -356,18 +355,18 @@ const BusinessSolutions = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Why Choose QuickBid for Business?</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {benefits.map((benefit, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="text-center p-6"
             >
               <div className="mb-4">{benefit.icon}</div>
               <h3 className="font-semibold text-lg mb-2">{benefit.title}</h3>
               <p className="text-gray-600 dark:text-gray-300 text-sm mb-3">{benefit.description}</p>
               <div className="text-lg font-bold text-indigo-600">{benefit.metric}</div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -377,11 +376,11 @@ const BusinessSolutions = () => {
         <h2 className="text-3xl font-bold text-center mb-8">Success Stories</h2>
         <div className="space-y-6">
           {caseStudies.map((study, index) => (
-            <motion.div
+            <div
               key={index}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.2 }}
+}
+}
+}
               className="bg-white dark:bg-gray-800 rounded-lg p-8 shadow-sm"
             >
               <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 items-center">
@@ -406,7 +405,7 @@ const BusinessSolutions = () => {
                   <div className="text-sm text-gray-500">in {study.timeline}</div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

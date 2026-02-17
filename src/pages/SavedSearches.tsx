@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { 
   Search, 
   Bell, 
@@ -165,9 +164,9 @@ export default function SavedSearches() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -177,12 +176,12 @@ export default function SavedSearches() {
               </div>
               <Search className="w-8 h-8 text-indigo-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -194,12 +193,12 @@ export default function SavedSearches() {
               </div>
               <CheckCircle className="w-8 h-8 text-green-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -211,12 +210,12 @@ export default function SavedSearches() {
               </div>
               <TrendingUp className="w-8 h-8 text-blue-600" />
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -228,17 +227,17 @@ export default function SavedSearches() {
               </div>
               <Star className="w-8 h-8 text-yellow-600" />
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Saved Searches List */}
         <div className="space-y-6">
           {savedSearches.map((search, index) => (
-            <motion.div
+            <div
               key={search.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="bg-white rounded-lg shadow p-6"
             >
               <div className="flex items-start justify-between">
@@ -341,7 +340,7 @@ export default function SavedSearches() {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
 

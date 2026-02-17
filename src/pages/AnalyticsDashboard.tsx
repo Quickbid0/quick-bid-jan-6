@@ -19,7 +19,6 @@ import {
   ArcElement,
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import { motion } from 'framer-motion';
 
 // Register Chart.js components
 ChartJS.register(
@@ -344,9 +343,9 @@ const AnalyticsDashboard = () => {
         {/* Charts and Detailed Analytics */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* User Registration Trend */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
+          <div
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">User Registrations Trend</h3>
@@ -380,13 +379,13 @@ const AnalyticsDashboard = () => {
                 },
               }}
             />
-          </motion.div>
+          </div>
 
           {/* Revenue by Month */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Monthly Revenue</h3>
@@ -416,13 +415,13 @@ const AnalyticsDashboard = () => {
                 },
               }}
             />
-          </motion.div>
+          </div>
 
           {/* Category Performance */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Category Distribution</h3>
@@ -455,13 +454,13 @@ const AnalyticsDashboard = () => {
                 },
               }}
             />
-          </motion.div>
+          </div>
 
           {/* Bidding Activity by Hour */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
+          <div
+}
+}
+}
             className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
           >
             <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Bidding Activity by Hour</h3>
@@ -488,24 +487,24 @@ const AnalyticsDashboard = () => {
                 },
               }}
             />
-          </motion.div>
+          </div>
         </div>
 
         {/* Top Locations */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+        <div
+}
+}
+}
           className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
         >
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Top Locations</h3>
           <div className="space-y-4">
             {analytics.userMetrics.topLocations.map((location, index) => (
-              <motion.div
+              <div
                 key={location.location}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: index * 0.1 }}
+}
+}
+}
                 className="flex items-center justify-between"
               >
                 <div className="flex items-center">
@@ -528,10 +527,10 @@ const AnalyticsDashboard = () => {
                     {((location.count / analytics.userMetrics.topLocations.reduce((sum, loc) => sum + loc.count, 0)) * 100).toFixed(1)}%
                   </span>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
 
         {/* Performance Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">

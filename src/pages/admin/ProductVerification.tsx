@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../config/supabaseClient';
 import { toast } from 'react-hot-toast';
 import { Shield, CheckCircle, X, Eye, AlertCircle, FileText, Image, Calendar, User, Brain, AlertTriangle } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { Package } from 'lucide-react';
 import { aiService, FakeProductDetectionResult } from '../../services/aiService';
 
@@ -213,10 +212,10 @@ const ProductVerification = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {products.map((product) => (
-            <motion.div
+            <div
               key={product.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
+}
+}
               className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden"
             >
               <div className="relative">
@@ -305,7 +304,7 @@ const ProductVerification = () => {
                   )}
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       )}

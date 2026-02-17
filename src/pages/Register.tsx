@@ -3,7 +3,6 @@ import { supabase } from '../config/supabaseClient';
 import { Link, useNavigate } from 'react-router-dom';
 import { UserPlus, Mail, Lock, User, Phone, MapPin, Camera, Loader2, Eye, EyeOff, Building } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { motion } from 'framer-motion';
 import { createOrLoadUserKey } from '../security/keyring';
 import { encryptProfileFields } from '../security/secureFields';
 import { useAuth } from '../context/UnifiedAuthContext';
@@ -182,9 +181,9 @@ const Register = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12 bg-gray-50 dark:bg-gray-900">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+      <div
+}
+}
         className="w-full max-w-md space-y-8 bg-white dark:bg-gray-800 p-8 rounded-xl shadow-xl"
       >
         <div className="text-center">
@@ -392,7 +391,7 @@ const Register = () => {
             )}
           </button>
         </form>
-      </motion.div>
+      </div>
     </div>
   );
 };

@@ -2,7 +2,6 @@
 // Premium wallet experience with animated balances, locked funds indicators, and trust messaging
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
 import {
   Wallet,
   TrendingUp,
@@ -108,23 +107,23 @@ const AnimatedBalance: React.FC<AnimatedBalanceProps> = ({
   };
 
   return (
-    <motion.div
+    <div
       className={`${sizeClasses[size]} font-black ${className}`}
       style={getTextStyle('fintech', 'balance')}
-      animate={isAnimating ? { scale: [1, 1.02, 1] } : {}}
-      transition={{ duration: 0.3, repeat: isAnimating ? Infinity : 0 }}
+ : {}}
+}
     >
       <span className="text-gray-600">{currency}</span>
-      <motion.span
+      <span
         key={displayAmount}
-        initial={{ opacity: 0.7 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
+}
+}
+}
       >
         {formatAmount(displayAmount)}
-      </motion.span>
+      </span>
       <span className="text-gray-500 text-lg ml-1">{getSuffix(amount)}</span>
-    </motion.div>
+    </div>
   );
 };
 
@@ -161,30 +160,30 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
       {/* Visual breakdown */}
       <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
         {/* Available funds */}
-        <motion.div
+        <div
           className="absolute left-0 top-0 h-full bg-emerald-500"
-          initial={{ width: 0 }}
-          animate={{ width: `${availablePercentage}%` }}
-          transition={{ duration: 1, delay: 0.2 }}
+}
+%` }}
+}
         />
 
         {/* Locked funds */}
-        <motion.div
+        <div
           className="absolute h-full bg-orange-500"
-          initial={{ width: 0, left: `${availablePercentage}%` }}
-          animate={{ width: `${lockedPercentage}%`, left: `${availablePercentage}%` }}
-          transition={{ duration: 1, delay: 0.4 }}
+%` }}
+%`, left: `${availablePercentage}%` }}
+}
         />
 
         {/* Escrow funds */}
-        <motion.div
+        <div
           className="absolute h-full bg-blue-500"
-          initial={{ width: 0, left: `${availablePercentage + lockedPercentage}%` }}
+%` }}
           animate={{
             width: `${escrowPercentage}%`,
             left: `${availablePercentage + lockedPercentage}%`
           }}
-          transition={{ duration: 1, delay: 0.6 }}
+}
         />
       </div>
 
@@ -219,19 +218,19 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
 
       {/* Gaming-style locked funds animation */}
       {locked > 0 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 0.8 }}
+        <div
+}
+}
+}
           className="mt-4 p-3 bg-gradient-to-r from-orange-50 to-red-50 border border-orange-200 rounded-lg"
         >
           <div className="flex items-center gap-3">
-            <motion.div
-              animate={{ rotate: [0, 10, -10, 0] }}
-              transition={{ duration: 2, repeat: Infinity }}
+            <div
+}
+}
             >
               <Lock className="w-5 h-5 text-orange-600" />
-            </motion.div>
+            </div>
             <div>
               <div className="font-medium text-orange-900">Funds Locked for Bidding</div>
               <div className="text-sm text-orange-700">
@@ -239,24 +238,24 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Trust messaging for escrow */}
       {escrow > 0 && (
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ delay: 1.0 }}
+        <div
+}
+}
+}
           className="p-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg"
         >
           <div className="flex items-center gap-3">
-            <motion.div
-              animate={{ scale: [1, 1.1, 1] }}
-              transition={{ duration: 2, repeat: Infinity }}
+            <div
+}
+}
             >
               <Shield className="w-5 h-5 text-blue-600" />
-            </motion.div>
+            </div>
             <div>
               <div className="font-medium text-blue-900">Securely Held in Escrow</div>
               <div className="text-sm text-blue-700">
@@ -264,7 +263,7 @@ const LockedFundsIndicator: React.FC<LockedFundsIndicatorProps> = ({
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
       )}
     </div>
   );
@@ -312,11 +311,11 @@ const TrustMessaging: React.FC<TrustMessagingProps> = ({ className }) => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {trustMessages.map((message, index) => (
-          <motion.div
+          <div
             key={message.title}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: index * 0.1, duration: 0.5 }}
+}
+}
+}
             className={`p-4 bg-gradient-to-br from-${message.color}-50 to-${message.color}-100 border border-${message.color}-200 rounded-lg`}
           >
             <div className="flex items-start gap-3">
@@ -332,7 +331,7 @@ const TrustMessaging: React.FC<TrustMessagingProps> = ({ className }) => {
                 </p>
               </div>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
     </div>
@@ -397,11 +396,11 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, c
         {transactions.map((transaction, index) => {
           const Icon = getTransactionIcon(transaction.type);
           return (
-            <motion.div
+            <div
               key={transaction.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.4 }}
+}
+}
+}
               className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow"
             >
               <div className="flex items-center gap-3">
@@ -438,7 +437,7 @@ const TransactionHistory: React.FC<TransactionHistoryProps> = ({ transactions, c
                   </div>
                 )}
               </div>
-            </motion.div>
+            </div>
           );
         })}
       </div>
@@ -502,10 +501,10 @@ export const EnhancedWallet: React.FC = () => {
   return (
     <Container className="py-8">
       {/* Header */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <div className="flex items-center justify-between">
@@ -539,13 +538,13 @@ export const EnhancedWallet: React.FC = () => {
             </Button>
           </div>
         </div>
-      </motion.div>
+      </div>
 
       {/* Main Balance Display */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mb-8"
       >
         <Card className="p-8 bg-gradient-to-br from-emerald-500 via-blue-500 to-purple-600 text-white relative overflow-hidden">
@@ -582,8 +581,8 @@ export const EnhancedWallet: React.FC = () => {
 
             {/* Quick Action Buttons */}
             <div className="grid grid-cols-2 gap-4">
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
@@ -594,10 +593,10 @@ export const EnhancedWallet: React.FC = () => {
                   <Plus className="w-5 h-5" />
                   Add Money
                 </Button>
-              </motion.div>
+              </div>
 
-              <motion.div
-                whileHover={{ scale: 1.02 }}
+              <div
+}
                 whileTap={{ scale: 0.98 }}
               >
                 <Button
@@ -608,11 +607,11 @@ export const EnhancedWallet: React.FC = () => {
                   <Minus className="w-5 h-5" />
                   Withdraw
                 </Button>
-              </motion.div>
+              </div>
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
 
       {/* Fund Distribution & Trust */}
       <Grid cols={2} gap="lg" className="mb-8">
@@ -636,10 +635,10 @@ export const EnhancedWallet: React.FC = () => {
       </Card>
 
       {/* Quick Deposit Options */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.8, duration: 0.6 }}
+      <div
+}
+}
+}
         className="mt-8"
       >
         <Card className="p-6">
@@ -653,9 +652,9 @@ export const EnhancedWallet: React.FC = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[1000, 5000, 10000, 25000].map((amount) => (
-              <motion.button
+              <button
                 key={amount}
-                whileHover={{ scale: 1.05 }}
+}
                 whileTap={{ scale: 0.95 }}
                 className="p-4 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg hover:shadow-md transition-all"
                 onClick={() => handleAction('deposit')}
@@ -666,7 +665,7 @@ export const EnhancedWallet: React.FC = () => {
                   </div>
                   <div className="text-xs text-blue-600">Quick Add</div>
                 </div>
-              </motion.button>
+              </button>
             ))}
           </div>
 
@@ -690,7 +689,7 @@ export const EnhancedWallet: React.FC = () => {
             </div>
           </div>
         </Card>
-      </motion.div>
+      </div>
     </Container>
   );
 };

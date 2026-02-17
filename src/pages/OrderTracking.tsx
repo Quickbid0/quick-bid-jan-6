@@ -15,7 +15,6 @@ import {
   Star,
   Eye
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface TrackingEvent {
   id: string;
@@ -347,11 +346,11 @@ const OrderTracking = () => {
         </h3>
         <div className="space-y-6">
           {trackingEvents.map((event, index) => (
-            <motion.div
+            <div
               key={event.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
+}
+}
+}
               className="flex items-start gap-4"
             >
               <div className="flex-shrink-0">
@@ -380,7 +379,7 @@ const OrderTracking = () => {
                   <span className="text-xs text-gray-500">{event.location}</span>
                 </div>
               </div>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>

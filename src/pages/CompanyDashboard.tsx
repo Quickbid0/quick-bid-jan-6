@@ -14,7 +14,6 @@ import {
   Eye,
   Calendar
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 
 interface CompanyStats {
   totalProducts: number;
@@ -87,9 +86,9 @@ const CompanyDashboard = () => {
     color?: string;
     trend?: number;
   }) => (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+    <div
+}
+}
       className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-sm"
     >
       <div className="flex items-center justify-between">
@@ -104,7 +103,7 @@ const CompanyDashboard = () => {
           <Icon className="h-6 w-6 text-indigo-600" />
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 
   if (loading) {

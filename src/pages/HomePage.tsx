@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import {
   Search,
@@ -172,10 +171,10 @@ const HomePage: React.FC = () => {
       <section className="bg-gradient-to-br from-blue-50 via-white to-indigo-50 py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
+            <div
+}
+}
+}
               className="space-y-8"
             >
               <div>
@@ -235,12 +234,12 @@ const HomePage: React.FC = () => {
                   Watch Demo
                 </Button>
               </div>
-            </motion.div>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
+            <div
+}
+}
+}
               className="relative"
             >
               <div className="relative">
@@ -259,7 +258,7 @@ const HomePage: React.FC = () => {
                   <div className="text-xs">Current: ₹18.5L</div>
                 </div>
               </div>
-            </motion.div>
+            </div>
           </div>
         </div>
       </section>
@@ -269,11 +268,11 @@ const HomePage: React.FC = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
-              <motion.div
+              <div
                 key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
+}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+}
                 className="text-center"
               >
                 <div className={`inline-flex items-center justify-center w-12 h-12 rounded-lg bg-white shadow-sm mb-4 ${stat.color}`}>
@@ -281,7 +280,7 @@ const HomePage: React.FC = () => {
                 </div>
                 <div className="text-3xl font-bold text-gray-900 mb-2">{stat.value}</div>
                 <div className="text-sm text-gray-600">{stat.label}</div>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -299,11 +298,11 @@ const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             {featuredAuctions.map((auction, index) => (
-              <motion.div
+              <div
                 key={auction.id}
-                initial={{ opacity: 0, y: 20 }}
+}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+}
               >
                 <Card className="overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="relative">
@@ -369,7 +368,7 @@ const HomePage: React.FC = () => {
                     </Button>
                   </div>
                 </Card>
-              </motion.div>
+              </div>
             ))}
           </div>
 
@@ -394,11 +393,11 @@ const HomePage: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {trustIndicators.map((indicator, index) => (
-              <motion.div
+              <div
                 key={indicator.title}
-                initial={{ opacity: 0, y: 20 }}
+}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+}
                 className="bg-white p-6 rounded-lg shadow-sm"
               >
                 <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
@@ -410,7 +409,7 @@ const HomePage: React.FC = () => {
                 <p className="text-gray-600">
                   {indicator.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -453,11 +452,11 @@ const HomePage: React.FC = () => {
                 icon: Car
               }
             ].map((step, index) => (
-              <motion.div
+              <div
                 key={step.step}
-                initial={{ opacity: 0, y: 20 }}
+}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
+}
                 className="text-center"
               >
                 <div className="w-16 h-16 bg-blue-600 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
@@ -469,7 +468,7 @@ const HomePage: React.FC = () => {
                 <p className="text-gray-600">
                   {step.description}
                 </p>
-              </motion.div>
+              </div>
             ))}
           </div>
         </div>
@@ -486,12 +485,12 @@ const HomePage: React.FC = () => {
           </div>
 
           <div className="max-w-4xl mx-auto">
-            <motion.div
+            <div
               key={currentTestimonial}
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -50 }}
-              transition={{ duration: 0.5 }}
+}
+}
+}
+}
               className="bg-white p-8 rounded-lg shadow-sm"
             >
               <div className="flex items-center gap-1 mb-4">
@@ -517,7 +516,7 @@ const HomePage: React.FC = () => {
                   </div>
                 </div>
               </div>
-            </motion.div>
+            </div>
 
             <div className="flex justify-center gap-2 mt-8">
               {testimonials.map((_, index) => (
