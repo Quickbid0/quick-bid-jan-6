@@ -20,14 +20,12 @@ interface AIInsight {
   confidence: number;
   actionable: boolean;
   timestamp: string;
-}
 
 interface AIMetrics {
   totalInsights: number;
   accuracyRate: number;
   opportunitiesIdentified: number;
   riskAlerts: number;
-}
 
 export default function AIDashboard() {
   const [insights, setInsights] = useState<AIInsight[]>([]);
@@ -150,8 +148,6 @@ export default function AIDashboard() {
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -164,9 +160,6 @@ export default function AIDashboard() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -179,9 +172,6 @@ export default function AIDashboard() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -194,9 +184,6 @@ export default function AIDashboard() {
           </div>
 
           <div
-}
-}
-}
             className="bg-white rounded-lg shadow p-6"
           >
             <div className="flex items-center justify-between">
@@ -217,9 +204,6 @@ export default function AIDashboard() {
               {insights.map((insight, index) => (
                 <div
                   key={insight.id}
-}
-}
-}
                   className={`border rounded-lg p-4 ${getInsightColor(insight.type)}`}
                 >
                   <div className="flex items-start space-x-3">
@@ -287,4 +271,3 @@ export default function AIDashboard() {
       </div>
     </div>
   );
-}
