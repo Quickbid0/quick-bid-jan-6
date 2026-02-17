@@ -38,6 +38,7 @@
     "clsx": "^2.1.1",
     "date-fns": "^2.30.0",
     "framer-motion": "^11.18.2",
+    "helmet": "^8.1.0",
     "html2canvas": "^1.4.1",
     "i18next": "^25.8.4",
     "i18next-browser-languagedetector": "^8.2.1",
@@ -75,13 +76,17 @@
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "@vitejs/plugin-react": "^5.1.2",
-    "autoprefixer": "^10.4.17",
+    "autoprefixer": "^10.4.24",
     "eslint": "^8.56.0",
-    "postcss": "^8.4.33",
-    "tailwindcss": "^3.4.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.19",
     "terser": "^5.27.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
     "vitest": "^4.0.16"
+  },
+  "resolutions": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
