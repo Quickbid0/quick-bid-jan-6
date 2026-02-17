@@ -1,8 +1,7 @@
 {
   "compilerOptions": {
     "skipLibCheck": true,
-    "types": [],
-    "typeRoots": [],
+    "typeRoots": ["../node_modules/@types"],
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,

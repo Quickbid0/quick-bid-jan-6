@@ -40,7 +40,7 @@ model User {
   products            Product[]
   auctions            Auction[]
   bids                Bid[]
-  transactions        Transaction[]
+  transactions        WalletTransaction[]
   auditLogs           AuditLog[]
   branchStaff         BranchStaff?
   deliveryAssignments DeliveryAssignment[]
@@ -174,7 +174,7 @@ model Wallet {
   updatedAt         DateTime    @updatedAt @map("updated_at")
 
   user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  transactions      Transaction[]
+  transactions      WalletTransaction[]
 
   @@index([userId], map: "idx_wallets_user_id")
   @@map("wallets")

@@ -3,7 +3,7 @@
 // It initializes Sentry before NestJS application starts
 
 import * as Sentry from '@sentry/nestjs';
-import { ProfilingIntegration } from '@sentry/profiling-node';
+import { nodeProfilingIntegration } from '@sentry/profiling-node';
 
 // Initialize Sentry for production monitoring
 Sentry.init({
@@ -28,7 +28,7 @@ Sentry.init({
     // new Sentry.Integrations.OnUnhandledRejection(),
 
     // Profiling integration for performance monitoring
-    // new ProfilingIntegration(),
+    // new nodeProfilingIntegration(),
   ],
 
   // Release tracking
@@ -42,7 +42,7 @@ Sentry.init({
     // Remove sensitive data from events
     if (event.request?.data) {
       // Sanitize request data
-      const sanitizedData = { ...event.request.data };
+      const sanitizedData = { ...(event.request.data as Record<string, any>) };
       // Remove passwords, tokens, etc.
       delete sanitizedData.password;
       delete sanitizedData.token;

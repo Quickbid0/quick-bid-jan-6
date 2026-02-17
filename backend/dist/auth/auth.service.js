@@ -42,7 +42,6 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var AuthService_1;
-var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthService = void 0;
 const common_1 = require("@nestjs/common");
@@ -50,6 +49,7 @@ const jwt_1 = require("@nestjs/jwt");
 const config_1 = require("@nestjs/config");
 const prisma_service_1 = require("../prisma/prisma.service");
 const referral_service_1 = require("../referral/referral.service");
+const client_1 = require("@prisma/client");
 const bcrypt = __importStar(require("bcrypt"));
 let AuthService = AuthService_1 = class AuthService {
     constructor(jwtService, configService, prisma, referralService) {
@@ -201,36 +201,12 @@ let AuthService = AuthService_1 = class AuthService {
                             email: userData.email,
                             name: userData.name,
                             passwordHash: hashedPassword,
-                            phoneNumber: userData.phoneNumber,
                             role: userData.role,
                             status: userData.status,
-                            isVerified: userData.isVerified,
-                            emailVerified: userData.emailVerified,
-                            phoneVerified: userData.phoneVerified,
-                            faceVerified: userData.faceVerified,
-                            kycStatus: userData.kycStatus,
-                            profile: {
-                                create: {
-                                    bio: `Professional ${userData.role.toLowerCase()} on QuickMela platform`,
-                                    city: userData.role === 'SELLER' ? 'Hyderabad' : userData.role === 'BUYER' ? 'Mumbai' : 'Delhi',
-                                    state: userData.role === 'SELLER' ? 'Telangana' : userData.role === 'BUYER' ? 'Maharashtra' : 'Delhi',
-                                    pincode: userData.role === 'SELLER' ? '500001' : userData.role === 'BUYER' ? '400001' : '110001'
-                                }
-                            },
+                            emailVerified: userData.emailVerified ? client_1.EmailVerificationStatus.VERIFIED : client_1.EmailVerificationStatus.UNVERIFIED,
                             wallet: {
                                 create: {
-                                    balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000,
-                                    totalCredits: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
-                                }
-                            },
-                            subscription: {
-                                create: {
-                                    plan: userData.role === 'BUYER' ? 'SILVER' : 'ENTERPRISE',
-                                    status: 'ACTIVE',
-                                    bidLimit: userData.role === 'BUYER' ? 10 : 1000,
-                                    price: userData.role === 'BUYER' ? 499 : 9999,
-                                    startDate: new Date(),
-                                    endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000)
+                                    balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
                                 }
                             }
                         }
@@ -288,7 +264,7 @@ let AuthService = AuthService_1 = class AuthService {
             this.refreshTokens.set(hash, { userId: user.id, expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) });
             await this.prisma.user.update({
                 where: { id: user.id },
-                data: { lastLogin: new Date() }
+                data: {}
             });
             this.logger.log(`Successful login for user ${email}`);
             return {
@@ -505,6 +481,7 @@ exports.AuthService = AuthService = AuthService_1 = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [jwt_1.JwtService,
         config_1.ConfigService,
-        prisma_service_1.PrismaService, typeof (_a = typeof referral_service_1.ReferralService !== "undefined" && referral_service_1.ReferralService) === "function" ? _a : Object])
+        prisma_service_1.PrismaService,
+        referral_service_1.ReferralService])
 ], AuthService);
 //# sourceMappingURL=auth.service.js.map

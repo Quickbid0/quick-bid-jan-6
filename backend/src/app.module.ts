@@ -3,7 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { APP_PIPE } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
-import * as Sentry from '@sentry/nestjs';
 import { AuthModule } from './auth/auth.module';
 import { HealthModule } from './health/health.module';
 import { AppController } from './app.controller';
@@ -15,9 +14,6 @@ import { PrismaService } from './prisma/prisma.service';
       isGlobal: true,
     }),
     EventEmitterModule.forRoot(),
-
-    // Sentry monitoring module
-    Sentry.SentryModule.forRoot(),
 
     AuthModule,
     // ProductsModule,

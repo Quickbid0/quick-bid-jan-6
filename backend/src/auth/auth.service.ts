@@ -38,7 +38,7 @@ export class AuthService {
         email: 'superadmin@quickmela.com',
         name: 'QuickMela Super Admin',
         password: 'SuperAdmin123!',
-        role: 'ADMIN' as const,
+        role: 'SUPER_ADMIN' as const,
         phoneNumber: '+919876543210',
         status: 'ACTIVE' as const,
         isVerified: true,
@@ -172,35 +172,12 @@ export class AuthService {
               email: userData.email,
               name: userData.name,
               passwordHash: hashedPassword, // Now properly hashed
-              phoneNumber: userData.phoneNumber,
-              role: userData.role,
+              role: userData.role as any,
               status: userData.status,
-              isVerified: userData.isVerified,
               emailVerified: userData.emailVerified ? EmailVerificationStatus.VERIFIED : EmailVerificationStatus.UNVERIFIED,
-              phoneVerified: userData.phoneVerified,
-              faceVerified: userData.faceVerified,
-              kycStatus: userData.kycStatus,
-              profile: {
-                create: {
-                  bio: `Professional ${userData.role.toLowerCase()} on QuickMela platform`,
-                  city: userData.role === 'SELLER' ? 'Hyderabad' : userData.role === 'BUYER' ? 'Mumbai' : 'Delhi',
-                  state: userData.role === 'SELLER' ? 'Telangana' : userData.role === 'BUYER' ? 'Maharashtra' : 'Delhi',
-                  pincode: userData.role === 'SELLER' ? '500001' : userData.role === 'BUYER' ? '400001' : '110001'
-                }
-              },
               wallet: {
                 create: {
                   balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
-                }
-              },
-              subscription: {
-                create: {
-                  plan: userData.role === 'BUYER' ? 'SILVER' : 'ENTERPRISE',
-                  status: 'ACTIVE',
-                  bidLimit: userData.role === 'BUYER' ? 10 : 1000,
-                  price: userData.role === 'BUYER' ? 499 : 9999,
-                  startDate: new Date(),
-                  endDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000) // 1 year
                 }
               }
             }

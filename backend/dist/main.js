@@ -61,6 +61,7 @@ async function bootstrap() {
         'http://localhost:5193',
         'http://localhost:5194',
         'http://localhost:5196',
+        'http://localhost:5197',
     ];
     app.enableCors({
         origin: (origin, callback) => {
