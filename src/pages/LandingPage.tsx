@@ -93,12 +93,7 @@ const EliteLandingPage = () => {
             {/* Left: Hero Content */}
             <div className="space-y-8">
               {/* Trust Badge */}
-              <div
-}
-}
-}
-                className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2"
-              >
+              <div className="inline-flex items-center gap-2 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2">
                 <Shield className="w-4 h-4 text-emerald-600" />
                 <span className="text-sm font-medium text-emerald-700">Trusted by 500K+ Users</span>
               </div>
