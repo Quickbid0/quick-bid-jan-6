@@ -100,9 +100,6 @@ const EliteLandingPage = () => {
 
               {/* Hero Headline */}
               <div
-}
-}
-}
                 className="space-y-4"
               >
                 <h1 className="text-5xl lg:text-6xl font-bold text-neutral-900 leading-tight">
@@ -117,9 +114,6 @@ const EliteLandingPage = () => {
 
               {/* Search-First UX */}
               <div
-}
-}
-}
                 className="max-w-md"
               >
                 <div className="relative">
@@ -139,9 +133,6 @@ const EliteLandingPage = () => {
 
               {/* CTA Buttons */}
               <div
-}
-}
-}
                 className="flex flex-col sm:flex-row gap-4"
               >
                 <Link to="/register">
@@ -158,9 +149,6 @@ const EliteLandingPage = () => {
 
               {/* Social Proof */}
               <div
-}
-}
-}
                 className="flex items-center gap-8 pt-8"
               >
                 <div className="flex items-center gap-1">
@@ -174,9 +162,6 @@ const EliteLandingPage = () => {
 
             {/* Right: Hero Visual */}
             <div
-}
-}
-}
               className="relative"
             >
               {/* Main Auction Card */}
@@ -237,9 +222,6 @@ const EliteLandingPage = () => {
             {trustSignals.map((signal, index) => (
               <div
                 key={signal.text}
-}
-}
-}
                 className="flex items-center gap-2 text-white"
               >
                 <signal.icon className={`w-5 h-5 ${signal.color}`} />
@@ -254,9 +236,6 @@ const EliteLandingPage = () => {
       <section className="py-24 bg-neutral-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-}
-}
-}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-neutral-900 mb-4">
@@ -271,9 +250,6 @@ const EliteLandingPage = () => {
             {categories.map((category, index) => (
               <div
                 key={category.id}
-}
-}
-}
                 className={`relative bg-white rounded-2xl p-8 border-2 transition-all duration-250 cursor-pointer ${
                   activeCategory === category.id
                     ? 'border-primary-500 shadow-xl shadow-primary-500/10'
@@ -298,9 +274,6 @@ const EliteLandingPage = () => {
       <section className="py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div
-}
-}
-}
             className="text-center mb-16"
           >
             <h2 className="text-4xl font-bold text-neutral-900 mb-4">
@@ -316,9 +289,6 @@ const EliteLandingPage = () => {
             {stats.map((stat, index) => (
               <div
                 key={stat.label}
-}
-}
-}
                 className="text-center"
               >
                 <div className="text-4xl font-bold text-primary-600 mb-2">{stat.value}</div>
@@ -352,9 +322,6 @@ const EliteLandingPage = () => {
             ].map((testimonial, index) => (
               <div
                 key={testimonial.name}
-}
-}
-}
                 className="bg-neutral-50 rounded-2xl p-8 border border-neutral-200"
               >
                 <div className="flex items-center gap-4 mb-4">
@@ -382,9 +349,6 @@ const EliteLandingPage = () => {
       <section className="py-24 bg-primary-600">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div
-}
-}
-}
           >
             <h2 className="text-4xl font-bold text-white mb-4">
               Ready to Start Your Auction Journey?
