@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.PaymentController = void 0;
 const common_1 = require("@nestjs/common");
@@ -245,6 +246,6 @@ __decorate([
 exports.PaymentController = PaymentController = __decorate([
     (0, swagger_1.ApiTags)('payments'),
     (0, common_1.Controller)('payments'),
-    __metadata("design:paramtypes", [payment_service_1.PaymentService])
+    __metadata("design:paramtypes", [typeof (_a = typeof payment_service_1.PaymentService !== "undefined" && payment_service_1.PaymentService) === "function" ? _a : Object])
 ], PaymentController);
 //# sourceMappingURL=payment.controller.js.map

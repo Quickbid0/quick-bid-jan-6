@@ -8,7 +8,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import * as express from 'express';
 import { join } from 'path';
 import { AppModule } from './app.module';
-import { AllExceptionsFilter } from './filters/all-exceptions.filter';
+import helmet from 'helmet';
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('Uncaught Exception:', err);
+  process.exit(1);
+});
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -75,6 +84,26 @@ async function bootstrap() {
     res.sendStatus(200);
   });
 
+  // Security headers with Helmet
+  app.use(helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        scriptSrc: ["'self'", "'unsafe-inline'"],
+        styleSrc: ["'self'", "'unsafe-inline'"],
+        imgSrc: ["'self'", "data:", "https:"],
+      },
+    },
+    hsts: {
+      maxAge: 31536000,
+      includeSubDomains: true,
+      preload: true
+    },
+    noSniff: true,
+    xssFilter: true,
+    referrerPolicy: { policy: 'strict-origin-when-cross-origin' }
+  }));
+
   app.use(express.json({ limit: '1mb' }));
   app.use(express.urlencoded({ limit: '1mb', extended: true }));
 
@@ -98,7 +127,7 @@ async function bootstrap() {
    * ========================================
    */
 
-  app.useGlobalFilters(new AllExceptionsFilter());
+  // app.useGlobalFilters(new AllExceptionsFilter());
 
   /**
    * ========================================
@@ -142,6 +171,16 @@ async function bootstrap() {
    */
 
   const port = process.env.PORT || 3000;
+
+  // Debug: Log all registered routes
+  const server = app.getHttpServer();
+  console.log('Registered Routes:');
+  server._events.request._router.stack
+    .filter(r => r.route)
+    .forEach(r => {
+      console.log(Object.keys(r.route.methods)[0].toUpperCase(), r.route.path);
+    });
+
   await app.listen(port);
 }
 

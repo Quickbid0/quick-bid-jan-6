@@ -28,14 +28,14 @@ export declare class PaymentService {
         userId: string;
     }): Promise<{
         success: boolean;
-        transactionId: any;
+        $transactionId: any;
         amount: any;
         message: string;
     }>;
     processSubscriptionPayment(userId: string, plan: 'SILVER' | 'GOLD' | 'ENTERPRISE'): Promise<{
         success: boolean;
         subscriptionId: any;
-        plan: "SILVER" | "ENTERPRISE" | "GOLD";
+        plan: "SILVER" | "GOLD" | "ENTERPRISE";
         amount: number;
         bidLimit: number;
         validUntil: Date;
@@ -52,9 +52,9 @@ export declare class PaymentService {
         winnerPayment: any;
         sellerPayment: any;
     }>;
-    processRefund(transactionId: string, refundAmount?: number, reason?: string): Promise<{
+    processRefund($transactionId: string, refundAmount?: number, reason?: string): Promise<{
         success: boolean;
-        transactionId: string;
+        $transactionId: string;
         refundAmount: any;
         reason: string;
         newBalance: any;

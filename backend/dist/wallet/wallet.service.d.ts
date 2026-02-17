@@ -37,11 +37,18 @@ export declare class WalletService {
     getBalance(userId: string): Promise<{
         userId: string;
         availableBalance: number;
-        heldBalance: any;
-        totalBalance: any;
-        currency: any;
-        lastUpdated: any;
-        transactions: any;
+        heldBalance: number;
+        totalBalance: number;
+        currency: string;
+        lastUpdated: Date;
+        transactions: {
+            id: string;
+            amount: number;
+            type: any;
+            description: string;
+            status: string;
+            createdAt: Date;
+        }[];
     }>;
     addFunds(userId: string, amount: number, purpose?: WalletTransaction['purpose'], referenceId?: string, referenceType?: string, description?: string, metadata?: Record<string, any>): Promise<{
         success: boolean;

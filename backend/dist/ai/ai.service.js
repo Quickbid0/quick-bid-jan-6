@@ -1081,151 +1081,158 @@ let AIService = AIService_1 = class AIService {
             autoCategorization,
         };
     }
-    entries(categories) { }
+    async categorizeProduct(productData) {
+        const title = productData.title.toLowerCase();
+        const description = productData.description.toLowerCase();
+        const fullText = `${title} ${description}`;
+        const categories = {
+            'Vehicles': ['car', 'bike', 'truck', 'vehicle', 'automobile', 'motorcycle', 'scooter', 'jeep', 'suv', 'sedan', 'hatchback', 'wagon', 'convertible', 'coupe', 'pickup', 'van', 'bus', 'tractor', 'auto', 'two wheeler', 'four wheeler'],
+            'Real Estate': ['house', 'apartment', 'flat', 'property', 'land', 'plot', 'villa', 'home', 'residential', 'commercial', 'office', 'shop', 'warehouse', 'building', 'estate'],
+            'Electronics': ['phone', 'mobile', 'laptop', 'computer', 'tablet', 'tv', 'television', 'camera', 'headphone', 'speaker', 'charger', 'battery', 'smartphone', 'smartwatch', 'drone', 'gaming', 'console', 'monitor', 'keyboard', 'mouse'],
+            'Fashion': ['shirt', 'pant', 'dress', 'shoe', 'watch', 'jewelry', 'bag', 'sunglass', 'hat', 'belt', 'tie', 'scarf', 'jacket', 'coat', 'skirt', 'suit', 'boot', 'sandal', 'perfume', 'cosmetic'],
+            'Sports': ['football', 'cricket', 'basketball', 'tennis', 'badminton', 'golf', 'hockey', 'swimming', 'cycling', 'running', 'yoga', 'gym', 'fitness', 'equipment', 'bicycle', 'helmet', 'bat', 'ball'],
+            'Home & Garden': ['furniture', 'sofa', 'chair', 'table', 'bed', 'mattress', 'kitchen', 'appliance', 'microwave', 'refrigerator', 'washing machine', 'fan', 'light', 'bulb', 'garden', 'plant', 'tool', 'paint'],
+            'Books & Media': ['book', 'novel', 'magazine', 'cd', 'dvd', 'music', 'movie', 'game', 'software', 'ebook', 'audiobook', 'comic', 'magazine', 'newspaper'],
+            'Collectibles': ['antique', 'coin', 'stamp', 'art', 'painting', 'sculpture', 'rare', 'vintage', 'collectible', 'memorabilia', 'figurine', 'card', 'toy'],
+            'Industrial': ['machine', 'equipment', 'tool', 'industrial', 'factory', 'construction', 'material', 'metal', 'wood', 'chemical', 'instrument', 'device'],
+            'Services': ['service', 'consulting', 'repair', 'maintenance', 'cleaning', 'tutoring', 'training', 'event', 'party', 'wedding', 'photography', 'design']
+        };
+        const scores = {};
+        for (const [category, keywords] of Object.entries(categories)) {
+            let score = 0;
+            for (const keyword of keywords) {
+                if (fullText.includes(keyword)) {
+                    score += 10;
+                }
+            }
+            scores[category] = score;
+        }
+        const sortedCategories = Object.entries(scores)
+            .sort(([, a], [, b]) => b - a);
+        const primaryCategory = sortedCategories[0][0];
+        const confidence = Math.min(95, sortedCategories[0][1] + 20);
+        const subcategories = this.getSubcategories(primaryCategory, fullText);
+        const alternatives = sortedCategories.slice(1, 4).map(([category, score]) => ({
+            category,
+            confidence: Math.min(90, score + 15),
+        }));
+        return {
+            primaryCategory,
+            subcategories,
+            confidence,
+            alternatives,
+        };
+    }
+    calculateExpectedIncrement(auction) {
+        const baseIncrement = 100;
+        const price = auction.currentBid;
+        if (price < 1000)
+            return baseIncrement;
+        if (price < 10000)
+            return Math.floor(price * 0.05);
+        if (price < 100000)
+            return Math.floor(price * 0.02);
+        return Math.floor(price * 0.01);
+    }
+    parseDocumentText(extractedText, documentType) {
+        const text = extractedText.toLowerCase();
+        const lines = extractedText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
+        switch (documentType) {
+            case 'AADHAAR':
+                return this.parseAadhaarText(text, lines);
+            case 'PAN':
+                return this.parsePanText(text, lines);
+            case 'DRIVING_LICENSE':
+                return this.parseDrivingLicenseText(text, lines);
+            default:
+                return {};
+        }
+    }
+    parseAadhaarText(text, lines) {
+        const result = {};
+        const aadhaarPattern = /\b\d{4}\s?\d{4}\s?\d{4}\b/;
+        const aadhaarMatch = text.match(aadhaarPattern);
+        if (aadhaarMatch) {
+            result.aadhaarNumber = aadhaarMatch[0].replace(/\s/g, '');
+        }
+        const dobPattern = /\b\d{2}\/\d{2}\/\d{4}\b|\b\d{2}-\d{2}-\d{4}\b/;
+        const dobMatch = text.match(dobPattern);
+        if (dobMatch) {
+            result.dateOfBirth = dobMatch[0];
+        }
+        const namePattern = /^[A-Z\s]+$/;
+        for (const line of lines) {
+            if (line.length > 3 && line.length < 50 && namePattern.test(line.toUpperCase())) {
+                if (!line.includes('GOVERNMENT') && !line.includes('INDIA') && !line.includes('AADHAAR')) {
+                    result.name = line.trim();
+                    break;
+                }
+            }
+        }
+        const nameIndex = lines.findIndex(line => line.toLowerCase().includes(result.name?.toLowerCase()));
+        if (nameIndex >= 0 && nameIndex < lines.length - 1) {
+            const addressLines = lines.slice(nameIndex + 1).filter(line => !line.match(/\d{12}/) &&
+                !line.match(/\d{2}\/\d{2}\/\d{4}/) &&
+                line.length > 5);
+            result.address = addressLines.join(', ');
+        }
+        return result;
+    }
+    parsePanText(text, lines) {
+        const result = {};
+        const panPattern = /\b[A-Z]{5}\d{4}[A-Z]\b/;
+        const panMatch = text.match(panPattern);
+        if (panMatch) {
+            result.panNumber = panMatch[0];
+        }
+        const dobPattern = /\b\d{2}\/\d{2}\/\d{4}\b|\b\d{2}-\d{2}-\d{4}\b/;
+        const dobMatch = text.match(dobPattern);
+        if (dobMatch) {
+            result.dateOfBirth = dobMatch[0];
+        }
+        const nameLines = lines.filter(line => line.length > 3 &&
+            line.length < 50 &&
+            !line.includes(result.panNumber || '') &&
+            !line.match(/\d{2}\/\d{2}\/\d{4}/));
+        if (nameLines.length > 0) {
+            result.name = nameLines[0].trim();
+        }
+        return result;
+    }
+    parseDrivingLicenseText(text, lines) {
+        const result = {};
+        const dlPattern = /\b[A-Z]{2}\d{13}\b|\b[A-Z]{2}-\d{2}-\d{11}\b/;
+        const dlMatch = text.match(dlPattern);
+        if (dlMatch) {
+            result.documentNumber = dlMatch[0];
+        }
+        const dobPattern = /\b\d{2}\/\d{2}\/\d{4}\b|\b\d{2}-\d{2}-\d{4}\b/;
+        const dobMatch = text.match(dobPattern);
+        if (dobMatch) {
+            result.dateOfBirth = dobMatch[0];
+        }
+        const nameLines = lines.filter(line => line.length > 3 &&
+            line.length < 50 &&
+            /^[A-Z\s]+$/.test(line.toUpperCase()) &&
+            !line.includes('DRIVING') &&
+            !line.includes('LICENCE') &&
+            !line.includes('INDIA'));
+        if (nameLines.length > 0) {
+            result.name = nameLines[0].trim();
+        }
+        const addressLines = lines.filter(line => !line.match(/\b[A-Z]{2}\d{13}\b/) &&
+            !line.match(/\d{2}\/\d{2}\/\d{4}/) &&
+            !line.includes(result.name || '') &&
+            line.length > 10);
+        if (addressLines.length > 0) {
+            result.address = addressLines.join(', ');
+        }
+        return result;
+    }
 };
 exports.AIService = AIService;
 exports.AIService = AIService = AIService_1 = __decorate([
     Injectable(),
     __metadata("design:paramtypes", [typeof (_a = typeof ConfigService !== "undefined" && ConfigService) === "function" ? _a : Object, typeof (_b = typeof PrismaService !== "undefined" && PrismaService) === "function" ? _b : Object, ab_testing_service_1.ABTestingService])
 ], AIService);
-{
-    let score = 0;
-    for (const keyword of keywords) {
-        if (fullText.includes(keyword)) {
-            score += 10;
-        }
-    }
-    scores[category] = score;
-}
-const sortedCategories = Object.entries(scores)
-    .sort(([, a], [, b]) => b - a);
-const primaryCategory = sortedCategories[0][0];
-const confidence = Math.min(95, sortedCategories[0][1] + 20);
-const subcategories = this.getSubcategories(primaryCategory, fullText);
-const alternatives = sortedCategories.slice(1, 4).map(([category, score]) => ({
-    category,
-    confidence: Math.min(90, score + 15),
-}));
-return {
-    primaryCategory,
-    subcategories,
-    confidence,
-    alternatives,
-};
-calculateExpectedIncrement(auction, any);
-number;
-{
-    const baseIncrement = 100;
-    const price = auction.currentBid;
-    if (price < 1000)
-        return baseIncrement;
-    if (price < 10000)
-        return Math.floor(price * 0.05);
-    if (price < 100000)
-        return Math.floor(price * 0.02);
-    return Math.floor(price * 0.01);
-}
-parseDocumentText(extractedText, string, documentType, string);
-any;
-{
-    const text = extractedText.toLowerCase();
-    const lines = extractedText.split('\n').map(line => line.trim()).filter(line => line.length > 0);
-    switch (documentType) {
-        case 'AADHAAR':
-            return this.parseAadhaarText(text, lines);
-        case 'PAN':
-            return this.parsePanText(text, lines);
-        case 'DRIVING_LICENSE':
-            return this.parseDrivingLicenseText(text, lines);
-        default:
-            return {};
-    }
-}
-parseAadhaarText(text, string, lines, string[]);
-any;
-{
-    const result = {};
-    const aadhaarPattern = /\b\d{4}\s?\d{4}\s?\d{4}\b/;
-    const aadhaarMatch = text.match(aadhaarPattern);
-    if (aadhaarMatch) {
-        result.aadhaarNumber = aadhaarMatch[0].replace(/\s/g, '');
-    }
-    const dobPattern = /\b\d{2}\/\d{2}\/\d{4}\b|\b\d{2}-\d{2}-\d{4}\b/;
-    const dobMatch = text.match(dobPattern);
-    if (dobMatch) {
-        result.dateOfBirth = dobMatch[0];
-    }
-    const namePattern = /^[A-Z\s]+$/;
-    for (const line of lines) {
-        if (line.length > 3 && line.length < 50 && namePattern.test(line.toUpperCase())) {
-            if (!line.includes('GOVERNMENT') && !line.includes('INDIA') && !line.includes('AADHAAR')) {
-                result.name = line.trim();
-                break;
-            }
-        }
-    }
-    const nameIndex = lines.findIndex(line => line.toLowerCase().includes(result.name?.toLowerCase()));
-    if (nameIndex >= 0 && nameIndex < lines.length - 1) {
-        const addressLines = lines.slice(nameIndex + 1).filter(line => !line.match(/\d{12}/) &&
-            !line.match(/\d{2}\/\d{2}\/\d{4}/) &&
-            line.length > 5);
-        result.address = addressLines.join(', ');
-    }
-    return result;
-}
-parsePanText(text, string, lines, string[]);
-any;
-{
-    const result = {};
-    const panPattern = /\b[A-Z]{5}\d{4}[A-Z]\b/;
-    const panMatch = text.match(panPattern);
-    if (panMatch) {
-        result.panNumber = panMatch[0];
-    }
-    const dobPattern = /\b\d{2}\/\d{2}\/\d{4}\b|\b\d{2}-\d{2}-\d{4}\b/;
-    const dobMatch = text.match(dobPattern);
-    if (dobMatch) {
-        result.dateOfBirth = dobMatch[0];
-    }
-    const nameLines = lines.filter(line => line.length > 3 &&
-        line.length < 50 &&
-        !line.includes(result.panNumber || '') &&
-        !line.match(/\d{2}\/\d{2}\/\d{4}/));
-    if (nameLines.length > 0) {
-        result.name = nameLines[0].trim();
-    }
-    return result;
-}
-parseDrivingLicenseText(text, string, lines, string[]);
-any;
-{
-    const result = {};
-    const dlPattern = /\b[A-Z]{2}\d{13}\b|\b[A-Z]{2}-\d{2}-\d{11}\b/;
-    const dlMatch = text.match(dlPattern);
-    if (dlMatch) {
-        result.documentNumber = dlMatch[0];
-    }
-    const dobPattern = /\b\d{2}\/\d{2}\/\d{4}\b|\b\d{2}-\d{2}-\d{4}\b/;
-    const dobMatch = text.match(dobPattern);
-    if (dobMatch) {
-        result.dateOfBirth = dobMatch[0];
-    }
-    const nameLines = lines.filter(line => line.length > 3 &&
-        line.length < 50 &&
-        /^[A-Z\s]+$/.test(line.toUpperCase()) &&
-        !line.includes('DRIVING') &&
-        !line.includes('LICENCE') &&
-        !line.includes('INDIA'));
-    if (nameLines.length > 0) {
-        result.name = nameLines[0].trim();
-    }
-    const addressLines = lines.filter(line => !line.match(/\b[A-Z]{2}\d{13}\b/) &&
-        !line.match(/\d{2}\/\d{2}\/\d{4}/) &&
-        !line.includes(result.name || '') &&
-        line.length > 10);
-    if (addressLines.length > 0) {
-        result.address = addressLines.join(', ');
-    }
-    return result;
-}
 //# sourceMappingURL=ai.service.js.map

@@ -41,11 +41,16 @@ var __importStar = (this && this.__importStar) || (function () {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const Sentry = __importStar(require("@sentry/nestjs"));
+const prisma_service_1 = require("../prisma/prisma.service");
 let AppController = class AppController {
+    constructor(prisma) {
+        this.prisma = prisma;
+    }
     getHealth() {
         return {
             status: 'ok',
@@ -54,13 +59,22 @@ let AppController = class AppController {
             environment: process.env.NODE_ENV || 'development'
         };
     }
-    getDetailedHealth() {
+    async checkDatabase() {
+        try {
+            await this.prisma.$queryRaw `SELECT 1`;
+            return 'connected';
+        }
+        catch (error) {
+            return 'disconnected';
+        }
+    }
+    async getDetailedHealth() {
         return {
             status: 'ok',
             timestamp: new Date().toISOString(),
             service: 'quickbid-backend',
             environment: process.env.NODE_ENV || 'development',
-            database: process.env.DATABASE_URL ? 'configured' : 'not configured'
+            database: await this.checkDatabase()
         };
     }
     triggerSentryError() {
@@ -89,7 +103,7 @@ __decorate([
     (0, common_1.Get)('health'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
+    __metadata("design:returntype", Promise)
 ], AppController.prototype, "getDetailedHealth", null);
 __decorate([
     (0, common_1.Get)('debug-sentry'),
@@ -98,6 +112,7 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], AppController.prototype, "triggerSentryError", null);
 exports.AppController = AppController = __decorate([
-    (0, common_1.Controller)()
+    (0, common_1.Controller)(),
+    __metadata("design:paramtypes", [typeof (_a = typeof prisma_service_1.PrismaService !== "undefined" && prisma_service_1.PrismaService) === "function" ? _a : Object])
 ], AppController);
 //# sourceMappingURL=app.controller.js.map

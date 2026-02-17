@@ -36,8 +36,8 @@ let WalletService = WalletService_1 = class WalletService {
             }
             return {
                 userId,
-                availableBalance: wallet.balance - wallet.blockedBalance,
-                heldBalance: wallet.blockedBalance,
+                availableBalance: wallet.balance - wallet.lockedBalance,
+                heldBalance: wallet.lockedBalance,
                 totalBalance: wallet.balance,
                 currency: wallet.currency,
                 lastUpdated: wallet.updatedAt,
@@ -94,7 +94,7 @@ let WalletService = WalletService_1 = class WalletService {
                     },
                     select: {
                         balance: true,
-                        blockedBalance: true,
+                        lockedBalance: true,
                         currency: true,
                         updatedAt: true,
                     },
@@ -105,8 +105,8 @@ let WalletService = WalletService_1 = class WalletService {
                 };
             });
             const newBalance = {
-                availableBalance: result.wallet.balance - result.wallet.blockedBalance,
-                heldBalance: result.wallet.blockedBalance,
+                availableBalance: result.wallet.balance - result.wallet.lockedBalance,
+                heldBalance: result.wallet.lockedBalance,
                 totalBalance: result.wallet.balance,
                 currency: result.wallet.currency,
                 lastUpdated: result.wallet.updatedAt,
@@ -143,7 +143,7 @@ let WalletService = WalletService_1 = class WalletService {
                 if (!wallet) {
                     throw new common_1.NotFoundException('Wallet not found');
                 }
-                const availableBalance = wallet.balance - wallet.blockedBalance;
+                const availableBalance = wallet.balance - wallet.lockedBalance;
                 if (availableBalance < amount) {
                     throw new common_1.BadRequestException('Insufficient funds in wallet');
                 }
@@ -169,7 +169,7 @@ let WalletService = WalletService_1 = class WalletService {
                     },
                     select: {
                         balance: true,
-                        blockedBalance: true,
+                        lockedBalance: true,
                         currency: true,
                         updatedAt: true,
                     },
@@ -180,8 +180,8 @@ let WalletService = WalletService_1 = class WalletService {
                 };
             });
             const newBalance = {
-                availableBalance: result.wallet.balance - result.wallet.blockedBalance,
-                heldBalance: result.wallet.blockedBalance,
+                availableBalance: result.wallet.balance - result.wallet.lockedBalance,
+                heldBalance: result.wallet.lockedBalance,
                 totalBalance: result.wallet.balance,
                 currency: result.wallet.currency,
                 lastUpdated: result.wallet.updatedAt,
@@ -218,7 +218,7 @@ let WalletService = WalletService_1 = class WalletService {
                 if (!wallet) {
                     throw new common_1.NotFoundException('Wallet not found');
                 }
-                const availableBalance = wallet.balance - wallet.blockedBalance;
+                const availableBalance = wallet.balance - wallet.lockedBalance;
                 if (availableBalance < amount) {
                     throw new common_1.BadRequestException('Insufficient funds in wallet');
                 }
@@ -239,12 +239,12 @@ let WalletService = WalletService_1 = class WalletService {
                 const updatedWallet = await tx.wallet.update({
                     where: { userId },
                     data: {
-                        blockedBalance: wallet.blockedBalance + amount,
+                        lockedBalance: wallet.lockedBalance + amount,
                         updatedAt: new Date(),
                     },
                     select: {
                         balance: true,
-                        blockedBalance: true,
+                        lockedBalance: true,
                         currency: true,
                         updatedAt: true,
                     },
@@ -255,8 +255,8 @@ let WalletService = WalletService_1 = class WalletService {
                 };
             });
             const newBalance = {
-                availableBalance: result.wallet.balance - result.wallet.blockedBalance,
-                heldBalance: result.wallet.blockedBalance,
+                availableBalance: result.wallet.balance - result.wallet.lockedBalance,
+                heldBalance: result.wallet.lockedBalance,
                 totalBalance: result.wallet.balance,
                 currency: result.wallet.currency,
                 lastUpdated: result.wallet.updatedAt,
@@ -289,7 +289,7 @@ let WalletService = WalletService_1 = class WalletService {
                 if (!wallet) {
                     throw new common_1.NotFoundException('Wallet not found');
                 }
-                if (wallet.blockedBalance < amount) {
+                if (wallet.lockedBalance < amount) {
                     throw new common_1.BadRequestException('Insufficient held funds to release');
                 }
                 const transaction = await tx.walletTransaction.create({
@@ -309,12 +309,12 @@ let WalletService = WalletService_1 = class WalletService {
                 const updatedWallet = await tx.wallet.update({
                     where: { userId },
                     data: {
-                        blockedBalance: wallet.blockedBalance - amount,
+                        lockedBalance: wallet.lockedBalance - amount,
                         updatedAt: new Date(),
                     },
                     select: {
                         balance: true,
-                        blockedBalance: true,
+                        lockedBalance: true,
                         currency: true,
                         updatedAt: true,
                     },
@@ -325,8 +325,8 @@ let WalletService = WalletService_1 = class WalletService {
                 };
             });
             const newBalance = {
-                availableBalance: result.wallet.balance - result.wallet.blockedBalance,
-                heldBalance: result.wallet.blockedBalance,
+                availableBalance: result.wallet.balance - result.wallet.lockedBalance,
+                heldBalance: result.wallet.lockedBalance,
                 totalBalance: result.wallet.balance,
                 currency: result.wallet.currency,
                 lastUpdated: result.wallet.updatedAt,
@@ -386,7 +386,7 @@ let WalletService = WalletService_1 = class WalletService {
                     },
                     select: {
                         balance: true,
-                        blockedBalance: true,
+                        lockedBalance: true,
                         currency: true,
                         updatedAt: true,
                     },
@@ -397,8 +397,8 @@ let WalletService = WalletService_1 = class WalletService {
                 };
             });
             const newBalance = {
-                availableBalance: result.wallet.balance - result.wallet.blockedBalance,
-                heldBalance: result.wallet.blockedBalance,
+                availableBalance: result.wallet.balance - result.wallet.lockedBalance,
+                heldBalance: result.wallet.lockedBalance,
                 totalBalance: result.wallet.balance,
                 currency: result.wallet.currency,
                 lastUpdated: result.wallet.updatedAt,
@@ -441,55 +441,10 @@ let WalletService = WalletService_1 = class WalletService {
                 if (!winnerWallet) {
                     throw new common_1.NotFoundException('Winner wallet not found');
                 }
-                const winnerAvailableBalance = winnerWallet.balance - winnerWallet.blockedBalance;
+                const winnerAvailableBalance = winnerWallet.balance - winnerWallet.lockedBalance;
                 if (winnerAvailableBalance < finalPrice) {
                     throw new common_1.BadRequestException('Winner has insufficient funds');
                 }
-                const winnerTransaction = await tx.walletTransaction.create({
-                    data: {
-                        id: winnerTransactionId,
-                        userId: winnerId,
-                        amount: finalPrice,
-                        type: 'debit',
-                        purpose: 'auction_win',
-                        status: 'completed',
-                        referenceId: auctionId,
-                        referenceType: 'auction',
-                        description: `Auction win payment for ${auctionId}`,
-                        metadata: {
-                            sellerId,
-                            platformFee,
-                            sellerPayout,
-                            finalPrice,
-                        },
-                    },
-                });
-                await tx.wallet.update({
-                    where: { userId: winnerId },
-                    data: {
-                        balance: winnerWallet.balance - finalPrice,
-                        updatedAt: new Date(),
-                    },
-                });
-                const sellerTransaction = await tx.walletTransaction.create({
-                    data: {
-                        id: sellerTransactionId,
-                        userId: sellerId,
-                        amount: sellerPayout,
-                        type: 'credit',
-                        purpose: 'auction_payout',
-                        status: 'completed',
-                        referenceId: auctionId,
-                        referenceType: 'auction',
-                        description: `Auction payout for ${auctionId} (₹${finalPrice} - ₹${platformFee} fee)`,
-                        metadata: {
-                            winnerId,
-                            finalPrice,
-                            platformFee,
-                            sellerPayout,
-                        },
-                    },
-                });
                 const sellerWallet = await tx.wallet.findUnique({
                     where: { userId: sellerId },
                 });
@@ -503,18 +458,9 @@ let WalletService = WalletService_1 = class WalletService {
                         updatedAt: new Date(),
                     },
                 });
-                await tx.platformFee.create({
-                    data: {
-                        auctionId,
-                        amount: platformFee,
-                        winnerId,
-                        sellerId,
-                        processedAt: new Date(),
-                    },
-                });
                 return {
-                    winnerTransaction,
-                    sellerTransaction,
+                    winnerTransaction: null,
+                    sellerTransaction: null,
                     platformFee,
                     sellerPayout,
                 };

@@ -107,9 +107,9 @@ export declare class CompanyController {
         };
     }>;
     getBulkUploadHistory(req: Request): Promise<{
-        status: string;
         id: string;
         createdAt: Date;
+        status: string;
         title: string;
         bulkUploadBatchId: string;
     }[]>;
@@ -144,11 +144,13 @@ export declare class CompanyController {
     }>;
     getCompanies(): Promise<({
         users: {
-            status: import(".prisma/client").$Enums.UserStatus;
             id: string;
+            createdAt: Date;
+            updatedAt: Date;
+            status: import(".prisma/client").$Enums.UserStatus;
+            name: string | null;
             email: string;
             passwordHash: string;
-            name: string | null;
             role: import(".prisma/client").$Enums.Role;
             isActive: boolean;
             emailVerified: import(".prisma/client").$Enums.EmailVerificationStatus;
@@ -156,18 +158,20 @@ export declare class CompanyController {
             resetPasswordToken: string | null;
             resetTokenExpiry: Date | null;
             companyId: string | null;
-            createdAt: Date;
-            updatedAt: Date;
+            whatsappNumber: string | null;
+            whatsappOptIn: boolean;
+            referralCode: string | null;
+            referredBy: string | null;
         }[];
         products: {
-            status: string;
             id: string;
-            companyId: string | null;
             createdAt: Date;
             updatedAt: Date;
             description: string | null;
-            title: string;
+            status: string;
             sellerId: string;
+            companyId: string | null;
+            title: string;
             category: string;
             price: number;
             images: string[];
@@ -197,26 +201,26 @@ export declare class CompanyController {
     }>;
     getCompanyStaff(req: Request): Promise<{
         staffMembers: {
-            status: import(".prisma/client").$Enums.UserStatus;
             id: string;
-            email: string;
-            name: string;
-            role: import(".prisma/client").$Enums.Role;
-            emailVerified: import(".prisma/client").$Enums.EmailVerificationStatus;
             createdAt: Date;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.UserStatus;
+            name: string;
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
+            emailVerified: import(".prisma/client").$Enums.EmailVerificationStatus;
         }[];
         totalCount: number;
     }>;
     updateStaffMember(staffId: string, updateData: any, req: Request): Promise<{
         message: string;
         staffMember: {
-            status: import(".prisma/client").$Enums.UserStatus;
             id: string;
-            email: string;
-            name: string;
-            role: import(".prisma/client").$Enums.Role;
             updatedAt: Date;
+            status: import(".prisma/client").$Enums.UserStatus;
+            name: string;
+            email: string;
+            role: import(".prisma/client").$Enums.Role;
         };
     }>;
     removeStaffMember(staffId: string, req: Request): Promise<{

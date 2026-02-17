@@ -22,12 +22,6 @@ export declare class AuthService {
             email: string;
             name: string;
             role: import(".prisma/client").$Enums.Role;
-            phoneNumber: any;
-            isVerified: any;
-            kycStatus: any;
-            walletBalance: any;
-            subscriptionPlan: any;
-            profile: any;
         };
         accessToken: string;
         refreshToken: string;
@@ -39,7 +33,7 @@ export declare class AuthService {
             email: string;
             name: string;
             role: import(".prisma/client").$Enums.Role;
-            referralCode: any;
+            referralCode: string;
         };
     }>;
     getProfile(req: any): Promise<{
@@ -86,4 +80,15 @@ export declare class AuthService {
     getUserCount(): number;
     getUserByEmail(email: string): any;
     generateCsrfToken(userId: string): Promise<string>;
+    forgotPassword(email: string): Promise<{
+        message: string;
+    }>;
+    resetPassword(token: string, password: string): Promise<{
+        message: string;
+    }>;
+    verifyEmail(token: string): Promise<{
+        message: string;
+    }>;
+    private hashPassword;
+    private verifyPassword;
 }

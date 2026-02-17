@@ -12,7 +12,7 @@ export declare class AuthController {
             email: string;
             name: string;
             role: import(".prisma/client").$Enums.Role;
-            referralCode: any;
+            referralCode: string;
         };
     }>;
     refresh(req: Request, res: Response): Promise<Response<any, Record<string, any>>>;
@@ -62,5 +62,19 @@ export declare class AuthController {
     }): Promise<{
         message: string;
         verified: boolean;
+    }>;
+    forgotPassword(body: {
+        email: string;
+    }): Promise<{
+        message: string;
+    }>;
+    resetPassword(body: {
+        token: string;
+        password: string;
+    }): Promise<{
+        message: string;
+    }>;
+    verifyEmail(token: string): Promise<{
+        message: string;
     }>;
 }

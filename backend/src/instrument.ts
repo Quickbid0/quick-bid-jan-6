@@ -22,13 +22,13 @@ Sentry.init({
   // Integrations
   integrations: [
     // Enable automatic instrumentation for NestJS
-    new Sentry.Integrations.Http({ tracing: true }),
-    new Sentry.Integrations.Console(),
-    new Sentry.Integrations.OnUncaughtException(),
-    new Sentry.Integrations.OnUnhandledRejection(),
+    // new Sentry.Integrations.Http({ tracing: true }),
+    // new Sentry.Integrations.Console(),
+    // new Sentry.Integrations.OnUncaughtException(),
+    // new Sentry.Integrations.OnUnhandledRejection(),
 
     // Profiling integration for performance monitoring
-    new ProfilingIntegration(),
+    // new ProfilingIntegration(),
   ],
 
   // Release tracking

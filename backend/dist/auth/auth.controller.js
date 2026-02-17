@@ -104,6 +104,15 @@ let AuthController = class AuthController {
     async verifyOtp(body) {
         return this.authService.verifyOTP(body.email, body.otp);
     }
+    async forgotPassword(body) {
+        return this.authService.forgotPassword(body.email);
+    }
+    async resetPassword(body) {
+        return this.authService.resetPassword(body.token, body.password);
+    }
+    async verifyEmail(token) {
+        return this.authService.verifyEmail(token);
+    }
 };
 exports.AuthController = AuthController;
 __decorate([
@@ -207,6 +216,36 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "verifyOtp", null);
+__decorate([
+    (0, common_1.Post)('forgot-password'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Request password reset' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Password reset email sent' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "forgotPassword", null);
+__decorate([
+    (0, common_1.Post)('reset-password'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Reset password' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Password reset successful' }),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "resetPassword", null);
+__decorate([
+    (0, common_1.Get)('verify-email'),
+    (0, common_1.HttpCode)(common_1.HttpStatus.OK),
+    (0, swagger_1.ApiOperation)({ summary: 'Verify email' }),
+    (0, swagger_1.ApiResponse)({ status: 200, description: 'Email verified' }),
+    __param(0, (0, common_1.Query)('token')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "verifyEmail", null);
 exports.AuthController = AuthController = __decorate([
     (0, swagger_1.ApiTags)('auth'),
     (0, common_1.Controller)('auth'),

@@ -80,7 +80,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
                 throw new common_1.BadRequestException('User not found');
             }
             const orderId = `order_${Date.now()}_${crypto.randomBytes(4).toString('hex')}`;
-            const order = await this.prisma.transaction.create({
+            const order = await this.prisma.$transaction.create({
                 data: {
                     userId,
                     walletId: userId,
@@ -144,7 +144,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
             if (sign !== razorpay_signature) {
                 throw new common_1.BadRequestException('Payment signature verification failed');
             }
-            const transaction = await this.prisma.transaction.findFirst({
+            const $transaction = await this.prisma.$transaction.findFirst({
                 where: {
                     userId,
                     referenceId: razorpay_order_id,
@@ -152,24 +152,24 @@ let PaymentService = PaymentService_1 = class PaymentService {
                     status: 'PENDING'
                 }
             });
-            if (!transaction) {
+            if (!$transaction) {
                 throw new common_1.BadRequestException('Payment order not found');
             }
-            await this.prisma.transaction.update({
-                where: { id: transaction.id },
+            await this.prisma.$transaction.update({
+                where: { id: $transaction.id },
                 data: {
                     status: 'COMPLETED',
                     razorpayOrderId: razorpay_order_id,
                     razorpayPaymentId: razorpay_payment_id
                 }
             });
-            await this.walletService.addMoney(userId, transaction.amount, 'RAZORPAY', razorpay_order_id);
+            await this.walletService.addMoney(userId, $transaction.amount, 'RAZORPAY', razorpay_order_id);
             await this.prisma.auditLog.create({
                 data: {
                     userId,
                     action: 'UPDATE',
                     resource: 'payment',
-                    resourceId: transaction.id,
+                    resourceId: $transaction.id,
                     oldValues: { status: 'PENDING' },
                     newValues: {
                         status: 'COMPLETED',
@@ -178,12 +178,12 @@ let PaymentService = PaymentService_1 = class PaymentService {
                     }
                 }
             });
-            this.logger.log(`Payment verified and processed: ₹${transaction.amount} credited to user ${userId}`);
+            this.logger.log(`Payment verified and processed: ₹${$transaction.amount} credited to user ${userId}`);
             return {
                 success: true,
-                transactionId: transaction.id,
-                amount: transaction.amount,
-                message: `₹${transaction.amount} successfully added to wallet`
+                $transactionId: $transaction.id,
+                amount: $transaction.amount,
+                message: `₹${$transaction.amount} successfully added to wallet`
             };
         }
         catch (error) {
@@ -252,7 +252,7 @@ let PaymentService = PaymentService_1 = class PaymentService {
                     bidsUsed: 0
                 }
             });
-            await this.prisma.transaction.create({
+            await this.prisma.$transaction.create({
                 data: {
                     userId,
                     walletId: wallet.id,
@@ -380,51 +380,51 @@ let PaymentService = PaymentService_1 = class PaymentService {
             throw new common_1.InternalServerErrorException('Auction settlement failed');
         }
     }
-    async processRefund(transactionId, refundAmount, reason = 'Transaction cancelled') {
+    async processRefund($transactionId, refundAmount, reason = 'Transaction cancelled') {
         try {
-            const transaction = await this.prisma.transaction.findUnique({
-                where: { id: transactionId },
+            const $transaction = await this.prisma.$transaction.findUnique({
+                where: { id: $transactionId },
                 include: {
                     user: true,
                     wallet: true
                 }
             });
-            if (!transaction) {
+            if (!$transaction) {
                 throw new common_1.BadRequestException('Transaction not found');
             }
-            if (!transaction.isRefundable || transaction.refundedAt) {
+            if (!$transaction.isRefundable || $transaction.refundedAt) {
                 throw new common_1.BadRequestException('Transaction is not refundable or already refunded');
             }
-            const refundAmt = refundAmount || transaction.amount;
-            if (refundAmt > transaction.amount) {
-                throw new common_1.BadRequestException('Refund amount cannot exceed transaction amount');
+            const refundAmt = refundAmount || $transaction.amount;
+            if (refundAmt > $transaction.amount) {
+                throw new common_1.BadRequestException('Refund amount cannot exceed $transaction amount');
             }
-            const refundResult = await this.walletService.addMoney(transaction.userId, refundAmt, 'REFUND', transactionId);
-            await this.prisma.transaction.update({
-                where: { id: transactionId },
+            const refundResult = await this.walletService.addMoney($transaction.userId, refundAmt, 'REFUND', $transactionId);
+            await this.prisma.$transaction.update({
+                where: { id: $transactionId },
                 data: {
                     refundedAt: new Date(),
                     refundAmount: refundAmt,
-                    description: `${transaction.description} - Refunded: ${reason}`
+                    description: `${$transaction.description} - Refunded: ${reason}`
                 }
             });
             await this.prisma.auditLog.create({
                 data: {
-                    userId: transaction.userId,
+                    userId: $transaction.userId,
                     action: 'CREATE',
                     resource: 'refund',
-                    resourceId: transactionId,
+                    resourceId: $transactionId,
                     metadata: {
                         refundAmount: refundAmt,
                         reason,
-                        originalAmount: transaction.amount
+                        originalAmount: $transaction.amount
                     }
                 }
             });
-            this.logger.log(`Refund processed: ₹${refundAmt} for transaction ${transactionId}, reason: ${reason}`);
+            this.logger.log(`Refund processed: ₹${refundAmt} for $transaction ${$transactionId}, reason: ${reason}`);
             return {
                 success: true,
-                transactionId,
+                $transactionId,
                 refundAmount: refundAmt,
                 reason,
                 newBalance: refundResult.newBalance,
@@ -474,20 +474,20 @@ let PaymentService = PaymentService_1 = class PaymentService {
     }
     async getPaymentStats() {
         try {
-            const transactions = await this.prisma.transaction.findMany();
+            const $transactions = await this.prisma.$transaction.findMany();
             const stats = {
-                totalTransactions: transactions.length,
-                totalVolume: transactions.reduce((sum, tx) => sum + tx.amount, 0),
-                successfulPayments: transactions.filter(tx => tx.status === 'COMPLETED').length,
-                failedPayments: transactions.filter(tx => tx.status === 'FAILED').length,
-                refundedAmount: transactions
+                totalTransactions: $transactions.length,
+                totalVolume: $transactions.reduce((sum, tx) => sum + tx.amount, 0),
+                successfulPayments: $transactions.filter(tx => tx.status === 'COMPLETED').length,
+                failedPayments: $transactions.filter(tx => tx.status === 'FAILED').length,
+                refundedAmount: $transactions
                     .filter(tx => tx.refundedAt)
                     .reduce((sum, tx) => sum + (tx.refundAmount || 0), 0),
                 byType: {
-                    CREDIT: transactions.filter(tx => tx.type === 'CREDIT').length,
-                    DEBIT: transactions.filter(tx => tx.type === 'DEBIT').length,
-                    REFUND: transactions.filter(tx => tx.type === 'REFUND').length,
-                    COMMISSION: transactions.filter(tx => tx.type === 'COMMISSION').length
+                    CREDIT: $transactions.filter(tx => tx.type === 'CREDIT').length,
+                    DEBIT: $transactions.filter(tx => tx.type === 'DEBIT').length,
+                    REFUND: $transactions.filter(tx => tx.type === 'REFUND').length,
+                    COMMISSION: $transactions.filter(tx => tx.type === 'COMMISSION').length
                 }
             };
             return stats;

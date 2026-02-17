@@ -12,6 +12,7 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var AdminAuctionService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AdminAuctionService = void 0;
 const common_1 = require("@nestjs/common");
@@ -468,7 +469,6 @@ exports.AdminAuctionService = AdminAuctionService;
 exports.AdminAuctionService = AdminAuctionService = AdminAuctionService_1 = __decorate([
     (0, common_1.Injectable)(),
     __param(0, (0, common_1.Inject)((0, common_1.forwardRef)(() => auctions_service_1.AuctionsService))),
-    __metadata("design:paramtypes", [auctions_service_1.AuctionsService,
-        payment_service_1.PaymentService])
+    __metadata("design:paramtypes", [auctions_service_1.AuctionsService, typeof (_a = typeof payment_service_1.PaymentService !== "undefined" && payment_service_1.PaymentService) === "function" ? _a : Object])
 ], AdminAuctionService);
 //# sourceMappingURL=admin-auction.service.js.map

@@ -1,8 +1,11 @@
 import { Controller, Get } from '@nestjs/common';
 import * as Sentry from '@sentry/nestjs';
+import { PrismaService } from '../prisma/prisma.service';
 
 @Controller()
 export class AppController {
+  constructor(private prisma: PrismaService) {}
+
   @Get()
   getHealth() {
     return {
@@ -13,14 +16,23 @@ export class AppController {
     };
   }
 
+  async checkDatabase(): Promise<string> {
+    try {
+      await this.prisma.$queryRaw`SELECT 1`;
+      return 'connected';
+    } catch (error) {
+      return 'disconnected';
+    }
+  }
+
   @Get('health')
-  getDetailedHealth() {
+  async getDetailedHealth() {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
       service: 'quickbid-backend',
       environment: process.env.NODE_ENV || 'development',
-      database: process.env.DATABASE_URL ? 'configured' : 'not configured'
+      database: await this.checkDatabase()
     };
   }
 

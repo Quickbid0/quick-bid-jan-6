@@ -123,9 +123,10 @@ export declare class AdminController {
         primaryCategory: string;
         subcategories: string[];
         confidence: number;
-        const: any;
-        scores: Record<string, number>;
-        for(: any, [category, keywords]: [any, any], of: any, Object: any): any;
+        alternatives?: {
+            category: string;
+            confidence: number;
+        }[];
     }>;
     approveUserRegistration(userId: string, data: {
         adminId: string;

@@ -9,6 +9,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 var AuctionsService_1;
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuctionsService = void 0;
 const common_1 = require("@nestjs/common");
@@ -424,8 +425,6 @@ let AuctionsService = AuctionsService_1 = class AuctionsService {
 exports.AuctionsService = AuctionsService;
 exports.AuctionsService = AuctionsService = AuctionsService_1 = __decorate([
     (0, common_1.Injectable)(),
-    __metadata("design:paramtypes", [prisma_service_1.PrismaService,
-        wallet_service_1.WalletService,
-        event_emitter_1.EventEmitter2])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService, typeof (_a = typeof wallet_service_1.WalletService !== "undefined" && wallet_service_1.WalletService) === "function" ? _a : Object, event_emitter_1.EventEmitter2])
 ], AuctionsService);
 //# sourceMappingURL=auctions.service.js.map

@@ -11,6 +11,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
+var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.WalletController = void 0;
 const common_1 = require("@nestjs/common");
@@ -89,6 +90,6 @@ __decorate([
 ], WalletController.prototype, "refundBid", null);
 exports.WalletController = WalletController = __decorate([
     (0, common_1.Controller)('wallet'),
-    __metadata("design:paramtypes", [wallet_service_1.WalletService])
+    __metadata("design:paramtypes", [typeof (_a = typeof wallet_service_1.WalletService !== "undefined" && wallet_service_1.WalletService) === "function" ? _a : Object])
 ], WalletController);
 //# sourceMappingURL=wallet.controller.js.map
