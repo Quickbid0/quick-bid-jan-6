@@ -20,12 +20,14 @@ interface AIInsight {
   confidence: number;
   actionable: boolean;
   timestamp: string;
+}
 
 interface AIMetrics {
   totalInsights: number;
   accuracyRate: number;
   opportunitiesIdentified: number;
   riskAlerts: number;
+}
 
 export default function AIDashboard() {
   const [insights, setInsights] = useState<AIInsight[]>([]);
@@ -271,3 +273,4 @@ export default function AIDashboard() {
       </div>
     </div>
   );
+}
