@@ -221,9 +221,6 @@ const Dashboard: React.FC = () => {
       <Fragment>
         {showSearchOverlay && (
           <div
-}
-}
-}
             className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowSearchOverlay(false)}
           >
