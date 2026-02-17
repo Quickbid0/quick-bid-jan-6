@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { ReferralService } from '../referral/referral.service';
+import { EmailVerificationStatus } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -37,7 +38,7 @@ export class AuthService {
         email: 'superadmin@quickmela.com',
         name: 'QuickMela Super Admin',
         password: 'SuperAdmin123!',
-        role: 'SUPER_ADMIN' as const,
+        role: 'ADMIN' as const,
         phoneNumber: '+919876543210',
         status: 'ACTIVE' as const,
         isVerified: true,
@@ -175,7 +176,7 @@ export class AuthService {
               role: userData.role,
               status: userData.status,
               isVerified: userData.isVerified,
-              emailVerified: userData.emailVerified,
+              emailVerified: userData.emailVerified ? EmailVerificationStatus.VERIFIED : EmailVerificationStatus.UNVERIFIED,
               phoneVerified: userData.phoneVerified,
               faceVerified: userData.faceVerified,
               kycStatus: userData.kycStatus,
@@ -189,8 +190,7 @@ export class AuthService {
               },
               wallet: {
                 create: {
-                  balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000,
-                  totalCredits: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
+                  balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
                 }
               },
               subscription: {
@@ -278,7 +278,7 @@ export class AuthService {
       // Update last login
       await this.prisma.user.update({
         where: { id: user.id },
-        data: { lastLogin: new Date() }
+        data: {}
       });
 
       this.logger.log(`Successful login for user ${email}`);

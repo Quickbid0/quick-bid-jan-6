@@ -1147,7 +1147,7 @@
     "@sentry/types" "7.120.4"
     "@sentry/utils" "7.120.4"
 
-"@sentry/nestjs@^10.38.0":
+"@sentry/nestjs@^10.39.0":
   version "10.39.0"
   resolved "https://registry.npmjs.org/@sentry/nestjs/-/nestjs-10.39.0.tgz"
   integrity sha512-PsYpdPzHjtoSP4dJLMENzh0riWSjxtnUIN4/efITdFLQYy7VQIGVvKydo7tomMhsYGfRpscqFRhHm4b74v0QIA==
@@ -1218,7 +1218,7 @@
   dependencies:
     "@sentry/core" "10.39.0"
 
-"@sentry/profiling-node@^10.38.0":
+"@sentry/profiling-node@^10.39.0":
   version "10.39.0"
   resolved "https://registry.npmjs.org/@sentry/profiling-node/-/profiling-node-10.39.0.tgz"
   integrity sha512-S+YHtTyGIhUFg/qYsrJ6KYHkZRqKSNx4JDWIZsn1/w6+87NfijDT/pVj+mdUHV6Z2imj+/HyAURANHgaZJKy4w==
