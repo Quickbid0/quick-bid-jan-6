@@ -97,7 +97,10 @@ RUN echo "=== Verifying Prisma client in production image ===" && \
     fi
 
 # Change ownership to non-root user
-RUN chown -R quickmela:nodejs /app
+RUN chown -R quickmela:nodejs /app && \
+    chmod -R u+w /app/node_modules
+
+# Switch to non-root user
 USER quickmela
 
 # Expose port

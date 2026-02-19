@@ -98,7 +98,11 @@ RUN echo "=== Verifying Prisma client in production image ===" && \
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \
-    chown -R quickmela:nodejs /app/uploads /app/logs /app/temp
+    chown -R quickmela:nodejs /app/uploads /app/logs /app/temp && \
+    chown -R quickmela:nodejs /app/node_modules && \
+    chown -R quickmela:nodejs /app/dist && \
+    chown -R quickmela:nodejs /app/prisma && \
+    chmod -R u+w /app/node_modules
 
 # Switch to non-root user
 USER quickmela
@@ -110,9 +114,9 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
-# Ensure Prisma is generated, then start the application
+# Ensure Prisma is generated at startup, then start the application
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["sh", "-c", "npx prisma generate 2>/dev/null || true && node dist/main.js"]
+CMD ["sh", "-c", "npx prisma generate 2>/dev/null || true && exec node dist/main.js"]
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
