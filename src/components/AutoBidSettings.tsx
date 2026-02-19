@@ -1,44 +1,16 @@
 import React, { useState } from 'react';
-import { useAI } from '../../context/AIContext';
 
 const AutoBidSettings: React.FC = () => {
-  const { settings, setSettings } = useAI();
-  const [maxAmount, setMaxAmount] = useState(settings.maxAmount);
-  const [increment, setIncrement] = useState(settings.increment);
-  const [winThreshold, setWinThreshold] = useState(settings.winProbabilityThreshold);
-  const [fraudThreshold, setFraudThreshold] = useState(settings.fraudRiskThreshold);
+  const [maxAmount, setMaxAmount] = useState(10000);
+  const [increment, setIncrement] = useState(100);
+  const [winProbabilityThreshold, setWinProbabilityThreshold] = useState(0.45);
+  const [fraudRiskThreshold, setFraudRiskThreshold] = useState(0.6);
   const [saving, setSaving] = useState(false);
 
   const saveSettings = async () => {
     setSaving(true);
-    setSettings({
-      ...settings,
-      maxAmount,
-      increment,
-      winProbabilityThreshold: winThreshold,
-      fraudRiskThreshold: fraudThreshold,
-    });
-
-    try {
-      const response = await fetch('/api/ai/auto-bid-config', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          maxAmount,
-          increment,
-          winProbabilityThreshold: winThreshold,
-          fraudRiskThreshold: fraudThreshold,
-        }),
-      });
-      if (response.ok) {
-        alert('Settings saved successfully!');
-      } else {
-        alert('Failed to save settings');
-      }
-    } catch (error) {
-      console.error('Error saving settings:', error);
-      alert('Error saving settings');
-    }
+    console.log('Saving auto-bid settings', { maxAmount, increment, winProbabilityThreshold, fraudRiskThreshold });
+    // TODO: Implement API call to save settings
     setSaving(false);
   };
 
