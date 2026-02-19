@@ -87,9 +87,9 @@ Phase 1 of the Marketplace Feature Parity initiative has been successfully compl
   - Soft delete (deactivate vs remove)
 
 #### API Endpoints:
-- `POST /api/seller/youtube/add` - Add video with auto-thumbnail
-- `GET /api/seller/youtube/:sellerId` - Fetch gallery
-- `DELETE /api/seller/youtube/:videoId` - Remove video
+- `POST /api/seller/{sellerId}/youtube/add` - Add video with auto-thumbnail
+- `GET /api/seller/{sellerId}/youtube` - Fetch gallery
+- `DELETE /api/seller/{sellerId}/youtube/:videoId` - Remove video
 
 #### Database:
 - Model: `YoutubeEmbed` (Prisma schema)

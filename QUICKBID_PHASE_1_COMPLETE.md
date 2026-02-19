@@ -165,9 +165,9 @@ Refer to [PHASE_1_DEPLOYMENT_EXECUTION.md](PHASE_1_DEPLOYMENT_EXECUTION.md) for 
 - POST /api/toys/:productId/validate
 
 **YouTube Gallery (3 endpoints)**
-- POST /api/seller/youtube/add
-- GET /api/seller/youtube/:sellerId
-- DELETE /api/seller/youtube/:videoId
+- POST /api/seller/{sellerId}/youtube/add
+- GET /api/seller/{sellerId}/youtube
+- DELETE /api/seller/{sellerId}/youtube/:videoId
 
 **Review Replies (3 endpoints)**
 - POST /api/review/:reviewId/reply

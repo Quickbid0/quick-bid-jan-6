@@ -161,9 +161,9 @@
 ### YouTube Gallery Endpoints (3)
 | Method | Endpoint | Purpose |
 |--------|----------|---------|
-| POST | `/api/seller/youtube/add` | Add video to gallery |
-| GET | `/api/seller/youtube/:sellerId` | Get seller's videos |
-| DELETE | `/api/seller/youtube/:videoId` | Remove video |
+| POST | `/api/seller/{sellerId}/youtube/add` | Add video to gallery |
+| GET | `/api/seller/{sellerId}/youtube` | Get seller's videos |
+| DELETE | `/api/seller/{sellerId}/youtube/:videoId` | Remove video |
 
 ### Review Reply Endpoints (3)
 | Method | Endpoint | Purpose |
@@ -364,7 +364,7 @@ npm run start:dev   # Runs on http://localhost:3001
 
 # 3. Verify endpoints
 curl http://localhost:3001/api/toys/metadata
-curl http://localhost:3001/api/seller/youtube/add
+curl http://localhost:3001/api/seller/{sellerId}/youtube/add
 curl http://localhost:3001/api/review/123/reply
 ```
 

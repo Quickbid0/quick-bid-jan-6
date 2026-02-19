@@ -153,9 +153,9 @@ TRANSACTION
 - **POST** `/api/toys/:productId/validate` - Validate toy compliance
 
 ### YouTube Gallery Endpoints (3)
-- **POST** `/api/seller/youtube/add` - Add YouTube video to gallery
-- **GET** `/api/seller/youtube/:sellerId` - Get seller's videos
-- **DELETE** `/api/seller/youtube/:videoId` - Remove video
+- **POST** `/api/seller/{sellerId}/youtube/add` - Add YouTube video to gallery
+- **GET** `/api/seller/{sellerId}/youtube` - Get seller's videos
+- **DELETE** `/api/seller/{sellerId}/youtube/:videoId` - Remove video
 
 ### Review Reply Endpoints (3)
 - **POST** `/api/review/:reviewId/reply` - Create reply to review

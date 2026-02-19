@@ -280,13 +280,13 @@ export const SELLER_CATEGORIES = [
 
 ### MISSING Endpoints
 
-1. **POST /api/seller/youtube/add** ❌
+1. **POST /api/seller/{sellerId}/youtube/add** ❌
    - Purpose: Seller adds YouTube video to gallery
    - Body: `{ youtubeUrl, title, description, displayOrder }`
    - Response: YoutubeEmbed object
    - File to Create: `backend/src/modules/seller/youtube.controller.ts`
 
-2. **DELETE /api/seller/youtube/:videoId** ❌
+2. **DELETE /api/seller/{sellerId}/youtube/:videoId** ❌
    - Purpose: Remove video from gallery
    - Response: Success/failure status
    - File to Create: Same controller

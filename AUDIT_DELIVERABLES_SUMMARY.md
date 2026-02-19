@@ -162,8 +162,8 @@ Average:  48.3% 🔴 NOT READY
 6. `CategorySpecializedDashboard.tsx` - Per-category analytics
 
 ### API Endpoints to Add
-1. `POST /api/seller/youtube/add`
-2. `DELETE /api/seller/youtube/:videoId`
+1. `POST /api/seller/{sellerId}/youtube/add`
+2. `DELETE /api/seller/{sellerId}/youtube/:videoId`
 3. `GET /seller/:sellerId/youtube`
 4. `POST /api/review/:reviewId/reply`
 5. `GET /api/review/:reviewId/replies`

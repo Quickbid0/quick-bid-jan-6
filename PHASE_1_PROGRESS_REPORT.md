@@ -53,9 +53,9 @@
 
 #### YoutubeGalleryController
 ```
-POST   /api/seller/youtube/add        → Add video (with URL sanitization)
-GET    /api/seller/youtube/:sellerId  → Fetch gallery
-DELETE /api/seller/youtube/:videoId   → Remove video
+POST   /api/seller/{sellerId}/youtube/add        → Add video (with URL sanitization)
+GET    /api/seller/{sellerId}/youtube  → Fetch gallery
+DELETE /api/seller/{sellerId}/youtube/:videoId   → Remove video
 ```
 
 #### ReviewReplyController

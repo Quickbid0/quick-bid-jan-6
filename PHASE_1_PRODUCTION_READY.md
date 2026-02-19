@@ -123,9 +123,9 @@ docker run quickbid-backend:latest
   - GET /api/toys/:productId
   - PUT /api/toys/:productId
   - POST /api/toys/:productId/validate
-  - POST /api/seller/youtube/add
-  - GET /api/seller/youtube/:sellerId
-  - DELETE /api/seller/youtube/:videoId
+  - POST /api/seller/{sellerId}/youtube/add
+  - GET /api/seller/{sellerId}/youtube
+  - DELETE /api/seller/{sellerId}/youtube/:videoId
   - POST /api/review/:reviewId/reply
   - GET /api/review/:reviewId/replies
   - GET /api/review/:reviewId/my-reply
@@ -149,7 +149,7 @@ curl -X POST http://localhost:4011/api/toys/metadata \
   -d '{"productId":"test","ageMin":36,"materials":["plastic"]}'
 
 # Test YouTube endpoint
-curl -X POST http://localhost:4011/api/seller/youtube/add \
+curl -X POST http://localhost:4011/api/seller/{sellerId}/youtube/add \
   -H "Content-Type: application/json" \
   -d '{"sellerId":"seller1","youtubeUrl":"https://youtube.com/watch?v=dQw4w9WgXcQ"}'
 
