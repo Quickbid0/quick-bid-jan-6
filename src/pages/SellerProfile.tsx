@@ -24,6 +24,7 @@ import {
 import { Link } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import SellerTrustSummary from '../components/auctions/SellerTrustSummary';
+import { ReviewReplyForm } from '../components';
 import { useSession } from '../context/SessionContext';
 
 interface SellerProfile {
@@ -49,7 +50,7 @@ interface SellerProfile {
 
 const SellerProfile = () => {
   const { id } = useParams();
-  const { isAdmin } = useSession();
+  const { isAdmin, user } = useSession();
   const [seller, setSeller] = useState<SellerProfile | null>(null);
   const [products, setProducts] = useState([]);
   const [reviews, setReviews] = useState([]);
@@ -148,6 +149,24 @@ const SellerProfile = () => {
 
       setSeller(profile);
 
+      // Load seller reviews
+      try {
+        const { data: reviewsData, error: reviewsError } = await supabase
+          .from('reviews')
+          .select('*')
+          .eq('seller_id', id)
+          .order('created_at', { ascending: false });
+
+        if (reviewsError) {
+          console.warn('Failed to load reviews for seller', reviewsError);
+          setReviews([]);
+        } else {
+          setReviews(reviewsData || []);
+        }
+      } catch (err) {
+        console.error('Error fetching reviews:', err);
+        setReviews([]);
+      }
       const { data: auctions, error: auctionsError } = await supabase
         .from('auctions')
         .select(
@@ -650,6 +669,27 @@ const SellerProfile = () => {
                 </div>
                 <p className="text-gray-600 dark:text-gray-300 mb-2">{review.comment}</p>
                 <p className="text-xs text-gray-500">{new Date(review.date).toLocaleDateString()}</p>
+                {/* Seller can reply to reviews */}
+                {user && user.id === seller.id && (
+                  <div className="mt-4">
+                    <ReviewReplyForm
+                      reviewId={review.id}
+                      sellerId={seller.id}
+                      reviewerName={review.buyer_name}
+                      reviewRating={review.rating}
+                      reviewComment={review.comment}
+                      onReplySubmitted={async () => {
+                        // reload reviews
+                        const { data: reviewsData } = await supabase
+                          .from('reviews')
+                          .select('*')
+                          .eq('seller_id', seller.id)
+                          .order('created_at', { ascending: false });
+                        setReviews(reviewsData || []);
+                      }}
+                    />
+                  </div>
+                )}
               </div>
             ))}
           </div>

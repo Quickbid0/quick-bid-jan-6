@@ -294,7 +294,7 @@ const AddProductFixed = () => {
                 </h3>
                 <ToySafetyForm 
                   onSave={setToySafetyData}
-                  productId={null}
+                  productId={''}
                 />
               </div>
             )}
