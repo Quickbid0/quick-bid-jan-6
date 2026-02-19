@@ -33,8 +33,11 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Remove dev dependencies but KEEP Prisma-generated files
+# Remove dev dependencies but KEEP Prisma and node_modules
 RUN npm prune --production
+
+# Verify Prisma files exist
+RUN ls -la node_modules/.prisma/client/ || echo "WARNING: Prisma files not found, will regenerate at runtime"
 
 # ================================
 # PRODUCTION STAGE
@@ -69,6 +72,9 @@ COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
 
+# Verify Prisma client was copied
+RUN if [ ! -f "node_modules/.prisma/client/index.js" ]; then echo "ERROR: Prisma client not found!"; exit 1; fi
+
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \
     chown -R quickmela:nodejs /app/uploads /app/logs /app/temp
@@ -83,6 +89,9 @@ EXPOSE 3000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
+# Ensure Prisma is generated, then start the application
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["sh", "-c", "npx prisma generate 2>/dev/null || true && node dist/main.js"]
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
