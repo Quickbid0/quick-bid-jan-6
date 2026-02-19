@@ -24,6 +24,7 @@ import {
   Info,
   ChevronDown
 } from 'lucide-react';
+import { ToySafetyForm } from '../components';
 
 interface ProductFormData {
   title: string;
@@ -51,6 +52,7 @@ const AddProductFixed = () => {
   const [verificationLoading, setVerificationLoading] = useState(true);
   const [isVerified, setIsVerified] = useState(false);
   const [userType, setUserType] = useState<string | null>(null);
+  const [toySafetyData, setToySafetyData] = useState<any>(null);
   
   const [formData, setFormData] = useState<ProductFormData>({
     title: '',
@@ -158,7 +160,63 @@ const AddProductFixed = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle form submission
+    
+    if (currentStep < 3) {
+      setCurrentStep(currentStep + 1);
+      return;
+    }
+
+    // Validate required fields
+    if (!formData.title || !formData.category || !formData.location) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    // For toys, require safety data
+    if (formData.category === 'toys' && !toySafetyData) {
+      toast.error('Please complete the toy safety information');
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        toast.error('You must be logged in');
+        navigate('/login');
+        return;
+      }
+
+      // TODO: Create product with safety data
+      const productData = {
+        ...formData,
+        sellerId: user.id,
+        toySafetyData: formData.category === 'toys' ? toySafetyData : null
+      };
+
+      // Create product in database
+      const { data, error } = await supabase
+        .from('products')
+        .insert([productData])
+        .select()
+        .single();
+
+      if (error) throw error;
+
+      toast.success('Product listing created successfully!');
+      navigate(`/product/${data.id}`);
+    } catch (error) {
+      console.error('Error creating product:', error);
+      toast.error('Failed to create product listing');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value, type } = e.target;
+    const val = type === 'number' ? parseFloat(value) : value;
+    setFormData(prev => ({ ...prev, [name]: val }));
   };
 
   return (
@@ -178,7 +236,11 @@ const AddProductFixed = () => {
       <form onSubmit={handleSubmit} className="space-y-8">
         <div className="bg-white rounded-xl border border-gray-200 p-6">
           <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Step {currentStep} of 3: Product Information
+            Step {currentStep} of 3: {
+              currentStep === 1 ? 'Product Information' :
+              currentStep === 2 ? 'Pricing & Duration' :
+              'Images & Location'
+            }
           </h2>
           <p className="text-gray-600">
             {currentStep === 1 && "Enter basic product details"}
@@ -187,11 +249,274 @@ const AddProductFixed = () => {
           </p>
         </div>
 
-        <div className="flex justify-between">
+        {/* Step 1: Product Details */}
+        {currentStep === 1 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Title *
+              </label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleInputChange}
+                placeholder="Enter product title"
+                maxLength={100}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Category *
+              </label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                required
+              >
+                {categories.map(cat => (
+                  <option key={cat.value} value={cat.value}>{cat.label}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Toy Safety Form - shown when category is toys */}
+            {formData.category === 'toys' && (
+              <div className="mt-6 pt-6 border-t border-gray-200">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                  <AlertTriangle className="h-5 w-5 text-amber-600" />
+                  Toy Safety Requirements
+                </h3>
+                <ToySafetyForm 
+                  onSave={setToySafetyData}
+                  productId={null}
+                />
+              </div>
+            )}
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Description *
+              </label>
+              <textarea
+                name="description"
+                value={formData.description}
+                onChange={handleInputChange}
+                placeholder="Describe your product in detail"
+                rows={5}
+                maxLength={2000}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Condition
+              </label>
+              <select
+                name="condition"
+                value={formData.condition}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                {conditions.map(cond => (
+                  <option key={cond.value} value={cond.value}>{cond.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Step 2: Pricing */}
+        {currentStep === 2 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Starting Bid (₹) *
+                </label>
+                <input
+                  type="number"
+                  name="startingBid"
+                  value={formData.startingBid}
+                  onChange={handleInputChange}
+                  min="0"
+                  step="100"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Bid Increment (₹)
+                </label>
+                <input
+                  type="number"
+                  name="bidIncrement"
+                  value={formData.bidIncrement}
+                  onChange={handleInputChange}
+                  min="1"
+                  step="10"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Reserve Price (₹)
+                </label>
+                <input
+                  type="number"
+                  name="reservePrice"
+                  value={formData.reservePrice}
+                  onChange={handleInputChange}
+                  min="0"
+                  step="100"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Buy Now Price (₹)
+                </label>
+                <input
+                  type="number"
+                  name="buyNowPrice"
+                  value={formData.buyNowPrice}
+                  onChange={handleInputChange}
+                  min="0"
+                  step="100"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Auction Duration *
+              </label>
+              <select
+                name="duration"
+                value={formData.duration}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                required
+              >
+                {durations.map(dur => (
+                  <option key={dur.value} value={dur.value}>{dur.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Shipping Method
+              </label>
+              <select
+                name="shipping"
+                value={formData.shipping}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                {shippingOptions.map(ship => (
+                  <option key={ship.value} value={ship.value}>{ship.label}</option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Return Policy
+              </label>
+              <select
+                name="returns"
+                value={formData.returns}
+                onChange={handleInputChange}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              >
+                {returnOptions.map(ret => (
+                  <option key={ret.value} value={ret.value}>{ret.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: Images & Location */}
+        {currentStep === 3 && (
+          <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Location *
+              </label>
+              <input
+                type="text"
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                placeholder="City, State"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Product Images (JPG, PNG)
+              </label>
+              <input
+                type="file"
+                multiple
+                accept="image/*"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+              <p className="text-xs text-gray-500 mt-1">Maximum 10 images, 5MB each</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Video URL
+              </label>
+              <input
+                type="url"
+                name="video"
+                value={formData.video}
+                onChange={handleInputChange}
+                placeholder="https://youtube.com/watch?v=..."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Specifications
+              </label>
+              <textarea
+                name="specifications"
+                value={formData.specifications}
+                onChange={handleInputChange}
+                placeholder="Additional specifications and features"
+                rows={3}
+                maxLength={1000}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        )}
+
+        <div className="flex justify-between gap-4">
           <button
             type="button"
             onClick={() => setCurrentStep(Math.max(1, currentStep - 1))}
-            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-6 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={currentStep === 1}
           >
             Previous
@@ -210,7 +535,7 @@ const AddProductFixed = () => {
             ) : (
               <>
                 {currentStep === 3 ? 'Create Listing' : 'Next'}
-                <ChevronDown className="w-4 h-4 rotate-90" />
+                <ChevronDown className="w-4 h-4" style={{ transform: currentStep === 3 ? 'none' : 'rotate(270deg)' }} />
               </>
             )}
           </button>
