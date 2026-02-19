@@ -17,15 +17,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY package*.json ./
 COPY prisma ./prisma/
 
-# Force Prisma to use glibc binaries (linux-x64) instead of musl
+# Force Prisma to use glibc binaries (linux-x64)
 ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 
 # Install all dependencies (including dev dependencies for build)
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
 RUN npm ci --legacy-peer-deps
 
-# Generate Prisma client with explicit platform
-RUN npx prisma generate
+# Remove musl binaries immediately after npm ci
+RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
+    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl*
 
 # Copy source code
 COPY . .
@@ -33,8 +34,10 @@ COPY . .
 # Build application
 RUN npm run build
 
-# Remove development dependencies
-RUN npm prune --production
+# Remove development dependencies and musl binaries - only keep glibc
+RUN npm prune --production && \
+    rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
+    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl*
 
 # ================================
 # PRODUCTION STAGE
@@ -55,6 +58,7 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 
 # Copy package files
+# Copy package files
 COPY package*.json ./
 
 # Force Prisma to use glibc binaries
@@ -69,11 +73,9 @@ COPY --from=builder /app/dist ./dist
 # Copy Prisma schema and migrations
 COPY --from=builder /app/prisma ./prisma
 
-# Regenerate Prisma client for production environment
-RUN npx prisma generate
-
-# Copy other necessary files
-COPY --from=builder /app/src/safety-rules/safety-rules.service.ts ./dist/src/safety-rules/
+# Remove any remaining musl binaries
+RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
+    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl*
 
 # Change ownership to non-root user
 RUN chown -R quickmela:nodejs /app

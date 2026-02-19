@@ -24,17 +24,22 @@ ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
 RUN npm ci --legacy-peer-deps
 
+# Remove musl binaries - only keep glibc (linux-x64)
+RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
+    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
+    rm -rf /app/node_modules/prisma/libquery_engine-linux-musl*
+
 # Copy source code
 COPY . .
-
-# Generate Prisma client with explicit platform
-RUN npx prisma generate
 
 # Build the application
 RUN npm run build
 
-# Remove dev dependencies
-RUN npm prune --production
+# Remove dev dependencies and musl binaries
+RUN npm prune --production && \
+    rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
+    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
+    rm -rf /app/node_modules/prisma/libquery_engine-linux-musl*
 
 # ================================
 # PRODUCTION STAGE
@@ -69,8 +74,10 @@ COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
 
-# Regenerate Prisma client for production environment
-RUN npx prisma generate
+# Remove any remaining musl binaries in production
+RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
+    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
+    chown -R quickmela:nodejs /app/node_modules
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \
