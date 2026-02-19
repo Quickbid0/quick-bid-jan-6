@@ -6,7 +6,8 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+# Use legacy-peer-deps to avoid NestJS version peer conflicts
+RUN npm ci --legacy-peer-deps
 
 # Copy source code
 COPY . .
