@@ -22,7 +22,8 @@ COPY package*.json ./
 COPY prisma ./prisma/
 
 # Install all dependencies (including dev dependencies for build)
-RUN npm ci
+# Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
+RUN npm ci --legacy-peer-deps
 
 # Generate Prisma client
 RUN npx prisma generate
