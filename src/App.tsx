@@ -6,6 +6,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 const LandingPage = lazy(() => import('./pages/LandingPage'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/RegisterFixed'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const ProfilePage = lazy(() => import('./pages/ProfileFixed'));
 const NotificationSettings = lazy(() => import('./pages/NotificationSettings'));
@@ -52,6 +53,7 @@ function App() {
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+      <Route path="/verify-email" element={<VerifyEmail />} />
       <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><NotificationSettings /></ProtectedRoute>} />
       <Route path="/ai-settings" element={<ProtectedRoute><AISettings /></ProtectedRoute>} />

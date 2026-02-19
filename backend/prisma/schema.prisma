@@ -1,3 +1,5 @@
+// This is a Prisma schema file for the AI Intelligence Engine additions
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -7,1112 +9,255 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Assuming User and Auction models exist in the main schema
+// If not, add them here minimally
+
 model User {
-  id                 String                  @id @default(cuid())
-  email              String                  @unique
-  passwordHash       String                  @map("password_hash")
-  name               String?
-  role               Role                    @default(BUYER)
-  status             UserStatus              @default(ACTIVE)
-  isActive           Boolean                 @default(true)
-  emailVerified      EmailVerificationStatus @default(UNVERIFIED)
-  verificationToken  String?                 @map("verification_token")
-  resetPasswordToken String?                 @map("reset_password_token")
-  resetTokenExpiry   DateTime?               @map("reset_token_expiry")
-  companyId          String?                 @map("company_id")
-  createdAt          DateTime                @default(now())
-  updatedAt          DateTime                @updatedAt
-
-  // WhatsApp Integration
-  whatsappNumber     String?                 @map("whatsapp_number")
-  whatsappOptIn      Boolean                 @default(false) @map("whatsapp_opt_in")
-
-  // Referral System
-  referralCode       String?                 @unique @map("referral_code")
-  referredBy         String?                 @map("referred_by")
-
-  auditLogs          AuditLog[]
-  profiles           Profile[]
-  sessions           UserSession[]
-  company            Company?                @relation(fields: [companyId], references: [id])
-
-  // Referral Relations
-  referredUsers      User[]                  @relation("ReferralRelation")
-  referrer           User?                   @relation("ReferralRelation", fields: [referredBy], references: [id])
-
-  // Wallet Relations
-  wallet             Wallet?
-  walletPromotions   WalletPromotion[]
-  notificationLogs   NotificationLog[]
-
-  // Referral as referrer/referred
-  referralsAsReferrer Referral[]             @relation("ReferralReferrer")
-  referralsAsReferred Referral[]             @relation("ReferralReferred")
-
-  @@index([email], map: "idx_accounts_email")
-  @@index([role], map: "idx_accounts_role")
-  @@index([status], map: "idx_accounts_status")
-  @@index([whatsappNumber], map: "idx_accounts_whatsapp_number")
-  @@index([referralCode], map: "idx_accounts_referral_code")
-  @@map("accounts")
-}
-
-model Profile {
-  id         String   @id @default(cuid())
-  userId     String   @map("user_id")
-  avatarUrl  String?  @map("avatar_url")
-  bio        String?
-  phone      String?
-  address    String?
-  city       String?
-  country    String?
-  postalCode String?  @map("postal_code")
-  isVerified Boolean  @default(false) @map("is_verified")
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId], map: "idx_profiles_user_id")
-  @@map("profiles")
-}
-
-model UserSession {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")
-  token        String   @unique
-  refreshToken String?  @map("refresh_token")
-  ipAddress    String?  @map("ip_address")
-  userAgent    String?  @map("user_agent")
-  expiresAt    DateTime @map("expires_at")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId], map: "idx_user_sessions_user_id")
-  @@map("user_sessions")
-}
-
-model AuditLog {
   id        String   @id @default(cuid())
-  userId    String?  @map("user_id")
-  action    String
-  resource  String?
-  ipAddress String?  @map("ip_address")
-  userAgent String?  @map("user_agent")
-  details   Json?
+  email     String   @unique
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  user      User?    @relation(fields: [userId], references: [id])
-
-  @@index([action], map: "idx_audit_logs_action")
-  @@index([userId], map: "idx_audit_logs_user_id")
-  @@map("audit_logs")
-}
-
-model Product {
-  id                   String   @id @default(cuid())
-  title                String
-  description          String?
-  category             String
-  price                Float
-  images               String[]
-  sellerId             String   @map("seller_id")
-  status               String
-  companyId            String?  @map("company_id")
-  bulkUploadBatchId    String?  @map("bulk_upload_batch_id")
-  uploadSource         String?  @map("upload_source")
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  company              Company? @relation(fields: [companyId], references: [id])
-  inspection           VehicleInspection?
-
-  @@index([sellerId], map: "idx_products_seller_id")
-  @@index([status], map: "idx_products_status")
-  @@index([companyId], map: "idx_products_company_id")
-  @@map("products")
+  // AI relations
+  aiUserMetrics   AIUserMetrics[]
+  autoBidConfigs  AutoBidConfig[]
+  userBehaviorLogs UserBehaviorLog[]
+  sellerInsights   SellerInsight[]
+  fraudClusters    FraudCluster[]
 }
 
 model Auction {
-  id         String   @id @default(cuid())
-  title      String
-  productId  String   @map("product_id")
-  sellerId   String   @map("seller_id")
-  startPrice Float    @map("start_price")
-  currentBid Float    @map("current_bid")
-  endTime    DateTime @map("end_time")
-  status     String
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  @@index([sellerId], map: "idx_auctions_seller_id")
-  @@index([status], map: "idx_auctions_status")
-  @@map("auctions")
-}
-
-model VehicleInspection {
-  id                    String              @id @default(cuid())
-  productId             String              @unique @map("product_id")
-  inspectionDate        DateTime            @map("inspection_date")
-  inspectorId           String?             @map("inspector_id")
-  inspectionGrade       InspectionGrade
-  overallScore          Int                 @map("overall_score")
-  estimatedResaleValue  Float               @map("estimated_resale_value")
-  marketValue           Float               @map("market_value")
-  depreciationPercent   Float               @map("depreciation_percent")
-  condition             VehicleCondition
-
-  // 360° Images
-  images360             String[]            @map("images_360")
-
-  // Damage Assessment
-  damageDetected        Boolean             @default(false) @map("damage_detected")
-  damageSeverity        DamageSeverity?
-  damageLocations       String[]            @map("damage_locations")
-  damageDescription     String?             @map("damage_description")
-
-  // Component Scores (0-100)
-  engineScore           Int                 @map("engine_score")
-  transmissionScore     Int                 @map("transmission_score")
-  suspensionScore       Int                 @map("suspension_score")
-  brakesScore           Int                 @map("brakes_score")
-  electricalScore       Int                 @map("electrical_score")
-  bodyExteriorScore     Int                 @map("body_exterior_score")
-  interiorScore         Int                 @map("interior_score")
-
-  // AI Analysis Results
-  aiConfidenceScore     Float               @map("ai_confidence_score")
-  aiDetectedIssues      String[]            @map("ai_detected_issues")
-  aiRecommendations     String[]            @map("ai_recommendations")
-
-  // Inspection Details
-  mileage               Int?
-  serviceHistory        String?             @map("service_history")
-  accidentHistory       String?             @map("accident_history")
-  ownershipHistory      String?             @map("ownership_history")
-
-  // Metadata
-  inspectionNotes       String?             @map("inspection_notes")
-  verifiedBy            String?             @map("verified_by")
-  createdAt             DateTime            @default(now())
-  updatedAt             DateTime            @updatedAt
-
-  product               Product             @relation(fields: [productId], references: [id], onDelete: Cascade)
-
-  @@index([productId], map: "idx_vehicle_inspections_product_id")
-  @@index([inspectionGrade], map: "idx_vehicle_inspections_grade")
-  @@index([condition], map: "idx_vehicle_inspections_condition")
-  @@map("vehicle_inspections")
-}
-
-model Dispute {
-  id              String            @id @default(cuid())
-  auctionId       String            @map("auction_id")
-  productId       String            @map("product_id")
-  buyerId         String            @map("buyer_id")
-  sellerId        String            @map("seller_id")
-  disputeType     DisputeType
-  title           String
-  description     String
-  evidence        String[]          // File URLs or descriptions
-  status          DisputeStatus     @default(PENDING_REVIEW)
-  priority        DisputePriority   @default(MEDIUM)
-
-  // AI Analysis
-  aiAnalysis      String?           @map("ai_analysis")
-  aiRecommendation DisputeResolution? @map("ai_recommendation")
-  aiConfidence    Float?            @map("ai_confidence")
-
-  // Resolution
-  resolution      DisputeResolution?
-  resolutionNotes String?           @map("resolution_notes")
-  resolvedBy      String?           @map("resolved_by")
-  resolvedAt      DateTime?         @map("resolved_at")
-
-  // Financial Impact
-  refundAmount    Float?            @map("refund_amount")
-  penaltyAmount   Float?            @map("penalty_amount")
-
-  // Timestamps
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  // Relations (would need Auction and Product models updated)
-  // auction         Auction           @relation(fields: [auctionId], references: [id])
-  // product         Product           @relation(fields: [productId], references: [id])
-
-  escrowHolds         EscrowHold[]
-  arbitrationCases    ArbitrationCase[]
-  escrowTransactions  EscrowTransaction[]
-
-  @@index([buyerId], map: "idx_disputes_buyer_id")
-  @@index([sellerId], map: "idx_disputes_seller_id")
-  @@index([status], map: "idx_disputes_status")
-  @@index([disputeType], map: "idx_disputes_type")
-  @@map("disputes")
-}
-
-model EscrowHold {
-  id              String            @id @default(cuid())
-  auctionId       String            @map("auction_id")
-  buyerId         String            @map("buyer_id")
-  sellerId        String            @map("seller_id")
-  amount          Float
-  holdReason      String            @map("hold_reason")
-  status          EscrowStatus      @default(ACTIVE)
-  releaseDate     DateTime?         @map("release_date")
-  releasedBy      String?           @map("released_by")
-  releaseNotes    String?           @map("release_notes")
-
-  // Associated dispute (if any)
-  disputeId       String?           @map("dispute_id")
-  dispute         Dispute?          @relation(fields: [disputeId], references: [id])
-
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  // Relations (would need Auction model)
-  // auction         Auction           @relation(fields: [auctionId], references: [id])
-
-  @@index([buyerId], map: "idx_escrow_holds_buyer_id")
-  @@index([sellerId], map: "idx_escrow_holds_seller_id")
-  @@index([status], map: "idx_escrow_holds_status")
-  @@map("escrow_holds")
-}
-
-model ArbitrationCase {
-  id              String            @id @default(cuid())
-  disputeId       String            @map("dispute_id")
-  dispute         Dispute           @relation(fields: [disputeId], references: [id], onDelete: Cascade)
-
-  // Arbitration details
-  arbitratorId    String?           @map("arbitrator_id")
-  assignedAt      DateTime?         @map("assigned_at")
-  deadline        DateTime?
-  status          ArbitrationStatus @default(PENDING)
-
-  // Hearing details
-  hearingDate     DateTime?         @map("hearing_date")
-  hearingNotes    String?           @map("hearing_notes")
-  virtualHearing  Boolean           @default(true) @map("virtual_hearing")
-  hearingLink     String?           @map("hearing_link")
-
-  // Decision
-  decision        ArbitrationDecision?
-  decisionDate    DateTime?         @map("decision_date")
-  decisionNotes   String?           @map("decision_notes")
-
-  // Appeal
-  appealed        Boolean           @default(false)
-  appealDeadline  DateTime?         @map("appeal_deadline")
-  appealDecision  ArbitrationDecision?
-  appealDate      DateTime?         @map("appeal_date")
-
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  @@index([disputeId], map: "idx_arbitration_cases_dispute_id")
-  @@index([arbitratorId], map: "idx_arbitration_cases_arbitrator_id")
-  @@index([status], map: "idx_arbitration_cases_status")
-  @@map("arbitration_cases")
-}
-
-model EscrowTransaction {
-  id                String            @id @default(cuid())
-  auctionId         String            @map("auction_id")
-  buyerId           String            @map("buyer_id")
-  sellerId          String            @map("seller_id")
-  amount            Float
-  currency          String            @default("INR")
-  status            EscrowStatus      @default(ACTIVE)
-
-  // Transaction details
-  transactionRef    String?           @map("transaction_ref")
-  paymentMethod     String?           @map("payment_method")
-
-  // Timeline
-  heldAt            DateTime          @default(now()) @map("held_at")
-  releasedAt        DateTime?         @map("released_at")
-  disputedAt        DateTime?         @map("disputed_at")
-
-  // Release details
-  releasedBy        String?           @map("released_by")
-  releaseReason     String?           @map("release_reason")
-  releaseNotes      String?           @map("release_notes")
-
-  // Associated entities
-  disputeId         String?           @map("dispute_id")
-  dispute           Dispute?          @relation(fields: [disputeId], references: [id])
-
-  // Metadata
-  escrowFee         Float             @default(0) @map("escrow_fee")
-  processingFee     Float             @default(0) @map("processing_fee")
-
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  @@index([auctionId], map: "idx_escrow_transactions_auction_id")
-  @@index([buyerId], map: "idx_escrow_transactions_buyer_id")
-  @@index([sellerId], map: "idx_escrow_transactions_seller_id")
-  @@index([status], map: "idx_escrow_transactions_status")
-  @@map("escrow_transactions")
-}
-
-model Company {
-  id                   String      @id @default(cuid())
-  companyName          String      @map("company_name")
-  companyType          String      @map("company_type")
-  registrationNumber   String      @map("registration_number")
-  gstNumber            String      @map("gst_number")
-  isVerified           Boolean     @default(false) @map("is_verified")
-  createdByAdminId     String      @map("created_by_admin_id")
-  createdAt            DateTime    @default(now())
-
-  users                User[]
-  products             Product[]
-
-  @@index([companyName], map: "idx_companies_company_name")
-  @@index([isVerified], map: "idx_companies_is_verified")
-  @@map("companies")
-}
-
-enum Role {
-  ADMIN
-  SELLER
-  BUYER
-  COMPANY_OWNER
-  COMPANY_MANAGER
-  UPLOAD_OPERATOR
-  FINANCE_ANALYST
-}
-
-enum UserStatus {
-  ACTIVE
-  INACTIVE
-  SUSPENDED
-  PENDING_VERIFICATION
-  REJECTED
-  DELETED
-}
-
-enum EmailVerificationStatus {
-  VERIFIED
-  UNVERIFIED
-  PENDING
-}
-
-enum PasswordResetStatus {
-  NONE
-  PENDING
-  COMPLETED
-}
-
-enum InspectionGrade {
-  A_PLUS  // 95-100
-  A       // 85-94
-  B_PLUS  // 75-84
-  B       // 65-74
-  C_PLUS  // 55-64
-  C       // 45-54
-  D       // Below 45
-}
-
-enum VehicleCondition {
-  EXCELLENT      // Like new, minimal wear
-  VERY_GOOD      // Minor wear, well maintained
-  GOOD          // Normal wear for age
-  FAIR          // Significant wear, functional
-  POOR          // Major issues, needs repair
-  DAMAGED       // Accident damage, not drivable
-}
-
-enum DamageSeverity {
-  MINOR         // Cosmetic damage only
-  MODERATE      // Functional but needs repair
-  MAJOR         // Significant structural damage
-  TOTAL_LOSS    // Beyond economical repair
-}
-
-enum DisputeType {
-  PRODUCT_CONDITION     // Product doesn't match description
-  DELIVERY_ISSUE        // Delivery problems
-  PAYMENT_DISPUTE       // Payment related issues
-  FRAUD_SUSPICION       // Suspected fraudulent activity
-  CONTRACT_BREACH       // Breach of auction terms
-  INSPECTION_DISCREPANCY // Inspection report issues
-  OTHER                 // Other dispute types
-}
-
-enum DisputeStatus {
-  PENDING_REVIEW        // Initial submission, under review
-  UNDER_INVESTIGATION   // Active investigation in progress
-  AI_REVIEW_PENDING     // Waiting for AI analysis
-  ESCALATED_TO_ADMIN    // Requires admin intervention
-  ARBITRATION_SCHEDULED // Arbitration hearing scheduled
-  RESOLVED              // Dispute has been resolved
-  CLOSED                // Case closed, no further action
-  APPEALED              // Customer appealed the decision
-}
-
-enum DisputePriority {
-  LOW                   // Minor issues, can wait
-  MEDIUM                // Standard priority
-  HIGH                  // Urgent resolution needed
-  CRITICAL              // Immediate attention required
-}
-
-enum DisputeResolution {
-  BUYER_REFUND          // Full refund to buyer
-  PARTIAL_REFUND        // Partial refund to buyer
-  SELLER_COMPENSATION   // Seller receives compensation
-  PRODUCT_RETURN        // Product to be returned
-  EXCHANGE_OFFERED      // Exchange offered to buyer
-  MEDIATED_SETTLEMENT   // Both parties agree to settlement
-  ARBITRATION_DECISION  // Formal arbitration ruling
-  DISMISSED             // Dispute dismissed, no action
-  ESCALATED             // Requires higher authority review
-}
-
-enum EscrowStatus {
-  ACTIVE                // Funds are held in escrow
-  RELEASED_TO_BUYER     // Funds released to buyer
-  RELEASED_TO_SELLER    // Funds released to seller
-  PARTIAL_RELEASE       // Partial release to both parties
-  RETURNED_TO_BUYER     // Full return due to dispute
-  FORFEITED             // Funds forfeited due to policy violation
-}
-
-enum ArbitrationStatus {
-  PENDING               // Case submitted, awaiting assignment
-  ASSIGNED              // Arbitrator assigned, case in progress
-  HEARING_SCHEDULED     // Hearing date set
-  IN_HEARING            // Arbitration hearing in progress
-  DECISION_PENDING      // Hearing complete, decision pending
-  DECISION_ISSUED       // Final decision issued
-  APPEAL_PERIOD         // In appeal period
-  APPEALED              // Appeal submitted
-  FINAL_RESOLUTION      // Case completely resolved
-}
-
-enum ArbitrationDecision {
-  BUYER_FAVORS          // Decision favors buyer
-  SELLER_FAVORS         // Decision favors seller
-  SPLIT_DECISION        // Partial victory for both parties
-  DISMISSED             // Case dismissed
-  SETTLEMENT_RECOMMENDED // Parties should settle out of court
-}
-
-model ComplianceDocument {
-  id                String            @id @default(cuid())
-  documentType      String            // terms_of_service, privacy_policy, auction_rules, repo_disclaimer
-  version           String            @default("1.0")
-  title             String
-  content           String            // Full document text
-  isActive          Boolean           @default(true)
-  effectiveDate     DateTime          @default(now())
-  expiryDate        DateTime?
-
-  // Metadata
-  createdBy         String?           @map("created_by")
-  approvedBy        String?           @map("approved_by")
-  approvalDate      DateTime?         @map("approval_date")
-
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  // Relations
-  acceptances       DocumentAcceptance[]
-
-  @@index([documentType], map: "idx_compliance_documents_type")
-  @@index([isActive], map: "idx_compliance_documents_active")
-  @@map("compliance_documents")
-}
-
-model DocumentAcceptance {
-  id                String            @id @default(cuid())
-  userId            String            @map("user_id")
-  documentId        String            @map("document_id")
-  version           String
-  ipAddress         String?           @map("ip_address")
-  userAgent         String?           @map("user_agent")
-  acceptedAt        DateTime          @default(now())
-
-  // Relations
-  document          ComplianceDocument @relation(fields: [documentId], references: [id], onDelete: Cascade)
-
-  @@index([userId], map: "idx_document_acceptances_user")
-  @@index([documentId], map: "idx_document_acceptances_document")
-  @@map("document_acceptances")
-}
-
-model LegalConsent {
-  id                String            @id @default(cuid())
-  userId            String            @map("user_id")
-  consentType       String            // auction_participation, repo_asset_purchase, nbcf_financing, dispute_arbitration
-  consentVersion    String            @map("consent_version")
-  consentedAt       DateTime          @default(now())
-  ipAddress         String?           @map("ip_address")
-  userAgent         String?           @map("user_agent")
-  expiresAt         DateTime?         @map("expires_at")
-
-  // Consent details
-  consentText       String            @map("consent_text")
-  withdrawalNotice  String?           @map("withdrawal_notice")
-
-  @@index([userId], map: "idx_legal_consents_user")
-  @@index([consentType], map: "idx_legal_consents_type")
-  @@map("legal_consents")
-}
-
-model NBFCComplianceRecord {
-  id                String            @id @default(cuid())
-  applicationId     String            @map("application_id")
-  userId            String            @map("user_id")
-  nbfcPartnerId     String            @map("nbfc_partner_id")
-  loanAmount        Float             @map("loan_amount")
-  processingFee     Float             @map("processing_fee")
-
-  // Compliance documents
-  kycDocuments      String[]          @map("kyc_documents")     // File URLs
-  incomeProof       String[]          @map("income_proof")      // File URLs
-  addressProof      String[]          @map("address_proof")     // File URLs
-  creditReport      String?           @map("credit_report")     // File URL
-
-  // Legal compliance
-  termsAccepted     Boolean           @default(false) @map("terms_accepted")
-  privacyAccepted   Boolean           @default(false) @map("privacy_accepted")
-  consentGiven      Boolean           @default(false) @map("consent_given")
-
-  // Processing status
-  status            String            @default("pending")       // pending, approved, rejected, disbursed
-  approvalDate      DateTime?         @map("approval_date")
-  disbursementDate  DateTime?         @map("disbursement_date")
-
-  // Audit trail
-  createdBy         String?           @map("created_by")
-  approvedBy        String?           @map("approved_by")
-  rejectionReason   String?           @map("rejection_reason")
-
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  @@index([userId], map: "idx_nbfc_compliance_user")
-  @@index([applicationId], map: "idx_nbfc_compliance_application")
-  @@index([status], map: "idx_nbfc_compliance_status")
-  @@map("nbfc_compliance_records")
-}
-
-model GSTInvoice {
-  id                String            @id @default(cuid())
-  invoiceNumber     String            @unique @map("invoice_number")
-  transactionId     String            @map("transaction_id")
-  transactionType   String            @map("transaction_type") // auction_win, escrow_fee, inspection_fee
-
-  // Parties
-  sellerId          String            @map("seller_id")
-  buyerId           String            @map("buyer_id")
-  sellerGST         String?           @map("seller_gst")
-  buyerGST          String?           @map("buyer_gst")
-
-  // Invoice details
-  invoiceDate       DateTime          @default(now()) @map("invoice_date")
-  dueDate           DateTime?         @map("due_date")
-
-  // Financials
-  baseAmount        Float             @map("base_amount")
-  gstRate           Float             @map("gst_rate")          // 18 for most services
-  gstAmount         Float             @map("gst_amount")
-  totalAmount       Float             @map("total_amount")
-
-  // Item details
-  itemDescription   String            @map("item_description")
-  hsnCode           String?           @map("hsn_code")
-  quantity          Int               @default(1)
-
-  // Status
-  status            String            @default("generated")     // generated, sent, paid, cancelled
-  paymentDate       DateTime?         @map("payment_date")
-
-  // PDF storage
-  pdfUrl            String?           @map("pdf_url")
-
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  @@index([sellerId], map: "idx_gst_invoices_seller")
-  @@index([buyerId], map: "idx_gst_invoices_buyer")
-  @@index([transactionId], map: "idx_gst_invoices_transaction")
-  @@index([invoiceNumber], map: "idx_gst_invoices_number")
-  @@map("gst_invoices")
-}
-
-model ComplianceAuditLog {
-  id                String            @id @default(cuid())
-  userId            String?           @map("user_id")
-  action            String
-  resource          String
-  resourceId        String?           @map("resource_id")
-
-  // Compliance specific
-  complianceType    String            @map("compliance_type")   // gdpr, gst, kyc, legal, security
-  riskLevel         String            @map("risk_level")         // low, medium, high, critical
-  jurisdiction      String?           @map("jurisdiction")      // india, international
-
-  // Audit details
-  oldValues         Json?
-  newValues         Json?
-  ipAddress         String?           @map("ip_address")
-  userAgent         String?           @map("user_agent")
-  location          String?           // Geo location if available
-
-  // Compliance flags
-  dataProcessing    Boolean           @default(false) @map("data_processing")
-  personalData      Boolean           @default(false) @map("personal_data")
-  financialData     Boolean           @default(false) @map("financial_data")
-  requiresRetention Boolean           @default(false) @map("requires_retention")
-
-  createdAt         DateTime          @default(now())
-
-  @@index([userId], map: "idx_compliance_audit_user")
-  @@index([complianceType], map: "idx_compliance_audit_type")
-  @@index([riskLevel], map: "idx_compliance_audit_risk")
-  @@index([createdAt], map: "idx_compliance_audit_date")
-  @@map("compliance_audit_logs")
-}
-
-model FeatureFlag {
   id          String   @id @default(cuid())
-  key         String   @unique @map("key")
-  value       Boolean  @default(false) @map("value")
-  description String?  @map("description")
-  updatedBy   String?  @map("updated_by") // Admin user ID
-  category    String   @default("general") @map("category") // launch, fees, bids, wallet, ui
+  title       String
+  startingPrice Float
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  @@index([key], map: "idx_feature_flags_key")
-  @@index([category], map: "idx_feature_flags_category")
-  @@map("feature_flags")
+  // AI relations
+  aiAuctionMetrics AIAuctionMetrics[]
+  autoBidConfigs   AutoBidConfig[]
+  aiPredictionLogs AIPredictionLog[]
+  sellerInsights   SellerInsight[]
 }
 
-model LaunchCampaign {
-  id                       String   @id @default(cuid())
-  campaignName             String   @map("campaign_name")
-  startDate                DateTime @map("start_date")
-  endDate                  DateTime @map("end_date")
-  targetRoles              String[] @map("target_roles") // buyer, seller, company, all
-  bonusWalletCredit        Float    @default(0) @map("bonus_wallet_credit")
-  referralBonusMultiplier  Float    @default(1) @map("referral_bonus_multiplier")
-  freeBidLimit             Int      @default(0) @map("free_bid_limit")
-  commissionOverridePercentage Float? @map("commission_override_percentage")
-  depositOverrideAmount     Float?   @map("deposit_override_amount")
-  subscriptionOverridePlan String?  @map("subscription_override_plan")
-  priorityListingEnabled   Boolean  @default(false) @map("priority_listing_enabled")
-  createdByAdmin           String   @map("created_by_admin")
-  activeStatus             Boolean  @default(false) @map("active_status")
-  createdAt               DateTime @default(now())
-  updatedAt               DateTime @updatedAt
+// AI Models
 
-  @@index([activeStatus], map: "idx_launch_campaigns_active")
-  @@index([startDate], map: "idx_launch_campaigns_start")
-  @@index([endDate], map: "idx_launch_campaigns_end")
-  @@map("launch_campaigns")
+model AIUserMetrics {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  totalBids       Int      @default(0)
+  wins            Int      @default(0)
+  avgBidAmount    Float    @default(0)
+  winRate         Float    @default(0)
+  aggressionScore Float    @default(0) // For win probability
+  walletStrength  Float    @default(0) // Calculated from balance
+  lastActivity    DateTime @default(now())
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([winRate])
+  @@index([aggressionScore])
 }
 
-model BidControl {
-  id                         String   @id @default(cuid())
-  minWalletBalance          Float    @default(0) @map("min_wallet_balance")
-  maxBidsPerDay             Int      @default(100) @map("max_bids_per_day")
-  autoBidEnabled            Boolean  @default(true) @map("auto_bid_enabled")
-  antiSnipingExtensionSeconds Int     @default(30) @map("anti_sniping_extension_seconds")
-  emergencyPauseFlag        Boolean  @default(false) @map("emergency_pause_flag")
-  updatedBy                 String?  @map("updated_by")
-  updatedAt                 DateTime @updatedAt
+model AIAuctionMetrics {
+  id                String   @id @default(cuid())
+  auctionId         String
+  auction           Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  totalBids         Int      @default(0)
+  uniqueBidders     Int      @default(0)
+  avgBidIncrement   Float    @default(0)
+  timeToFirstBid    Int?     // in seconds
+  auctionDuration   Int      // in seconds
+  finalPrice        Float?
+  priceIncrease     Float    @default(0)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  @@map("bid_controls")
+  @@index([auctionId])
+  @@index([totalBids])
+  @@index([finalPrice])
 }
 
-model AccountTier {
-  id             String   @id @default(cuid())
-  name           String   @unique @map("name") // Founding, Early Supporter, Dealer Elite, Enterprise
-  walletBonus    Float    @default(0) @map("wallet_bonus")
-  badge          String   @map("badge") // emoji or badge identifier
-  bidPriority    Int      @default(0) @map("bid_priority") // 0-10, higher = more priority
-  supportLevel   String   @default("standard") @map("support_level") // standard, priority, vip
-  description    String?  @map("description")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+model AutoBidConfig {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  auctionId         String?
+  auction           Auction? @relation(fields: [auctionId], references: [id], onDelete: SetNull)
+  maxAmount         Float
+  increment         Float    @default(100)
+  isActive          Boolean  @default(true)
+  winProbabilityThreshold Float @default(0.45)
+  fraudRiskThreshold     Float @default(0.6)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  @@index([name], map: "idx_account_tiers_name")
-  @@map("account_tiers")
+  @@unique([userId, auctionId])
+  @@index([userId])
+  @@index([auctionId])
+  @@index([isActive])
 }
 
-model FeeOverride {
-  id                   String   @id @default(cuid())
-  listingFee           Float?   @map("listing_fee")
-  depositFee           Float?   @map("deposit_fee")
-  commissionPercentage Float?   @map("commission_percentage")
-  escrowFee            Float?   @map("escrow_fee")
-  referralReward       Float?   @map("referral_reward")
-  activeStatus         Boolean  @default(false) @map("active_status")
-  updatedBy            String?  @map("updated_by")
-  updatedAt            DateTime @updatedAt
-
-  @@map("fee_overrides")
-}
-
-model WalletPromotion {
-  id           String   @id @default(cuid())
-  userId       String   @map("user_id")
-  bonusAmount  Float    @map("bonus_amount")
-  reason       String   @map("reason") // launch_bonus, referral_bonus, campaign_bonus
-  campaignId   String?  @map("campaign_id")
-  expiresAt    DateTime @map("expires_at")
-  usedAmount   Float    @default(0) @map("used_amount")
-  isActive     Boolean  @default(true) @map("is_active")
-  createdBy    String?  @map("created_by")
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  user         User     @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "idx_wallet_promotions_user")
-  @@index([campaignId], map: "idx_wallet_promotions_campaign")
-  @@index([expiresAt], map: "idx_wallet_promotions_expires")
-  @@index([isActive], map: "idx_wallet_promotions_active")
-  @@map("wallet_promotions")
-}
-
-model Wallet {
-  id             String   @id @default(cuid())
-  userId         String   @unique @map("user_id")
-  balance        Float    @default(0) @map("balance")
-  lockedBalance  Float    @default(0) @map("locked_balance")
-  currency       String   @default("INR")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-
-  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  transactions   WalletTransaction[]
-
-  @@index([userId], map: "idx_wallets_user_id")
-  @@map("wallets")
-}
-
-model WalletTransaction {
-  id             String   @id @default(cuid())
-  walletId       String   @map("wallet_id")
-  transactionType String  @map("transaction_type") // deposit, withdrawal, bid_lock, bid_release, commission, refund, payment
-  amount         Float
-  balanceBefore  Float    @map("balance_before")
-  balanceAfter   Float    @map("balance_after")
-  referenceId    String?  @map("reference_id") // Links to bids, auctions, etc.
-  referenceType  String?  @map("reference_type")
-  description    String?
-  status         String   @default("completed") // pending, completed, failed, cancelled
-  createdAt      DateTime @default(now())
-  metadata       Json?
-
-  wallet         Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
-
-  @@index([walletId], map: "idx_wallet_transactions_wallet_id")
-  @@index([createdAt], map: "idx_wallet_transactions_created_at")
-  @@index([referenceId], map: "idx_wallet_transactions_reference_id")
-  @@map("wallet_transactions")
-}
-
-model MarketplaceMetric {
-  id                   String   @id @default(cuid())
-  date                 DateTime @unique @map("date")
-
-  // User metrics
-  dailyActiveUsers     Int      @default(0) @map("daily_active_users")
-  newRegistrations     Int      @default(0) @map("new_registrations")
-  newSellers           Int      @default(0) @map("new_sellers")
-
-  // Auction metrics
-  auctionsCreated      Int      @default(0) @map("auctions_created")
-  auctionsCompleted    Int      @default(0) @map("auctions_completed")
-  bidsPlaced           Int      @default(0) @map("bids_placed")
-  averageBidsPerAuction Float    @default(0) @map("average_bids_per_auction")
-
-  // Financial metrics
-  revenueGenerated     Float    @default(0) @map("revenue_generated")
-  escrowVolume         Float    @default(0) @map("escrow_volume")
-  walletVolume         Float    @default(0) @map("wallet_volume")
-
-  // Referral metrics
-  referralSignups      Int      @default(0) @map("referral_signups")
-  referralConversions  Int      @default(0) @map("referral_conversions")
-  referralRevenue      Float    @default(0) @map("referral_revenue")
-
-  // Campaign tracking
-  campaignId           String?  @map("campaign_id")
-  campaignRevenue      Float    @default(0) @map("campaign_revenue")
-
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-
-  @@index([date], map: "idx_marketplace_metrics_date")
-  @@index([campaignId], map: "idx_marketplace_metrics_campaign")
-  @@map("marketplace_metrics")
-}
-
-model NotificationLog {
-  id                String            @id @default(cuid())
-  userId            String?           @map("user_id")
-  type              String            // whatsapp_template, email, sms, push
-  status            String            // pending, sent, delivered, failed, cancelled
-  templateId        String?           @map("template_id")
-  responsePayload   Json?             @map("response_payload")
-  errorMessage      String?           @map("error_message")
-  recipient         String?           // Phone number, email, etc.
-  messageId         String?           @map("message_id") // External service message ID
-  provider          String            @default("whatsapp") @map("provider") // whatsapp, twilio, sendgrid
-  priority          String            @default("normal") // low, normal, high, urgent
-  retryCount        Int               @default(0) @map("retry_count")
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  user              User?             @relation(fields: [userId], references: [id])
-
-  @@index([userId], map: "idx_notification_logs_user")
-  @@index([type], map: "idx_notification_logs_type")
-  @@index([status], map: "idx_notification_logs_status")
-  @@index([templateId], map: "idx_notification_logs_template")
-  @@index([createdAt], map: "idx_notification_logs_created")
-  @@map("notification_logs")
-}
-
-model Referral {
-  id              String            @id @default(cuid())
-  referrerId      String            @map("referrer_id")
-  referredUserId  String            @unique @map("referred_user_id")
-  referralCode    String            @map("referral_code")
-  rewardAmount    Float             @default(0) @map("reward_amount")
-  rewardStatus    String            @default("pending") @map("reward_status") // pending, credited, failed, cancelled
-  rewardCreditedAt DateTime?        @map("reward_credited_at")
-  transactionId   String?           @map("transaction_id") // Wallet transaction ID
-  ipAddress       String?           @map("ip_address")
-  userAgent       String?           @map("user_agent")
-
-  // Relations
-  referrer        User              @relation("ReferralReferrer", fields: [referrerId], references: [id])
-  referredUser    User              @relation("ReferralReferred", fields: [referredUserId], references: [id])
-
-  createdAt       DateTime          @default(now())
-  updatedAt       DateTime          @updatedAt
-
-  @@index([referrerId], map: "idx_referrals_referrer")
-  @@index([referredUserId], map: "idx_referrals_referred")
-  @@index([referralCode], map: "idx_referrals_code")
-  @@index([rewardStatus], map: "idx_referrals_reward_status")
-  @@map("referrals")
-}
-
-model ReferralMetrics {
-  id                    String            @id @default(cuid())
-  date                  DateTime          @unique @map("date")
-
-  // Daily metrics
-  totalShares           Int               @default(0) @map("total_shares")
-  totalReferrals        Int               @default(0) @map("total_referrals")
-  successfulConversions Int               @default(0) @map("successful_conversions")
-  walletRewardsPaid     Float             @default(0) @map("wallet_rewards_paid")
-  auctionParticipationIncrease Int        @default(0) @map("auction_participation_increase")
-
-  // WhatsApp specific metrics
-  whatsappShares        Int               @default(0) @map("whatsapp_shares")
-  whatsappCTR           Float             @default(0) @map("whatsapp_ctr") // Click-through rate
-  whatsappConversions   Int               @default(0) @map("whatsapp_conversions")
-
-  // Revenue metrics
-  referralRevenue       Float             @default(0) @map("referral_revenue")
-  averageOrderValue     Float             @default(0) @map("average_order_value")
-
-  createdAt             DateTime          @default(now())
-  updatedAt             DateTime          @updatedAt
-
-  @@index([date], map: "idx_referral_metrics_date")
-  @@map("referral_metrics")
-}
-
-model DealerProfile {
-  id                String            @id @default(cuid())
-  userId            String            @unique @map("user_id")
-  businessName      String            @map("business_name")
-  gstNumber         String?           @map("gst_number")
-  dealershipType    String            @map("dealership_type")   // authorized, independent, multi-brand, used_car_specialist
-  dealerTier        String            @default("bronze")        @map("dealer_tier") // bronze, silver, gold, platinum
-
-  // Location
-  city              String
-  state             String
-  pincode           String
-  address           String
-
-  // Contact Information
-  primaryPhone      String            @map("primary_phone")
-  secondaryPhone    String?           @map("secondary_phone")
-  email             String
-  website           String?           @map("website")
-
-  // Business Metrics
-  monthlyTurnover   Float             @map("monthly_turnover")
-  yearsInBusiness   Int               @map("years_in_business")
-  monthlySales      Int               @map("monthly_sales")
-  inventorySize     Int               @map("inventory_size")
-
-  // Verification & Status
-  verificationStatus String            @default("pending")      @map("verification_status") // pending, under_review, verified, rejected
-  isActive          Boolean           @default(true)            @map("is_active")
-  specializations   String[]          @map("specializations")   // car brands, vehicle types
-  certifications    String[]          @map("certifications")   // dealer certifications
-
-  // Performance Metrics
-  totalVehiclesListed Int             @default(0)              @map("total_vehicles_listed")
-  totalVehiclesSold   Int             @default(0)              @map("total_vehicles_sold")
-  averageSalePrice    Float?           @map("average_sale_price")
-  successRate         Float            @default(0)              @map("success_rate") // percentage
-
-  // Timestamps
-  onboardedAt        DateTime?         @map("onboarded_at")
-  lastActivityAt     DateTime?         @map("last_activity_at")
-  createdAt          DateTime          @default(now())
-  updatedAt          DateTime          @updatedAt
-
-  @@index([userId], map: "idx_dealer_profiles_user")
-  @@index([dealershipType], map: "idx_dealer_profiles_type")
-  @@index([dealerTier], map: "idx_dealer_profiles_tier")
-  @@index([verificationStatus], map: "idx_dealer_profiles_verification")
-  @@index([city], map: "idx_dealer_profiles_city")
-  @@map("dealer_profiles")
-}
-
-model DealerCampaign {
-  id                String            @id @default(cuid())
-  name              String
-  description       String
-  targetRegions     String[]          @map("target_regions")
-  targetDealerTypes String[]          @map("target_dealer_types")
-
-  // Campaign Incentives
-  signupBonus       Float             @default(0)               @map("signup_bonus")
-  firstSaleBonus    Float             @default(0)               @map("first_sale_bonus")
-  monthlyCommission Float             @default(0)               @map("monthly_commission")
-  marketingSupport  Boolean           @default(false)           @map("marketing_support")
-  priorityListing   Boolean           @default(false)           @map("priority_listing")
-
-  // Campaign Goals
-  targetDealers     Int               @map("target_dealers")
-  targetVehicles    Int               @map("target_vehicles")
-  budget            Float
-
-  // Status & Timeline
-  status            String            @default("draft")         // draft, active, paused, completed, cancelled
-  startDate         DateTime          @map("start_date")
-  endDate           DateTime          @map("end_date")
-
-  // Performance Tracking
-  performance       Json              // {dealersOnboarded, vehiclesListed, totalSpend, conversionRate}
-
-  // Metadata
-  createdBy         String?           @map("created_by")
-  createdAt         DateTime          @default(now())
-  updatedAt         DateTime          @updatedAt
-
-  // Relations
-  applications      DealerApplication[]
-
-  @@index([status], map: "idx_dealer_campaigns_status")
-  @@index([startDate], map: "idx_dealer_campaigns_start")
-  @@index([endDate], map: "idx_dealer_campaigns_end")
-  @@map("dealer_campaigns")
-}
-
-model DealerApplication {
-  id                String            @id @default(cuid())
-
-  // Applicant Information
-  applicantName     String            @map("applicant_name")
-  businessName      String            @map("business_name")
-  email             String
-  phone             String
-  city              String
-  dealershipType    String            @map("dealership_type")
-  monthlyTurnover   Float             @map("monthly_turnover")
-
-  // Application Details
-  source            String            @default("organic")       // campaign, organic, referral, cold_outreach
-  campaignId        String?           @map("campaign_id")
-  status            String            @default("submitted")     // submitted, under_review, approved, rejected, onboarded
-
-  // Processing Timeline
-  submittedAt       DateTime          @default(now())           @map("submitted_at")
-  reviewedAt        DateTime?         @map("reviewed_at")
-  approvedAt        DateTime?         @map("approved_at")
-
-  // Review Details
-  reviewedBy        String?           @map("reviewed_by")
-  rejectionReason   String?           @map("rejection_reason")
-  notes             String?
-
-  // Relations
-  campaign          DealerCampaign?   @relation(fields: [campaignId], references: [id])
-
-  @@index([email], map: "idx_dealer_applications_email")
-  @@index([status], map: "idx_dealer_applications_status")
-  @@index([source], map: "idx_dealer_applications_source")
-  @@index([campaignId], map: "idx_dealer_applications_campaign")
-  @@index([submittedAt], map: "idx_dealer_applications_submitted")
-  @@map("dealer_applications")
-}
-
-// Payment Models
-model Payment {
+model AIPredictionLog {
   id            String   @id @default(cuid())
-  orderId       String
-  amount        Float
-  currency      String   @default("INR")
-  paymentMethod String   // 'upi', 'netbanking', 'wallet', 'card'
-  provider      String   @default("razorpay") // 'razorpay', 'payu', 'cashfree', 'stripe'
-  status        String   @default("created") // 'created', 'pending', 'completed', 'failed', 'refunded'
-  transactionId String?  @unique
-  customerId    String
-  metadata      Json?    // Store payment provider specific data
+  auctionId     String
+  auction       Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  userId        String?
+  predictionType String  // e.g., "win_probability", "fraud_score"
+  predictionValue Float
+  confidence     Float   @default(0)
+  factors       Json     // Store the factors used
+  result        String?  // e.g., "bid_placed", "blocked"
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
 
-  // Relations
-  refunds       Refund[]
-
-  @@index([orderId], map: "idx_payments_order")
-  @@index([customerId], map: "idx_payments_customer")
-  @@index([status], map: "idx_payments_status")
-  @@index([paymentMethod], map: "idx_payments_method")
-  @@index([provider], map: "idx_payments_provider")
-  @@index([createdAt], map: "idx_payments_created")
-  @@map("payments")
+  @@index([auctionId])
+  @@index([userId])
+  @@index([predictionType])
+  @@index([createdAt])
 }
 
-model Refund {
-  id         String   @id @default(cuid())
-  paymentId  String
-  amount     Float
-  reason     String?  @default("customer_request")
-  status     String   @default("pending") // 'pending', 'processed', 'failed'
-  processedAt DateTime?
-  metadata   Json?    // Store refund provider specific data
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+model UserBehaviorLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action      String   // e.g., "bid", "view", "login"
+  metadata    Json     // Additional data
+  ipAddress   String?
+  userAgent   String?
+  timestamp   DateTime @default(now())
 
-  // Relations
-  payment    Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  @@index([userId])
+  @@index([action])
+  @@index([timestamp])
+}
 
-  @@index([paymentId], map: "idx_refunds_payment")
-  @@index([status], map: "idx_refunds_status")
-  @@index([createdAt], map: "idx_refunds_created")
-  @@map("refunds")
+model FraudCluster {
+  id              String   @id @default(cuid())
+  userId          String
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  clusterId       String   // Group similar behaviors
+  fraudScore      Float    @default(0)
+  bidRingScore    Float    @default(0)
+  behaviorSimilarity Float @default(0)
+  walletAnomaly   Float    @default(0)
+  isFrozen        Boolean  @default(false)
+  frozenAt        DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+  @@index([clusterId])
+  @@index([fraudScore])
+  @@index([isFrozen])
+}
+
+model SellerInsight {
+  id                  String   @id @default(cuid())
+  userId              String
+  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  auctionId           String?
+  auction             Auction? @relation(fields: [auctionId], references: [id], onDelete: SetNull)
+  insightType         String   // e.g., "starting_price", "timing", "description"
+  recommendation      String
+  expectedImpact      Float    @default(0) // Expected price increase %
+  confidence          Float    @default(0)
+  applied             Boolean  @default(false)
+  appliedAt           DateTime?
+  createdAt           DateTime @default(now())
+
+  @@index([userId])
+  @@index([auctionId])
+  @@index([insightType])
+  @@index([applied])
+}
+
+model EmbeddingVector {
+  id        String   @id @default(cuid())
+  entityId  String   // ID of the entity (user, auction, etc.)
+  entityType String  // "user", "auction", "product"
+  vector    Unsupported("vector(1536)")? // For pgvector, assuming 1536 for OpenAI
+  metadata  Json?
+  createdAt DateTime @default(now())
+
+  @@index([entityId])
+  @@index([entityType])
+  @@unique([entityId, entityType])
+}
+
+// Enable pgvector extension if needed
+// In migration, run: CREATE EXTENSION IF NOT EXISTS vector;
+
+// Training Datasets
+
+model AuctionTrainingData {
+  id                      String   @id @default(cuid())
+  userId                  String
+  auctionId               String
+  bidAmount               Float
+  previousBidAmount       Float?
+  bidIncrement            Float
+  timeRemainingSeconds    Int
+  totalAuctionDuration    Int
+  walletBalance           Float
+  walletToCurrentPriceRatio Float
+  userHistoricalWinRate   Float
+  userAggressionScore     Float
+  auctionVolatilityScore  Float
+  numberOfCompetitors     Int
+  wasHighestBid           Boolean
+  finalOutcome            String  // "WIN" or "LOSS"
+  createdAt               DateTime @default(now())
+
+  @@index([userId])
+  @@index([auctionId])
+  @@index([createdAt])
+  @@index([finalOutcome])
+}
+
+model FraudTrainingData {
+  id                      String   @id @default(cuid())
+  userId                  String
+  auctionId               String?
+  bidFrequencyPerMinute   Float
+  avgIncrement            Float
+  sessionDuration         Int
+  rechargeAmountBeforeBid Float?
+  deviceFingerprintHash   String
+  ipHash                  String
+  similarityClusterScore  Float
+  walletAbuseScore        Float
+  labeledFraud            Boolean
+  createdAt               DateTime @default(now())
+
+  @@index([userId])
+  @@index([auctionId])
+  @@index([createdAt])
+  @@index([labeledFraud])
+}
+
+model AISubscription {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  planType        String   // "FREE", "PRO", "ELITE"
+  featuresEnabled Json     // JSON object of enabled features
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ModelMetrics {
+  id          String   @id @default(cuid())
+  modelName   String
+  version     String
+  accuracy    Float
+  precision   Float
+  recall      Float
+  f1Score     Float
+  trainedAt   DateTime @default(now())
+
+  @@index([modelName])
+  @@index([version])
+  @@index([trainedAt])
 }

@@ -610,16 +610,3 @@ export const MobileAuctionFeed: React.FC<MobileAuctionFeedProps> = ({
   );
 };
 
-export default {
-  useDeviceType,
-  TouchButton,
-  useSwipeGesture,
-  MobileModal,
-  MobileBidCard,
-  useMobilePerformance,
-  MobileStack,
-  BottomSheet,
-  PullToRefresh,
-  MobileHUD,
-  MobileAuctionFeed
-};

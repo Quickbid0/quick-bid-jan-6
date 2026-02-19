@@ -315,6 +315,9 @@ async function generateChatResponseServer(userMessage: string, context: any) {
   } catch (error) {
     console.error('AI chat response failed:', error);
     return getFallbackChatResponse(userMessage, context);
+  }
+}
+
 async function analyzeFraudServer(userData: any) {
   try {
     const prompt = `

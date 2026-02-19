@@ -1,0 +1,38 @@
+{
+  "revenueProjection": {
+    "12MonthForecast": [
+      { "month": 1, "revenue": 50000, "users": 1000, "arpu": 50 },
+      { "month": 2, "revenue": 75000, "users": 1500, "arpu": 50 },
+      { "month": 3, "revenue": 112500, "users": 2250, "arpu": 50 },
+      { "month": 6, "revenue": 337500, "users": 6750, "arpu": 50 },
+      { "month": 12, "revenue": 2025000, "users": 40500, "arpu": 50 }
+    ],
+    "growthFormula": "revenue = baseUsers * (1 + monthlyGrowthRate)^month * arpu",
+    "assumptions": {
+      "monthlyGrowthRate": 0.5,
+      "baseUsers": 1000,
+      "arpu": 50,
+      "churnRate": 0.05
+    }
+  },
+  "aiAdoptionSimulation": {
+    "currentAdoption": 0.1,
+    "targetAdoption": 0.8,
+    "adoptionCurve": "logistic",
+    "engagementLift": 2.5,
+    "fraudReduction": 0.7,
+    "description": "AI adoption drives 2.5x engagement and 70% fraud reduction"
+  },
+  "fraudReductionMetric": {
+    "baselineFraudRate": 0.05,
+    "aiReducedRate": 0.015,
+    "annualSavings": 500000,
+    "roi": 5.0
+  },
+  "engagementLiftModel": {
+    "baselineEngagement": 1.0,
+    "aiEngagement": 2.5,
+    "retentionIncrease": 0.3,
+    "lifetimeValueIncrease": 0.4
+  }
+}

@@ -659,14 +659,3 @@ export const EliteCelebration: React.FC<EliteCelebrationProps> = ({
   </Fragment>
 );
 
-export default {
-  AuctionCardSkeleton,
-  DashboardCardSkeleton,
-  EliteSuccessToast,
-  EliteBidConfirmationModal,
-  EliteLoadingButton,
-  EliteProgressIndicator,
-  EliteNotificationBanner,
-  ElitePulse,
-  EliteCelebration
-};

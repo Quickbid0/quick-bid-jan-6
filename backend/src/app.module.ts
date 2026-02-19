@@ -1,58 +1,20 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { EventEmitterModule } from '@nestjs/event-emitter';
-import { APP_PIPE } from '@nestjs/core';
-import { ValidationPipe } from '@nestjs/common';
-import { AuthModule } from './auth/auth.module';
-import { HealthModule } from './health/health.module';
-import { AppController } from './app.controller';
 import { PrismaModule } from './prisma/prisma.module';
+import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env',
     }),
-    EventEmitterModule.forRoot(),
-
     PrismaModule,
-
     AuthModule,
-    // ProductsModule,
-    // WalletModule,
-    // PaymentsModule,
-    // KYCModule,
-    // PenaltyModule,
-    // CompanyModule,
-    // AuctionsModule,
-    // InspectionModule,
-    // FinanceModule,
-    // ReputationModule,
-    // DisputesModule,
-    // EscrowModule,
-    // ComplianceModule,
-    // AnalyticsModule,
-    // InvestorMetricsModule,
-    // AuditModule,
-    // DealerModule,
-    // PaymentsModule,
-    // NotificationsModule,
-    // WebhookModule,
-    // ReferralModule,
-    // FeatureFlagModule,
-    // LaunchCampaignModule,
-    // SubscriptionModule,
-    // BidControlModule,
-    // AccountTierModule,
-    // FeeOverrideModule,
-    // WalletBonusModule,
-    // InvestorDashboardModule,
-    // MarketplaceMetricsModule,
-    // SafetyRulesModule,
-    // AdminLaunchControlModule,
-    // PreLaunchSimulationModule,
-    HealthModule,
+    EmailModule,
+    AiModule,
   ],
-  controllers: [AppController], // [TestDbController],
 })
 export class AppModule {}

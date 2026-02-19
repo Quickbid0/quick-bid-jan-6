@@ -349,11 +349,3 @@ export const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({
   );
 };
 
-export default {
-  StatusBadge,
-  TrustScore,
-  AuctionStatus,
-  PaymentStatus,
-  DeliveryStatus,
-  ProgressIndicator
-};

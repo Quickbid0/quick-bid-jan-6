@@ -384,17 +384,3 @@ export const Skeleton: React.FC<SkeletonProps> = ({ className, lines = 1 }) => (
   </div>
 );
 
-export default {
-  Memoized,
-  LazyWrapper,
-  OptimizedImage,
-  ResponsiveContainer,
-  TouchButton,
-  MobileModal,
-  TrustBar,
-  SecurityBadges,
-  ErrorToast,
-  SuccessFeedback,
-  LoadingSpinner,
-  Skeleton
-};

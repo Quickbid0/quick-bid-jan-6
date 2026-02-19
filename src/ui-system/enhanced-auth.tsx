@@ -697,4 +697,3 @@ export const EnhancedSignup: React.FC = () => {
   );
 };
 
-export default { EnhancedLogin, EnhancedSignup };

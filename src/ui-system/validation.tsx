@@ -430,8 +430,3 @@ export const useFlowValidation = (flowName: string) => {
 };
 
 // Export validation utilities
-export default {
-  validationTests,
-  ValidationDashboard,
-  useFlowValidation
-};

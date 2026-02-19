@@ -41,6 +41,7 @@ interface DashboardStats {
 }
 
 const Dashboard: React.FC = () => {
+  console.log("Rendering Dashboard");
   const [stats, setStats] = useState<DashboardStats>({
     activeBids: 0,
     totalSpent: 0,

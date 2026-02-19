@@ -326,11 +326,3 @@ export const useLaunchMode = () => {
   return launchMode;
 };
 
-export default {
-  LaunchBanner,
-  FreeWeekBadge,
-  AccountTierBadge,
-  LaunchModeOverlay,
-  ReferralPrompt,
-  useLaunchMode,
-};

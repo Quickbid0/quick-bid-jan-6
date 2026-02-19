@@ -263,17 +263,3 @@ export class SafeErrorBoundary extends React.Component<
   }
 }
 
-export default {
-  useSafeClick,
-  useFormSubmission,
-  useScrollLock,
-  useLayoutStable,
-  useStableKey,
-  useEventListener,
-  useHydrated,
-  useDebounce,
-  safeGet,
-  safeInvoke,
-  NoSSR,
-  SafeErrorBoundary
-};

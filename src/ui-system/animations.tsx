@@ -669,16 +669,3 @@ export const AchievementUnlock: React.FC<AchievementUnlockProps> = ({
 };
 
 // Export all animation utilities
-export default {
-  animationVariants,
-  useAnimatedCounter,
-  useSpringValue,
-  useHoverAnimation,
-  AnimatedCard,
-  AnimatedButton,
-  RealTimeFeedback,
-  AnimatedBidTicker,
-  PageTransition,
-  StaggerContainer,
-  AchievementUnlock
-};

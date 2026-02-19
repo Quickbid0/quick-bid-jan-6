@@ -377,13 +377,3 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({
   </div>
 );
 
-export default {
-  Container,
-  PageLayout,
-  Grid,
-  Flex,
-  Stack,
-  Section,
-  AuctionLayout,
-  DashboardLayout,
-};
