@@ -1,0 +1,15 @@
+node_modules
+npm-debug.log
+.git
+.gitignore
+README.md
+dist
+coverage
+test
+.env.local
+.vscode
+.idea
+*.swp
+.DS_Store
+# DO NOT ignore Prisma files
+# .prisma should be copied if it exists

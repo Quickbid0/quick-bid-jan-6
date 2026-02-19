@@ -36,8 +36,15 @@ RUN npm run build
 # Remove development dependencies (keep Prisma - already generated)
 RUN npm prune --production
 
-# Verify Prisma files exist
-RUN ls -la node_modules/.prisma/client/ || echo "WARNING: Prisma files not found, will regenerate at runtime"
+# Verify Prisma files exist and list them
+RUN echo "=== Checking Prisma files after npm prune ===" && \
+    if [ -d "node_modules/.prisma" ]; then \
+      echo "✓ Prisma directory found"; \
+      ls -lh node_modules/.prisma/client/ 2>/dev/null | head -5 || echo "  (Warning: client subdirectory missing)"; \
+    else \
+      echo "✗ ERROR: Prisma directory missing!"; \
+      exit 1; \
+    fi
 
 # ================================
 # PRODUCTION STAGE
@@ -73,7 +80,15 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/prisma ./prisma
 
 # Verify Prisma client was copied
-RUN if [ ! -f "node_modules/.prisma/client/index.js" ]; then echo "ERROR: Prisma client not found!"; exit 1; fi
+RUN echo "=== Verifying Prisma client in production image ===" && \
+    if [ -f "node_modules/.prisma/client/index.js" ]; then \
+      echo "✓ Prisma client index.js found"; \
+      ls -lh node_modules/.prisma/client/index.js; \
+    else \
+      echo "✗ ERROR: Prisma client index.js NOT FOUND!"; \
+      ls -la node_modules/.prisma/ || echo "  .prisma directory also missing"; \
+      exit 1; \
+    fi
 
 # Change ownership to non-root user
 RUN chown -R quickmela:nodejs /app
