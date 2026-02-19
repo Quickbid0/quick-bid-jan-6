@@ -17,6 +17,8 @@ const About = lazy(() => import('./pages/About'));
 const ContactUs = lazy(() => import('./pages/ContactUs'));
 const FAQ = lazy(() => import('./pages/FAQ'));
 const NotFound = lazy(() => import('./pages/NotFound'));
+const Privacy = lazy(() => import('./pages/Privacy'));
+const Terms = lazy(() => import('./pages/Terms'));
 
 // Scroll to Top on Route Change
 const ScrollToTop: React.FC = () => {
