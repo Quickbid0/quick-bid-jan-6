@@ -15,6 +15,13 @@ datasource db {
 model User {
   id        String   @id @default(cuid())
   email     String   @unique
+  name      String?
+  passwordHash String?
+  role      String   @default("BUYER") // ADMIN | BUYER | SELLER | AGENT
+  status    String   @default("ACTIVE") // ACTIVE | SUSPENDED | BANNED
+  isActive  Boolean  @default(true)
+  emailVerified Boolean @default(false)
+  phoneVerified Boolean @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -24,6 +31,9 @@ model User {
   userBehaviorLogs UserBehaviorLog[]
   sellerInsights   SellerInsight[]
   fraudClusters    FraudCluster[]
+  aiSubscription   AISubscription?
+  subscription    Subscription?
+  wallet          Wallet?
 }
 
 model Auction {
@@ -38,6 +48,31 @@ model Auction {
   autoBidConfigs   AutoBidConfig[]
   aiPredictionLogs AIPredictionLog[]
   sellerInsights   SellerInsight[]
+  bids             Bid[]
+}
+
+model Bid {
+  id        String   @id @default(cuid())
+  auctionId String
+  auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
+  userId    String
+  amount    Float
+  createdAt DateTime @default(now())
+
+  @@index([auctionId])
+  @@index([userId])
+  @@index([createdAt])
+}
+
+model Wallet {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  balance   Float    @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
 }
 
 // AI Models
@@ -240,11 +275,27 @@ model FraudTrainingData {
 model AISubscription {
   id              String   @id @default(cuid())
   userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   planType        String   // "FREE", "PRO", "ELITE"
   featuresEnabled Json     // JSON object of enabled features
   expiresAt       DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+
+  @@index([userId])
+}
+
+model Subscription {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  planType        String   // "FREE", "PRO", "ELITE"
+  featuresEnabled Json     // JSON object of enabled features
+  expiresAt       DateTime?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@index([userId])
 }
 
 model ModelMetrics {

@@ -10,12 +10,17 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
-    "incremental": true,
+    "moduleResolution": "node",
+    "incremental": false,
     "skipLibCheck": true,
     "strictNullChecks": false,
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "suppressImplicitAnyIndexErrors": true,
+    "noEmitOnError": false,
+    "esModuleInterop": true,
+    "allowJs": true
   }
 }
