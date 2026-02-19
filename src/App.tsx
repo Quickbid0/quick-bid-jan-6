@@ -60,9 +60,16 @@ function App() {
       <Route path="/add-product" element={<ProtectedRoute><AddProduct /></ProtectedRoute>} />
       <Route path="/admin/dashboard" element={<ProtectedRoute adminRequired={true}><AdminDashboard /></ProtectedRoute>} />
       <Route path="/about" element={<About />} />
-      <Route path="/contact" element={<ContactUs />} />
-      <Route path="/faq" element={<FAQ />} />
-      <Route path="*" element={<NotFound />} />
+      <Route path="/auctions" element={<div>Auctions Page</div>} />
+      <Route path="/sell" element={<div>Sell Page</div>} />
+      <Route path="/how-it-works" element={<div>How It Works</div>} />
+      <Route path="/pricing" element={<div>Pricing</div>} />
+      <Route path="/careers" element={<div>Careers</div>} />
+      <Route path="/press" element={<div>Press</div>} />
+      <Route path="/help" element={<div>Help Center</div>} />
+      <Route path="/security" element={<div>Security</div>} />
+      <Route path="/privacy" element={<Privacy />} />
+      <Route path="/terms" element={<Terms />} />
     </Routes>
     </Suspense>
   );

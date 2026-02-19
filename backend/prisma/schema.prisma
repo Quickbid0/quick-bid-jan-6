@@ -261,3 +261,33 @@ model ModelMetrics {
   @@index([version])
   @@index([trainedAt])
 }
+
+// Live Auction System Models
+
+model LiveAuctionSession {
+  id         String   @id @default(cuid())
+  sellerId   String
+  title      String
+  scheduledAt DateTime
+  status     String   // SCHEDULED | LIVE | ENDED
+  streamUrl  String?
+  createdAt  DateTime @default(now())
+}
+
+model LiveBid {
+  id        String   @id @default(cuid())
+  sessionId String
+  userId    String
+  amount    Float
+  createdAt DateTime @default(now())
+}
+
+model VoiceBidLog {
+  id          String   @id @default(cuid())
+  sessionId   String
+  userId      String
+  spokenText  String
+  parsedAmount Float?
+  confidence  Float
+  createdAt   DateTime @default(now())
+}
