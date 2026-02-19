@@ -7,7 +7,7 @@ import { PrismaService } from '../prisma/prisma.service';
 @WebSocketGateway({ cors: true })
 export class LiveGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
-  server: Server;
+  server: any;
 
   private redisClient: any;
 
