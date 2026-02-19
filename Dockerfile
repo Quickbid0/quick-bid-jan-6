@@ -33,10 +33,8 @@ RUN npx prisma generate
 # Build application
 RUN npm run build
 
-# Remove development dependencies and musl binaries - only keep glibc
-RUN npm prune --production && \
-    rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
-    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl*
+# Remove development dependencies (keep Prisma - already generated)
+RUN npm prune --production
 
 # ================================
 # PRODUCTION STAGE
@@ -71,21 +69,22 @@ COPY --from=builder /app/dist ./dist
 # Copy Prisma schema and migrations
 COPY --from=builder /app/prisma ./prisma
 
-# Copy entrypoint script from backend directory
-COPY backend/docker-entrypoint.sh ./docker-entrypoint.sh
-
-# Make entrypoint executable
-RUN chmod +x /app/docker-entrypoint.sh && chown -R quickmela:nodejs /app
-
 # Change ownership to non-root user
 RUN chown -R quickmela:nodejs /app
-USER root
+USER quickmela
+
+# Expose port
+EXPOSE 4000
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:4000/health || exit 1
 
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start application with entrypoint script
-CMD ["/app/docker-entrypoint.sh"]
+# Start application directly (Prisma already generated in builder)
+CMD ["node", "dist/main.js"]
 
 # ================================
 # METADATA

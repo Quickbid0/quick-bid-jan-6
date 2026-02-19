@@ -27,22 +27,14 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Generate Prisma client with glibc target
+# Generate Prisma client (glibc) - ONCE in builder
 RUN npx prisma generate
-
-# Remove musl binaries - only keep glibc (linux-x64)
-RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
-    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
-    rm -rf /app/node_modules/prisma/libquery_engine-linux-musl*
 
 # Build the application
 RUN npm run build
 
-# Remove dev dependencies and musl binaries
-RUN npm prune --production && \
-    rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
-    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
-    rm -rf /app/node_modules/prisma/libquery_engine-linux-musl*
+# Remove dev dependencies but KEEP Prisma-generated files
+RUN npm prune --production
 
 # ================================
 # PRODUCTION STAGE
@@ -76,17 +68,16 @@ ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=quickmela:nodejs /app/docker-entrypoint.sh ./docker-entrypoint.sh
-
-# Make entrypoint executable
-RUN chmod +x /app/docker-entrypoint.sh
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \
     chown -R quickmela:nodejs /app/uploads /app/logs /app/temp
 
-# User must be root to run prisma generate
-USER root
+# Switch to non-root user
+USER quickmela
+
+# Expose port
+EXPOSE 3000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
@@ -95,5 +86,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application with entrypoint script
-CMD ["/app/docker-entrypoint.sh"]
+# Start the application directly (Prisma already generated)
+CMD ["node", "dist/main.js"]
