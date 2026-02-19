@@ -1,9 +1,12 @@
-import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-dotenv.config({ path: `${__dirname}/.env` });
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.startServer = startServer;
+const dotenv_1 = require("dotenv");
+const url_1 = require("url");
+const path_1 = require("path");
+const __filename = (0, url_1.fileURLToPath)(import.meta.url);
+const __dirname = (0, path_1.dirname)(__filename);
+dotenv_1.default.config({ path: `${__dirname}/.env` });
 const express = require('express');
 const http = require('http');
 const cors = require('cors');
@@ -12,21 +15,21 @@ const { Pool } = require('pg');
 const { createClient } = require('@supabase/supabase-js');
 const crypto = require('crypto');
 const Sentry = require('@sentry/node');
-import { registerAuctionSocket } from './sockets/auctionSocket.ts';
-import { CountdownService } from './services/countdownService.ts';
-import { createAdsRouter } from './routes/adsRoutes.ts';
-import { createDepositRouter } from './routes/depositRoutes.ts';
-import { createMarketingRouter } from './routes/marketingRoutes.ts';
-import { createAiRouter } from './routes/aiRoutes.ts';
-import { createExotelRouter } from './routes/exotelRoutes.ts';
-import { createSupportRouter } from './routes/supportRoutes.ts';
-import { createFinanceRouter } from './routes/financeRoutes.ts';
-import { createPartnerWebhookRouter } from './routes/partnerWebhookRoutes.ts';
-import { BidService } from './services/bidService.ts';
-import { razorpayWebhookHandler } from './controllers/depositController.ts';
-import { createWinsRouter } from './routes/winsRoutes.ts';
-import { createDepartmentsRouter } from './routes/departmentsRoutes.ts';
-import { createRiskRouter } from './routes/riskRoutes.ts';
+const auctionSocket_ts_1 = require("./sockets/auctionSocket.ts");
+const countdownService_ts_1 = require("./services/countdownService.ts");
+const adsRoutes_ts_1 = require("./routes/adsRoutes.ts");
+const depositRoutes_ts_1 = require("./routes/depositRoutes.ts");
+const marketingRoutes_ts_1 = require("./routes/marketingRoutes.ts");
+const aiRoutes_ts_1 = require("./routes/aiRoutes.ts");
+const exotelRoutes_ts_1 = require("./routes/exotelRoutes.ts");
+const supportRoutes_ts_1 = require("./routes/supportRoutes.ts");
+const financeRoutes_ts_1 = require("./routes/financeRoutes.ts");
+const partnerWebhookRoutes_ts_1 = require("./routes/partnerWebhookRoutes.ts");
+const bidService_ts_1 = require("./services/bidService.ts");
+const depositController_ts_1 = require("./controllers/depositController.ts");
+const winsRoutes_ts_1 = require("./routes/winsRoutes.ts");
+const departmentsRoutes_ts_1 = require("./routes/departmentsRoutes.ts");
+const riskRoutes_ts_1 = require("./routes/riskRoutes.ts");
 if (!DATABASE_URL) {
     console.warn('[live-backend] DATABASE_URL is not set. Postgres connections will fail.');
 }
@@ -81,7 +84,7 @@ const authMiddleware = async (req, res, next) => {
         return res.status(500).json({ error: 'AUTH_VERIFICATION_FAILED' });
     }
 };
-export async function startServer() {
+async function startServer() {
     if (!DATABASE_URL && supabase) {
         console.log('[live-backend] Using Supabase instead of PostgreSQL');
     }
@@ -124,7 +127,7 @@ export async function startServer() {
         }
         next();
     });
-    app.post('/webhooks/razorpay', razorpayWebhookHandler(pool));
+    app.post('/webhooks/razorpay', (0, depositController_ts_1.razorpayWebhookHandler)(pool));
     app.use(authMiddleware);
     const server = http.createServer(app);
     const io = new SocketIOServer(server, {
@@ -142,11 +145,11 @@ export async function startServer() {
             credentials: true,
         },
     });
-    registerAuctionSocket(io, pool);
-    const bidService = new BidService(io, pool);
-    const countdownService = new CountdownService(io, pool);
+    (0, auctionSocket_ts_1.registerAuctionSocket)(io, pool);
+    const bidService = new bidService_ts_1.BidService(io, pool);
+    const countdownService = new countdownService_ts_1.CountdownService(io, pool);
     await countdownService.initializeActiveAuctions();
-    registerAuctionSocket(io, pool, countdownService);
+    (0, auctionSocket_ts_1.registerAuctionSocket)(io, pool, countdownService);
     async function autoEndLiveAuctions() {
         try {
             const res = await pool.query(`select id
@@ -169,18 +172,18 @@ export async function startServer() {
             console.error('[live-backend] autoEndLiveAuctions query failed', err);
         }
     }
-    setInterval(autoEndLiveAuctions, 15000);
-    app.use('/api/ads', createAdsRouter(io, pool, authMiddleware));
-    app.use('/api/deposits', createDepositRouter(pool, authMiddleware));
-    app.use('/api/marketing', createMarketingRouter(pool));
-    app.use('/api/ai', createAiRouter(authMiddleware));
-    app.use('/api/support', createSupportRouter(pool, authMiddleware));
-    app.use('/api/v1/finance', createFinanceRouter(pool, authMiddleware));
-    app.use('/api/v1/webhooks/partner', createPartnerWebhookRouter(pool));
-    app.use('/webhooks/exotel', createExotelRouter(pool));
-    app.use('/api/wins', createWinsRouter(pool, authMiddleware));
-    app.use('/api/departments', createDepartmentsRouter(pool));
-    app.use('/api/risk', createRiskRouter(pool, authMiddleware));
+    setInterval(autoEndLiveAuctions, 15_000);
+    app.use('/api/ads', (0, adsRoutes_ts_1.createAdsRouter)(io, pool, authMiddleware));
+    app.use('/api/deposits', (0, depositRoutes_ts_1.createDepositRouter)(pool, authMiddleware));
+    app.use('/api/marketing', (0, marketingRoutes_ts_1.createMarketingRouter)(pool));
+    app.use('/api/ai', (0, aiRoutes_ts_1.createAiRouter)(authMiddleware));
+    app.use('/api/support', (0, supportRoutes_ts_1.createSupportRouter)(pool, authMiddleware));
+    app.use('/api/v1/finance', (0, financeRoutes_ts_1.createFinanceRouter)(pool, authMiddleware));
+    app.use('/api/v1/webhooks/partner', (0, partnerWebhookRoutes_ts_1.createPartnerWebhookRouter)(pool));
+    app.use('/webhooks/exotel', (0, exotelRoutes_ts_1.createExotelRouter)(pool));
+    app.use('/api/wins', (0, winsRoutes_ts_1.createWinsRouter)(pool, authMiddleware));
+    app.use('/api/departments', (0, departmentsRoutes_ts_1.createDepartmentsRouter)(pool));
+    app.use('/api/risk', (0, riskRoutes_ts_1.createRiskRouter)(pool, authMiddleware));
     await new Promise((resolve) => {
         server.listen(PORT, () => {
             console.log(`[live-backend] listening on http://localhost:${PORT}`);
