@@ -79,6 +79,12 @@ COPY --from=builder /app/dist ./dist
 # Copy Prisma schema and migrations
 COPY --from=builder /app/prisma ./prisma
 
+# Copy environment configuration (Railway will override with platform variables)
+COPY .env.production ./.env.production
+
+# Set production environment
+ENV NODE_ENV=production
+
 # Verify Prisma client was copied
 RUN echo "=== Verifying Prisma client in production image ===" && \
     if [ -f "node_modules/.prisma/client/index.js" ]; then \

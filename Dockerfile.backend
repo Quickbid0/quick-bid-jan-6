@@ -79,6 +79,12 @@ COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
 
+# Copy environment configuration (Railway will override with platform variables)
+COPY --chown=quickmela:nodejs .env.production ./.env.production
+
+# Set production environment
+ENV NODE_ENV=production
+
 # Verify Prisma client was copied
 RUN echo "=== Verifying Prisma client in production image ===" && \
     if [ -f "node_modules/.prisma/client/index.js" ]; then \
