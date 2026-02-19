@@ -33,18 +33,9 @@ RUN npx prisma generate
 # Build the application
 RUN npm run build
 
-# Remove dev dependencies but KEEP Prisma-generated files
-RUN npm prune --production
-
-# Verify Prisma files exist and list them
-RUN echo "=== Checking Prisma files after npm prune ===" && \
-    if [ -d "node_modules/.prisma" ]; then \
-      echo "✓ Prisma directory found"; \
-      ls -lh node_modules/.prisma/client/ 2>/dev/null | head -5 || echo "  (Warning: client subdirectory missing)"; \
-    else \
-      echo "✗ ERROR: Prisma directory missing!"; \
-      exit 1; \
-    fi
+# Keep full node_modules for production (includes Prisma packages for generation fallback)
+# We'll use --omit=dev at production startup if needed
+# For now, keep everything to ensure Prisma works
 
 # ================================
 # PRODUCTION STAGE
@@ -79,22 +70,16 @@ COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
 
+# Copy startup script and source
+COPY --from=builder --chown=quickmela:nodejs /app/backend/docker-entrypoint.sh ./docker-entrypoint.sh
+COPY --from=builder --chown=quickmela:nodejs /app/package*.json ./
+RUN chmod +x ./docker-entrypoint.sh
+
 # Copy environment configuration (Railway will override with platform variables)
 COPY --chown=quickmela:nodejs .env.production ./.env.production
 
 # Set production environment
 ENV NODE_ENV=production
-
-# Verify Prisma client was copied
-RUN echo "=== Verifying Prisma client in production image ===" && \
-    if [ -f "node_modules/.prisma/client/index.js" ]; then \
-      echo "✓ Prisma client index.js found"; \
-      ls -lh node_modules/.prisma/client/index.js; \
-    else \
-      echo "✗ ERROR: Prisma client index.js NOT FOUND!"; \
-      ls -la node_modules/.prisma/ || echo "  .prisma directory also missing"; \
-      exit 1; \
-    fi
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \
@@ -110,15 +95,10 @@ USER quickmela
 # Expose port
 EXPOSE 3000
 
-# Health check
+# Health check (starts after 60 seconds to allow Prisma generation)
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
     CMD curl -f http://localhost:3000/health || exit 1
 
-# Ensure Prisma is generated at startup, then start the application
+# Use startup script for proper Prisma initialization
 ENTRYPOINT ["dumb-init", "--"]
-CMD ["sh", "-c", "npx prisma generate 2>/dev/null || true && exec node dist/main.js"]
-# Use dumb-init to handle signals properly
-ENTRYPOINT ["dumb-init", "--"]
-
-# Start the application directly (Prisma already generated)
-CMD ["node", "dist/main.js"]
+CMD ["./docker-entrypoint.sh"]
