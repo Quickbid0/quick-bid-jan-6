@@ -10,7 +10,6 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import DOMPurify from 'isomorphic-dompurify';
 
 const prisma = new PrismaClient();
 
@@ -73,9 +72,9 @@ export class YoutubeGalleryController {
       throw new BadRequestException('Unable to extract video ID');
     }
 
-    // sanitize title/description (XSS protection)
-    const safeTitle = dto.title ? DOMPurify.sanitize(dto.title) : 'Untitled Video';
-    const safeDescription = dto.description ? DOMPurify.sanitize(dto.description) : undefined;
+    // sanitize title/description (basic trimming - frontend handles HTML rendering)
+    const safeTitle = (dto.title || 'Untitled Video').trim().substring(0, 255);
+    const safeDescription = dto.description ? dto.description.trim().substring(0, 1000) : undefined;
 
     try {
       // Check for duplicates using canonical id

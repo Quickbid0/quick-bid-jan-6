@@ -173,7 +173,7 @@ export class AuthService {
               passwordHash: hashedPassword, // Now properly hashed
               role: userData.role as any,
               status: userData.status,
-              emailVerified: userData.emailVerified ? 'VERIFIED' : 'UNVERIFIED',
+              emailVerified: userData.emailVerified ? true : false,
               wallet: {
                 create: {
                   balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
