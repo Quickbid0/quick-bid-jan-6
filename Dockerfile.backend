@@ -17,6 +17,9 @@ WORKDIR /app
 COPY package*.json ./
 COPY prisma ./prisma/
 
+# Force Prisma to use glibc binaries (linux-x64) instead of musl
+ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
+
 # Install all dependencies (including dev dependencies for build)
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
 RUN npm ci --legacy-peer-deps
@@ -24,7 +27,7 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Generate Prisma client
+# Generate Prisma client with explicit platform
 RUN npx prisma generate
 
 # Build the application
@@ -58,10 +61,16 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Copy package files
 COPY package*.json ./
 
+# Force Prisma to use glibc binaries
+ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
+
 # Copy built application from builder stage
 COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
+
+# Regenerate Prisma client for production environment
+RUN npx prisma generate
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \

@@ -17,11 +17,14 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 COPY package*.json ./
 COPY prisma ./prisma/
 
+# Force Prisma to use glibc binaries (linux-x64) instead of musl
+ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
+
 # Install all dependencies (including dev dependencies for build)
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
 RUN npm ci --legacy-peer-deps
 
-# Generate Prisma client
+# Generate Prisma client with explicit platform
 RUN npx prisma generate
 
 # Copy source code
@@ -54,6 +57,9 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
+# Force Prisma to use glibc binaries
+ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
+
 # Copy production dependencies from builder
 COPY --from=builder /app/node_modules ./node_modules
 
@@ -62,6 +68,9 @@ COPY --from=builder /app/dist ./dist
 
 # Copy Prisma schema and migrations
 COPY --from=builder /app/prisma ./prisma
+
+# Regenerate Prisma client for production environment
+RUN npx prisma generate
 
 # Copy other necessary files
 COPY --from=builder /app/src/safety-rules/safety-rules.service.ts ./dist/src/safety-rules/
