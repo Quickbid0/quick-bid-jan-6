@@ -9,9 +9,11 @@ export class LiveGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
   @WebSocketServer()
   server: Server;
 
-  private redis = new Redis();
+  private redisClient: any;
 
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) {
+    this.redisClient = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' });
+  }
 
   async afterInit(server: Server) {
     console.log('Live Auction Gateway initialized');
@@ -29,6 +31,8 @@ export class LiveGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
         console.error('Failed to connect Redis adapter:', error);
       }
     }
+
+    await this.redisClient.connect();
   }
 
   handleConnection(client: Socket) {
@@ -45,8 +49,8 @@ export class LiveGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
 
     const session = await this.prisma.liveAuctionSession.findUnique({ where: { id: payload.sessionId } });
     if (session) {
-      const highestBid = await this.redis.get(`auction:${payload.sessionId}:highestBid`);
-      const bidders = await this.redis.smembers(`auction:${payload.sessionId}:bidders`);
+      const highestBid = await this.redisClient.get(`auction:${payload.sessionId}:highestBid`);
+      const bidders = await this.redisClient.smembers(`auction:${payload.sessionId}:bidders`);
       client.emit('auctionState', { session, highestBid: parseFloat(highestBid || '0'), bidders: bidders.length });
     }
   }
@@ -70,11 +74,11 @@ export class LiveGateway implements OnGatewayInit, OnGatewayConnection, OnGatewa
       },
     });
 
-    await this.redis.set(`auction:${payload.sessionId}:highestBid`, payload.amount.toString());
-    await this.redis.sadd(`auction:${payload.sessionId}:bidders`, payload.userId);
+    await this.redisClient.set(`auction:${payload.sessionId}:highestBid`, payload.amount.toString());
+    await this.redisClient.sadd(`auction:${payload.sessionId}:bidders`, payload.userId);
 
     this.server.to(payload.sessionId).emit('bidPlaced', { userId: payload.userId, amount: payload.amount });
-    this.server.to(payload.sessionId).emit('liveStatsUpdate', { highestBid: payload.amount, biddersCount: await this.redis.scard(`auction:${payload.sessionId}:bidders`) });
+    this.server.to(payload.sessionId).emit('liveStatsUpdate', { highestBid: payload.amount, biddersCount: await this.redisClient.scard(`auction:${payload.sessionId}:bidders`) });
 
     // Trigger auto-bids
     await this.triggerAutoBids(payload.sessionId, payload.userId, payload.amount);
