@@ -4,18 +4,14 @@
 # ================================
 # BUILD STAGE
 # ================================
-FROM node:18-alpine AS builder
+FROM node:18-bookworm AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Install build dependencies
-RUN apk add --no-cache \
-    python3 \
-    make \
-    g++ \
-    sqlite-dev \
-    postgresql-dev
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 make g++ && rm -rf /var/lib/apt/lists/*
 
 # Copy package files
 COPY package*.json ./
@@ -40,14 +36,13 @@ RUN npm prune --production
 # ================================
 # PRODUCTION STAGE
 # ================================
-FROM node:18-alpine AS production
+FROM node:18-bookworm AS production
 
-# Install production runtime dependencies (including OpenSSL 1.1 for Prisma)
-RUN apk add --no-cache \
+# Install production runtime dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
     dumb-init \
     curl \
-    postgresql-client \
-    openssl1.1-compat
+    postgresql-client && rm -rf /var/lib/apt/lists/*
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
