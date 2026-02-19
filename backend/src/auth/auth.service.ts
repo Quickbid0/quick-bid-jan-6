@@ -3,7 +3,6 @@ import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '../prisma/prisma.service';
 import { ReferralService } from '../referral/referral.service';
-import { EmailVerificationStatus } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 
 @Injectable()
@@ -174,7 +173,7 @@ export class AuthService {
               passwordHash: hashedPassword, // Now properly hashed
               role: userData.role as any,
               status: userData.status,
-              emailVerified: userData.emailVerified ? EmailVerificationStatus.VERIFIED : EmailVerificationStatus.UNVERIFIED,
+              emailVerified: userData.emailVerified ? 'VERIFIED' : 'UNVERIFIED',
               wallet: {
                 create: {
                   balance: userData.role === 'SUPER_ADMIN' ? 1000000 : userData.role === 'ADMIN' ? 500000 : 10000
