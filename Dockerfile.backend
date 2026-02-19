@@ -37,11 +37,12 @@ RUN npm prune --production
 # ================================
 FROM node:18-alpine AS production
 
-# Install production runtime dependencies
+# Install production runtime dependencies (including OpenSSL 1.1 for Prisma)
 RUN apk add --no-cache \
     dumb-init \
     curl \
     tzdata \
+    openssl1.1-compat \
     && rm -rf /var/cache/apk/*
 
 # Create app user for security

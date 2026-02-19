@@ -42,11 +42,12 @@ RUN npm prune --production
 # ================================
 FROM node:18-alpine AS production
 
-# Install production runtime dependencies
+# Install production runtime dependencies (including OpenSSL 1.1 for Prisma)
 RUN apk add --no-cache \
     dumb-init \
     curl \
-    postgresql-client
+    postgresql-client \
+    openssl1.1-compat
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs && \
