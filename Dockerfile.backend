@@ -69,18 +69,13 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Copy package files
 COPY package*.json ./
 
-# Force Prisma to use glibc binaries
+# Force all Prisma operations to use glibc (linux-x64)
 ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 
 # Copy built application from builder stage
 COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
-
-# Remove any remaining musl binaries in production
-RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
-    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
-    chown -R quickmela:nodejs /app/node_modules
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \

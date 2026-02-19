@@ -27,12 +27,8 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Generate Prisma client with glibc target
+# Generate Prisma client for glibc
 RUN npx prisma generate
-
-# Remove musl binaries immediately - only keep glibc
-RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
-    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl*
 
 # Build application
 RUN npm run build
@@ -61,10 +57,9 @@ RUN addgroup -g 1001 -S nodejs && \
 WORKDIR /app
 
 # Copy package files
-# Copy package files
 COPY package*.json ./
 
-# Force Prisma to use glibc binaries
+# Force all Prisma operations to use glibc (linux-x64)
 ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 
 # Copy production dependencies from builder
