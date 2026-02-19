@@ -3,8 +3,6 @@ import { ConfigModule } from '@nestjs/config';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { EmailModule } from './email/email.module';
-import { AiModule } from './ai/ai.module';
-import { LiveModule } from './live/live.module';
 import { SellerModule } from './seller/seller.module';
 
 @Module({
@@ -16,8 +14,6 @@ import { SellerModule } from './seller/seller.module';
     PrismaModule,
     AuthModule,
     EmailModule,
-    AiModule,
-    LiveModule,
     SellerModule,
   ],
 })
