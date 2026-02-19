@@ -8,6 +8,7 @@ import { RolesGuard } from './roles.guard';
 import { CsrfGuard } from './csrf.guard';
 import { EmailModule } from '../email/email.module';
 import { PrismaModule } from '../prisma/prisma.module';
+import { ReferralModule } from '../referral/referral.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { PrismaModule } from '../prisma/prisma.module';
     }),
     EmailModule,
     PrismaModule,
+    ReferralModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAuthGuard, RolesGuard, CsrfGuard],
