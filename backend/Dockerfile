@@ -1,6 +1,6 @@
 FROM node:18-alpine
 
-RUN apk add --no-cache curl
+RUN echo 'http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories && apk update && apk add --no-cache libssl1.1 libcrypto1.1 curl
 
 WORKDIR /app
 
