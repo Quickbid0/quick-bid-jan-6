@@ -1,5 +1,5 @@
 import React from 'react';
-import AutoBidSettings from '../components/AI/AutoBidSettings';
+import AutoBidSettings from '../components/AutoBidSettings';
 
 const AISettings: React.FC = () => {
   return (
