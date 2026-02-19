@@ -65,6 +65,10 @@ model User {
   platformFeesPaid    PlatformFee[] @relation("PlatformFeeWinner")
   platformFeesEarned  PlatformFee[] @relation("PlatformFeeSeller")
 
+  // Seller trust & verification relations
+  youtubeGallery      YoutubeEmbed[]
+  reviewReplies       ReviewReply[]
+
   @@index([email], map: "idx_users_email")
   @@index([phoneNumber], map: "idx_users_phone")
   @@index([role], map: "idx_users_role")
@@ -274,6 +278,7 @@ model Product {
   bids                  Bid[]
   reviews               Review[]
   favorites             ProductFavorite[]
+  toyMetadata           ToyMetadata?  @relation("ToyMetadata")
 
   @@index([sellerId], map: "idx_products_seller_id")
   @@index([status], map: "idx_products_status")
@@ -503,11 +508,29 @@ model Review {
 
   product     Product  @relation(fields: [productId], references: [id])
   reviewer    User     @relation(fields: [reviewerId], references: [id])
+  replies     ReviewReply[]
 
   @@index([productId], map: "idx_reviews_product_id")
   @@index([reviewerId], map: "idx_reviews_reviewer_id")
   @@index([rating], map: "idx_reviews_rating")
   @@map("reviews")
+}
+
+model ReviewReply {
+  id        String   @id @default(cuid())
+  reviewId  String   @map("review_id")
+  sellerId  String   @map("seller_id")
+  comment   String   @db.Text
+  isPublic  Boolean  @default(true) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  seller    User     @relation(fields: [sellerId], references: [id])
+
+  @@index([reviewId], map: "idx_review_replies_review_id")
+  @@index([sellerId], map: "idx_review_replies_seller_id")
+  @@map("review_replies")
 }
 
 model ProductFavorite {
@@ -523,6 +546,51 @@ model ProductFavorite {
   @@index([userId], map: "idx_favorites_user_id")
   @@index([productId], map: "idx_favorites_product_id")
   @@map("product_favorites")
+}
+
+// ============================================================================
+// SELLER TRUST & VERIFICATION SYSTEM
+// ============================================================================
+
+model YoutubeEmbed {
+  id              String   @id @default(cuid())
+  sellerId        String   @map("seller_id")
+  youtubeUrl      String   @map("youtube_url")
+  videoId         String   @map("video_id") // Extracted from URL for deduplication
+  title           String?
+  thumbnail       String?  // URL to video thumbnail
+  description     String?  @db.Text
+  duration        Int?     // in seconds
+  displayOrder    Int      @default(0) @map("display_order")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  seller          User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId], map: "idx_youtube_seller_id")
+  @@index([videoId], map: "idx_youtube_video_id")
+  @@map("youtube_embeds")
+}
+
+model ToyMetadata {
+  id                          String   @id @default(cuid())
+  productId                   String   @unique @map("product_id")
+  ageMin                      Int      // Minimum age in months
+  ageMax                      Int?     // Maximum age in months
+  safetyCompliances           String[] @default([]) @map("safety_compliances") // CE, ASTM, ISO, EN71
+  isRecalledByManufacturer    Boolean  @default(false) @map("is_recalled_by_manufacturer")
+  recallDate                  DateTime? @map("recall_date")
+  material                    String?  // Plastic, Wood, Metal, Fabric
+  hasSmallParts               Boolean  @default(false) @map("has_small_parts")
+  hasChokingHazard            Boolean  @default(false) @map("has_choking_hazard")
+  warningLabel                String?  @db.Text @map("warning_label")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  product                     Product  @relation("ToyMetadata", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId], map: "idx_toy_metadata_product_id")
+  @@map("toy_metadata")
 }
 
 // ============================================================================
@@ -606,10 +674,14 @@ enum TransactionStatus {
 enum ProductCategory {
   ELECTRONICS
   VEHICLES
+  BIKES
   REAL_ESTATE
   GOLD_JEWELLERY
   INDUSTRIAL_EQUIPMENT
   HANDMADE_ART
+  PAINTINGS_ARTWORK
+  WOODWORK
+  TOYS
   COLLECTIBLES
   OTHERS
 }
@@ -703,4 +775,10 @@ enum AuditAction {
   REJECT
   PAYMENT
   REFUND
+}
+
+enum ReviewType {
+  SELLER
+  PRODUCT
+  TRANSACTION
 }
