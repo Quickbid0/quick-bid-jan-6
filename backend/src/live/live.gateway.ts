@@ -4,8 +4,9 @@ import { RedisAdapter } from '@socket.io/redis-adapter';
 import { createClient } from 'redis';
 import { PrismaService } from '../prisma/prisma.service';
 
-@WebSocketGateway({ cors: true })
+  @WebSocketGateway({ cors: true })
 export class LiveGateway implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
+  // @ts-ignore
   @WebSocketServer()
   server: any;
 
