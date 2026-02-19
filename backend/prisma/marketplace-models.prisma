@@ -1,0 +1,501 @@
+// Marketplace Models - Category-Specific Features
+// This file contains the missing models for full feature parity across all 6 seller categories
+
+// ============================================================================
+// ENUM DEFINITIONS
+// ============================================================================
+
+enum ProductCategory {
+  HANDMADE_ART
+  TOYS
+  VEHICLES
+  PAINTINGS_ARTWORK
+  WOODWORK
+  OTHERS
+}
+
+enum SellerTier {
+  NEW_SELLER
+  TRUSTED_SELLER
+  TOP_RATED
+  ENTERPRISE
+}
+
+enum KYCStatus {
+  PENDING
+  UNDER_REVIEW
+  VERIFIED
+  REJECTED
+  EXPIRED
+}
+
+enum ReviewType {
+  SELLER
+  PRODUCT
+  TRANSACTION
+}
+
+// ============================================================================
+// CORE MARKETPLACE MODELS
+// ============================================================================
+
+model Product {
+  id                    String   @id @default(cuid())
+  sellerId              String
+  title                 String
+  description           String
+  category              ProductCategory
+  subcategory           String?
+  price                 Float
+  images                String[] // Array of image URLs
+  videoUrl              String?
+  isActive              Boolean  @default(true)
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relationships
+  seller                User     @relation("ProductSeller", fields: [sellerId], references: [id], onDelete: Cascade)
+  auctions              Auction[]
+  reviews               Review[]
+  metadata              ProductMetadata?
+
+  @@index([sellerId])
+  @@index([category])
+  @@index([createdAt])
+}
+
+model ProductMetadata {
+  id                    String   @id @default(cuid())
+  productId             String   @unique
+  product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  // Creative/Handmade fields
+  materials             String?  // e.g., "Oil on canvas", "Teak wood", "Polymer clay"
+  dimensions            String?  // e.g., "24x36 inches"
+  technique             String?  // e.g., "Acrylic painting", "Hand-carved"
+  handmadeProofVideo    String?  // Video URL proving handmade creation
+  isVerifiedHandmade    Boolean  @default(false)
+
+  // Toys fields
+  ageRating             Int?     // Minimum age in months
+  safetyCompliance      String[] // e.g., ["CE", "ASTM", "ISO"]
+  isRecalled            Boolean  @default(false)
+
+  // Bikes/Vehicle fields
+  vehicleYear           Int?
+  make                  String?
+  model                 String?
+  engineCC              Int?     // For bikes: engine capacity
+  transmission          String?  // Manual/Automatic/(Bike-specific)
+  mileage               Float?   // in km
+  registrationNumber    String?  // Masked for privacy
+  engineNumber          String?  // Masked for privacy
+  chassisNumber         String?  // Masked for privacy
+  fuelType              String?  // Petrol/Diesel/CNG/Hybrid/Electric
+  bodyType              String?  // Sedan, SUV, Auto, Scooty, etc.
+
+  @@index([productId])
+}
+
+model SellerProfile {
+  id                    String   @id @default(cuid())
+  userId                String   @unique
+  user                  User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Profile information
+  businessName          String?
+  bio                   String?
+  profileImage          String?
+  bannerImage           String?
+  sellerTier            SellerTier @default(NEW_SELLER)
+  
+  // Metrics
+  totalSales            Int      @default(0)
+  totalRating           Float    @default(0) // 0-5
+  totalReviews          Int      @default(0)
+  responseTime          Int      @default(0) // in hours
+  acceptanceRate        Float    @default(0) // 0-100
+  returnRate            Float    @default(0) // 0-100
+  
+  // Verification
+  isVerified            Boolean  @default(false)
+  isTopRated            Boolean  @default(false)
+  isPowerSeller         Boolean  @default(false)
+  
+  // Settings
+  enablesYoutubeGallery Boolean @default(false)
+  enablesVideoBidding   Boolean @default(false)
+  vendorType            String?  // INDIVIDUAL, SHOP, ENTERPRISE
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relationships
+  kyc                   KYCVerification?
+  youtubeGallery        YoutubeEmbed[]
+  faqs                  SellerFAQ[]
+
+  @@index([userId])
+  @@index([sellerTier])
+  @@index([isVerified])
+}
+
+// ============================================================================
+// TRUST & VERIFICATION MODELS
+// ============================================================================
+
+model Review {
+  id                    String   @id @default(cuid())
+  sellerId              String
+  buyerId               String
+  seller                User     @relation("SellerReviews", fields: [sellerId], references: [id], onDelete: Cascade)
+  buyer                 User     @relation("BuyerReviews", fields: [buyerId], references: [id], onDelete: Cascade)
+  
+  productId             String?
+  product               Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+  
+  rating                Int      // 1-5
+  title                 String
+  comment               String
+  reviewType            ReviewType @default(SELLER)
+  
+  // Media
+  images                String[]
+  videoUrl              String?
+  
+  // Verification
+  isVerifiedPurchase    Boolean  @default(false)
+  isVerifiedReview      Boolean  @default(false)
+  
+  // Engagement
+  helpfulCount          Int      @default(0)
+  unhelpfulCount        Int      @default(0)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relationships
+  replies               ReviewReply[]
+
+  @@index([sellerId])
+  @@index([buyerId])
+  @@index([rating])
+  @@index([createdAt])
+  @@unique([sellerId, buyerId, productId])
+}
+
+model ReviewReply {
+  id                    String   @id @default(cuid())
+  reviewId              String
+  review                Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  
+  sellerId              String
+  seller                User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+  
+  comment               String
+  isPublic              Boolean  @default(true)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([reviewId])
+  @@index([sellerId])
+}
+
+model YoutubeEmbed {
+  id                    String   @id @default(cuid())
+  sellerProfileId       String
+  sellerProfile         SellerProfile @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  
+  youtubeUrl            String
+  videoId               String   // Extracted from URL
+  title                 String?
+  thumbnail             String?  // URL to video thumbnail
+  description           String?
+  duration              Int?     // in seconds
+  
+  displayOrder          Int      @default(0)
+  isActive              Boolean  @default(true)
+  
+  createdAt             DateTime @default(now())
+
+  @@index([sellerProfileId])
+  @@index([videoId])
+}
+
+model KYCVerification {
+  id                    String   @id @default(cuid())
+  sellerProfileId       String   @unique
+  sellerProfile         SellerProfile @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  
+  // Personal/Business info
+  legalName             String
+  businessName          String?
+  businessType          String   // INDIVIDUAL, PARTNERSHIP, CORPORATION
+  gstNumber             String?
+  panNumber             String   // PAN is always required in India
+  aadhaarNumber         String?  // Masked, last 4 visible only
+  
+  // Documents
+  identityDocType       String   // PASSPORT, AADHAAR, DL, VOTER_ID
+  identityDocUrl        String
+  businessDocUrl        String?
+  bankDocUrl            String?
+  
+  // Address
+  addressLine1          String
+  addressLine2          String?
+  city                  String
+  state                 String
+  postalCode            String
+  country               String   @default("India")
+  
+  // Status
+  status                KYCStatus @default(PENDING)
+  rejectionReason       String?
+  verifiedAt            DateTime?
+  expiresAt             DateTime?  // Some verifications are time-bound
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([panNumber])
+  @@index([status])
+}
+
+// ============================================================================
+// CATEGORY-SPECIFIC MODELS
+// ============================================================================
+
+model ToyMetadata {
+  id                    String   @id @default(cuid())
+  productId             String   @unique
+  
+  ageMin                Int      // Minimum age in months
+  ageMax                Int?     // Maximum age in months
+  
+  safetyCompliances     String[] // CE, ASTM, ISO, EN71, etc.
+  isRecalledByManufacturer Boolean @default(false)
+  recallDate            DateTime?
+  
+  material              String   // Plastic, Wood, Metal, Fabric, etc.
+  hasSmallParts         Boolean  @default(false)
+  hasChokingHazard      Boolean  @default(false)
+  
+  warningLabel          String?
+  
+  createdAt             DateTime @default(now())
+}
+
+model BikeSpecification {
+  id                    String   @id @default(cuid())
+  productId             String   @unique
+  
+  // Engine specs
+  engineCC              Int      // 50, 100, 125, 150, 200, 250, 350, 500+
+  fuelType              String   // Petrol, Diesel, CNG, Electric
+  transmission          String   // Manual, CVT, Automatic, Semi-Auto
+  
+  // Design specs
+  forkType              String   // Telescopic, Inverted, Rigid, etc.
+  suspensionType        String?  // Independent, Synchronized, etc.
+  brakeTypeF            String   // Drum, Disc, ABS
+  brakeTypeR            String   // Drum, Disc, ABS
+  
+  // Performance
+  maxPower              Float?   // in bhp
+  maxTorque             Float?   // in Nm
+  topSpeed              Int?     // in kmph
+  mileage               Float?   // in kmpl
+  
+  // Comfort & Features
+  seatHeight            Float?   // in mm
+  wheelbaseLength       Float?   // in mm
+  groundClearance       Float?   // in mm
+  fuelTankCapacity      Float    // in liters
+  
+  createdAt             DateTime @default(now())
+}
+
+model VehicleInspectionReport {
+  id                    String   @id @default(cuid())
+  productId             String   @unique
+  
+  // Vehicle details
+  registrationNumber    String   // Masked like **** 2024
+  registrationValidity  DateTime?
+  
+  // Inspection checklist
+  bodyCondition         String   // Excellent, Good, Fair, Poor
+  engineCondition       String
+  interiorCondition     String
+  electricalCondition   String
+  
+  // Key issues
+  hasAccidents          Boolean  @default(false)
+  accidentDetails       String?
+  hasRepaints           Boolean  @default(false)
+  repaintAreas          String?
+  hasChallan            Boolean  @default(false)
+  challanDetails        String?
+  
+  // Documents
+  rcStatus              String   // Active, Inactive, PUC Valid, etc.
+  insuranceStatus       String?  // Active, Expired
+  pollutionStatus       String?  // Valid, Expired
+  loanStatus            String?  // No Loan, Financed
+  loanDetails           String?
+  
+  // Report
+  reportUrl             String?
+  inspectionDate        DateTime
+  inspectorName         String?
+  
+  createdAt             DateTime @default(now())
+}
+
+// ============================================================================
+// AUCTION & BIDDING MODELS
+// ============================================================================
+
+model Auction {
+  id                    String   @id @default(cuid())
+  productId             String
+  product               Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  
+  sellerId              String
+  startingPrice         Float
+  currentPrice          Float    @default(0)
+  reservePrice          Float?
+  
+  startTime             DateTime
+  endTime               DateTime
+  status                String   @default("SCHEDULED") // SCHEDULED, ACTIVE, ENDED, CANCELLED
+  
+  allowVoiceBidding     Boolean  @default(false)
+  allowAutoBidding      Boolean  @default(true)
+  
+  totalBids             Int      @default(0)
+  uniqueBidders         Int      @default(0)
+  winnerUserId          String?
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  // Relationships
+  bids                  Bid[]
+
+  @@index([productId])
+  @@index([sellerId])
+  @@index([status])
+  @@index([endTime])
+}
+
+// ============================================================================
+// SELLER MANAGEMENT MODELS
+// ============================================================================
+
+model SellerFAQ {
+  id                    String   @id @default(cuid())
+  sellerProfileId       String
+  sellerProfile         SellerProfile @relation(fields: [sellerProfileId], references: [id], onDelete: Cascade)
+  
+  question              String
+  answer                String
+  category              String   // SHIPPING, QUALITY, WARRANTY, RETURN, PRODUCT_INFO
+  
+  viewCount             Int      @default(0)
+  helpfulCount          Int      @default(0)
+  
+  displayOrder          Int      @default(0)
+  isActive              Boolean  @default(true)
+
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@index([sellerProfileId])
+  @@index([category])
+}
+
+model SellerCategory {
+  id                    String   @id @default(cuid())
+  sellerId              String
+  seller                User     @relation("SellerCategoryPref", fields: [sellerId], references: [id], onDelete: Cascade)
+  
+  category              ProductCategory
+  isEnabled             Boolean  @default(true)
+  isFeatured            Boolean  @default(false)
+  totalListings         Int      @default(0)
+  avgRating             Float    @default(0)
+  
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  @@unique([sellerId, category])
+  @@index([sellerId])
+}
+
+// ============================================================================
+// BULK OPERATIONS (Primarily for Vehicles)
+// ============================================================================
+
+model BulkUploadSession {
+  id                    String   @id @default(cuid())
+  sellerId              String
+  seller                User     @relation("BulkUploadSessions", fields: [sellerId], references: [id], onDelete: Cascade)
+  
+  fileName              String
+  fileUrl               String
+  totalRows             Int
+  processedRows         Int      @default(0)
+  successCount          Int      @default(0)
+  failureCount          Int      @default(0)
+  
+  status                String   @default("PENDING") // PENDING, IN_PROGRESS, COMPLETED, FAILED
+  errorLog              String?
+  
+  createdAt             DateTime @default(now())
+  completedAt           DateTime?
+
+  @@index([sellerId])
+  @@index([status])
+}
+
+// ============================================================================
+// DASHBOARD & ANALYTICS
+// ============================================================================
+
+model SellerDashboardMetrics {
+  id                    String   @id @default(cuid())
+  sellerId              String   @unique
+  seller                User     @relation("SellerDashboardMetrics", fields: [sellerId], references: [id], onDelete: Cascade)
+  
+  // Monthly metrics
+  monthYear             String   // e.g., "2024-01"
+  
+  // Sales
+  totalSales            Int
+  totalRevenue          Float
+  totalImpressions      Int
+  conversionRate        Float
+  
+  // Auctions
+  totalAuctionsCreated  Int
+  totalAuctionsWon      Int
+  avgSellingPrice       Float
+  
+  // Customer
+  totalOrders           Int
+  returnRate            Float
+  customerSatisfaction  Float
+  
+  // Engagement
+  totalReviews          Int
+  avgRating             Float
+  messageResponseTime   Int      // in minutes
+  
+  createdAt             DateTime @default(now())
+
+  @@unique([sellerId, monthYear])
+  @@index([sellerId])
+}
