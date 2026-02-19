@@ -9,6 +9,9 @@ FROM node:18-bookworm AS builder
 # Set working directory
 WORKDIR /app
 
+# Force Prisma to use glibc binaries (linux-x64) - MUST be set before npm ci
+ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
+
 # Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 make g++ && rm -rf /var/lib/apt/lists/*
@@ -16,9 +19,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy package files
 COPY package*.json ./
 COPY prisma ./prisma/
-
-# Force Prisma to use glibc binaries (linux-x64)
-ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 
 # Install all dependencies (including dev dependencies for build)
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
@@ -71,26 +71,21 @@ COPY --from=builder /app/dist ./dist
 # Copy Prisma schema and migrations
 COPY --from=builder /app/prisma ./prisma
 
-# Remove any remaining musl binaries
-RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
-    rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl*
+# Copy entrypoint script from backend directory
+COPY backend/docker-entrypoint.sh ./docker-entrypoint.sh
+
+# Make entrypoint executable
+RUN chmod +x /app/docker-entrypoint.sh && chown -R quickmela:nodejs /app
 
 # Change ownership to non-root user
 RUN chown -R quickmela:nodejs /app
-USER quickmela
-
-# Expose port
-EXPOSE 4000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:4000/health || exit 1
+USER root
 
 # Use dumb-init for proper signal handling
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start application
-CMD ["node", "dist/main.js"]
+# Start application with entrypoint script
+CMD ["/app/docker-entrypoint.sh"]
 
 # ================================
 # METADATA

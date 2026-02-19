@@ -13,12 +13,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Set working directory
 WORKDIR /app
 
+# Force Prisma to use glibc binaries (linux-x64) BEFORE npm ci
+ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
+
 # Copy package files for better caching
 COPY package*.json ./
 COPY prisma ./prisma/
-
-# Force Prisma to use glibc binaries (linux-x64) instead of musl
-ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 
 # Install all dependencies (including dev dependencies for build)
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
@@ -76,16 +76,17 @@ ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 COPY --from=builder --chown=quickmela:nodejs /app/dist ./dist
 COPY --from=builder --chown=quickmela:nodejs /app/node_modules ./node_modules
 COPY --from=builder --chown=quickmela:nodejs /app/prisma ./prisma
+COPY --from=builder --chown=quickmela:nodejs /app/docker-entrypoint.sh ./docker-entrypoint.sh
+
+# Make entrypoint executable
+RUN chmod +x /app/docker-entrypoint.sh
 
 # Create necessary directories with proper permissions
 RUN mkdir -p /app/uploads /app/logs /app/temp && \
     chown -R quickmela:nodejs /app/uploads /app/logs /app/temp
 
-# Switch to non-root user
-USER quickmela
-
-# Expose port
-EXPOSE 3000
+# User must be root to run prisma generate
+USER root
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
@@ -94,5 +95,5 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
 # Use dumb-init to handle signals properly
 ENTRYPOINT ["dumb-init", "--"]
 
-# Start the application
-CMD ["node", "dist/main.js"]
+# Start the application with entrypoint script
+CMD ["/app/docker-entrypoint.sh"]
