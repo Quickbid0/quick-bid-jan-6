@@ -24,13 +24,16 @@ ENV PRISMA_CLI_BINARY_TARGETS=linux-x64
 # Using --legacy-peer-deps to handle @nestjs/config@4.0.3 with @nestjs/common@9.4.0
 RUN npm ci --legacy-peer-deps
 
+# Copy source code
+COPY . .
+
+# Generate Prisma client with glibc target
+RUN npx prisma generate
+
 # Remove musl binaries - only keep glibc (linux-x64)
 RUN rm -rf /app/node_modules/.prisma/client/libquery_engine-linux-musl* && \
     rm -rf /app/node_modules/.prisma/client/query-engine-linux-musl* && \
     rm -rf /app/node_modules/prisma/libquery_engine-linux-musl*
-
-# Copy source code
-COPY . .
 
 # Build the application
 RUN npm run build
