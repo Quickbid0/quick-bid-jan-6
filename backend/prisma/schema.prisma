@@ -1,5 +1,3 @@
-// This is a Prisma schema file for the AI Intelligence Engine additions
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -9,336 +7,777 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Assuming User and Auction models exist in the main schema
-// If not, add them here minimally
+// ============================================================================
+// USER MANAGEMENT & AUTHENTICATION
+// ============================================================================
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String?
-  passwordHash String?
-  role      String   @default("BUYER") // ADMIN | BUYER | SELLER | AGENT
-  status    String   @default("ACTIVE") // ACTIVE | SUSPENDED | BANNED
-  isActive  Boolean  @default(true)
-  emailVerified Boolean @default(false)
-  phoneVerified Boolean @default(false)
+  id                  String              @id @default(cuid())
+  email               String              @unique
+  passwordHash        String?             @map("password_hash")
+  phoneNumber         String?             @unique @map("phone_number")
+  referralCode        String?             @map("referral_code")
+  referredBy          String?             @map("referred_by")
+  name                String
+  role                UserRole            @default(BUYER)
+  status              UserStatus          @default(PENDING_VERIFICATION)
+  isActive            Boolean             @default(true) @map("is_active")
+  isVerified          Boolean             @default(false) @map("is_verified")
+  emailVerified       Boolean             @default(false) @map("email_verified")
+  phoneVerified       Boolean             @default(false) @map("phone_verified")
+  faceVerified        Boolean             @default(false) @map("face_verified")
+  kycStatus           KYCStatus           @default(PENDING) @map("kyc_status")
+  lastLogin           DateTime?           @map("last_login")
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+
+  // Relations
+  profile             Profile?
+  kyc                 KYC?
+  wallet              Wallet?
+  subscription        Subscription?
+  products            Product[]
+  auctions            Auction[]
+  bids                Bid[]
+  transactions        WalletTransaction[]
+  auditLogs           AuditLog[]
+  branchStaff         BranchStaff?
+  deliveryAssignments DeliveryAssignment[]
+
+  // Opposite relations for named relations
+  verifiedKYCs        KYC[]               @relation("KYCVerifier")
+  approvedProducts    Product[]           @relation("ProductApprover")
+  wonAuctions         Auction[]           @relation("AuctionWinner")
+  managedBranches     Branch[]            @relation("BranchManager")
+  deliveriesAsSeller  Delivery[]          @relation("DeliverySeller")
+  deliveriesAsBuyer   Delivery[]          @relation("DeliveryBuyer")
+  deliveriesAsAgent   Delivery[]          @relation("DeliveryAgent")
+  assignedDeliveries  DeliveryAssignment[] @relation("AssignmentAdmin")
+  reviews             Review[]
+  favorites           ProductFavorite[]
+
+  // Referral relations
+  referralsMade       Referral[] @relation("ReferralReferrer")
+  referralsReceived   Referral[] @relation("ReferralReferred")
+
+  // Platform fee relations
+  platformFeesPaid    PlatformFee[] @relation("PlatformFeeWinner")
+  platformFeesEarned  PlatformFee[] @relation("PlatformFeeSeller")
+
+  // Seller trust & verification relations
+  youtubeGallery      YoutubeEmbed[]
+  reviewReplies       ReviewReply[]
+
+  @@index([email], map: "idx_users_email")
+  @@index([phoneNumber], map: "idx_users_phone")
+  @@index([role], map: "idx_users_role")
+  @@index([status], map: "idx_users_status")
+  @@index([isVerified], map: "idx_users_verified")
+  @@map("users")
+}
+
+model Profile {
+  id           String   @id @default(cuid())
+  userId       String   @unique @map("user_id")
+  avatarUrl    String?  @map("avatar_url")
+  bio          String?
+  dateOfBirth  DateTime? @map("date_of_birth")
+  gender       String?
+  address      String?
+  city         String?
+  state        String?
+  pincode      String?
+  occupation   String?
+  rating       Float    @default(0)
+  totalReviews Int      @default(0) @map("total_reviews")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId], map: "idx_profiles_user_id")
+  @@map("profiles")
+}
+
+model Refund {
+  id        String   @id
+  paymentId String
+  amount    Float
+  reason    String
+  status    String
+  metadata  Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
 
-  // AI relations
-  aiUserMetrics   AIUserMetrics[]
-  autoBidConfigs  AutoBidConfig[]
-  userBehaviorLogs UserBehaviorLog[]
-  sellerInsights   SellerInsight[]
-  fraudClusters    FraudCluster[]
-  aiSubscription   AISubscription?
-  subscription    Subscription?
-  wallet          Wallet?
+model Referral {
+  id           String   @id @default(cuid())
+  referrerId   String   @map("referrer_id")
+  referredId   String   @map("referred_id")
+  status       String
+  rewardAmount Float    @map("reward_amount")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  referrer User @relation("ReferralReferrer", fields: [referrerId], references: [id])
+  referred User @relation("ReferralReferred", fields: [referredId], references: [id])
+
+  @@index([referrerId], map: "idx_referrals_referrer_id")
+  @@index([referredId], map: "idx_referrals_referred_id")
+  @@index([status], map: "idx_referrals_status")
+  @@map("referrals")
+}
+
+// ============================================================================
+// KYC & VERIFICATION SYSTEM
+// ============================================================================
+
+model KYC {
+  id                String         @id @default(cuid())
+  userId            String         @unique @map("user_id")
+  documentType      DocumentType   @map("document_type")
+  documentNumber    String         @map("document_number")
+  documentFrontUrl  String         @map("document_front_url")
+  documentBackUrl   String?        @map("document_back_url")
+  selfieUrl         String         @map("selfie_url")
+  aadhaarNumber     String?        @unique @map("aadhaar_number")
+  panNumber         String?        @unique @map("pan_number")
+  extractedData     Json?          @map("extracted_data")
+  faceMatchScore    Float?         @map("face_match_score")
+  status            KYCStatus      @default(PENDING)
+  rejectionReason   String?        @map("rejection_reason")
+  verifiedAt        DateTime?      @map("verified_at")
+  verifiedBy        String?        @map("verified_by")
+  createdAt         DateTime       @default(now()) @map("created_at")
+  updatedAt         DateTime       @updatedAt @map("updated_at")
+
+  user              User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  verifiedByAdmin   User?          @relation("KYCVerifier", fields: [verifiedBy], references: [id])
+
+  @@index([userId], map: "idx_kyc_user_id")
+  @@index([status], map: "idx_kyc_status")
+  @@index([documentType], map: "idx_kyc_document_type")
+  @@map("kyc")
+}
+
+// ============================================================================
+// WALLET & PAYMENT SYSTEM
+// ============================================================================
+
+model Wallet {
+  id                String      @id @default(cuid())
+  userId            String      @unique @map("user_id")
+  balance           Float       @default(0)
+  blockedBalance    Float       @default(0) @map("blocked_balance")
+  totalCredits      Float       @default(0) @map("total_credits")
+  totalDebits       Float       @default(0) @map("total_debits")
+  currency          String      @default("INR")
+  isActive          Boolean     @default(true) @map("is_active")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
+
+  user              User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions      WalletTransaction[]
+
+  @@index([userId], map: "idx_wallets_user_id")
+  @@map("wallets")
+}
+
+model WalletTransaction {
+  id                String           @id @default(cuid())
+  userId            String           @map("user_id")
+  walletId          String           @map("wallet_id")
+  type              TransactionType
+  amount            Float
+  balanceBefore     Float            @map("balance_before")
+  balanceAfter      Float            @map("balance_after")
+  description       String
+  referenceId       String?          @map("reference_id") // auction_id, product_id, etc.
+  referenceType     String?          @map("reference_type")
+  paymentMethod     String?          @map("payment_method")
+  razorpayOrderId   String?          @map("razorpay_order_id")
+  razorpayPaymentId String?          @map("razorpay_payment_id")
+  status            TransactionStatus @default(PENDING)
+  isRefundable      Boolean          @default(false) @map("is_refundable")
+  refundAmount      Float?           @map("refund_amount")
+  refundedAt        DateTime?        @map("refunded_at")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
+
+  user              User             @relation(fields: [userId], references: [id])
+  wallet            Wallet           @relation(fields: [walletId], references: [id])
+
+  @@index([userId], map: "idx_transactions_user_id")
+  @@index([walletId], map: "idx_transactions_wallet_id")
+  @@index([type], map: "idx_transactions_type")
+  @@index([status], map: "idx_transactions_status")
+  @@index([referenceId], map: "idx_transactions_reference_id")
+  @@map("transactions")
+}
+
+// ============================================================================
+// PLATFORM FEE SYSTEM
+// ============================================================================
+
+model PlatformFee {
+  id          String   @id @default(cuid())
+  auctionId   String   @map("auction_id")
+  amount      Float
+  winnerId    String   @map("winner_id")
+  sellerId    String   @map("seller_id")
+  processedAt DateTime @default(now()) @map("processed_at")
+
+  auction     Auction  @relation(fields: [auctionId], references: [id])
+  winner      User     @relation("PlatformFeeWinner", fields: [winnerId], references: [id])
+  seller      User     @relation("PlatformFeeSeller", fields: [sellerId], references: [id])
+
+  @@map("platform_fees")
+}
+
+// ============================================================================
+// PRODUCT & AUCTION SYSTEM
+// ============================================================================
+
+model Product {
+  id                    String        @id @default(cuid())
+  title                 String
+  description           String?       @db.Text
+  category              ProductCategory
+  subcategory           String?
+  condition             ProductCondition
+  price                 Float
+  reservePrice          Float?        @map("reserve_price")
+  minimumBid            Float?        @map("minimum_bid")
+  bidIncrement          Float         @default(100) @map("bid_increment")
+  images                String[]      @default([])
+  videoUrl              String?       @map("video_url")
+  handmadeProofVideo    String?       @map("handmade_proof_video")
+  isHandmade            Boolean       @default(false) @map("is_handmade")
+  handmadeRating        Float?        @map("handmade_rating")
+  sellerId              String        @map("seller_id")
+  status                ProductStatus @default(DRAFT)
+  depositAmount         Float         @default(200) @map("deposit_amount")
+  depositRefunded       Boolean       @default(false) @map("deposit_refunded")
+  branchId              String?       @map("branch_id")
+  location              String?
+  views                 Int           @default(0)
+  favoritesCount       Int           @default(0) @map("favorites_count")
+  rating                Float         @default(0)
+  totalReviews          Int           @default(0) @map("total_reviews")
+  approvedAt            DateTime?     @map("approved_at")
+  approvedBy            String?       @map("approved_by")
+  rejectionReason       String?       @map("rejection_reason")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  seller                User          @relation(fields: [sellerId], references: [id])
+  approvedByAdmin       User?         @relation("ProductApprover", fields: [approvedBy], references: [id])
+  branch                Branch?       @relation(fields: [branchId], references: [id])
+  auctions              Auction[]
+  bids                  Bid[]
+  reviews               Review[]
+  favorites             ProductFavorite[]
+  toyMetadata           ToyMetadata?  @relation("ToyMetadata")
+
+  @@index([sellerId], map: "idx_products_seller_id")
+  @@index([status], map: "idx_products_status")
+  @@index([category], map: "idx_products_category")
+  @@index([branchId], map: "idx_products_branch_id")
+  @@index([isHandmade], map: "idx_products_handmade")
+  @@map("products")
 }
 
 model Auction {
-  id          String   @id @default(cuid())
-  title       String
-  startingPrice Float
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String           @id @default(cuid())
+  productId         String           @unique @map("product_id")
+  sellerId          String           @map("seller_id")
+  auctionType       AuctionType      @map("auction_type")
+  startPrice        Float            @map("start_price")
+  reservePrice      Float?           @map("reserve_price")
+  currentBid        Float?           @map("current_bid")
+  bidIncrement      Float            @default(100) @map("bid_increment")
+  startTime         DateTime         @map("start_time")
+  endTime           DateTime         @map("end_time")
+  status            AuctionStatus    @default(SCHEDULED)
+  isLive            Boolean          @default(false) @map("is_live")
+  liveStreamUrl     String?          @map("live_stream_url")
+  winnerId          String?          @map("winner_id")
+  winningBidId      String?          @map("winning_bid_id")
+  totalBids         Int              @default(0) @map("total_bids")
+  uniqueBidders     Int              @default(0) @map("unique_bidders")
+  views             Int              @default(0)
+  autoExtendTime    Int?             @map("auto_extend_time") // minutes
+  fraudAlert        Boolean          @default(false) @map("fraud_alert")
+  fraudScore        Float?           @map("fraud_score")
+  createdAt         DateTime         @default(now()) @map("created_at")
+  updatedAt         DateTime         @updatedAt @map("updated_at")
 
-  // AI relations
-  aiAuctionMetrics AIAuctionMetrics[]
-  autoBidConfigs   AutoBidConfig[]
-  aiPredictionLogs AIPredictionLog[]
-  sellerInsights   SellerInsight[]
-  bids             Bid[]
+  product           Product          @relation(fields: [productId], references: [id])
+  seller            User             @relation(fields: [sellerId], references: [id])
+  winner            User?            @relation("AuctionWinner", fields: [winnerId], references: [id])
+  bids              Bid[]
+  delivery          Delivery?
+  platformFees      PlatformFee[]
+
+  @@index([productId], map: "idx_auctions_product_id")
+  @@index([sellerId], map: "idx_auctions_seller_id")
+  @@index([status], map: "idx_auctions_status")
+  @@index([auctionType], map: "idx_auctions_type")
+  @@index([startTime], map: "idx_auctions_start_time")
+  @@index([endTime], map: "idx_auctions_end_time")
+  @@map("auctions")
 }
 
 model Bid {
-  id        String   @id @default(cuid())
-  auctionId String
-  auction   Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
-  userId    String
-  amount    Float
-  createdAt DateTime @default(now())
+  id                String      @id @default(cuid())
+  auctionId         String      @map("auction_id")
+  bidderId          String      @map("bidder_id")
+  productId         String      @map("product_id")
+  amount            Float
+  isWinning         Boolean     @default(false) @map("is_winning")
+  isAutoBid         Boolean     @default(false) @map("is_auto_bid")
+  maxAutoBidAmount  Float?      @map("max_auto_bid_amount")
+  status            BidStatus   @default(ACTIVE)
+  fraudAlert        Boolean     @default(false) @map("fraud_alert")
+  createdAt         DateTime    @default(now()) @map("created_at")
+  updatedAt         DateTime    @updatedAt @map("updated_at")
 
-  @@index([auctionId])
-  @@index([userId])
-  @@index([createdAt])
+  auction           Auction     @relation(fields: [auctionId], references: [id])
+  bidder            User        @relation(fields: [bidderId], references: [id])
+  product           Product     @relation(fields: [productId], references: [id])
+
+  @@index([auctionId], map: "idx_bids_auction_id")
+  @@index([bidderId], map: "idx_bids_bidder_id")
+  @@index([productId], map: "idx_bids_product_id")
+  @@index([status], map: "idx_bids_status")
+  @@map("bids")
 }
 
-model Wallet {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  balance   Float    @default(0)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+// ============================================================================
+// ENTERPRISE MANAGEMENT SYSTEM
+// ============================================================================
 
-  @@index([userId])
+model Branch {
+  id              String       @id @default(cuid())
+  name            String
+  code            String       @unique
+  type            BranchType   @default(REGULAR)
+  address         String
+  city            String
+  state           String
+  pincode         String
+  phone           String?
+  email           String?
+  managerId       String?      @map("manager_id")
+  isActive        Boolean      @default(true) @map("is_active")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  manager         User?        @relation("BranchManager", fields: [managerId], references: [id])
+  staff           BranchStaff[]
+  products        Product[]
+  deliveries      Delivery[]
+
+  @@index([code], map: "idx_branches_code")
+  @@index([city], map: "idx_branches_city")
+  @@index([isActive], map: "idx_branches_active")
+  @@map("branches")
 }
 
-// AI Models
+model BranchStaff {
+  id              String         @id @default(cuid())
+  userId          String         @unique @map("user_id")
+  branchId        String         @map("branch_id")
+  role            StaffRole
+  permissions     String[]       @default([])
+  isActive        Boolean        @default(true) @map("is_active")
+  assignedAt      DateTime       @default(now()) @map("assigned_at")
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
 
-model AIUserMetrics {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  totalBids       Int      @default(0)
-  wins            Int      @default(0)
-  avgBidAmount    Float    @default(0)
-  winRate         Float    @default(0)
-  aggressionScore Float    @default(0) // For win probability
-  walletStrength  Float    @default(0) // Calculated from balance
-  lastActivity    DateTime @default(now())
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  user            User           @relation(fields: [userId], references: [id])
+  branch          Branch         @relation(fields: [branchId], references: [id])
 
-  @@index([userId])
-  @@index([winRate])
-  @@index([aggressionScore])
+  @@index([userId], map: "idx_branch_staff_user_id")
+  @@index([branchId], map: "idx_branch_staff_branch_id")
+  @@index([role], map: "idx_branch_staff_role")
+  @@map("branch_staff")
 }
 
-model AIAuctionMetrics {
-  id                String   @id @default(cuid())
-  auctionId         String
-  auction           Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
-  totalBids         Int      @default(0)
-  uniqueBidders     Int      @default(0)
-  avgBidIncrement   Float    @default(0)
-  timeToFirstBid    Int?     // in seconds
-  auctionDuration   Int      // in seconds
-  finalPrice        Float?
-  priceIncrease     Float    @default(0)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  @@index([auctionId])
-  @@index([totalBids])
-  @@index([finalPrice])
-}
-
-model AutoBidConfig {
-  id                String   @id @default(cuid())
-  userId            String
-  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  auctionId         String?
-  auction           Auction? @relation(fields: [auctionId], references: [id], onDelete: SetNull)
-  maxAmount         Float
-  increment         Float    @default(100)
-  isActive          Boolean  @default(true)
-  winProbabilityThreshold Float @default(0.45)
-  fraudRiskThreshold     Float @default(0.6)
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-
-  @@unique([userId, auctionId])
-  @@index([userId])
-  @@index([auctionId])
-  @@index([isActive])
-}
-
-model AIPredictionLog {
-  id            String   @id @default(cuid())
-  auctionId     String
-  auction       Auction  @relation(fields: [auctionId], references: [id], onDelete: Cascade)
-  userId        String?
-  predictionType String  // e.g., "win_probability", "fraud_score"
-  predictionValue Float
-  confidence     Float   @default(0)
-  factors       Json     // Store the factors used
-  result        String?  // e.g., "bid_placed", "blocked"
-  createdAt     DateTime @default(now())
-
-  @@index([auctionId])
-  @@index([userId])
-  @@index([predictionType])
-  @@index([createdAt])
-}
-
-model UserBehaviorLog {
-  id          String   @id @default(cuid())
-  userId      String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  action      String   // e.g., "bid", "view", "login"
-  metadata    Json     // Additional data
-  ipAddress   String?
-  userAgent   String?
-  timestamp   DateTime @default(now())
-
-  @@index([userId])
-  @@index([action])
-  @@index([timestamp])
-}
-
-model FraudCluster {
-  id              String   @id @default(cuid())
-  userId          String
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  clusterId       String   // Group similar behaviors
-  fraudScore      Float    @default(0)
-  bidRingScore    Float    @default(0)
-  behaviorSimilarity Float @default(0)
-  walletAnomaly   Float    @default(0)
-  isFrozen        Boolean  @default(false)
-  frozenAt        DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([userId])
-  @@index([clusterId])
-  @@index([fraudScore])
-  @@index([isFrozen])
-}
-
-model SellerInsight {
-  id                  String   @id @default(cuid())
-  userId              String
-  user                User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  auctionId           String?
-  auction             Auction? @relation(fields: [auctionId], references: [id], onDelete: SetNull)
-  insightType         String   // e.g., "starting_price", "timing", "description"
-  recommendation      String
-  expectedImpact      Float    @default(0) // Expected price increase %
-  confidence          Float    @default(0)
-  applied             Boolean  @default(false)
-  appliedAt           DateTime?
-  createdAt           DateTime @default(now())
-
-  @@index([userId])
-  @@index([auctionId])
-  @@index([insightType])
-  @@index([applied])
-}
-
-model EmbeddingVector {
-  id        String   @id @default(cuid())
-  entityId  String   // ID of the entity (user, auction, etc.)
-  entityType String  // "user", "auction", "product"
-  vector    Unsupported("vector(1536)")? // For pgvector, assuming 1536 for OpenAI
-  metadata  Json?
-  createdAt DateTime @default(now())
-
-  @@index([entityId])
-  @@index([entityType])
-  @@unique([entityId, entityType])
-}
-
-// Enable pgvector extension if needed
-// In migration, run: CREATE EXTENSION IF NOT EXISTS vector;
-
-// Training Datasets
-
-model AuctionTrainingData {
-  id                      String   @id @default(cuid())
-  userId                  String
-  auctionId               String
-  bidAmount               Float
-  previousBidAmount       Float?
-  bidIncrement            Float
-  timeRemainingSeconds    Int
-  totalAuctionDuration    Int
-  walletBalance           Float
-  walletToCurrentPriceRatio Float
-  userHistoricalWinRate   Float
-  userAggressionScore     Float
-  auctionVolatilityScore  Float
-  numberOfCompetitors     Int
-  wasHighestBid           Boolean
-  finalOutcome            String  // "WIN" or "LOSS"
-  createdAt               DateTime @default(now())
-
-  @@index([userId])
-  @@index([auctionId])
-  @@index([createdAt])
-  @@index([finalOutcome])
-}
-
-model FraudTrainingData {
-  id                      String   @id @default(cuid())
-  userId                  String
-  auctionId               String?
-  bidFrequencyPerMinute   Float
-  avgIncrement            Float
-  sessionDuration         Int
-  rechargeAmountBeforeBid Float?
-  deviceFingerprintHash   String
-  ipHash                  String
-  similarityClusterScore  Float
-  walletAbuseScore        Float
-  labeledFraud            Boolean
-  createdAt               DateTime @default(now())
-
-  @@index([userId])
-  @@index([auctionId])
-  @@index([createdAt])
-  @@index([labeledFraud])
-}
-
-model AISubscription {
-  id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  planType        String   // "FREE", "PRO", "ELITE"
-  featuresEnabled Json     // JSON object of enabled features
-  expiresAt       DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  @@index([userId])
-}
+// ============================================================================
+// SUBSCRIPTION SYSTEM
+// ============================================================================
 
 model Subscription {
+  id                String            @id @default(cuid())
+  userId            String            @unique @map("user_id")
+  plan              SubscriptionPlan
+  status            SubscriptionStatus @default(ACTIVE)
+  bidLimit          Int               @map("bid_limit")
+  bidsUsed          Int               @default(0) @map("bids_used")
+  price             Float
+  currency          String            @default("INR")
+  startDate         DateTime          @map("start_date")
+  endDate           DateTime          @map("end_date")
+  autoRenew         Boolean           @default(false) @map("auto_renew")
+  razorpaySubscriptionId String?      @map("razorpay_subscription_id")
+  createdAt         DateTime          @default(now()) @map("created_at")
+  updatedAt         DateTime          @updatedAt @map("updated_at")
+
+  user              User              @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_subscriptions_user_id")
+  @@index([plan], map: "idx_subscriptions_plan")
+  @@index([status], map: "idx_subscriptions_status")
+  @@map("subscriptions")
+}
+
+// ============================================================================
+// DELIVERY & LOGISTICS SYSTEM
+// ============================================================================
+
+model Delivery {
+  id                    String            @id @default(cuid())
+  auctionId             String            @unique @map("auction_id")
+  sellerId              String            @map("seller_id")
+  buyerId               String            @map("buyer_id")
+  deliveryAgentId       String?           @map("delivery_agent_id")
+  branchId              String?           @map("branch_id")
+  status                DeliveryStatus    @default(PENDING_PICKUP)
+  pickupAddress         String            @map("pickup_address")
+  deliveryAddress       String            @map("delivery_address")
+  estimatedPickupTime   DateTime?         @map("estimated_pickup_time")
+  actualPickupTime      DateTime?         @map("actual_pickup_time")
+  estimatedDeliveryTime DateTime?         @map("estimated_delivery_time")
+  actualDeliveryTime    DateTime?         @map("actual_delivery_time")
+  trackingNumber        String?           @unique @map("tracking_number")
+  pickupProofImages     String[]          @default([]) @map("pickup_proof_images")
+  deliveryProofImages   String[]          @default([]) @map("delivery_proof_images")
+  buyerSignature        String?           @map("buyer_signature")
+  notes                 String?
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  auction               Auction           @relation(fields: [auctionId], references: [id])
+  seller                User              @relation("DeliverySeller", fields: [sellerId], references: [id])
+  buyer                 User              @relation("DeliveryBuyer", fields: [buyerId], references: [id])
+  deliveryAgent         User?             @relation("DeliveryAgent", fields: [deliveryAgentId], references: [id])
+  branch                Branch?           @relation(fields: [branchId], references: [id])
+  assignments           DeliveryAssignment[]
+
+  @@index([auctionId], map: "idx_deliveries_auction_id")
+  @@index([sellerId], map: "idx_deliveries_seller_id")
+  @@index([buyerId], map: "idx_deliveries_buyer_id")
+  @@index([deliveryAgentId], map: "idx_deliveries_agent_id")
+  @@index([status], map: "idx_deliveries_status")
+  @@map("deliveries")
+}
+
+model DeliveryAssignment {
   id              String   @id @default(cuid())
-  userId          String   @unique
-  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  planType        String   // "FREE", "PRO", "ELITE"
-  featuresEnabled Json     // JSON object of enabled features
-  expiresAt       DateTime?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
+  deliveryId      String   @map("delivery_id")
+  agentId         String   @map("agent_id")
+  assignedAt      DateTime @default(now()) @map("assigned_at")
+  assignedBy      String   @map("assigned_by")
 
-  @@index([userId])
+  delivery        Delivery @relation(fields: [deliveryId], references: [id])
+  agent           User     @relation(fields: [agentId], references: [id])
+  assignedByAdmin User     @relation("AssignmentAdmin", fields: [assignedBy], references: [id])
+
+  @@index([deliveryId], map: "idx_delivery_assignments_delivery_id")
+  @@index([agentId], map: "idx_delivery_assignments_agent_id")
+  @@map("delivery_assignments")
 }
 
-model ModelMetrics {
+// ============================================================================
+// REVIEWS & RATINGS SYSTEM
+// ============================================================================
+
+model Review {
   id          String   @id @default(cuid())
-  modelName   String
-  version     String
-  accuracy    Float
-  precision   Float
-  recall      Float
-  f1Score     Float
-  trainedAt   DateTime @default(now())
+  productId   String   @map("product_id")
+  reviewerId  String   @map("reviewer_id")
+  rating      Int      // 1-5 stars
+  title       String?
+  comment     String?  @db.Text
+  images      String[] @default([])
+  isVerified  Boolean  @default(false) @map("is_verified")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
 
-  @@index([modelName])
-  @@index([version])
-  @@index([trainedAt])
+  product     Product  @relation(fields: [productId], references: [id])
+  reviewer    User     @relation(fields: [reviewerId], references: [id])
+  replies     ReviewReply[]
+
+  @@index([productId], map: "idx_reviews_product_id")
+  @@index([reviewerId], map: "idx_reviews_reviewer_id")
+  @@index([rating], map: "idx_reviews_rating")
+  @@map("reviews")
 }
 
-// Live Auction System Models
-
-model LiveAuctionSession {
-  id         String   @id @default(cuid())
-  sellerId   String
-  title      String
-  scheduledAt DateTime
-  status     String   // SCHEDULED | LIVE | ENDED
-  streamUrl  String?
-  createdAt  DateTime @default(now())
-}
-
-model LiveBid {
+model ReviewReply {
   id        String   @id @default(cuid())
-  sessionId String
-  userId    String
-  amount    Float
-  createdAt DateTime @default(now())
+  reviewId  String   @map("review_id")
+  sellerId  String   @map("seller_id")
+  comment   String   @db.Text
+  isPublic  Boolean  @default(true) @map("is_public")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  seller    User     @relation(fields: [sellerId], references: [id])
+
+  @@index([reviewId], map: "idx_review_replies_review_id")
+  @@index([sellerId], map: "idx_review_replies_seller_id")
+  @@map("review_replies")
 }
 
-model VoiceBidLog {
-  id          String   @id @default(cuid())
-  sessionId   String
-  userId      String
-  spokenText  String
-  parsedAmount Float?
-  confidence  Float
-  createdAt   DateTime @default(now())
+model ProductFavorite {
+  id         String   @id @default(cuid())
+  userId     String   @map("user_id")
+  productId  String   @map("product_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  user       User     @relation(fields: [userId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId], map: "unique_user_product_favorite")
+  @@index([userId], map: "idx_favorites_user_id")
+  @@index([productId], map: "idx_favorites_product_id")
+  @@map("product_favorites")
+}
+
+// ============================================================================
+// SELLER TRUST & VERIFICATION SYSTEM
+// ============================================================================
+
+model YoutubeEmbed {
+  id              String   @id @default(cuid())
+  sellerId        String   @map("seller_id")
+  youtubeUrl      String   @map("youtube_url")
+  videoId         String   @map("video_id") // Extracted from URL for deduplication
+  title           String?
+  thumbnail       String?  // URL to video thumbnail
+  description     String?  @db.Text
+  duration        Int?     // in seconds
+  displayOrder    Int      @default(0) @map("display_order")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  seller          User     @relation(fields: [sellerId], references: [id], onDelete: Cascade)
+
+  @@index([sellerId], map: "idx_youtube_seller_id")
+  @@index([videoId], map: "idx_youtube_video_id")
+  @@map("youtube_embeds")
+}
+
+model ToyMetadata {
+  id                          String   @id @default(cuid())
+  productId                   String   @unique @map("product_id")
+  ageMin                      Int      // Minimum age in months
+  ageMax                      Int?     // Maximum age in months
+  safetyCompliances           String[] @default([]) @map("safety_compliances") // CE, ASTM, ISO, EN71
+  isRecalledByManufacturer    Boolean  @default(false) @map("is_recalled_by_manufacturer")
+  recallDate                  DateTime? @map("recall_date")
+  material                    String?  // Plastic, Wood, Metal, Fabric
+  hasSmallParts               Boolean  @default(false) @map("has_small_parts")
+  hasChokingHazard            Boolean  @default(false) @map("has_choking_hazard")
+  warningLabel                String?  @db.Text @map("warning_label")
+  createdAt                   DateTime @default(now()) @map("created_at")
+  updatedAt                   DateTime @updatedAt @map("updated_at")
+
+  product                     Product  @relation("ToyMetadata", fields: [productId], references: [id], onDelete: Cascade)
+
+  @@index([productId], map: "idx_toy_metadata_product_id")
+  @@map("toy_metadata")
+}
+
+// ============================================================================
+// AUDIT & COMPLIANCE SYSTEM
+// ============================================================================
+
+model AuditLog {
+  id          String      @id @default(cuid())
+  userId      String?     @map("user_id")
+  action      AuditAction
+  resource    String      // table/model name
+  resourceId  String?     @map("resource_id")
+  oldValues   Json?       @map("old_values")
+  newValues   Json?       @map("new_values")
+  ipAddress   String?     @map("ip_address")
+  userAgent   String?     @map("user_agent")
+  metadata    Json?       // additional context
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  user        User?       @relation(fields: [userId], references: [id])
+
+  @@index([userId], map: "idx_audit_logs_user_id")
+  @@index([action], map: "idx_audit_logs_action")
+  @@index([resource], map: "idx_audit_logs_resource")
+  @@index([createdAt], map: "idx_audit_logs_created_at")
+  @@map("audit_logs")
+}
+
+// ============================================================================
+// ENUMS & TYPES
+// ============================================================================
+
+enum UserRole {
+  SUPER_ADMIN
+  ADMIN
+  SELLER
+  BUYER
+  DELIVERY_AGENT
+  TELECALLER
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  PENDING_VERIFICATION
+  BANNED
+}
+
+enum KYCStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum DocumentType {
+  AADHAAR
+  PAN
+  PASSPORT
+  DRIVING_LICENSE
+}
+
+enum TransactionType {
+  CREDIT
+  DEBIT
+  REFUND
+  DEPOSIT
+  COMMISSION
+  WITHDRAWAL
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+  REFUNDED
+}
+
+enum ProductCategory {
+  ELECTRONICS
+  VEHICLES
+  BIKES
+  REAL_ESTATE
+  GOLD_JEWELLERY
+  INDUSTRIAL_EQUIPMENT
+  HANDMADE_ART
+  PAINTINGS_ARTWORK
+  WOODWORK
+  TOYS
+  COLLECTIBLES
+  OTHERS
+}
+
+enum ProductCondition {
+  NEW
+  EXCELLENT
+  GOOD
+  FAIR
+  POOR
+}
+
+enum ProductStatus {
+  DRAFT
+  PENDING_APPROVAL
+  APPROVED
+  REJECTED
+  ACTIVE
+  SOLD
+  EXPIRED
+}
+
+enum AuctionType {
+  TIMED
+  LIVE
+  FLASH
+  DUTCH
+  RESERVE
+}
+
+enum AuctionStatus {
+  SCHEDULED
+  ACTIVE
+  EXTENDED
+  CLOSED
+  CANCELLED
+  COMPLETED
+}
+
+enum BidStatus {
+  ACTIVE
+  OUTBID
+  WINNING
+  CANCELLED
+}
+
+enum BranchType {
+  HEAD_OFFICE
+  REGULAR
+  FRANCHISE
+}
+
+enum StaffRole {
+  MANAGER
+  SUPERVISOR
+  EXECUTIVE
+  AGENT
+}
+
+enum SubscriptionPlan {
+  FREE
+  SILVER
+  GOLD
+  ENTERPRISE
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  EXPIRED
+  CANCELLED
+  SUSPENDED
+}
+
+enum DeliveryStatus {
+  PENDING_PICKUP
+  PICKED_UP
+  IN_TRANSIT
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+  LOGIN
+  LOGOUT
+  APPROVE
+  REJECT
+  PAYMENT
+  REFUND
+}
+
+enum ReviewType {
+  SELLER
+  PRODUCT
+  TRANSACTION
 }
