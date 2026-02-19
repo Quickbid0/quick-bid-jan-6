@@ -87,7 +87,7 @@ curl -X POST https://api.quickbid.com/api/toys/metadata \
   -d '{"productId":"test-1","ageMin":3,"ageMax":8,...}'
 
 # Test youtube gallery endpoint
-curl https://api.quickbid.com/api/seller/youtube/12345
+curl https://api.quickbid.com/api/seller/12345/youtube
 
 # Test review reply endpoint  
 curl https://api.quickbid.com/api/review/rev123/replies

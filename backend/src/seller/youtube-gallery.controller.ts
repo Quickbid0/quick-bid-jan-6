@@ -5,8 +5,6 @@ import {
   Delete,
   Body,
   Param,
-  UseGuards,
-  Request,
   HttpException,
   HttpStatus,
   BadRequestException,
@@ -23,6 +21,9 @@ class AddYoutubeVideoDto {
   title?: string;
   description?: string;
 }
+
+// DTO intentionally does not include sellerId because the route carries it
+
 
 // Helper to extract video ID from YouTube URL
 function extractVideoId(url: string): string | null {
@@ -54,41 +55,47 @@ function sanitizeYoutubeUrl(url: string): string | null {
   return `https://www.youtube.com/embed/${videoId}`;
 }
 
-@Controller('api/seller/youtube')
+@Controller('api/seller/:sellerId/youtube')
 export class YoutubeGalleryController {
   @Post('add')
   async addVideo(
-    @Body() dto: AddYoutubeVideoDto,
     @Param('sellerId') sellerId: string,
+    @Body() dto: AddYoutubeVideoDto,
   ) {
-    // Validate URL
-    const sanitized = sanitizeYoutubeUrl(dto.youtubeUrl);
-    if (!sanitized) {
+    // sanitize and validate URL
+    const sanitizedUrl = sanitizeYoutubeUrl(dto.youtubeUrl);
+    if (!sanitizedUrl) {
       throw new BadRequestException('Invalid YouTube URL');
     }
 
+    const videoId = sanitizedUrl.split('/').pop();
+    if (!videoId) {
+      throw new BadRequestException('Unable to extract video ID');
+    }
+
+    // sanitize title/description (XSS protection)
+    const safeTitle = dto.title ? DOMPurify.sanitize(dto.title) : 'Untitled Video';
+    const safeDescription = dto.description ? DOMPurify.sanitize(dto.description) : undefined;
+
     try {
-      // Check for duplicates
+      // Check for duplicates using canonical id
       const existing = await prisma.youtubeEmbed.findFirst({
-        where: {
-          sellerId,
-          videoId: sanitized.split('/').pop(),
-        },
+        where: { sellerId, videoId },
       });
 
       if (existing) {
         throw new BadRequestException('This video is already in your gallery');
       }
 
-      // Create new embed
+      // create record with sanitized url and canonical id
       const video = await prisma.youtubeEmbed.create({
         data: {
           sellerId,
-          youtubeUrl: dto.youtubeUrl,
-          videoId: dto.videoId,
-          title: dto.title || 'Untitled Video',
-          description: dto.description,
-          thumbnail: `https://img.youtube.com/vi/${dto.videoId}/maxresdefault.jpg`,
+          youtubeUrl: sanitizedUrl,
+          videoId,
+          title: safeTitle,
+          description: safeDescription,
+          thumbnail: `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`,
           displayOrder: 0,
         },
       });
@@ -98,14 +105,11 @@ export class YoutubeGalleryController {
       if (error instanceof BadRequestException) {
         throw error;
       }
-      throw new HttpException(
-        'Failed to add video',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException('Failed to add video', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  @Get(':sellerId')
+  @Get()
   async getGallery(@Param('sellerId') sellerId: string) {
     try {
       const videos = await prisma.youtubeEmbed.findMany({
@@ -128,10 +132,14 @@ export class YoutubeGalleryController {
   }
 
   @Delete(':videoId')
-  async deleteVideo(@Param('videoId') videoId: string) {
+  async deleteVideo(
+    @Param('sellerId') sellerId: string,
+    @Param('videoId') videoId: string,
+  ) {
     try {
-      await prisma.youtubeEmbed.update({
-        where: { id: videoId },
+      // verify ownership while marking inactive
+      await prisma.youtubeEmbed.updateMany({
+        where: { id: videoId, sellerId },
         data: { isActive: false },
       });
 

@@ -145,11 +145,11 @@ export const YoutubeGalleryEditor: React.FC<YoutubeGalleryEditorProps> = ({
     };
 
     try {
-      const response = await fetch(`/api/seller/youtube/add`, {
+      // POST to new path which includes sellerId in URL
+      const response = await fetch(`/api/seller/${sellerId}/youtube/add`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sellerId,
           youtubeUrl: newUrl,
           videoId,
         }),
@@ -172,7 +172,7 @@ export const YoutubeGalleryEditor: React.FC<YoutubeGalleryEditorProps> = ({
 
   const removeVideo = async (videoId: string) => {
     try {
-      const response = await fetch(`/api/seller/youtube/${videoId}`, {
+      const response = await fetch(`/api/seller/${sellerId}/youtube/${videoId}`, {
         method: 'DELETE',
       });
 

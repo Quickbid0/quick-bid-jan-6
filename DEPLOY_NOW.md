@@ -94,7 +94,7 @@ curl -X POST https://your-domain.com/api/toys/metadata \
   -d '{"productId":"test123","ageMin":5,"ageMax":12,"materials":["plastic"]}'
 
 # 3. YouTube Gallery
-curl https://your-domain.com/api/seller/youtube/seller123
+curl https://your-domain.com/api/seller/{sellerId}/youtube/seller123
 
 # 4. Review Reply
 curl https://your-domain.com/api/review/review123/replies
@@ -175,9 +175,9 @@ After deployment, verify:
 - POST /api/toys/metadata ← Toy safety submission
 - GET /api/toys/:productId ← Fetch toy safety data
 - PUT /api/toys/:productId ← Update safety metadata
-- POST /api/seller/youtube/add ← Add gallery video
-- GET /api/seller/youtube/:sellerId ← Fetch gallery
-- DELETE /api/seller/youtube/:videoId ← Remove video
+- POST /api/seller/{sellerId}/youtube/add ← Add gallery video
+- GET /api/seller/{sellerId}/youtube ← Fetch gallery
+- DELETE /api/seller/{sellerId}/youtube/:videoId ← Remove video
 - POST /api/review/:reviewId/reply ← Create reply
 - GET /api/review/:reviewId/replies ← Fetch replies
 - GET /api/review/:reviewId/my-reply ← My reply

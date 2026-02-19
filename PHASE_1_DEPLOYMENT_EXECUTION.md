@@ -248,7 +248,7 @@ curl -X POST https://api.yourdomain.com/api/toys/metadata \
 # Expected: {"success":true,"data":{...}}
 
 # 3. Test YouTube gallery endpoint
-curl https://api.yourdomain.com/api/seller/youtube/seller-123
+curl https://api.yourdomain.com/api/seller/seller-123/youtube
 # Expected: [] or array of videos
 
 # 4. Test review reply endpoint
