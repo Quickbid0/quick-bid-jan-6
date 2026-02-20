@@ -243,15 +243,13 @@ export class AuthService {
       };
 
       const accessToken = this.jwtService.sign(payload, {
-        expiresIn: '15m',
-        algorithm: 'HS256'
+        expiresIn: '15m'
       });
 
       const refreshToken = this.jwtService.sign(
         { sub: user.id, type: 'refresh' },
         {
-          expiresIn: '7d',
-          algorithm: 'HS256'
+          expiresIn: '7d'
         }
       );
 

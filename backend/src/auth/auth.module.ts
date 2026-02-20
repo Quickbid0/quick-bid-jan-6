@@ -9,17 +9,20 @@ import { CsrfGuard } from './csrf.guard';
 import { EmailModule } from '../email/email.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ReferralModule } from '../referral/referral.module';
+import { ConfigService } from '@nestjs/config';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    JwtModule.register({
-      privateKey: process.env.JWT_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      publicKey: process.env.JWT_PUBLIC_KEY?.replace(/\\n/g, '\n'),
-      signOptions: {
-        algorithm: 'RS256',
-        expiresIn: '1d',
-      },
+    JwtModule.registerAsync({
+      inject: [ConfigService],
+      useFactory: async (configService: ConfigService) => ({
+        secret: configService.get<string>('JWT_SECRET') || 'your-secret-key-min-32-chars-long',
+        signOptions: {
+          algorithm: 'HS256',
+          expiresIn: '1d',
+        },
+      }),
     }),
     EmailModule,
     PrismaModule,
