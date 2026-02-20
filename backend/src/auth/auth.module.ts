@@ -4,6 +4,7 @@ import { PassportModule } from '@nestjs/passport';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './auth.guard';
+import { JwtStrategy } from './jwt.strategy';
 import { RolesGuard } from './roles.guard';
 import { CsrfGuard } from './csrf.guard';
 import { EmailModule } from '../email/email.module';
@@ -32,7 +33,7 @@ import { ConfigService } from '@nestjs/config';
     ReferralModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAuthGuard, RolesGuard, CsrfGuard],
+  providers: [AuthService, JwtAuthGuard, JwtStrategy, RolesGuard, CsrfGuard],
   exports: [AuthService, JwtAuthGuard],
 })
 export class AuthModule {}
