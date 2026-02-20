@@ -347,7 +347,25 @@ export class AuthService {
   async getProfile(req: any) {
     const user = req.user;
     if (!user) throw new Error('Not authenticated');
-    const fullUser = this.users.get(user.email);
+    
+    // Try to get user from in-memory map first (for test users)
+    let fullUser = this.users.get(user.email);
+    
+    // If not found in map, construct from JWT
+    if (!fullUser) {
+      fullUser = {
+        id: user.sub || user.id,
+        email: user.email,
+        name: user.name || user.email.split('@')[0],
+        role: user.role || 'BUYER',
+        walletBalance: 0,
+        kycStatus: 'PENDING',
+        profile: { verified: false },
+        createdAt: new Date(),
+        lastLogin: new Date()
+      };
+    }
+    
     return {
       id: fullUser.id,
       email: fullUser.email,

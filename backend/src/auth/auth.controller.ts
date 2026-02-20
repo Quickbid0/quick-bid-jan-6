@@ -96,11 +96,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Get user profile for dashboard' })
   @ApiResponse({ status: 200, description: 'User profile data' })
   async getUserProfile(@Req() req: Request) {
-    try {
-      return this.authService.getProfile(req);
-    } catch (error) {
-      return { error: 'Profile retrieval failed' };
-    }
+    return this.authService.getProfile(req);
   }
 
   @Get('csrf-token')
