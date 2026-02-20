@@ -91,6 +91,31 @@ export class AuthController {
     return this.authService.getProfile(req);
   }
 
+  @Get('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get user profile for dashboard' })
+  @ApiResponse({ status: 200, description: 'User profile data' })
+  async getUserProfile(@Req() req: Request & { user: { sub: string } }) {
+    const userId = req.user.sub;
+    const user = await this.authService.getUserById(userId);
+    
+    if (!user) {
+      return { error: 'User not found' };
+    }
+
+    return {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      user_type: user.role?.toLowerCase() || 'buyer',
+      is_verified: user.is_verified,
+      phone_verified: user.phone_verified,
+      email_verified: user.email_verified,
+      kyc_status: user.kyc_status,
+    };
+  }
+
   @Get('csrf-token')
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: 'Get CSRF token' })

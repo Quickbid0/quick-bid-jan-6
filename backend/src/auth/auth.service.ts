@@ -361,6 +361,18 @@ export class AuthService {
     };
   }
 
+  async getUserById(userId: string) {
+    try {
+      const user = await this.prisma.user.findUnique({
+        where: { id: userId }
+      });
+      return user;
+    } catch (error) {
+      this.logger.error(`Error fetching user ${userId}:`, error);
+      return null;
+    }
+  }
+
   async logout(refreshToken: string) {
     const crypto = require('crypto');
     const hash = crypto.createHash('sha256').update(refreshToken).digest('hex');

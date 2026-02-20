@@ -115,37 +115,46 @@ const Dashboard: React.FC = () => {
           console.log('Dashboard: userId set', currentUser.id);
 
           try {
-            const { data: profile } = await supabase
-              .from('profiles')
-              .select('id, name, email, role, user_type, is_verified')
-              .eq('id', currentUser.id)
-              .single();
+            // Fetch profile from backend API instead of Supabase
+            const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+            const token = localStorage.getItem('accessToken');
             
-            if (profile) {
+            const profileResponse = await fetch(`${backendUrl}/api/auth/profile`, {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'application/json'
+              }
+            });
+
+            if (profileResponse.ok) {
+              const profile = await profileResponse.json();
               setUserProfile(profile);
               console.log('Dashboard: profile loaded', profile);
+              
+              // Validate role
+              const userRole = (profile?.role || profile?.user_type || currentUser.role || 'buyer').toLowerCase();
+              const validRoles = ['admin', 'seller', 'buyer'];
+              
+              if (!validRoles.includes(userRole)) {
+                console.error('🔐 AUTH: Dashboard - Invalid role detected:', userRole);
+                // Don't redirect, let ProtectedRoute handle it
+                setLoading(false);
+                return;
+              }
+              
+              console.log('🔐 AUTH: Dashboard - User role validated:', userRole);
+              
+              // Only redirect sellers to their specific dashboard, NOT buyers
+              if (userRole === 'seller') {
+                console.log('🔐 AUTH: Dashboard - Redirecting seller to /seller/dashboard');
+                navigate('/seller/dashboard', { replace: true });
+                return;
+              }
+            } else {
+              console.error('Failed to fetch profile:', profileResponse.statusText);
             }
 
-            // Validate role
-            const userRole = (profile?.role || profile?.user_type || currentUser.role || 'buyer').toLowerCase();
-            const validRoles = ['admin', 'seller', 'buyer'];
-            
-            if (!validRoles.includes(userRole)) {
-              console.error('🔐 AUTH: Dashboard - Invalid role detected:', userRole);
-              // Don't redirect, let ProtectedRoute handle it
-              setLoading(false);
-              return;
-            }
-            
-            console.log('🔐 AUTH: Dashboard - User role validated:', userRole);
-            
-            // Only redirect sellers to their specific dashboard, NOT buyers
-            if (userRole === 'seller') {
-              console.log('🔐 AUTH: Dashboard - Redirecting seller to /seller/dashboard');
-              navigate('/seller/dashboard', { replace: true });
-              return;
-            }
-            
             // Set loading to false after successful authentication
             setLoading(false);
           } catch (e) {
