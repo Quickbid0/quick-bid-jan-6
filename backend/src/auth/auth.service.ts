@@ -30,6 +30,16 @@ export class AuthService {
   }
 
   private async initializeTestUsers() {
+    // Try to initialize test users, but don't fail if DB is unreachable
+    try {
+      await this.createDefaultUsers();
+    } catch (error) {
+      this.logger.warn('Database not available during initialization. API will still respond.');
+      this.logger.error('DB Error:', error instanceof Error ? error.message : 'Unknown error');
+    }
+  }
+
+  private async createDefaultUsers() {
     // Create test users with QuickMela roles
     const users = [
       // Super Admin
