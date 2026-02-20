@@ -119,7 +119,7 @@ const Dashboard: React.FC = () => {
             const backendUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
             const token = localStorage.getItem('accessToken');
             
-            const profileResponse = await fetch(`${backendUrl}/api/auth/profile`, {
+            const profileResponse = await fetch(`${backendUrl}/api/auth/me`, {
               method: 'GET',
               headers: {
                 'Authorization': `Bearer ${token}`,
