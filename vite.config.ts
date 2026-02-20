@@ -2,47 +2,37 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
 
-// https://vitejs.dev/config/
+/**
+ * FIX 28: Disable Vite Source Maps in Staging & Production
+ * Source maps expose your code to users — only enable in development
+ */
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react({
+      babel: {
+        parserOpts: {
+          sourceType: 'module',
+        },
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
     },
-    dedupe: ["react", "react-dom"],
   },
   build: {
     target: 'esnext',
-    minify: 'esbuild',
-    sourcemap: false,
+    minify: false,
+    // ✅ FIX 28: Only generate source maps in development
+    sourcemap: process.env.NODE_ENV === 'development',
+    emptyOutDir: true,
     rollupOptions: {
       output: {
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId ? chunkInfo.facadeModuleId.split('/').pop() : 'chunk';
-          return `js/${facadeModuleId.replace(/\.[^.]*$/, '')}-[hash].js`;
-        },
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) return 'react';
-            if (id.includes('react-router-dom')) return 'react-router';
-            if (id.includes('lucide-react')) return 'lucide-react';
-            if (id.includes('zustand')) return 'zustand';
-            if (id.includes('html2canvas')) return 'html2canvas';
-            if (id.includes('purify')) return 'purify';
-            return 'vendor';
-          }
+        manualChunks: {
+          vendor: ['react', 'react-dom', 'react-router-dom'],
         },
       },
     },
-  },
-  optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-    ],
-  },
-  esbuild: {
-    // Remove tsconfigRaw to avoid conflicts
   },
 });

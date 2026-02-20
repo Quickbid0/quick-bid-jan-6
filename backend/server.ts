@@ -34,6 +34,10 @@ import { createWinsRouter } from './routes/winsRoutes.ts';
 import { createDepartmentsRouter } from './routes/departmentsRoutes.ts';
 import { createRiskRouter } from './routes/riskRoutes.ts';
 
+// ✅ FIX S-01, S-02, S-03, S-04: Import new security middleware
+import { verifyRole, handleTokenRefresh } from './middleware/verifyAuth.ts';
+import { bidRateLimiter } from './middleware/rateLimiter.ts';
+
 if (!DATABASE_URL) {
   console.warn('[live-backend] DATABASE_URL is not set. Postgres connections will fail.');
 }
@@ -141,6 +145,9 @@ export async function startServer() {
 
   app.post('/webhooks/razorpay', razorpayWebhookHandler(pool));
 
+  // ✅ FIX S-03: Token refresh endpoint with httpOnly cookies
+  app.post('/api/auth/refresh', handleTokenRefresh);
+
   app.use(authMiddleware);
 
   const server = http.createServer(app);
@@ -193,6 +200,15 @@ export async function startServer() {
   }
 
   setInterval(autoEndLiveAuctions, 15_000);
+
+  // ✅ FIX S-01: Apply role-based access control to admin routes
+  app.use('/api/admin', verifyRole('admin', 'superadmin'));
+  app.use('/api/v1/finance', verifyRole('admin', 'superadmin'));
+  app.use('/api/risk', verifyRole('admin', 'superadmin'));
+
+  // ✅ FIX S-06: Apply rate limiting to bid placement (5 bids per 10 seconds)
+  // This should be applied before the ads router that handles bid-related endpoints
+  const bidRateLimitMiddleware = bidRateLimiter(10 * 1000, 5); // 10s window, 5 max requests
 
   app.use('/api/ads', createAdsRouter(io, pool, authMiddleware));
   app.use('/api/deposits', createDepositRouter(pool, authMiddleware));

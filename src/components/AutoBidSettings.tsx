@@ -1,73 +1,51 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 const AutoBidSettings: React.FC = () => {
-  const [maxAmount, setMaxAmount] = useState(10000);
-  const [increment, setIncrement] = useState(100);
-  const [winProbabilityThreshold, setWinProbabilityThreshold] = useState(0.45);
-  const [fraudRiskThreshold, setFraudRiskThreshold] = useState(0.6);
-  const [saving, setSaving] = useState(false);
-
-  const saveSettings = async () => {
-    setSaving(true);
-    console.log('Saving auto-bid settings', { maxAmount, increment, winProbabilityThreshold, fraudRiskThreshold });
-    // TODO: Implement API call to save settings
-    setSaving(false);
-  };
-
   return (
-    <div className="auto-bid-settings bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-bold mb-4">Auto-Bid Configuration</h3>
+    <div className="auto-bid-settings border rounded-lg p-6 bg-gray-50">
+      <h2 className="text-xl font-semibold mb-4">Auto Bidding Preferences</h2>
+      
       <div className="space-y-4">
-        <label className="block">
-          <span className="text-gray-700">Max Bid Amount (₹)</span>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Maximum Bid Limit
+          </label>
           <input
             type="number"
-            value={maxAmount}
-            onChange={e => setMaxAmount(Number(e.target.value))}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+            placeholder="Set your maximum bid amount"
+            className="w-full px-3 py-2 border border-gray-300 rounded-md"
+            disabled
           />
-        </label>
-        <label className="block">
-          <span className="text-gray-700">Bid Increment (₹)</span>
-          <input
-            type="number"
-            value={increment}
-            onChange={e => setIncrement(Number(e.target.value))}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </label>
-        <label className="block">
-          <span className="text-gray-700">Min Win Probability Threshold</span>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            max="1"
-            value={winThreshold}
-            onChange={e => setWinThreshold(Number(e.target.value))}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </label>
-        <label className="block">
-          <span className="text-gray-700">Max Fraud Risk Threshold</span>
-          <input
-            type="number"
-            step="0.01"
-            min="0"
-            max="1"
-            value={fraudThreshold}
-            onChange={e => setFraudThreshold(Number(e.target.value))}
-            className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
-          />
-        </label>
-        <button
-          onClick={saveSettings}
-          disabled={saving}
-          className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
-        >
-          {saving ? 'Saving...' : 'Save Settings'}
-        </button>
+          <p className="mt-1 text-xs text-gray-500">Configure auto-bidding limits</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Bid Increment Strategy
+          </label>
+          <select className="w-full px-3 py-2 border border-gray-300 rounded-md" disabled>
+            <option>Conservative</option>
+            <option>Standard</option>
+            <option>Aggressive</option>
+          </select>
+          <p className="mt-1 text-xs text-gray-500">Choose how aggressively to bid</p>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            <input type="checkbox" className="mr-2" disabled />
+            Enable AI-Powered Recommendations
+          </label>
+          <p className="text-xs text-gray-500">Let AI suggest optimal bid amounts based on market trends</p>
+        </div>
       </div>
+
+      <button
+        disabled
+        className="mt-6 w-full px-4 py-2 bg-gray-300 text-gray-600 rounded-md cursor-not-allowed"
+      >
+        Save Settings
+      </button>
     </div>
   );
 };

@@ -5,6 +5,8 @@ import { CountdownService } from '../services/countdownService.ts';
 import crypto from 'crypto';
 import { checkLimit } from '../middleware/redisRateLimit.ts';
 import { createClient } from '@supabase/supabase-js';
+// ✅ FIX S-05: Import PII sanitization utility
+import { sanitizePublicUser } from '../utils/userSanitizer.ts';
 
 interface JoinAuctionPayload {
   auctionId: string;
@@ -80,7 +82,7 @@ export function registerAuctionSocket(io: SocketIOServer, pool: Pool, countdownS
           
           // Get recent bids history
           const recentBidsRes = await pool.query(
-            `select b.*, u.name as user_name 
+            `select b.*, u.id as user_id_for_sanitize, u.name, u.avatar_url
              from public.bids b
              left join public.user_profiles u on b.user_id = u.id
              where b.auction_id = $1 and b.status = 'accepted'
@@ -88,6 +90,20 @@ export function registerAuctionSocket(io: SocketIOServer, pool: Pool, countdownS
              limit 10`,
             [payload.auctionId]
           );
+
+          // ✅ FIX S-05: Sanitize bidder PII in recent bids
+          const sanitizedBids = recentBidsRes.rows.map((bid: any) => ({
+            id: bid.id,
+            amount_cents: bid.amount_cents,
+            sequence: bid.sequence,
+            created_at: bid.created_at,
+            // Sanitize user data - only expose name, no email/phone/wallet
+            bidder: bid.user_id_for_sanitize ? sanitizePublicUser({
+              id: bid.user_id_for_sanitize,
+              name: bid.name,
+              avatarUrl: bid.avatar_url
+            }) : null
+          }));
 
           socket.emit('auction-state', {
             auction: {
@@ -97,8 +113,12 @@ export function registerAuctionSocket(io: SocketIOServer, pool: Pool, countdownS
               end_date: auction.end_date,
               min_increment: auction.min_increment_cents,
             },
-            highestBid: highestBidRes.rows[0] || null,
-            recentBids: recentBidsRes.rows || [],
+            highestBid: highestBidRes.rows[0] ? {
+              id: highestBidRes.rows[0].id,
+              amount_cents: highestBidRes.rows[0].amount_cents
+              // Note: don't expose full bidder info for highest bid to prevent sniping info
+            } : null,
+            recentBids: sanitizedBids,
           });
         }
       } catch (err) {
@@ -114,7 +134,9 @@ export function registerAuctionSocket(io: SocketIOServer, pool: Pool, countdownS
           return;
         }
         const reqId = crypto.randomUUID();
-        const rl = await checkLimit(`socket-bid:${userId}`, 10, 10_000);
+        
+        // ✅ FIX S-06: Rate limit to 5 bids per 10 seconds per user
+        const rl = await checkLimit(`socket-bid:${userId}`, 5, 10_000);
         if (!rl.allowed) {
           socket.emit('error', { code: 'RATE_LIMITED', retryAfterSeconds: rl.ttlSeconds, requestId: reqId });
           return;

@@ -5,6 +5,7 @@ import { EnvironmentBadge } from '../components/EnvironmentBadge';
 import { BetaUserIndicator } from '../components/BetaUserIndicator';
 import { SandboxWalletBanner } from '../components/SandboxWalletBanner';
 import { BetaVersionBanner } from '../components/BetaVersionBanner';
+import { DashboardSkeleton } from '../components/LoadingSkeletons';
 
 interface Product {
   id: string;
@@ -115,11 +116,7 @@ export const ModernDashboard: React.FC = () => {
   );
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   return (

@@ -6,19 +6,26 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { UnifiedAuthProvider } from './context/UnifiedAuthContext';
+import { ConfirmDialogProvider } from './hooks/useConfirmDialog';
 import App from './App.tsx';
 import './index.css';
 import { initSecurity } from './utils/securityUtils';
+import { setupAxiosInterceptors } from './utils/axiosInterceptor';
 
 // Initialize security measures
 initSecurity();
 
+// Setup axios interceptor for 401 token refresh handling (FIX S-02, S-04)
+setupAxiosInterceptors();
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <UnifiedAuthProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
+      <ConfirmDialogProvider>
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </ConfirmDialogProvider>
     </UnifiedAuthProvider>
   </StrictMode>
 );
@@ -42,3 +49,4 @@ if (import.meta.env.PROD && 'serviceWorker' in navigator) {
     });
   });
 }
+

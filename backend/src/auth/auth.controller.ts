@@ -21,29 +21,34 @@ export class AuthController {
   async login(@Body() loginDto: LoginDto, @Res() res: Response) {
     const result = await this.authService.login(loginDto);
 
+    // ✅ FIX S-02: Set JWT in httpOnly cookie (XSS safe)
     res.cookie('access_token', result.accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000 // 15 min
+      sameSite: 'strict',  // CSRF protection
+      maxAge: 15 * 60 * 1000, // 15 min
+      path: '/'
     });
 
+    // ✅ Set refresh token in separate httpOnly cookie
     res.cookie('refresh_token', result.refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      path: '/'
     });
 
-    // Return tokens in JSON response for frontend compatibility
+    // ✅ FIX S-02: Return user info only (NOT tokens) — they're in cookies
     return res.json({
-      accessToken: result.accessToken,
-      refreshToken: result.refreshToken,
+      success: true,
       user: {
         id: result.user.id,
         email: result.user.email,
         role: result.user.role,
+        name: result.user.name,
       },
+      // Tokens are in httpOnly cookies, NOT in body
     });
   }
 
@@ -57,30 +62,42 @@ export class AuthController {
   }
 
   @Post('refresh')
-  @UseGuards(CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'Refresh access token' })
   @ApiResponse({ status: 200, description: 'Tokens refreshed successfully' })
   @ApiResponse({ status: 401, description: 'Invalid refresh token' })
   async refresh(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies['refreshToken'];
+    // ✅ FIX S-03: Browser automatically sends refresh_token cookie
+    const refreshToken = req.cookies?.refresh_token;
     if (!refreshToken) {
-      throw new Error('No refresh token');
+      return res.status(401).json({ error: 'No refresh token' });
     }
-    const tokens = await this.authService.refresh(refreshToken);
-    res.cookie('accessToken', tokens.accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 15 * 60 * 1000
-    });
-    res.cookie('refreshToken', tokens.refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 7 * 24 * 60 * 60 * 1000
-    });
-    return res.json({ message: 'Tokens refreshed' });
+    try {
+      const tokens = await this.authService.refresh(refreshToken);
+      
+      // ✅ Set new access token in httpOnly cookie
+      res.cookie('access_token', tokens.accessToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 15 * 60 * 1000,
+        path: '/'
+      });
+      
+      // ✅ Optionally refresh the refresh token too
+      res.cookie('refresh_token', tokens.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'strict',
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+        path: '/'
+      });
+      
+      return res.json({ success: true, message: 'Token refreshed' });
+    } catch (error) {
+      // ✅ FIX S-04: Return 401 so frontend knows to logout
+      return res.status(401).json({ error: 'Token refresh failed' });
+    }
   }
 
   @Get('me')
@@ -134,18 +151,21 @@ export class AuthController {
   }
 
   @Post('logout')
-  @UseGuards(CsrfGuard)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({ summary: 'User logout' })
   @ApiResponse({ status: 200, description: 'Logout successful' })
   async logout(@Req() req: Request, @Res() res: Response) {
-    const refreshToken = req.cookies['refreshToken'];
+    // ✅ FIX ST-02: Clear both auth cookies on logout
+    const refreshToken = req.cookies?.refresh_token;
     if (refreshToken) {
       await this.authService.logout(refreshToken);
     }
-    res.clearCookie('accessToken');
-    res.clearCookie('refreshToken');
-    return res.json({ message: 'Logout successful' });
+    
+    // ✅ Clear httpOnly cookies (browser enforces httpOnly)
+    res.clearCookie('access_token', { path: '/' });
+    res.clearCookie('refresh_token', { path: '/' });
+    
+    return res.json({ success: true, message: 'Logout successful' });
   }
 
   @Post('verify-otp')
