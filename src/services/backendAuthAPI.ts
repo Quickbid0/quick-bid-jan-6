@@ -1,7 +1,7 @@
 import axios, { AxiosInstance, AxiosResponse } from 'axios';
 
 // Backend API configuration
-const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:4011';
+const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
 
 // Create axios instance with default configuration
 const apiClient: AxiosInstance = axios.create({
