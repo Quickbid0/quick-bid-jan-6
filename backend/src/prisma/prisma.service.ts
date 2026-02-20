@@ -6,6 +6,7 @@ export class PrismaService extends PrismaClient {
   constructor() {
     super({
       log: ['query'],
+      engineType: 'library',
     });
   }
 }
