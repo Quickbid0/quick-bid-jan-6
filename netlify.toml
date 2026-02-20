@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  VITE_AUTH_MODE = "real"
+  VITE_API_URL = "https://web-production-b7c8b.up.railway.app"
+  VITE_RAZORPAY_KEY = "rzp_test_SCwiApUPtqIXUy"
+  VITE_SERVER_URL = "https://web-production-b7c8b.up.railway.app"
+  VITE_APP_URL = "https://quickmela.netlify.app"
+
 [dev]
   command = "npm run dev"
   targetPort = 3007
