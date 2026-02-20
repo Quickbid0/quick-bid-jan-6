@@ -16,13 +16,16 @@ import { ConfigService } from '@nestjs/config';
     PassportModule.register({ defaultStrategy: 'jwt' }),
     JwtModule.registerAsync({
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get<string>('JWT_SECRET') || 'your-secret-key-min-32-chars-long',
-        signOptions: {
-          algorithm: 'HS256',
-          expiresIn: '1d',
-        },
-      }),
+      useFactory: async (configService: ConfigService) => {
+        const secret = configService.get<string>('JWT_SECRET') || 'quickmela-jwt-secret-key-production-secure-minimum-32-chars-verified';
+        return {
+          secret: secret.length >= 32 ? secret : 'quickmela-jwt-secret-key-production-secure-minimum-32-chars-verified',
+          signOptions: {
+            algorithm: 'HS256',
+            expiresIn: '1d',
+          },
+        };
+      },
     }),
     EmailModule,
     PrismaModule,

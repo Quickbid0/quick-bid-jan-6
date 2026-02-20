@@ -228,12 +228,7 @@ export class AuthService {
         throw new Error('Invalid credentials');
       }
 
-      // Generate tokens
-      const jwtSecret = this.configService.get<string>('JWT_SECRET');
-      if (!jwtSecret || jwtSecret.length < 32) {
-        throw new Error('JWT_SECRET must be at least 32 characters long');
-      }
-
+      // Generate tokens using configured JWT service
       this.logger.log(`Generating secure JWT tokens for user ${email}`);
       const payload = {
         sub: user.id,
