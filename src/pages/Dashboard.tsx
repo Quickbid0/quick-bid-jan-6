@@ -127,7 +127,7 @@ const Dashboard: React.FC = () => {
             }
 
             // Validate role
-            const userRole = profile?.role || profile?.user_type || currentUser.role || 'buyer';
+            const userRole = (profile?.role || profile?.user_type || currentUser.role || 'buyer').toLowerCase();
             const validRoles = ['admin', 'seller', 'buyer'];
             
             if (!validRoles.includes(userRole)) {
@@ -168,7 +168,7 @@ const Dashboard: React.FC = () => {
             setUserId(session.user.id);
             
             // Validate demo role
-            const userRole = session.user.user_metadata.role;
+            const userRole = (session.user.user_metadata.role || 'buyer').toLowerCase();
             const validRoles = ['admin', 'seller', 'buyer'];
             
             if (!validRoles.includes(userRole)) {
